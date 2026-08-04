@@ -31,6 +31,7 @@ class SiteParser(HTMLParser):
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
         self.ids: list[str] = []
+        self.routes: list[str] = []
         self.references: list[tuple[str, str, int]] = []
         self.images_without_alt: list[int] = []
         self.has_lang = False
@@ -52,6 +53,8 @@ class SiteParser(HTMLParser):
             self._inside_title = True
         if values.get("id"):
             self.ids.append(values["id"])
+        if values.get("data-panel"):
+            self.routes.append(values["data-panel"])
         if tag in {"a", "link"} and values.get("href"):
             self.references.append((tag, values["href"], self.getpos()[0]))
         if tag in {"img", "script", "source"} and values.get("src"):
@@ -123,12 +126,12 @@ def validate() -> list[str]:
             errors.append(f"{page.name}: imágenes sin alt en líneas {lines}")
 
     for page, parser in parsed_pages.items():
-        own_ids = set(parser.ids)
-        for tag, reference, line in parser.references:
+        own_targets = set(parser.ids) | set(parser.routes)
+        for _tag, reference, line in parser.references:
             if reference.startswith("#"):
                 anchor = unquote(reference[1:])
-                if anchor and anchor not in own_ids:
-                    errors.append(f"{page.name}:{line}: ancla inexistente #{anchor}")
+                if anchor and anchor not in own_targets:
+                    errors.append(f"{page.name}:{line}: ancla o ruta inexistente #{anchor}")
                 continue
             try:
                 target = local_target(page, reference)
@@ -143,10 +146,12 @@ def validate() -> list[str]:
             fragment = unquote(urlsplit(reference).fragment)
             if fragment and target.suffix.lower() == ".html":
                 target_parser = parsed_pages.get(target)
-                if target_parser and fragment not in set(target_parser.ids):
-                    errors.append(
-                        f"{page.name}:{line}: ancla #{fragment} inexistente en {target.name}"
-                    )
+                if target_parser:
+                    targets = set(target_parser.ids) | set(target_parser.routes)
+                    if fragment not in targets:
+                        errors.append(
+                            f"{page.name}:{line}: ancla o ruta #{fragment} inexistente en {target.name}"
+                        )
 
     return errors
 
