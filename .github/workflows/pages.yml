@@ -28,8 +28,7 @@ jobs:
         run: node --check demo.js
 
   deploy:
-    name: Deploy GitHub Pages
-    if: github.event_name != 'pull_request'
+    name: Verify GitHub Pages deployment
     needs: quality
     runs-on: ubuntu-latest
     permissions:
