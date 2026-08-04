@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 430 92" role="img" aria-labelledby="title desc">
+  <title id="title">Meridiano Legal</title>
+  <desc id="desc">Versión clara del logotipo Meridiano Legal.</desc>
+  <g fill="none" fill-rule="evenodd">
+    <g transform="translate(5 8)">
+      <path d="M8 66V18l24 24L54 8l25 34 23-24v48" stroke="#F5F1E8" stroke-width="7" stroke-linejoin="miter"/>
+      <path d="M54 8v58" stroke="#C7A66E" stroke-width="4"/>
+      <circle cx="54" cy="8" r="5" fill="#C7A66E"/>
+      <path d="M8 72h94" stroke="#F5F1E8" stroke-width="2" opacity=".45"/>
+    </g>
+    <g transform="translate(128 12)">
+      <text x="0" y="34" fill="#F5F1E8" font-family="Georgia, 'Times New Roman', serif" font-size="31" font-weight="600" letter-spacing="3.2">MERIDIANO</text>
+      <text x="2" y="61" fill="#C7A66E" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" letter-spacing="8">LEGAL</text>
+      <text x="2" y="79" fill="#D9E1E6" font-family="Arial, Helvetica, sans-serif" font-size="8.7" font-weight="700" letter-spacing="2.05">DERECHO • EMPRESA • TECNOLOGÍA</text>
+    </g>
+  </g>
+</svg>
