@@ -20,10 +20,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-      - name: Validate HTML, canonical assets and local resources
+      - name: Validate HTML, catalog pages and local resources
         run: python3 scripts/validate_site.py
       - name: Validate canonical public JavaScript v3
         run: node --check site-v3.js
+      - name: Validate deep catalog JavaScript v3.2
+        run: node --check catalog-v32.js
+      - name: Validate catalog links JavaScript v3.2
+        run: node --check catalog-home-v32.js
       - name: Validate legacy public JavaScript
         run: node --check app.js
       - name: Validate enhancements JavaScript
