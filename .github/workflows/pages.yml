@@ -26,6 +26,8 @@ jobs:
         run: node --check app.js
       - name: Validate enhancements JavaScript
         run: node --check enhancements.js
+      - name: Validate experience JavaScript
+        run: node --check experiencia.js
       - name: Validate demo JavaScript
         run: node --check demo.js
       - name: Validate web manifest
