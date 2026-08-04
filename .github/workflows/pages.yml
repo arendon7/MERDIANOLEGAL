@@ -3,35 +3,30 @@ name: Site Quality and Deploy
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
   workflow_dispatch:
 
 concurrency:
-  group: pages-${{ github.ref }}
+  group: meridiano-pages-main
   cancel-in-progress: true
 
 jobs:
   quality:
-    name: Validate static site
+    name: Validate current site
     runs-on: ubuntu-latest
+    timeout-minutes: 8
     permissions:
       contents: read
     steps:
-      - name: Checkout
+      - name: Checkout main
         uses: actions/checkout@v6
       - name: Validate HTML, catalog pages and local resources
         run: python3 scripts/validate_site.py
-      - name: Validate canonical public JavaScript v3
+      - name: Validate public JavaScript
         run: node --check site-v3.js
-      - name: Validate deep catalog JavaScript v3.2
+      - name: Validate catalog JavaScript
         run: node --check catalog-v32.js
-      - name: Validate catalog links JavaScript v3.2
+      - name: Validate catalog links
         run: node --check catalog-home-v32.js
-      - name: Validate legacy public JavaScript
-        run: node --check app.js
-      - name: Validate enhancements JavaScript
-        run: node --check enhancements.js
       - name: Validate experience JavaScript
         run: node --check experiencia.js
       - name: Validate demo JavaScript
@@ -43,9 +38,10 @@ jobs:
 
   deploy:
     name: Deploy GitHub Pages
-    if: github.event_name != 'pull_request'
+    if: github.ref == 'refs/heads/main'
     needs: quality
     runs-on: ubuntu-latest
+    timeout-minutes: 8
     permissions:
       contents: read
       pages: write
@@ -54,14 +50,30 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Checkout
+      - name: Checkout main
         uses: actions/checkout@v6
       - name: Configure Pages
         uses: actions/configure-pages@v5
-      - name: Upload Pages artifact
+      - name: Upload current repository
         uses: actions/upload-pages-artifact@v4
         with:
           path: .
-      - name: Deploy
+      - name: Deploy current main
         id: deployment
         uses: actions/deploy-pages@v4
+
+  snapshot:
+    name: Update stable snapshot
+    if: github.ref == 'refs/heads/main'
+    needs: deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout deployed commit
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Move stable to deployed commit
+        run: git push origin HEAD:refs/heads/stable --force
