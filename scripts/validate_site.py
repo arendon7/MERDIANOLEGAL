@@ -30,8 +30,8 @@ CATALOG_PAGES = {
     "productos/proteccion-datos-consumidor.html": "product-data-consumer",
 }
 REQUIRED_FILES = {
-    "index.html", "demo.html", "experiencia.html", "404.html",
-    "styles.css", "site-v3.css", "clarity-v31.css", "catalog-v32.css", "enhancements.css", "experiencia.css",
+    "index.html", "firma.html", "demo.html", "experiencia.html", "404.html",
+    "styles.css", "site-v3.css", "clarity-v31.css", "catalog-v32.css", "enhancements.css", "experiencia.css", "firma.css",
     "site-v3.js", "catalog-v32.js", "catalog-home-v32.js", "demo.js", "experiencia.js",
     "manifest.webmanifest", "version.json", "robots.txt", "sitemap.xml",
     "assets/logo-meridiano.svg", "assets/logo-meridiano-v3.svg", "assets/logo-meridiano-v3-light.svg",
