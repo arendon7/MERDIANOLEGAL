@@ -34,6 +34,7 @@
   style.textContent = `
     .full-detail-link{display:inline-flex;align-items:center;gap:7px;margin-top:10px;color:#2c5878!important;font-size:.69rem!important;font-weight:900!important;text-transform:uppercase;letter-spacing:.055em;text-decoration:none}
     .full-detail-link:after{content:'→';color:#a88454}.service-card .full-detail-link,.product-card .full-detail-link{margin-top:9px}.product-card .full-detail-link{color:#d9bc8b!important}.modal-actions .full-detail-link{margin-top:0;padding:12px 18px;border:1px solid rgba(19,38,58,.28);color:#13263a!important;background:#fff}.modal-actions .full-detail-link:after{display:none}
+    .firm-deep-link{display:inline-flex;align-items:center;gap:9px;margin-top:22px;padding:12px 17px;border:1px solid rgba(19,38,58,.28);color:#13263a;font-size:.71rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase}.firm-deep-link:after{content:'→';color:#a88454}.firm-deep-link:hover{border-color:#a88454;color:#a88454}
   `;
   document.head.append(style);
 
@@ -48,6 +49,15 @@
 
   document.querySelectorAll('.service-card [data-service]').forEach((button) => addLink(button.closest('.service-card'), serviceUrls[button.dataset.service]));
   document.querySelectorAll('.product-card [data-product]').forEach((button) => addLink(button.closest('.product-card'), productUrls[button.dataset.product]));
+
+  const firmCopy = document.querySelector('#firma .editorial-copy');
+  if (firmCopy && !firmCopy.querySelector('.firm-deep-link')) {
+    const link = document.createElement('a');
+    link.className = 'firm-deep-link';
+    link.href = 'firma.html';
+    link.textContent = 'Conocer la firma y su método';
+    firmCopy.append(link);
+  }
 
   const modalContent = document.getElementById('modal-content');
   if (modalContent) {
@@ -68,5 +78,5 @@
   }
 
   const versionLabel = [...document.querySelectorAll('.footer-bottom span')].find((item) => item.textContent.includes('Web demostrativa'));
-  if (versionLabel) versionLabel.textContent = 'Web demostrativa v3.2.0';
+  if (versionLabel) versionLabel.textContent = 'Web demostrativa v3.3.0';
 })();
