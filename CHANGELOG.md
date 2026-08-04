@@ -1,5 +1,26 @@
 # Historial de versiones
 
+## v3.3.0 — 2026-08-04
+
+### Autoridad institucional
+
+- Se creó una página profunda de la firma con dirección, enfoque profesional, método, principios de actuación, experiencia sectorial y modelo de colaboración.
+- La portada incorpora acceso directo a la página institucional sin perder su resumen ejecutivo.
+- El sitemap incorpora la nueva ruta pública.
+
+### Flujo directo de implementación
+
+- `main` pasa a ser la línea única de trabajo y publicación.
+- Se eliminó el proceso ordinario de ramas temporales y pull requests de QA.
+- La rama única `stable` conserva automáticamente el último commit desplegado con éxito.
+- Si una validación falla, GitHub Pages mantiene la última versión aprobada.
+
+### Depuración
+
+- Se eliminaron `app.js`, `enhancements.js` y `autocontenida.css`, que ya no eran consumidos por ninguna página activa.
+- Se eliminaron dos SVG duplicados sustituidos por los activos canónicos v3.
+- Se simplificaron workflow, documentación y validaciones para trabajar sobre el código vigente.
+
 ## v3.2.0 — 2026-08-04
 
 ### Fichas profundas
