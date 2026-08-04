@@ -238,6 +238,17 @@ document.querySelectorAll('.need-card').forEach((card) => {
   });
 });
 
+const contactEmail = document.querySelector('a[href="mailto:contacto@meridianolegal.co"]');
+contactEmail?.remove();
+
+const contactPhone = document.querySelector('a[href="tel:+573008507813"]');
+if (contactPhone) {
+  contactPhone.href = `https://wa.me/${WHATSAPP_NUMBER}`;
+  contactPhone.target = '_blank';
+  contactPhone.rel = 'noopener noreferrer';
+  contactPhone.textContent = 'WhatsApp: +57 300 850 7813';
+}
+
 const contactForm = document.getElementById('contact-form');
 contactForm?.addEventListener('submit', async (event) => {
   event.preventDefault();
@@ -271,3 +282,7 @@ contactForm?.addEventListener('submit', async (event) => {
 
 const year = document.getElementById('year');
 if (year) year.textContent = String(new Date().getFullYear());
+
+const versionLabel = [...document.querySelectorAll('.footer-bottom span')]
+  .find((element) => element.textContent.includes('Versión web GitHub Pages'));
+if (versionLabel) versionLabel.textContent = 'Versión web GitHub Pages · v2.29.0';
