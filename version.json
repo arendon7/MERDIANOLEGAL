@@ -1,8 +1,8 @@
 {
   "name": "Meridiano Legal Web",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "release_date": "2026-08-04",
   "channel": "github-pages-demo",
-  "commit_scope": "clarity-conversion-information-architecture",
-  "source_baseline": "stable-v3.0.0"
+  "commit_scope": "deep-service-product-pages",
+  "source_baseline": "stable-v3.1.0"
 }
