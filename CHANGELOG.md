@@ -1,5 +1,31 @@
 # Historial de versiones
 
+## v2.30.0 — 2026-08-04
+
+### Confianza y cumplimiento
+
+- Se publicaron páginas separadas de privacidad, términos de uso y aviso legal.
+- Se aclaró el funcionamiento local del formulario y la apertura de WhatsApp.
+- Se documentaron los límites de la demo, el uso de información confidencial y el inicio de la relación profesional.
+
+### Experiencia de usuario
+
+- Se añadió navegación activa según la sección visible.
+- Se incorporaron accesos flotantes a WhatsApp y regreso al inicio.
+- Se añadieron enlaces legales permanentes en el pie de página.
+- Se agregó una nota de confianza junto al formulario de contacto.
+
+### Publicación y SEO
+
+- Se añadió `manifest.webmanifest`.
+- Se amplió `sitemap.xml` con las páginas legales.
+- Se incorporó una capa separada de mejoras en `enhancements.js` y `enhancements.css`.
+
+### Calidad
+
+- GitHub Actions valida ahora el JavaScript de mejoras, el manifiesto y los metadatos de versión.
+- El núcleo v2.29 permanece separado y recuperable.
+
 ## v2.29.0 — 2026-08-04
 
 ### Estabilidad
