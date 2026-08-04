@@ -24,8 +24,14 @@ jobs:
         run: python3 scripts/validate_site.py
       - name: Validate public JavaScript
         run: node --check app.js
+      - name: Validate enhancements JavaScript
+        run: node --check enhancements.js
       - name: Validate demo JavaScript
         run: node --check demo.js
+      - name: Validate web manifest
+        run: python3 -m json.tool manifest.webmanifest > /dev/null
+      - name: Validate version metadata
+        run: python3 -m json.tool version.json > /dev/null
 
   deploy:
     name: Deploy GitHub Pages
