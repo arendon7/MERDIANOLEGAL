@@ -1,6 +1,14 @@
 # Meridiano Legal · Web canónica v3.2.0
 
-Base pública, responsive y autocontenida para iterar directamente desde GitHub con validación automática y puntos de restauración.
+Sitio público, responsive y autocontenido, desarrollado y publicado directamente desde GitHub.
+
+## Flujo actual
+
+- `main`: código vigente y fuente de GitHub Pages.
+- `stable`: último commit que pasó validación y fue desplegado correctamente.
+- No se crean ramas de iteración, pull requests temporales ni copias versionadas para el trabajo ordinario.
+- Cada cambio directo en `main` activa validación, publicación y actualización automática de `stable`.
+- Si una validación falla, la web pública conserva el último despliegue aprobado.
 
 ## Accesos
 
@@ -23,7 +31,7 @@ Base pública, responsive y autocontenida para iterar directamente desde GitHub 
 - Centro de demostración con recorrido, entregables, caso integral y simulador.
 - Páginas legales, página 404, `robots.txt`, manifiesto y sitemap ampliado.
 
-## Estándar de las fichas v3.2
+## Estándar de las fichas
 
 Cada servicio y producto incorpora:
 
@@ -37,13 +45,15 @@ Cada servicio y producto incorpora:
 - soluciones relacionadas;
 - siguiente paso y canal de contacto.
 
-Los archivos se encuentran en:
+Los archivos activos se encuentran en:
 
 - `servicios/`
 - `productos/`
 - `catalog-v32.js`
 - `catalog-v32.css`
 - `catalog-home-v32.js`
+
+Estos archivos se actualizarán directamente en futuras iteraciones. No se crearán copias `v33`, `v34`, `final` o equivalentes.
 
 ## Credenciales ficticias de la demo
 
@@ -53,30 +63,28 @@ Los archivos se encuentran en:
 | Abogada | `abogado@meridianolegal.local` | `Abogado2026!` |
 | Socio director | `admin@meridianolegal.local` | `Meridiano2026!` |
 
-## Validación local
+## Validación
 
 ```bash
 python3 scripts/validate_site.py
 node --check site-v3.js
 node --check catalog-v32.js
 node --check catalog-home-v32.js
-node --check app.js
-node --check enhancements.js
 node --check experiencia.js
 node --check demo.js
 python3 -m json.tool manifest.webmanifest
 python3 -m json.tool version.json
 ```
 
-El workflow `.github/workflows/pages.yml` valida todas las páginas raíz y de subdirectorios. El despliegue solo se ejecuta cuando pasan los controles.
+El workflow `.github/workflows/pages.yml` valida todas las páginas y recursos. Solo después publica el contenido y mueve `stable` al commit desplegado.
 
-## Documentación de mantenimiento
+## Documentación
 
 - `docs/REGLAS_CANONICAS.md`: identidad, arquitectura y restricciones.
-- `docs/GUIA_DE_ITERACION.md`: archivos y flujo para cambios puntuales.
+- `docs/GUIA_DE_ITERACION.md`: flujo directo de trabajo sobre `main`.
 - `docs/ESTADO_GITHUB.md`: separación entre demo pública y backend productivo.
-- `docs/ROADMAP_V3.md`: etapas de consolidación previstas.
-- `CHANGELOG.md`: historial de versiones.
+- `docs/ROADMAP_V3.md`: etapas de consolidación.
+- `CHANGELOG.md`: historial funcional.
 
 ## Límites
 
