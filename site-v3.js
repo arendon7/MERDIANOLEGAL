@@ -139,4 +139,8 @@
 
   const year = document.getElementById('year'); if (year) year.textContent = String(new Date().getFullYear());
   const topButton = document.querySelector('.floating-actions button'); const updateTopButton = () => topButton?.classList.toggle('visible', window.scrollY > 700); window.addEventListener('scroll', updateTopButton, { passive: true }); topButton?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' })); updateTopButton();
+
+  const catalogEnhancer = document.createElement('script');
+  catalogEnhancer.src = 'catalog-home-v32.js';
+  document.body.append(catalogEnhancer);
 })();

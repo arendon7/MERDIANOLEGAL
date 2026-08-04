@@ -10,15 +10,34 @@ from urllib.parse import unquote, urlsplit
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-HTML_FILES = sorted(ROOT.glob("*.html"))
+HTML_FILES = sorted(ROOT.rglob("*.html"))
+CATALOG_PAGES = {
+    "servicios/diagnostico-juridico-empresarial.html": "service-diagnostic",
+    "servicios/direccion-juridica-externa.html": "service-direction",
+    "servicios/contratacion-estrategica.html": "service-contracts",
+    "servicios/sociedades-gobierno-inversion.html": "service-corporate",
+    "servicios/propiedad-intelectual.html": "service-ip",
+    "servicios/tecnologia-inteligencia-artificial.html": "service-ai",
+    "servicios/proyectos-regulados.html": "service-regulated",
+    "servicios/legal-operations.html": "service-ops",
+    "productos/diagnostico-juridico-empresarial.html": "product-diagnostic",
+    "productos/empresa-juridicamente-organizada.html": "product-organized",
+    "productos/activos-intangibles-protegidos.html": "product-assets",
+    "productos/empresa-lista-para-inversion.html": "product-investment",
+    "productos/programa-gobernanza-ia.html": "product-ai",
+    "productos/proyecto-regulado-estructurado.html": "product-regulated",
+    "productos/sistema-contractual-empresarial.html": "product-contract-system",
+    "productos/proteccion-datos-consumidor.html": "product-data-consumer",
+}
 REQUIRED_FILES = {
     "index.html", "demo.html", "experiencia.html", "404.html",
-    "styles.css", "site-v3.css", "clarity-v31.css", "enhancements.css", "autocontenida.css", "experiencia.css",
-    "app.js", "site-v3.js", "enhancements.js", "demo.js", "experiencia.js",
+    "styles.css", "site-v3.css", "clarity-v31.css", "catalog-v32.css", "enhancements.css", "autocontenida.css", "experiencia.css",
+    "app.js", "site-v3.js", "catalog-v32.js", "catalog-home-v32.js", "enhancements.js", "demo.js", "experiencia.js",
     "manifest.webmanifest", "version.json", "robots.txt", "sitemap.xml",
     "assets/logo-meridiano.svg", "assets/logo-meridiano-v3.svg", "assets/logo-meridiano-v3-light.svg",
     "assets/hero-meridiano.svg", "assets/hero-meridiano-v3.svg",
     "assets/decision-map.svg", "assets/route-meridiano-v3.svg",
+    *CATALOG_PAGES.keys(),
 }
 CANONICAL_INDEX_MARKERS = {
     "Dirección jurídica para empresas que avanzan",
@@ -38,7 +57,6 @@ CANONICAL_INDEX_MARKERS = {
     "Legal Operations",
     "Economía circular y aseo",
     "Meridiano Empresas",
-    "Web demostrativa v3.1.0",
 }
 IGNORED_SCHEMES = {"http", "https", "mailto", "tel", "data", "javascript"}
 
@@ -50,6 +68,7 @@ class SiteParser(HTMLParser):
         self.routes: list[str] = []
         self.references: list[tuple[str, str, int]] = []
         self.images_without_alt: list[int] = []
+        self.catalog_id: str | None = None
         self.has_lang = False
         self.has_charset = False
         self.has_viewport = False
@@ -60,6 +79,7 @@ class SiteParser(HTMLParser):
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         values = {key: value or "" for key, value in attrs}
         if tag == "html" and values.get("lang", "").strip(): self.has_lang = True
+        if tag == "body" and values.get("data-catalog-id"): self.catalog_id = values["data-catalog-id"]
         if tag == "meta" and "charset" in values: self.has_charset = True
         if tag == "meta" and values.get("name", "").lower() == "viewport": self.has_viewport = True
         if tag == "title": self._inside_title = True
@@ -101,47 +121,61 @@ def validate() -> list[str]:
         missing_markers = sorted(marker for marker in CANONICAL_INDEX_MARKERS if marker not in index_text)
         if missing_markers: errors.append(f"index.html no corresponde a la portada canónica v3.1; faltan: {', '.join(missing_markers)}")
 
+    site_script = ROOT / "site-v3.js"
+    if site_script.exists() and "catalog-home-v32.js" not in site_script.read_text(encoding="utf-8"):
+        errors.append("site-v3.js no carga la navegación hacia las fichas profundas v3.2")
+
     if not HTML_FILES:
-        errors.append("No se encontraron archivos HTML en la raíz")
+        errors.append("No se encontraron archivos HTML")
         return errors
 
     parsed_pages: dict[Path, SiteParser] = {}
     for page in HTML_FILES:
         parser = SiteParser()
+        relative = page.relative_to(ROOT).as_posix()
         try: parser.feed(page.read_text(encoding="utf-8"))
         except UnicodeDecodeError:
-            errors.append(f"{page.name}: no está codificado en UTF-8")
+            errors.append(f"{relative}: no está codificado en UTF-8")
             continue
-        parsed_pages[page] = parser
+        parsed_pages[page.resolve()] = parser
         duplicates = [item for item, count in Counter(parser.ids).items() if count > 1]
-        if duplicates: errors.append(f"{page.name}: IDs duplicados: {', '.join(sorted(duplicates))}")
-        if not parser.has_lang: errors.append(f"{page.name}: falta atributo lang en <html>")
-        if not parser.has_charset: errors.append(f"{page.name}: falta meta charset")
-        if not parser.has_viewport: errors.append(f"{page.name}: falta meta viewport")
-        if not parser.has_title: errors.append(f"{page.name}: falta un título no vacío")
-        if parser.images_without_alt: errors.append(f"{page.name}: imágenes sin alt en líneas {', '.join(map(str, parser.images_without_alt))}")
+        if duplicates: errors.append(f"{relative}: IDs duplicados: {', '.join(sorted(duplicates))}")
+        if not parser.has_lang: errors.append(f"{relative}: falta atributo lang en <html>")
+        if not parser.has_charset: errors.append(f"{relative}: falta meta charset")
+        if not parser.has_viewport: errors.append(f"{relative}: falta meta viewport")
+        if not parser.has_title: errors.append(f"{relative}: falta un título no vacío")
+        if parser.images_without_alt: errors.append(f"{relative}: imágenes sin alt en líneas {', '.join(map(str, parser.images_without_alt))}")
+        expected_catalog_id = CATALOG_PAGES.get(relative)
+        if expected_catalog_id and parser.catalog_id != expected_catalog_id:
+            errors.append(f"{relative}: data-catalog-id debe ser {expected_catalog_id!r}")
+
+    catalog_ids = [parser.catalog_id for parser in parsed_pages.values() if parser.catalog_id]
+    duplicated_catalog_ids = [item for item, count in Counter(catalog_ids).items() if count > 1]
+    if duplicated_catalog_ids: errors.append(f"IDs de catálogo duplicados: {', '.join(sorted(duplicated_catalog_ids))}")
+    if len(catalog_ids) != 16: errors.append(f"Se esperaban 16 fichas profundas y se encontraron {len(catalog_ids)}")
 
     for page, parser in parsed_pages.items():
+        relative = page.relative_to(ROOT.resolve()).as_posix()
         own_targets = set(parser.ids) | set(parser.routes)
         for _tag, reference, line in parser.references:
             if reference.startswith("#"):
                 anchor = unquote(reference[1:])
-                if anchor and anchor not in own_targets: errors.append(f"{page.name}:{line}: ancla o ruta inexistente #{anchor}")
+                if anchor and anchor not in own_targets: errors.append(f"{relative}:{line}: ancla o ruta inexistente #{anchor}")
                 continue
             try: target = local_target(page, reference)
             except ValueError as exc:
-                errors.append(f"{page.name}:{line}: {reference!r}: {exc}")
+                errors.append(f"{relative}:{line}: {reference!r}: {exc}")
                 continue
             if target is None: continue
             if not target.exists():
-                errors.append(f"{page.name}:{line}: recurso inexistente {reference!r}")
+                errors.append(f"{relative}:{line}: recurso inexistente {reference!r}")
                 continue
             fragment = unquote(urlsplit(reference).fragment)
             if fragment and target.suffix.lower() == ".html":
-                target_parser = parsed_pages.get(target)
+                target_parser = parsed_pages.get(target.resolve())
                 if target_parser:
                     targets = set(target_parser.ids) | set(target_parser.routes)
-                    if fragment not in targets: errors.append(f"{page.name}:{line}: ancla o ruta #{fragment} inexistente en {target.name}")
+                    if fragment not in targets: errors.append(f"{relative}:{line}: ancla o ruta #{fragment} inexistente en {target.relative_to(ROOT.resolve())}")
     return errors
 
 
@@ -151,7 +185,7 @@ def main() -> int:
         print("VALIDACIÓN FALLIDA")
         for error in errors: print(f"- {error}")
         return 1
-    print(f"VALIDACIÓN OK: {len(HTML_FILES)} páginas, portada v3.1 y recursos internos íntegros.")
+    print(f"VALIDACIÓN OK: {len(HTML_FILES)} páginas, 16 fichas profundas y recursos internos íntegros.")
     return 0
 
 

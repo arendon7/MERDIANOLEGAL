@@ -1,6 +1,6 @@
-# Meridiano Legal · Web canónica v2.31.0
+# Meridiano Legal · Web canónica v3.2.0
 
-Base pública, responsive y autocontenida para iterar directamente desde GitHub.
+Base pública, responsive y autocontenida para iterar directamente desde GitHub con validación automática y puntos de restauración.
 
 ## Accesos
 
@@ -8,27 +8,42 @@ Base pública, responsive y autocontenida para iterar directamente desde GitHub.
 - Centro de demostración: `https://arendon7.github.io/MERDIANOLEGAL/experiencia.html`
 - Portal demostrativo: `https://arendon7.github.io/MERDIANOLEGAL/demo.html`
 
-La publicación requiere que el repositorio tenga seleccionado **Settings → Pages → Source: GitHub Actions**.
+## Arquitectura consolidada
 
-## Alcance consolidado
-
-- Landing comercial completa.
-- 8 servicios profesionales.
-- 8 productos jurídicos de alcance cerrado.
+- Identidad visual angular v3 en marino, marfil, azul y dorado.
+- Landing comercial con guía para elegir modalidad y punto de entrada.
+- 8 servicios profesionales con página profunda individual.
+- 8 productos jurídicos de alcance cerrado con página profunda individual.
 - 5 planes recurrentes.
 - 6 documentos guiados.
-- Sectores priorizados y Ruta Meridiano.
+- 8 sectores priorizados.
+- Ruta Meridiano y explicación de entregables.
+- Preguntas frecuentes, criterios de encaje y contacto por WhatsApp.
 - Portal por perfiles con 9 módulos.
-- Centro de demostración migrado desde la versión autocontenida.
-- Recorridos ejecutivos de 10 y 20 minutos.
-- Galería de entregables jurídicos demostrativos.
-- Caso integral ficticio.
-- Simulador privado de alcance sin transmisión de información.
-- Modalidades de trabajo y arquitectura de propuesta.
-- Identidad visual propia y recursos SVG/CSS locales.
-- Diseño responsive sin dependencias de imágenes externas.
-- Páginas legales, página 404, `robots.txt`, manifiesto y `sitemap.xml`.
-- Validación automática antes de cada despliegue.
+- Centro de demostración con recorrido, entregables, caso integral y simulador.
+- Páginas legales, página 404, `robots.txt`, manifiesto y sitemap ampliado.
+
+## Estándar de las fichas v3.2
+
+Cada servicio y producto incorpora:
+
+- pregunta ejecutiva;
+- situaciones en las que puede ser útil;
+- alcance orientativo;
+- método de trabajo;
+- entregables;
+- información y participación requerida;
+- límites y exclusiones;
+- soluciones relacionadas;
+- siguiente paso y canal de contacto.
+
+Los archivos se encuentran en:
+
+- `servicios/`
+- `productos/`
+- `catalog-v32.js`
+- `catalog-v32.css`
+- `catalog-home-v32.js`
 
 ## Credenciales ficticias de la demo
 
@@ -42,6 +57,9 @@ La publicación requiere que el repositorio tenga seleccionado **Settings → Pa
 
 ```bash
 python3 scripts/validate_site.py
+node --check site-v3.js
+node --check catalog-v32.js
+node --check catalog-home-v32.js
 node --check app.js
 node --check enhancements.js
 node --check experiencia.js
@@ -50,14 +68,15 @@ python3 -m json.tool manifest.webmanifest
 python3 -m json.tool version.json
 ```
 
-El workflow `.github/workflows/pages.yml` ejecuta estas verificaciones y solo despliega cuando pasan.
+El workflow `.github/workflows/pages.yml` valida todas las páginas raíz y de subdirectorios. El despliegue solo se ejecuta cuando pasan los controles.
 
 ## Documentación de mantenimiento
 
 - `docs/REGLAS_CANONICAS.md`: identidad, arquitectura y restricciones.
 - `docs/GUIA_DE_ITERACION.md`: archivos y flujo para cambios puntuales.
 - `docs/ESTADO_GITHUB.md`: separación entre demo pública y backend productivo.
-- `CHANGELOG.md`: historial de las iteraciones consolidadas.
+- `docs/ROADMAP_V3.md`: etapas de consolidación previstas.
+- `CHANGELOG.md`: historial de versiones.
 
 ## Límites
 

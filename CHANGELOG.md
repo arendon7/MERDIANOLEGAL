@@ -1,5 +1,46 @@
 # Historial de versiones
 
+## v3.2.0 — 2026-08-04
+
+### Fichas profundas
+
+- Se crearon páginas individuales para los 8 servicios profesionales.
+- Se crearon páginas individuales para los 8 productos de alcance cerrado.
+- Cada ficha incorpora pregunta ejecutiva, situaciones de uso, alcance, método, entregables, requisitos, exclusiones y soluciones relacionadas.
+- Se mantuvo una arquitectura común para facilitar futuras correcciones sin perder consistencia.
+
+### Navegación y descubrimiento
+
+- Las tarjetas de la portada conservan la ficha ejecutiva y agregan acceso a la página completa.
+- Los modales distinguen correctamente entre servicio profesional y producto jurídico.
+- El sitemap incorpora las 16 nuevas rutas públicas.
+
+### Calidad
+
+- El validador revisa páginas HTML en subdirectorios.
+- Se verifica la presencia y unicidad de 16 identificadores de catálogo.
+- GitHub Actions valida `catalog-v32.js` y `catalog-home-v32.js`.
+- Se controla que la portada siga cargando la navegación hacia las fichas profundas.
+
+## v3.1.0 — 2026-08-04
+
+### Claridad y conversión
+
+- Se explicó para quién es Meridiano y cuándo puede agregar mayor valor.
+- Se diferenció orientación focal, servicio profesional, producto cerrado y plan recurrente.
+- Se incorporó una sección de entregables concretos.
+- Se agregaron criterios de encaje, preguntas frecuentes y un proceso de contacto en tres etapas.
+- Se documentó el roadmap de consolidación v3.
+
+## v3.0.0 — 2026-08-04
+
+### Reconstrucción canónica
+
+- Se sustituyó la reconstrucción beta por la identidad visual angular v3.
+- Se incorporaron logotipo principal y claro, hero gráfico y Ruta Meridiano.
+- Se restauró la arquitectura de 8 servicios, 8 productos, 5 planes, 6 documentos y 8 sectores.
+- Se añadieron controles antirregresión y la rama estable `stable-v3.0.0`.
+
 ## v2.31.0 — 2026-08-04
 
 ### Migración desde la versión autocontenida
