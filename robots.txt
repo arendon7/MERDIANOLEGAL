@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /MERDIANOLEGAL/
+Disallow: /MERDIANOLEGAL/demo.html
+Disallow: /MERDIANOLEGAL/docs/
+
+Sitemap: https://arendon7.github.io/MERDIANOLEGAL/sitemap.xml
