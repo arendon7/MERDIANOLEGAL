@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 580" role="img" aria-labelledby="title desc">
+  <title id="title">Dirección jurídica para decisiones empresariales</title>
+  <desc id="desc">Composición abstracta de una ciudad, un meridiano y rutas de decisión.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0c1b2b"/><stop offset=".55" stop-color="#13263a"/><stop offset="1" stop-color="#21435d"/></linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f5f1e8" stop-opacity=".24"/><stop offset="1" stop-color="#2c5878" stop-opacity=".05"/></linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="820" height="580" rx="32" fill="url(#bg)"/>
+  <g opacity=".16" stroke="#f5f1e8"><path d="M0 115h820M0 230h820M0 345h820M0 460h820"/><path d="M136 0v580M273 0v580M410 0v580M547 0v580M684 0v580"/></g>
+  <g transform="translate(482 70)">
+    <circle cx="150" cy="150" r="136" fill="none" stroke="#a88454" stroke-width="1.7" opacity=".75"/>
+    <circle cx="150" cy="150" r="104" fill="none" stroke="#c5a46d" stroke-dasharray="5 9" opacity=".75"/>
+    <ellipse cx="150" cy="150" rx="56" ry="136" fill="none" stroke="#e2c796" opacity=".85"/>
+    <path d="M14 150h272M150 14v272" stroke="#e2c796" opacity=".8"/>
+    <path d="M150 26l11 25h-22z" fill="#c5a46d"/>
+    <circle cx="150" cy="150" r="7" fill="#f5f1e8" filter="url(#glow)"/>
+    <text x="144" y="7" font-family="Arial" font-size="14" fill="#f5f1e8">N</text><text x="295" y="155" font-family="Arial" font-size="14" fill="#f5f1e8">E</text><text x="145" y="305" font-family="Arial" font-size="14" fill="#f5f1e8">S</text><text x="-2" y="155" font-family="Arial" font-size="14" fill="#f5f1e8">O</text>
+  </g>
+  <g transform="translate(52 266)">
+    <rect x="0" y="86" width="94" height="176" rx="5" fill="url(#glass)" stroke="#7890a3"/><rect x="104" y="38" width="116" height="224" rx="5" fill="url(#glass)" stroke="#7890a3"/><rect x="230" y="120" width="84" height="142" rx="5" fill="url(#glass)" stroke="#7890a3"/><rect x="324" y="0" width="126" height="262" rx="5" fill="url(#glass)" stroke="#7890a3"/>
+    <path d="M13 118h68M13 150h68M13 182h68M13 214h68M119 70h86M119 108h86M119 146h86M119 184h86M244 150h56M244 184h56M339 36h96M339 80h96M339 124h96M339 168h96M339 212h96" stroke="#f5f1e8" opacity=".25"/>
+  </g>
+  <g fill="none" stroke="#c5a46d" stroke-width="3" stroke-linecap="round"><path d="M80 128C196 54 269 70 351 137S507 238 620 217"/><path d="M80 128l28-2-12 25"/></g>
+  <g font-family="Arial, sans-serif"><rect x="56" y="64" width="268" height="116" rx="16" fill="#0c1b2b" fill-opacity=".82" stroke="#a88454"/><text x="82" y="100" font-size="13" letter-spacing="2.2" fill="#c5a46d">RUTA MERIDIANO</text><text x="82" y="133" font-family="Georgia, serif" font-size="24" fill="#f5f1e8">Entender · Priorizar</text><text x="82" y="160" font-family="Georgia, serif" font-size="24" fill="#f5f1e8">Ejecutar · Dar seguimiento</text></g>
+</svg>
