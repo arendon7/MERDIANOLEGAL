@@ -1,4 +1,4 @@
-# Meridiano Legal · Web canónica v3.2.0
+# Meridiano Legal · Web canónica v3.3.0
 
 Sitio público, responsive y autocontenido, desarrollado y publicado directamente desde GitHub.
 
@@ -13,6 +13,7 @@ Sitio público, responsive y autocontenido, desarrollado y publicado directament
 ## Accesos
 
 - Web pública: `https://arendon7.github.io/MERDIANOLEGAL/`
+- La firma: `https://arendon7.github.io/MERDIANOLEGAL/firma.html`
 - Centro de demostración: `https://arendon7.github.io/MERDIANOLEGAL/experiencia.html`
 - Portal demostrativo: `https://arendon7.github.io/MERDIANOLEGAL/demo.html`
 
@@ -20,6 +21,7 @@ Sitio público, responsive y autocontenido, desarrollado y publicado directament
 
 - Identidad visual angular v3 en marino, marfil, azul y dorado.
 - Landing comercial con guía para elegir modalidad y punto de entrada.
+- Página institucional con dirección, método, principios, experiencia y colaboración profesional.
 - 8 servicios profesionales con página profunda individual.
 - 8 productos jurídicos de alcance cerrado con página profunda individual.
 - 5 planes recurrentes.
@@ -30,6 +32,17 @@ Sitio público, responsive y autocontenido, desarrollado y publicado directament
 - Portal por perfiles con 9 módulos.
 - Centro de demostración con recorrido, entregables, caso integral y simulador.
 - Páginas legales, página 404, `robots.txt`, manifiesto y sitemap ampliado.
+
+## Archivos canónicos
+
+- `index.html`, `site-v3.css`, `clarity-v31.css` y `site-v3.js`: portada pública.
+- `firma.html` y `firma.css`: página institucional.
+- `servicios/` y `productos/`: 16 fichas profundas.
+- `catalog-v32.js`, `catalog-v32.css` y `catalog-home-v32.js`: catálogo y conexiones de navegación.
+- `experiencia.html`, `experiencia.css` y `experiencia.js`: centro de demostración.
+- `demo.html`, `styles.css` y `demo.js`: portal demostrativo.
+
+Los nombres históricos que todavía corresponden a archivos activos se actualizan directamente. No se crearán copias `v33`, `v34`, `final`, `nuevo` o equivalentes.
 
 ## Estándar de las fichas
 
@@ -44,16 +57,6 @@ Cada servicio y producto incorpora:
 - límites y exclusiones;
 - soluciones relacionadas;
 - siguiente paso y canal de contacto.
-
-Los archivos activos se encuentran en:
-
-- `servicios/`
-- `productos/`
-- `catalog-v32.js`
-- `catalog-v32.css`
-- `catalog-home-v32.js`
-
-Estos archivos se actualizarán directamente en futuras iteraciones. No se crearán copias `v33`, `v34`, `final` o equivalentes.
 
 ## Credenciales ficticias de la demo
 
