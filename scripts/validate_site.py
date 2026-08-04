@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 HTML_FILES = sorted(ROOT.glob("*.html"))
 REQUIRED_FILES = {
     "index.html", "demo.html", "experiencia.html", "404.html",
-    "styles.css", "site-v3.css", "enhancements.css", "autocontenida.css", "experiencia.css",
+    "styles.css", "site-v3.css", "clarity-v31.css", "enhancements.css", "autocontenida.css", "experiencia.css",
     "app.js", "site-v3.js", "enhancements.js", "demo.js", "experiencia.js",
     "manifest.webmanifest", "version.json", "robots.txt", "sitemap.xml",
     "assets/logo-meridiano.svg", "assets/logo-meridiano-v3.svg", "assets/logo-meridiano-v3-light.svg",
@@ -26,13 +26,19 @@ CANONICAL_INDEX_MARKERS = {
     "assets/hero-meridiano-v3.svg",
     "assets/route-meridiano-v3.svg",
     "site-v3.css",
+    "clarity-v31.css",
     "site-v3.js",
+    "CÓMO ELEGIR",
+    "QUÉ RECIBE LA EMPRESA",
+    "CUÁNDO TIENE SENTIDO",
+    "PREGUNTAS FRECUENTES",
     "Diagnóstico Jurídico Empresarial",
     "Dirección Jurídica Externa",
     "Tecnología e inteligencia artificial",
     "Legal Operations",
     "Economía circular y aseo",
     "Meridiano Empresas",
+    "Web demostrativa v3.1.0",
 }
 IGNORED_SCHEMES = {"http", "https", "mailto", "tel", "data", "javascript"}
 
@@ -93,7 +99,7 @@ def validate() -> list[str]:
     if index_path.exists():
         index_text = index_path.read_text(encoding="utf-8")
         missing_markers = sorted(marker for marker in CANONICAL_INDEX_MARKERS if marker not in index_text)
-        if missing_markers: errors.append(f"index.html no corresponde a la portada canónica v3; faltan: {', '.join(missing_markers)}")
+        if missing_markers: errors.append(f"index.html no corresponde a la portada canónica v3.1; faltan: {', '.join(missing_markers)}")
 
     if not HTML_FILES:
         errors.append("No se encontraron archivos HTML en la raíz")
@@ -145,7 +151,7 @@ def main() -> int:
         print("VALIDACIÓN FALLIDA")
         for error in errors: print(f"- {error}")
         return 1
-    print(f"VALIDACIÓN OK: {len(HTML_FILES)} páginas, portada v3 y recursos internos íntegros.")
+    print(f"VALIDACIÓN OK: {len(HTML_FILES)} páginas, portada v3.1 y recursos internos íntegros.")
     return 0
 
 
