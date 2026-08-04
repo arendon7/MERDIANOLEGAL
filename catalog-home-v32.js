@@ -19,8 +19,8 @@
     'Sistema Contractual Empresarial': 'productos/sistema-contractual-empresarial.html',
     'Programa de Protección de Datos y Consumidor': 'productos/proteccion-datos-consumidor.html',
   };
-  const titleUrls = {
-    'Diagnóstico Jurídico Empresarial': productUrls['Diagnóstico Jurídico Empresarial'],
+  const serviceTitleUrls = {
+    'Diagnóstico Jurídico Empresarial': serviceUrls.diagnostic,
     'Dirección Jurídica Externa': serviceUrls.direction,
     'Contratación Estratégica y Gestión Contractual': serviceUrls.contracts,
     'Sociedades, Gobierno e Inversión': serviceUrls.corporate,
@@ -28,7 +28,6 @@
     'Gobernanza Jurídica de Tecnología e Inteligencia Artificial': serviceUrls.ai,
     'Estructuración Jurídica de Proyectos Regulados': serviceUrls.regulated,
     'Legal Operations y Transformación de la Función Jurídica': serviceUrls.ops,
-    ...productUrls,
   };
 
   const style = document.createElement('style');
@@ -54,8 +53,10 @@
   if (modalContent) {
     const syncModalLink = () => {
       const title = modalContent.querySelector('h2')?.textContent?.trim();
+      const code = modalContent.querySelector('.modal-aside span')?.textContent?.trim() || '';
       const actions = modalContent.querySelector('.modal-actions');
-      const url = titleUrls[title];
+      const productMode = code.includes('PRODUCTO') || code.includes('PUNTO DE ENTRADA');
+      const url = productMode ? productUrls[title] : serviceTitleUrls[title];
       if (!actions || !url || actions.querySelector('.full-detail-link')) return;
       const link = document.createElement('a');
       link.className = 'full-detail-link';
@@ -65,4 +66,7 @@
     };
     new MutationObserver(syncModalLink).observe(modalContent, { childList: true, subtree: true });
   }
+
+  const versionLabel = [...document.querySelectorAll('.footer-bottom span')].find((item) => item.textContent.includes('Web demostrativa'));
+  if (versionLabel) versionLabel.textContent = 'Web demostrativa v3.2.0';
 })();
