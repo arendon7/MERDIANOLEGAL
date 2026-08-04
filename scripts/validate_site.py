@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Valida la integridad básica del sitio estático de Meridiano Legal."""
+"""Valida integridad, rutas y activos canónicos del sitio Meridiano Legal."""
 
 from __future__ import annotations
 
@@ -12,25 +12,27 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 HTML_FILES = sorted(ROOT.glob("*.html"))
 REQUIRED_FILES = {
-    "index.html",
-    "demo.html",
-    "experiencia.html",
-    "404.html",
-    "styles.css",
-    "enhancements.css",
-    "autocontenida.css",
-    "experiencia.css",
-    "app.js",
-    "enhancements.js",
-    "demo.js",
-    "experiencia.js",
-    "manifest.webmanifest",
-    "version.json",
-    "robots.txt",
-    "sitemap.xml",
-    "assets/logo-meridiano.svg",
-    "assets/hero-meridiano.svg",
-    "assets/decision-map.svg",
+    "index.html", "demo.html", "experiencia.html", "404.html",
+    "styles.css", "site-v3.css", "enhancements.css", "autocontenida.css", "experiencia.css",
+    "app.js", "site-v3.js", "enhancements.js", "demo.js", "experiencia.js",
+    "manifest.webmanifest", "version.json", "robots.txt", "sitemap.xml",
+    "assets/logo-meridiano.svg", "assets/logo-meridiano-v3.svg", "assets/logo-meridiano-v3-light.svg",
+    "assets/hero-meridiano.svg", "assets/hero-meridiano-v3.svg",
+    "assets/decision-map.svg", "assets/route-meridiano-v3.svg",
+}
+CANONICAL_INDEX_MARKERS = {
+    "Dirección jurídica para empresas que avanzan",
+    "assets/logo-meridiano-v3.svg",
+    "assets/hero-meridiano-v3.svg",
+    "assets/route-meridiano-v3.svg",
+    "site-v3.css",
+    "site-v3.js",
+    "Diagnóstico Jurídico Empresarial",
+    "Dirección Jurídica Externa",
+    "Gobernanza Jurídica de Tecnología e Inteligencia Artificial",
+    "Legal Operations",
+    "Economía circular y aseo",
+    "Meridiano Empresas",
 }
 IGNORED_SCHEMES = {"http", "https", "mailto", "tel", "data", "javascript"}
 
@@ -99,10 +101,16 @@ def local_target(source: Path, reference: str) -> Path | None:
 
 def validate() -> list[str]:
     errors: list[str] = []
-
     missing = sorted(name for name in REQUIRED_FILES if not (ROOT / name).exists())
     if missing:
         errors.append(f"Faltan archivos requeridos: {', '.join(missing)}")
+
+    index_path = ROOT / "index.html"
+    if index_path.exists():
+        index_text = index_path.read_text(encoding="utf-8")
+        missing_markers = sorted(marker for marker in CANONICAL_INDEX_MARKERS if marker not in index_text)
+        if missing_markers:
+            errors.append(f"index.html no corresponde a la portada canónica v3; faltan: {', '.join(missing_markers)}")
 
     if not HTML_FILES:
         errors.append("No se encontraron archivos HTML en la raíz")
@@ -117,7 +125,6 @@ def validate() -> list[str]:
             errors.append(f"{page.name}: no está codificado en UTF-8")
             continue
         parsed_pages[page] = parser
-
         duplicates = [item for item, count in Counter(parser.ids).items() if count > 1]
         if duplicates:
             errors.append(f"{page.name}: IDs duplicados: {', '.join(sorted(duplicates))}")
@@ -130,8 +137,7 @@ def validate() -> list[str]:
         if not parser.has_title:
             errors.append(f"{page.name}: falta un título no vacío")
         if parser.images_without_alt:
-            lines = ", ".join(map(str, parser.images_without_alt))
-            errors.append(f"{page.name}: imágenes sin alt en líneas {lines}")
+            errors.append(f"{page.name}: imágenes sin alt en líneas {', '.join(map(str, parser.images_without_alt))}")
 
     for page, parser in parsed_pages.items():
         own_targets = set(parser.ids) | set(parser.routes)
@@ -157,10 +163,7 @@ def validate() -> list[str]:
                 if target_parser:
                     targets = set(target_parser.ids) | set(target_parser.routes)
                     if fragment not in targets:
-                        errors.append(
-                            f"{page.name}:{line}: ancla o ruta #{fragment} inexistente en {target.name}"
-                        )
-
+                        errors.append(f"{page.name}:{line}: ancla o ruta #{fragment} inexistente en {target.name}")
     return errors
 
 
@@ -171,7 +174,7 @@ def main() -> int:
         for error in errors:
             print(f"- {error}")
         return 1
-    print(f"VALIDACIÓN OK: {len(HTML_FILES)} páginas y recursos internos íntegros.")
+    print(f"VALIDACIÓN OK: {len(HTML_FILES)} páginas, portada v3 y recursos internos íntegros.")
     return 0
 
 
