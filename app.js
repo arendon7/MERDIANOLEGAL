@@ -286,3 +286,10 @@ if (year) year.textContent = String(new Date().getFullYear());
 const versionLabel = [...document.querySelectorAll('.footer-bottom span')]
   .find((element) => element.textContent.includes('Versión web GitHub Pages'));
 if (versionLabel) versionLabel.textContent = 'Versión web GitHub Pages · v2.29.0';
+
+if (!document.querySelector('script[src="enhancements.js"]')) {
+  const enhancements = document.createElement('script');
+  enhancements.src = 'enhancements.js';
+  enhancements.defer = true;
+  document.body.append(enhancements);
+}
