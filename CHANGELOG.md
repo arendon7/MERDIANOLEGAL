@@ -1,30 +1,43 @@
 # Historial de versiones
 
-## v2.30.0 — 2026-08-04
+## v2.31.0 — 2026-08-04
 
-### Confianza y cumplimiento
+### Migración desde la versión autocontenida
 
-- Se publicaron páginas separadas de privacidad, términos de uso y aviso legal.
-- Se aclaró el funcionamiento local del formulario y la apertura de WhatsApp.
-- Se documentaron los límites de la demo, el uso de información confidencial y el inicio de la relación profesional.
+- Se incorporó un Centro de demostración integrado con recorrido ejecutivo de 10 o 20 minutos.
+- Se agregó una galería visual de entregables jurídicos demostrativos.
+- Se incorporó un caso integral completamente ficticio desde comprensión hasta seguimiento.
+- Se agregó un simulador privado de alcance que funciona en el navegador y no transmite información.
+- Se creó una vista contextual de Meridiano Empresas y sus módulos.
+- La landing incorpora modalidades de trabajo y una entrada visible a la experiencia demostrativa.
 
-### Experiencia de usuario
+### Identidad y experiencia
 
-- Se añadió navegación activa según la sección visible.
-- Se incorporaron accesos flotantes a WhatsApp y regreso al inicio.
-- Se añadieron enlaces legales permanentes en el pie de página.
-- Se agregó una nota de confianza junto al formulario de contacto.
-
-### Publicación y SEO
-
-- Se añadió `manifest.webmanifest`.
-- Se amplió `sitemap.xml` con las páginas legales.
-- Se incorporó una capa separada de mejoras en `enhancements.js` y `enhancements.css`.
+- Se reforzó la jerarquía editorial mediante la combinación serif/sans, paleta marino, marfil, azul y dorado.
+- Se incorporaron composiciones de matriz, ruta, contrato, política y tablero sin depender de imágenes externas.
+- Se mantuvo la arquitectura canónica de 8 servicios, 8 productos, 5 planes y 6 documentos guiados.
+- La experiencia conserva navegación responsive y tratamiento diferenciado para escritorio y móvil.
 
 ### Calidad
 
-- GitHub Actions valida ahora el JavaScript de mejoras, el manifiesto y los metadatos de versión.
-- El núcleo v2.29 permanece separado y recuperable.
+- El validador exige ahora todos los recursos del centro de demostración.
+- GitHub Actions valida `experiencia.js` además de los archivos públicos y de la demo privada.
+- Se incorporó `experiencia.html` al sitemap público.
+
+## v2.30.0 — 2026-08-04
+
+### Confianza y conversión
+
+- Se agregaron política de privacidad, términos de uso y aviso legal navegables.
+- Se incorporaron accesos flotantes a WhatsApp y regreso al inicio.
+- Se agregó una nota de confianza al formulario de contacto.
+- Se incorporó navegación activa por sección.
+
+### Publicación
+
+- Se agregó manifiesto web instalable y metadatos sociales básicos.
+- Se amplió el sitemap con páginas institucionales.
+- Se reforzó la validación de JSON, enlaces y recursos.
 
 ## v2.29.0 — 2026-08-04
 
