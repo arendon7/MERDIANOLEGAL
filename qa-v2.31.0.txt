@@ -1,0 +1,1 @@
+Validación temporal de la migración autocontenida v2.31.0.
