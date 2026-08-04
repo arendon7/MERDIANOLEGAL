@@ -3,5 +3,6 @@
   "version": "2.31.0",
   "release_date": "2026-08-04",
   "channel": "github-pages-demo",
-  "commit_scope": "autocontenida-experience-migration"
+  "commit_scope": "autocontenida-experience-migration",
+  "deployment_triggered_at": "2026-08-04T14:54:00-05:00"
 }
