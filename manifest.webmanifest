@@ -1,0 +1,19 @@
+{
+  "name": "Meridiano Legal",
+  "short_name": "Meridiano",
+  "description": "Dirección jurídica para empresas, innovación y proyectos regulados.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f1e8",
+  "theme_color": "#13263a",
+  "lang": "es-CO",
+  "icons": [
+    {
+      "src": "assets/logo-meridiano.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
