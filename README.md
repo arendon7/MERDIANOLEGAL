@@ -1,14 +1,75 @@
-# Meridiano Legal · Web canónica v3.5.0
+# Meridiano Legal · Web canónica v3.6.0
 
-Sitio público, responsive y autocontenido, desarrollado y publicado directamente desde GitHub.
+Sitio público, responsive y autocontenido de Meridiano Legal, publicado directamente desde GitHub Pages.
 
-## Flujo de trabajo
+## Flujo operativo
 
-- `main`: código vigente y fuente de GitHub Pages.
+- `main`: código vigente y fuente de publicación.
 - `stable`: último commit validado y desplegado correctamente.
-- Cada cambio en `main` activa validación, publicación y actualización automática de `stable`.
-- Si una validación falla, la web pública conserva el último despliegue aprobado.
-- No se crean ramas ordinarias, pull requests temporales ni copias con sufijos de versión.
+- Cada cambio en `main` activa controles, despliegue y actualización automática de `stable`.
+- Si una validación falla, GitHub Pages conserva la última versión aprobada.
+- No se usan ramas ordinarias, pull requests temporales ni copias con nombres `final`, `nuevo` o sufijos de versión.
+
+## Arquitectura pública
+
+- Portada comercial con selector guiado y contacto contextual.
+- Página institucional de la firma y su método.
+- 8 servicios profesionales con ficha profunda.
+- 8 productos jurídicos de alcance cerrado.
+- 8 páginas sectoriales.
+- Biblioteca con 6 perspectivas jurídicas.
+- 5 planes recurrentes y 6 documentos guiados.
+- Centro de demostración y portal demostrativo por perfiles.
+- Páginas legales, sitemap, robots, manifiesto y página 404.
+
+## Archivos canónicos
+
+- `index.html`, `site-v3.css`, `clarity-v31.css` y `site-v3.js`: portada.
+- `catalog-home-v32.js`: enlaces entre portada, fichas, sectores y perspectivas.
+- `decision-flow.js` y `decision-flow.css`: selector, formulario contextual y menú móvil.
+- `page-context.js` y `page-context.css`: continuidad del recorrido, foco, CTA y contexto persistente.
+- `catalog-v32.js` y `catalog-v32.css`: contenido y presentación de las fichas.
+- `scripts/build_catalog_shells.py`: plantilla canónica y metadatos de las 16 fichas.
+- `sectores/`, `perspectivas/`, `servicios/` y `productos/`: páginas públicas profundas.
+
+## Generación de fichas
+
+Las fichas de servicios y productos no se editan una por una. Sus metadatos y estructura se administran en:
+
+```bash
+python3 scripts/build_catalog_shells.py
+```
+
+El workflow `build-catalog.yml` solo se activa cuando cambia ese generador. Si detecta diferencias, actualiza las 16 fichas en un único commit. Esto evita duplicaciones, divergencias y trabajo repetitivo.
+
+Cada ficha incorpora:
+
+- metadatos sociales;
+- canonical y descripción específica;
+- esquema `Service` o `Product`;
+- breadcrumb estructurado;
+- contexto explícito hacia contacto;
+- barra de continuidad del recorrido;
+- carga de contenido desde el catálogo central.
+
+## Validación
+
+```bash
+python3 scripts/validate_site.py
+python3 scripts/validate_decision_flow.py
+python3 scripts/validate_page_context.py
+node --check site-v3.js
+node --check catalog-v32.js
+node --check catalog-home-v32.js
+node --check decision-flow.js
+node --check page-context.js
+node --check experiencia.js
+node --check demo.js
+python3 -m json.tool manifest.webmanifest
+python3 -m json.tool version.json
+```
+
+El workflow `pages.yml` despliega únicamente después de aprobar todas las comprobaciones.
 
 ## Accesos
 
@@ -18,61 +79,8 @@ Sitio público, responsive y autocontenido, desarrollado y publicado directament
 - Centro de demostración: `https://arendon7.github.io/MERDIANOLEGAL/experiencia.html`
 - Portal demostrativo: `https://arendon7.github.io/MERDIANOLEGAL/demo.html`
 
-## Arquitectura consolidada
-
-- Landing comercial con selector guiado de solución.
-- Comparación entre orientación, servicio, producto y plan.
-- Contacto contextual según la página o recomendación de origen.
-- Navegación móvil compacta con accesos a demostración y área de clientes.
-- Página institucional con dirección, método, principios y experiencia.
-- 8 servicios profesionales y 8 productos de alcance cerrado.
-- 8 páginas sectoriales profundas.
-- Biblioteca con 6 perspectivas jurídicas y empresariales.
-- 5 planes recurrentes y 6 documentos guiados.
-- Centro de demostración y portal ficticio por perfiles.
-- Páginas legales, página 404, manifiesto, `robots.txt` y sitemap.
-
-## Archivos canónicos
-
-| Componente | Archivos |
-|---|---|
-| Portada | `index.html`, `site-v3.css`, `clarity-v31.css`, `site-v3.js` |
-| Enlaces y catálogo en portada | `catalog-home-v32.js` |
-| Selector y contacto contextual | `decision-flow.js`, `decision-flow.css` |
-| Servicios y productos | `servicios/`, `productos/`, `catalog-v32.js`, `catalog-v32.css` |
-| Firma | `firma.html`, `firma.css` |
-| Perspectivas | `perspectivas.html`, `perspectivas.css`, `perspectivas/` |
-| Sectores | `sectores.css`, `sectores/` |
-| Demostración | `experiencia.html`, `experiencia.css`, `experiencia.js` |
-| Portal ficticio | `demo.html`, `styles.css`, `demo.js` |
-
-Los nombres históricos que todavía identifican archivos activos se actualizan directamente. No se crean copias `final`, `nuevo`, `v36` o equivalentes.
-
-## Validación
-
-```bash
-python3 scripts/validate_site.py
-python3 scripts/validate_decision_flow.py
-node --check site-v3.js
-node --check catalog-v32.js
-node --check catalog-home-v32.js
-node --check decision-flow.js
-node --check experiencia.js
-node --check demo.js
-python3 -m json.tool manifest.webmanifest
-python3 -m json.tool version.json
-```
-
-El workflow `.github/workflows/pages.yml` publica únicamente después de aprobar todas las comprobaciones.
-
-## Credenciales ficticias de la demo
-
-| Perfil | Usuario | Contraseña |
-|---|---|---|
-| Cliente | `cliente@empresa-demo.com` | `Cliente2026!` |
-| Abogada | `abogado@meridianolegal.local` | `Abogado2026!` |
-| Socio director | `admin@meridianolegal.local` | `Meridiano2026!` |
-
 ## Límites
 
-Esta versión es demostrativa. No almacena archivos, no autentica usuarios reales y no debe utilizarse con datos personales, expedientes, credenciales o información confidencial.
+La versión publicada es demostrativa. No autentica usuarios reales, no almacena expedientes, no recibe archivos y no debe utilizarse para transmitir información confidencial o datos personales sensibles.
+
+El historial funcional se conserva exclusivamente en `CHANGELOG.md`.
