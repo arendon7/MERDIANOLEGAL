@@ -1,4 +1,4 @@
-# Meridiano Legal · Web canónica v3.3.1
+# Meridiano Legal · Web canónica v3.4.0
 
 Sitio público, responsive y autocontenido, desarrollado y publicado directamente desde GitHub.
 
@@ -25,22 +25,34 @@ Sitio público, responsive y autocontenido, desarrollado y publicado directament
 - Página institucional con dirección, método, principios, experiencia y colaboración profesional.
 - Biblioteca pública de perspectivas jurídicas y empresariales.
 - 6 artículos profundos sobre IA, contratos, propiedad intelectual, socios e inversión, proyectos regulados y Legal Operations.
+- 8 páginas sectoriales profundas con decisiones, riesgos, mapas operativos y soluciones relacionadas.
 - 8 servicios profesionales con página profunda individual.
 - 8 productos jurídicos de alcance cerrado con página profunda individual.
 - 5 planes recurrentes.
 - 6 documentos guiados.
-- 8 sectores priorizados.
 - Ruta Meridiano y explicación de entregables.
 - Preguntas frecuentes, criterios de encaje y contacto por WhatsApp.
 - Portal por perfiles con 9 módulos.
 - Centro de demostración con recorrido, entregables, caso integral y simulador.
 - Páginas legales, página 404, `robots.txt`, manifiesto y sitemap ampliado.
 
+## Frentes sectoriales
+
+1. Tecnología, software e inteligencia artificial.
+2. Servicios públicos, aseo y economía circular.
+3. Agroindustria, fertilizantes y sostenibilidad.
+4. Salud y negocios regulados.
+5. Comercio y distribución.
+6. Startups e inversión.
+7. Proyectos públicos y territoriales.
+8. Transformación de operaciones jurídicas.
+
 ## Archivos canónicos
 
 - `index.html`, `site-v3.css`, `clarity-v31.css` y `site-v3.js`: portada pública.
 - `firma.html` y `firma.css`: página institucional.
 - `perspectivas.html`, `perspectivas.css` y `perspectivas/`: biblioteca y artículos jurídicos.
+- `sectores.css` y `sectores/`: sistema visual y ocho páginas sectoriales.
 - `servicios/` y `productos/`: 16 fichas profundas.
 - `catalog-v32.js`, `catalog-v32.css` y `catalog-home-v32.js`: catálogo y conexiones de navegación.
 - `experiencia.html`, `experiencia.css` y `experiencia.js`: centro de demostración.
@@ -73,6 +85,18 @@ Cada artículo incorpora:
 - acciones o componentes de implementación;
 - conexión con servicios y productos;
 - advertencia sobre el carácter general del contenido.
+
+## Estándar de las páginas sectoriales
+
+Cada sector incorpora:
+
+- decisiones jurídicas frecuentes;
+- explicación del contexto operativo;
+- mapa jurídico-operativo;
+- riesgos tempranos;
+- momentos en los que conviene intervenir;
+- servicios, productos y perspectivas relacionadas;
+- siguiente paso sin recepción pública de información confidencial.
 
 ## Credenciales ficticias de la demo
 
