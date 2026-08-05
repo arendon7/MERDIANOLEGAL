@@ -3,7 +3,16 @@ name: Site Quality and Deploy
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - version.json
+      - scripts/build_catalog_shells.py
+      - scripts/enrich_editorial_pages.py
+      - scripts/sync_public_version.py
+      - .github/workflows/build-canonical.yml
   workflow_dispatch:
+  workflow_run:
+    workflows: ["Build canonical public site"]
+    types: [completed]
 
 concurrency:
   group: meridiano-pages-main
@@ -12,13 +21,16 @@ concurrency:
 jobs:
   quality:
     name: Validate current site
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 8
     permissions:
       contents: read
     steps:
-      - name: Checkout main
+      - name: Checkout current main
         uses: actions/checkout@v6
+        with:
+          ref: main
       - name: Check canonical generators are idempotent
         run: |
           python3 scripts/build_catalog_shells.py
@@ -54,7 +66,6 @@ jobs:
 
   deploy:
     name: Deploy GitHub Pages
-    if: github.ref == 'refs/heads/main'
     needs: quality
     runs-on: ubuntu-latest
     timeout-minutes: 8
@@ -66,8 +77,10 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Checkout main
+      - name: Checkout validated main
         uses: actions/checkout@v6
+        with:
+          ref: main
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload current repository
@@ -80,16 +93,16 @@ jobs:
 
   snapshot:
     name: Update stable snapshot
-    if: github.ref == 'refs/heads/main'
     needs: deploy
     runs-on: ubuntu-latest
     timeout-minutes: 3
     permissions:
       contents: write
     steps:
-      - name: Checkout deployed commit
+      - name: Checkout deployed main
         uses: actions/checkout@v6
         with:
+          ref: main
           fetch-depth: 0
       - name: Move stable to deployed commit
         run: git push origin HEAD:refs/heads/stable --force
