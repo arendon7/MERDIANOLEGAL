@@ -51,7 +51,8 @@ def validate() -> list[str]:
     required_files = {
         "scripts/enrich_editorial_pages.py",
         "scripts/validate_editorial_context.py",
-        ".github/workflows/enrich-editorial.yml",
+        "scripts/sync_public_version.py",
+        ".github/workflows/build-canonical.yml",
         "page-context.css",
         "page-context.js",
         *ALL_PAGES,
@@ -80,9 +81,14 @@ def validate() -> list[str]:
                     errors.append(f"{path}: falta el marcador institucional {marker!r}")
 
     css = (ROOT / "page-context.css").read_text(encoding="utf-8")
-    for marker in (".editorial-sequence", ".editorial-journey", ":focus-visible"):
+    for marker in (".editorial-sequence", ".editorial-journey", ".editorial-meta-strip", ":focus-visible"):
         if marker not in css:
             errors.append(f"page-context.css no contiene {marker}")
+
+    script = (ROOT / "page-context.js").read_text(encoding="utf-8")
+    for marker in ("addVisibleEditorialMetadata", "Agustín Rendón Calle", "5 de agosto de 2026", "editorial-meta-strip"):
+        if marker not in script:
+            errors.append(f"page-context.js no contiene {marker!r}")
 
     return errors
 
@@ -94,7 +100,7 @@ def main() -> int:
         for error in errors:
             print(f"- {error}")
         return 1
-    print("VALIDACIÓN EDITORIAL OK: firma, 6 perspectivas y 8 sectores con contexto, SEO y navegación íntegros.")
+    print("VALIDACIÓN EDITORIAL OK: firma, 6 perspectivas y 8 sectores con contexto, SEO, autoría y navegación íntegros.")
     return 0
 
 
