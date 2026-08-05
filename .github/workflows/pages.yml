@@ -19,10 +19,12 @@ jobs:
     steps:
       - name: Checkout main
         uses: actions/checkout@v6
-      - name: Check editorial generator is idempotent
+      - name: Check canonical generators are idempotent
         run: |
+          python3 scripts/build_catalog_shells.py
           python3 scripts/enrich_editorial_pages.py
-          git diff --exit-code -- firma.html perspectivas sectores
+          python3 scripts/sync_public_version.py
+          git diff --exit-code -- index.html catalog-home-v32.js decision-flow.js servicios productos firma.html perspectivas sectores
       - name: Validate HTML, catalog pages and local resources
         run: python3 scripts/validate_site.py
       - name: Validate guided decision flow
