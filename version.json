@@ -1,8 +1,8 @@
 {
   "name": "Meridiano Legal Web",
-  "version": "3.5.0",
+  "version": "3.6.0",
   "release_date": "2026-08-05",
   "channel": "github-pages-demo",
-  "commit_scope": "guided-solution-selector-contextual-contact-and-mobile-navigation",
+  "commit_scope": "structured-data-explicit-context-and-canonical-catalog-navigation",
   "source_baseline": "stable"
 }
