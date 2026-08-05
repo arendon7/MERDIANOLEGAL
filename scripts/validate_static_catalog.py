@@ -48,7 +48,7 @@ class ContentParser(HTMLParser):
             self.h2 += 1
         elif tag == "h3":
             self.h3 += 1
-        elif tag == "section":
+        elif tag == "section" and "detail-section" in values.get("class", "").split():
             self.sections += 1
             if values.get("aria-labelledby"):
                 self.aria_sections += 1
@@ -115,8 +115,8 @@ def validate() -> list[str]:
             errors.append(f"{relative}: debe contener al menos 9 h2 y contiene {parser.h2}")
         if parser.h3 < 12:
             errors.append(f"{relative}: debe contener al menos 12 h3 y contiene {parser.h3}")
-        if parser.sections < 9 or parser.aria_sections != parser.sections:
-            errors.append(f"{relative}: las secciones no están completamente identificadas con aria-labelledby")
+        if parser.sections != 9 or parser.aria_sections != parser.sections:
+            errors.append(f"{relative}: las 9 secciones editoriales deben usar aria-labelledby")
         if len(words) < 450:
             errors.append(f"{relative}: contenido estático insuficiente ({len(words)} palabras)")
 
