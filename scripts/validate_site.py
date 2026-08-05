@@ -37,15 +37,26 @@ PERSPECTIVE_PAGES = {
     "perspectivas/proyectos-regulados-secuencia-viabilidad.html",
     "perspectivas/legal-operations-modelo-operativo.html",
 }
+SECTOR_PAGES = {
+    "sectores/tecnologia-software-ia.html",
+    "sectores/servicios-publicos-aseo-economia-circular.html",
+    "sectores/agroindustria-fertilizantes-sostenibilidad.html",
+    "sectores/salud-negocios-regulados.html",
+    "sectores/comercio-distribucion.html",
+    "sectores/startups-inversion.html",
+    "sectores/proyectos-publicos-territoriales.html",
+    "sectores/operaciones-juridicas.html",
+}
 REQUIRED_FILES = {
     "index.html", "firma.html", "perspectivas.html", "demo.html", "experiencia.html", "404.html",
-    "styles.css", "site-v3.css", "clarity-v31.css", "catalog-v32.css", "enhancements.css", "experiencia.css", "firma.css", "perspectivas.css",
+    "styles.css", "site-v3.css", "clarity-v31.css", "catalog-v32.css", "enhancements.css", "experiencia.css", "firma.css", "perspectivas.css", "sectores.css",
     "site-v3.js", "catalog-v32.js", "catalog-home-v32.js", "demo.js", "experiencia.js",
     "manifest.webmanifest", "version.json", "robots.txt", "sitemap.xml",
     "assets/logo-meridiano.svg", "assets/logo-meridiano-v3.svg", "assets/logo-meridiano-v3-light.svg",
     "assets/hero-meridiano-v3.svg", "assets/route-meridiano-v3.svg",
     *CATALOG_PAGES.keys(),
     *PERSPECTIVE_PAGES,
+    *SECTOR_PAGES,
 }
 CANONICAL_INDEX_MARKERS = {
     "Dirección jurídica para empresas que avanzan",
@@ -170,7 +181,14 @@ def validate() -> list[str]:
     home_links_script = ROOT / "catalog-home-v32.js"
     if home_links_script.exists():
         home_links_text = home_links_script.read_text(encoding="utf-8")
-        for required_reference in ("perspectivas.html", "perspectivas/gobierno-juridico-inteligencia-artificial.html", "perspectivas/contratos-administrables.html", "perspectivas/proyectos-regulados-secuencia-viabilidad.html"):
+        required_home_references = {
+            "perspectivas.html",
+            "perspectivas/gobierno-juridico-inteligencia-artificial.html",
+            "perspectivas/contratos-administrables.html",
+            "perspectivas/proyectos-regulados-secuencia-viabilidad.html",
+            *SECTOR_PAGES,
+        }
+        for required_reference in sorted(required_home_references):
             if required_reference not in home_links_text:
                 errors.append(f"catalog-home-v32.js no enlaza {required_reference}")
 
@@ -209,6 +227,10 @@ def validate() -> list[str]:
             for marker in ("article-hero", "article-body", "article-meta", "LECTURAS RELACIONADAS"):
                 if marker not in page_text:
                     errors.append(f"{relative}: falta el bloque editorial {marker!r}")
+        if relative in SECTOR_PAGES:
+            for marker in ("sector-hero", "decision-grid", "map-grid", "INTERVENCIÓN MERIDIANO", "LECTURAS RELACIONADAS"):
+                if marker not in page_text:
+                    errors.append(f"{relative}: falta el bloque sectorial {marker!r}")
 
     catalog_ids = [parser.catalog_id for parser in parsed_pages.values() if parser.catalog_id]
     duplicated_catalog_ids = [item for item, count in Counter(catalog_ids).items() if count > 1]
@@ -220,6 +242,10 @@ def validate() -> list[str]:
     perspective_count = sum(1 for page in parsed_pages if page.relative_to(ROOT.resolve()).as_posix() in PERSPECTIVE_PAGES)
     if perspective_count != 6:
         errors.append(f"Se esperaban 6 perspectivas profundas y se encontraron {perspective_count}")
+
+    sector_count = sum(1 for page in parsed_pages if page.relative_to(ROOT.resolve()).as_posix() in SECTOR_PAGES)
+    if sector_count != 8:
+        errors.append(f"Se esperaban 8 páginas sectoriales y se encontraron {sector_count}")
 
     for page, parser in parsed_pages.items():
         relative = page.relative_to(ROOT.resolve()).as_posix()
@@ -259,7 +285,7 @@ def main() -> int:
         for error in errors:
             print(f"- {error}")
         return 1
-    print(f"VALIDACIÓN OK: {len(HTML_FILES)} páginas, 16 fichas profundas, 6 perspectivas y recursos internos íntegros.")
+    print(f"VALIDACIÓN OK: {len(HTML_FILES)} páginas, 16 fichas, 6 perspectivas, 8 sectores y recursos íntegros.")
     return 0
 
 
