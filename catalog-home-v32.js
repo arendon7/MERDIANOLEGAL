@@ -150,6 +150,13 @@
     new MutationObserver(syncModalLink).observe(modalContent, { childList: true, subtree: true });
   }
 
+  if (!document.querySelector('script[data-decision-flow]')) {
+    const flow = document.createElement('script');
+    flow.src = 'decision-flow.js';
+    flow.dataset.decisionFlow = 'true';
+    document.body.append(flow);
+  }
+
   const versionLabel = [...document.querySelectorAll('.footer-bottom span')].find((item) => item.textContent.includes('Web demostrativa'));
-  if (versionLabel) versionLabel.textContent = 'Web demostrativa v3.4.0';
+  if (versionLabel) versionLabel.textContent = 'Web demostrativa v3.5.0';
 })();
