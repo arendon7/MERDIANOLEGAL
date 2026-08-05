@@ -1,5 +1,33 @@
 # Historial de versiones
 
+## v3.6.0 — 2026-08-05
+
+### Continuidad del recorrido
+
+- Los enlaces desde la portada hacia servicios, productos, sectores y perspectivas incorporan contexto explícito.
+- El contexto se conserva en la sesión y puede recuperarse al regresar al formulario, incluso cuando el navegador limita el `referrer`.
+- Las 16 fichas incluyen una barra compacta para volver al portafolio o presentar directamente la necesidad revisada.
+- Los CTA generados y los enlaces de contacto reciben la materia correspondiente sin solicitar información confidencial.
+
+### SEO y metadatos
+
+- Cada ficha incorpora descripción, URL social, tarjeta de vista previa y canonical específico.
+- Los servicios publican datos estructurados `Service`; los productos utilizan `Product`.
+- Todas las fichas incorporan `BreadcrumbList` y la portada publica el esquema `LegalService` de Meridiano Legal.
+
+### Accesibilidad y presentación
+
+- Se consolidó el indicador global `:focus-visible`.
+- El menú de fichas sincroniza etiqueta accesible, cierre por Escape y bloqueo de desplazamiento.
+- Los estilos que antes se inyectaban desde `catalog-home-v32.js` se trasladaron a `page-context.css`.
+
+### Flujo de mantenimiento
+
+- Se creó `scripts/build_catalog_shells.py` como fuente canónica de estructura y metadatos de las 16 fichas.
+- `build-catalog.yml` se ejecuta únicamente cuando cambia el generador y consolida todas las fichas en un solo commit.
+- Se agregó una validación independiente para contexto, esquemas estructurados, metadatos y navegación.
+- El README se depuró para describir solamente la arquitectura y el proceso vigentes.
+
 ## v3.5.0 — 2026-08-05
 
 ### Selector y conversión
