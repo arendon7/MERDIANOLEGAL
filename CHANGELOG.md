@@ -1,5 +1,38 @@
 # Historial de versiones
 
+## v3.8.0 — 2026-08-05
+
+### Catálogo estático e indexable
+
+- Las ocho fichas de servicios y las ocho fichas de productos publican ahora su contenido jurídico completo en HTML.
+- Títulos, pregunta ejecutiva, situaciones, alcance, método, entregables, requisitos, límites y soluciones relacionadas están disponibles sin ejecutar JavaScript.
+- `catalog-v32.js` permanece como fuente única del contenido para evitar divergencias editoriales.
+- Se creó `scripts/render_catalog_static.mjs`, que convierte el catálogo central en HTML semántico durante la construcción.
+- Cada ficha contiene un único `h1`, nueve secciones editoriales identificadas y un volumen sustantivo mínimo validado.
+
+### Rendimiento y mejora progresiva
+
+- Las fichas dejaron de descargar y ejecutar el catálogo completo en el navegador.
+- Se creó `catalog-page.js` como controlador ligero para menú, teclado, año y regreso al inicio.
+- Los scripts de ficha cargan con `defer`.
+- Las secciones inferiores utilizan `content-visibility` para reducir trabajo inicial de renderizado.
+- Año, versión y contenido permanecen visibles como respaldo cuando JavaScript no está disponible.
+
+### Accesibilidad y presentación
+
+- Se incorporó soporte de `prefers-reduced-motion`.
+- El menú móvil conserva cierre con Escape, recuperación de foco, bloqueo del fondo y desplazamiento interno.
+- Los títulos extensos ajustan su contenido en pantallas estrechas.
+- Se añadieron estilos de impresión que eliminan navegación, controles flotantes y fondos decorativos.
+- Se conservó foco visible compartido y objetivos táctiles para controles móviles.
+
+### Construcción y calidad
+
+- `build-canonical.yml` ejecuta shells, prerender, enriquecimiento editorial y sincronización de versión en una secuencia única.
+- Los cambios en `catalog-v32.js` regeneran automáticamente las 16 fichas.
+- Se creó `validate_static_catalog.py` para impedir regresiones hacia páginas vacías o dependientes de JavaScript.
+- `pages.yml` comprueba idempotencia del prerender, estructura semántica, contenido mínimo, scripts ligeros y sintaxis antes de publicar.
+
 ## v3.7.0 — 2026-08-05
 
 ### Autoridad y capa editorial
