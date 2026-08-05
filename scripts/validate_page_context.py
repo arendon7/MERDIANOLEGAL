@@ -57,7 +57,7 @@ HOME_MARKERS = {
     "page-context.css",
     "page-context.js",
     "data-page-context",
-    "data-context-label",
+    "dataset.contextLabel",
     "Web demostrativa v3.6.0",
 }
 
