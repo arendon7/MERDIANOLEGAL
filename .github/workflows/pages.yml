@@ -5,7 +5,9 @@ on:
     branches: [main]
     paths-ignore:
       - version.json
+      - catalog-v32.js
       - scripts/build_catalog_shells.py
+      - scripts/render_catalog_static.mjs
       - scripts/enrich_editorial_pages.py
       - scripts/sync_public_version.py
       - .github/workflows/build-canonical.yml
@@ -23,7 +25,7 @@ jobs:
     name: Validate current site
     if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 10
     permissions:
       contents: read
     steps:
@@ -34,11 +36,14 @@ jobs:
       - name: Check canonical generators are idempotent
         run: |
           python3 scripts/build_catalog_shells.py
+          node scripts/render_catalog_static.mjs
           python3 scripts/enrich_editorial_pages.py
           python3 scripts/sync_public_version.py
           git diff --exit-code -- index.html catalog-home-v32.js decision-flow.js servicios productos firma.html perspectivas sectores
-      - name: Validate HTML, catalog pages and local resources
+      - name: Validate HTML and local resources
         run: python3 scripts/validate_site.py
+      - name: Validate static catalog
+        run: python3 scripts/validate_static_catalog.py
       - name: Validate guided decision flow
         run: python3 scripts/validate_decision_flow.py
       - name: Validate page context and structured data
@@ -47,8 +52,12 @@ jobs:
         run: python3 scripts/validate_editorial_context.py
       - name: Validate public JavaScript
         run: node --check site-v3.js
-      - name: Validate catalog JavaScript
+      - name: Validate catalog data source
         run: node --check catalog-v32.js
+      - name: Validate catalog page controller
+        run: node --check catalog-page.js
+      - name: Validate catalog pre-renderer
+        run: node --check scripts/render_catalog_static.mjs
       - name: Validate catalog links
         run: node --check catalog-home-v32.js
       - name: Validate decision flow JavaScript
