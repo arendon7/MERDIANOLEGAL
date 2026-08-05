@@ -1,4 +1,4 @@
-# Meridiano Legal · Web canónica v3.3.0
+# Meridiano Legal · Web canónica v3.3.1
 
 Sitio público, responsive y autocontenido, desarrollado y publicado directamente desde GitHub.
 
@@ -14,6 +14,7 @@ Sitio público, responsive y autocontenido, desarrollado y publicado directament
 
 - Web pública: `https://arendon7.github.io/MERDIANOLEGAL/`
 - La firma: `https://arendon7.github.io/MERDIANOLEGAL/firma.html`
+- Perspectivas: `https://arendon7.github.io/MERDIANOLEGAL/perspectivas.html`
 - Centro de demostración: `https://arendon7.github.io/MERDIANOLEGAL/experiencia.html`
 - Portal demostrativo: `https://arendon7.github.io/MERDIANOLEGAL/demo.html`
 
@@ -22,6 +23,8 @@ Sitio público, responsive y autocontenido, desarrollado y publicado directament
 - Identidad visual angular v3 en marino, marfil, azul y dorado.
 - Landing comercial con guía para elegir modalidad y punto de entrada.
 - Página institucional con dirección, método, principios, experiencia y colaboración profesional.
+- Biblioteca pública de perspectivas jurídicas y empresariales.
+- 6 artículos profundos sobre IA, contratos, propiedad intelectual, socios e inversión, proyectos regulados y Legal Operations.
 - 8 servicios profesionales con página profunda individual.
 - 8 productos jurídicos de alcance cerrado con página profunda individual.
 - 5 planes recurrentes.
@@ -37,6 +40,7 @@ Sitio público, responsive y autocontenido, desarrollado y publicado directament
 
 - `index.html`, `site-v3.css`, `clarity-v31.css` y `site-v3.js`: portada pública.
 - `firma.html` y `firma.css`: página institucional.
+- `perspectivas.html`, `perspectivas.css` y `perspectivas/`: biblioteca y artículos jurídicos.
 - `servicios/` y `productos/`: 16 fichas profundas.
 - `catalog-v32.js`, `catalog-v32.css` y `catalog-home-v32.js`: catálogo y conexiones de navegación.
 - `experiencia.html`, `experiencia.css` y `experiencia.js`: centro de demostración.
@@ -57,6 +61,18 @@ Cada servicio y producto incorpora:
 - límites y exclusiones;
 - soluciones relacionadas;
 - siguiente paso y canal de contacto.
+
+## Estándar de las perspectivas
+
+Cada artículo incorpora:
+
+- pregunta ejecutiva;
+- marco de análisis;
+- señales de alerta;
+- preguntas de control;
+- acciones o componentes de implementación;
+- conexión con servicios y productos;
+- advertencia sobre el carácter general del contenido.
 
 ## Credenciales ficticias de la demo
 
