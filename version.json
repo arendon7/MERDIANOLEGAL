@@ -1,8 +1,8 @@
 {
   "name": "Meridiano Legal Web",
-  "version": "3.3.0",
-  "release_date": "2026-08-04",
+  "version": "3.3.1",
+  "release_date": "2026-08-05",
   "channel": "github-pages-demo",
-  "commit_scope": "institutional-authority-and-direct-main-workflow",
+  "commit_scope": "institutional-authority-and-legal-perspectives-library",
   "source_baseline": "stable"
 }
