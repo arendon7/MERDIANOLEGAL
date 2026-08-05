@@ -34,13 +34,23 @@
     contracts: 'perspectivas/contratos-administrables.html',
     regulated: 'perspectivas/proyectos-regulados-secuencia-viabilidad.html',
   };
+  const sectorUrls = {
+    'Tecnología, software e IA': 'sectores/tecnologia-software-ia.html',
+    'Servicios públicos, aseo y economía circular': 'sectores/servicios-publicos-aseo-economia-circular.html',
+    'Agroindustria y fertilizantes': 'sectores/agroindustria-fertilizantes-sostenibilidad.html',
+    'Salud y negocios regulados': 'sectores/salud-negocios-regulados.html',
+    'Proyectos públicos': 'sectores/proyectos-publicos-territoriales.html',
+    'Comercio y distribución': 'sectores/comercio-distribucion.html',
+    'Startups e inversión': 'sectores/startups-inversion.html',
+    'Transformación de operaciones jurídicas': 'sectores/operaciones-juridicas.html',
+  };
 
   const style = document.createElement('style');
   style.textContent = `
     .full-detail-link{display:inline-flex;align-items:center;gap:7px;margin-top:10px;color:#2c5878!important;font-size:.69rem!important;font-weight:900!important;text-transform:uppercase;letter-spacing:.055em;text-decoration:none}
     .full-detail-link:after{content:'→';color:#a88454}.service-card .full-detail-link,.product-card .full-detail-link{margin-top:9px}.product-card .full-detail-link{color:#d9bc8b!important}.modal-actions .full-detail-link{margin-top:0;padding:12px 18px;border:1px solid rgba(19,38,58,.28);color:#13263a!important;background:#fff}.modal-actions .full-detail-link:after{display:none}
-    .firm-deep-link,.library-deep-link,.perspective-read-link{display:inline-flex;align-items:center;gap:9px;margin-top:22px;padding:12px 17px;border:1px solid rgba(19,38,58,.28);color:#13263a;font-size:.71rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;text-decoration:none}.firm-deep-link:after,.library-deep-link:after,.perspective-read-link:after{content:'→';color:#a88454}.firm-deep-link:hover,.library-deep-link:hover,.perspective-read-link:hover{border-color:#a88454;color:#a88454}
-    .perspectives-grid article{display:flex;flex-direction:column}.perspectives-grid article .perspective-read-link{margin-top:auto;align-self:flex-start;color:#13263a!important}.perspective-library-action{margin-top:8px}.main-nav .nav-perspectives{color:#a88454}
+    .firm-deep-link,.library-deep-link,.perspective-read-link,.sector-deep-link{display:inline-flex;align-items:center;gap:9px;margin-top:22px;padding:12px 17px;border:1px solid rgba(19,38,58,.28);color:#13263a;font-size:.71rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;text-decoration:none}.firm-deep-link:after,.library-deep-link:after,.perspective-read-link:after,.sector-deep-link:after{content:'→';color:#a88454}.firm-deep-link:hover,.library-deep-link:hover,.perspective-read-link:hover,.sector-deep-link:hover{border-color:#a88454;color:#a88454}
+    .perspectives-grid article,.sectors-grid article{display:flex;flex-direction:column}.perspectives-grid article .perspective-read-link{margin-top:auto;align-self:flex-start;color:#13263a!important}.sectors-grid article .sector-deep-link{margin-top:auto;align-self:flex-start;padding:0;border:0;color:#2c5878!important;font-size:.67rem}.perspective-library-action{margin-top:8px}.main-nav .nav-perspectives{color:#a88454}
   `;
   document.head.append(style);
 
@@ -88,6 +98,30 @@
     perspectivesHeading.append(action);
   }
 
+  const sectorCards = [...document.querySelectorAll('.sectors-grid article')];
+  const publicServicesCard = sectorCards.find((card) => card.querySelector('strong')?.textContent.trim() === 'Servicios públicos');
+  if (publicServicesCard) {
+    publicServicesCard.querySelector('strong').textContent = 'Servicios públicos, aseo y economía circular';
+    const description = publicServicesCard.querySelector('p');
+    if (description) description.textContent = 'Modelos operativos, actores territoriales, habilitaciones, contratos, obligaciones y aprovechamiento.';
+  }
+  const circularCard = sectorCards.find((card) => card.querySelector('strong')?.textContent.trim() === 'Economía circular y aseo');
+  if (circularCard) {
+    circularCard.querySelector('strong').textContent = 'Transformación de operaciones jurídicas';
+    const description = circularCard.querySelector('p');
+    if (description) description.textContent = 'Solicitudes, procesos, documentos, obligaciones, métricas, automatización y gestión del cambio.';
+  }
+  sectorCards.forEach((card) => {
+    const title = card.querySelector('strong')?.textContent.trim();
+    const url = sectorUrls[title];
+    if (!url || card.querySelector('.sector-deep-link')) return;
+    const link = document.createElement('a');
+    link.className = 'sector-deep-link';
+    link.href = url;
+    link.textContent = 'Explorar sector';
+    card.append(link);
+  });
+
   const mainNav = document.querySelector('.main-nav');
   if (mainNav && !mainNav.querySelector('.nav-perspectives')) {
     const link = document.createElement('a');
@@ -117,5 +151,5 @@
   }
 
   const versionLabel = [...document.querySelectorAll('.footer-bottom span')].find((item) => item.textContent.includes('Web demostrativa'));
-  if (versionLabel) versionLabel.textContent = 'Web demostrativa v3.3.1';
+  if (versionLabel) versionLabel.textContent = 'Web demostrativa v3.4.0';
 })();
