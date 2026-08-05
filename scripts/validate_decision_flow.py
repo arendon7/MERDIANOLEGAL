@@ -9,6 +9,8 @@ ROOT = Path(__file__).resolve().parents[1]
 REQUIRED_FILES = {
     "decision-flow.js",
     "decision-flow.css",
+    "page-context.js",
+    "page-context.css",
     "catalog-home-v32.js",
 }
 
@@ -20,13 +22,14 @@ FLOW_MARKERS = {
     "applyContactContext",
     "nav-mobile-utility",
     "decision-flow.css",
-    "Web demostrativa v3.5.0",
 }
 
 LOADER_MARKERS = {
     "decision-flow.js",
     "data-decision-flow",
-    "Web demostrativa v3.5.0",
+    "page-context.js",
+    "data-page-context",
+    "Web demostrativa v3.6.0",
 }
 
 RECOMMENDED_ROUTES = {
@@ -53,8 +56,7 @@ def validate() -> list[str]:
     errors: list[str] = []
     missing = sorted(path for path in REQUIRED_FILES if not (ROOT / path).exists())
     if missing:
-        errors.append(f"Faltan archivos del flujo de decisión: {', '.join(missing)}")
-        return errors
+        return [f"Faltan archivos del flujo de decisión: {', '.join(missing)}"]
 
     flow_text = (ROOT / "decision-flow.js").read_text(encoding="utf-8")
     loader_text = (ROOT / "catalog-home-v32.js").read_text(encoding="utf-8")
@@ -86,7 +88,7 @@ def main() -> int:
         for error in errors:
             print(f"- {error}")
         return 1
-    print("VALIDACIÓN DEL FLUJO OK: selector, rutas, contacto contextual y navegación móvil íntegros.")
+    print("VALIDACIÓN DEL FLUJO OK: selector, rutas, contexto y navegación móvil íntegros.")
     return 0
 
 
