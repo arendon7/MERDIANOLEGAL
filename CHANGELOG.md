@@ -1,5 +1,21 @@
 # Historial de versiones
 
+## v3.3.1 — 2026-08-05
+
+### Biblioteca de perspectivas
+
+- Se creó una biblioteca pública de contenido jurídico y empresarial.
+- Se publicaron seis perspectivas profundas sobre gobierno jurídico de IA, contratos administrables, cadena de titularidad de activos intangibles, socios e inversión, secuencia de viabilidad en proyectos regulados y Legal Operations.
+- Cada artículo incorpora pregunta ejecutiva, marco de análisis, señales de alerta, preguntas de control, componentes de implementación, límites y enlaces a servicios o productos relacionados.
+- La portada incorpora acceso a la biblioteca y a tres perspectivas destacadas.
+- El sitemap incluye la biblioteca y las seis rutas editoriales.
+
+### Calidad
+
+- El validador exige la presencia de las seis perspectivas y sus bloques editoriales principales.
+- Se controla que la portada conserve los enlaces a la biblioteca y a las lecturas destacadas.
+- `stable` continúa actualizándose únicamente después de un despliegue exitoso.
+
 ## v3.3.0 — 2026-08-04
 
 ### Autoridad institucional
