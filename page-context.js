@@ -97,6 +97,27 @@
   const pageNeed = normalizeNeed(body.dataset.pageNeed || '');
   const ownContext = pageTitle ? `${pageType || 'Página'}: ${pageTitle}` : '';
 
+  const addVisibleEditorialMetadata = () => {
+    if (!['Perspectiva', 'Sector', 'La firma'].includes(pageType)) return;
+    const main = document.querySelector('main');
+    const journey = document.querySelector('.editorial-journey');
+    if (!main || !journey || document.querySelector('.editorial-meta-strip')) return;
+    const strip = document.createElement('div');
+    strip.className = 'editorial-meta-strip';
+    const content = document.createElement('div');
+    content.className = 'container';
+    if (pageType === 'Perspectiva') {
+      content.innerHTML = '<span>Autor</span><strong>Agustín Rendón Calle</strong><span>Revisión editorial</span><strong>5 de agosto de 2026</strong><small>Contenido general y educativo</small>';
+    } else if (pageType === 'Sector') {
+      content.innerHTML = '<span>Enfoque sectorial</span><strong>Meridiano Legal</strong><span>Revisión editorial</span><strong>5 de agosto de 2026</strong><small>El régimen aplicable debe validarse para cada caso</small>';
+    } else {
+      content.innerHTML = '<span>Dirección</span><strong>Agustín Rendón Calle</strong><span>Base</span><strong>Medellín, Colombia</strong><small>Información institucional revisada el 5 de agosto de 2026</small>';
+    }
+    strip.append(content);
+    main.before(strip);
+  };
+
+  addVisibleEditorialMetadata();
   if (ownContext) storeContext(ownContext, pageNeed);
 
   const rewriteContactLinks = () => {
