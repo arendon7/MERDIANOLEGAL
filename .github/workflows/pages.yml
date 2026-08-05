@@ -23,6 +23,8 @@ jobs:
         run: python3 scripts/validate_site.py
       - name: Validate guided decision flow
         run: python3 scripts/validate_decision_flow.py
+      - name: Validate page context and structured data
+        run: python3 scripts/validate_page_context.py
       - name: Validate public JavaScript
         run: node --check site-v3.js
       - name: Validate catalog JavaScript
@@ -31,6 +33,8 @@ jobs:
         run: node --check catalog-home-v32.js
       - name: Validate decision flow JavaScript
         run: node --check decision-flow.js
+      - name: Validate page context JavaScript
+        run: node --check page-context.js
       - name: Validate experience JavaScript
         run: node --check experiencia.js
       - name: Validate demo JavaScript
