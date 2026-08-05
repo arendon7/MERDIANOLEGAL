@@ -29,12 +29,18 @@
     'Estructuración Jurídica de Proyectos Regulados': serviceUrls.regulated,
     'Legal Operations y Transformación de la Función Jurídica': serviceUrls.ops,
   };
+  const perspectiveUrls = {
+    ai: 'perspectivas/gobierno-juridico-inteligencia-artificial.html',
+    contracts: 'perspectivas/contratos-administrables.html',
+    regulated: 'perspectivas/proyectos-regulados-secuencia-viabilidad.html',
+  };
 
   const style = document.createElement('style');
   style.textContent = `
     .full-detail-link{display:inline-flex;align-items:center;gap:7px;margin-top:10px;color:#2c5878!important;font-size:.69rem!important;font-weight:900!important;text-transform:uppercase;letter-spacing:.055em;text-decoration:none}
     .full-detail-link:after{content:'→';color:#a88454}.service-card .full-detail-link,.product-card .full-detail-link{margin-top:9px}.product-card .full-detail-link{color:#d9bc8b!important}.modal-actions .full-detail-link{margin-top:0;padding:12px 18px;border:1px solid rgba(19,38,58,.28);color:#13263a!important;background:#fff}.modal-actions .full-detail-link:after{display:none}
-    .firm-deep-link{display:inline-flex;align-items:center;gap:9px;margin-top:22px;padding:12px 17px;border:1px solid rgba(19,38,58,.28);color:#13263a;font-size:.71rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase}.firm-deep-link:after{content:'→';color:#a88454}.firm-deep-link:hover{border-color:#a88454;color:#a88454}
+    .firm-deep-link,.library-deep-link,.perspective-read-link{display:inline-flex;align-items:center;gap:9px;margin-top:22px;padding:12px 17px;border:1px solid rgba(19,38,58,.28);color:#13263a;font-size:.71rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;text-decoration:none}.firm-deep-link:after,.library-deep-link:after,.perspective-read-link:after{content:'→';color:#a88454}.firm-deep-link:hover,.library-deep-link:hover,.perspective-read-link:hover{border-color:#a88454;color:#a88454}
+    .perspectives-grid article{display:flex;flex-direction:column}.perspectives-grid article .perspective-read-link{margin-top:auto;align-self:flex-start;color:#13263a!important}.perspective-library-action{margin-top:8px}.main-nav .nav-perspectives{color:#a88454}
   `;
   document.head.append(style);
 
@@ -57,6 +63,39 @@
     link.href = 'firma.html';
     link.textContent = 'Conocer la firma y su método';
     firmCopy.append(link);
+  }
+
+  document.querySelectorAll('.perspectives-grid article').forEach((card) => {
+    const button = card.querySelector('[data-service]');
+    const url = perspectiveUrls[button?.dataset.service];
+    if (!url || card.querySelector('.perspective-read-link')) return;
+    const link = document.createElement('a');
+    link.className = 'perspective-read-link';
+    link.href = url;
+    link.textContent = 'Leer perspectiva completa';
+    card.append(link);
+  });
+
+  const perspectivesHeading = document.querySelector('#perspectivas .section-heading');
+  if (perspectivesHeading && !perspectivesHeading.querySelector('.library-deep-link')) {
+    const action = document.createElement('div');
+    action.className = 'perspective-library-action';
+    const link = document.createElement('a');
+    link.className = 'library-deep-link';
+    link.href = 'perspectivas.html';
+    link.textContent = 'Abrir biblioteca de perspectivas';
+    action.append(link);
+    perspectivesHeading.append(action);
+  }
+
+  const mainNav = document.querySelector('.main-nav');
+  if (mainNav && !mainNav.querySelector('.nav-perspectives')) {
+    const link = document.createElement('a');
+    link.className = 'nav-perspectives';
+    link.href = 'perspectivas.html';
+    link.textContent = 'Perspectivas';
+    const contactLink = [...mainNav.querySelectorAll('a')].find((item) => item.getAttribute('href') === '#contacto');
+    mainNav.insertBefore(link, contactLink || null);
   }
 
   const modalContent = document.getElementById('modal-content');
