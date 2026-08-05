@@ -29,14 +29,23 @@ CATALOG_PAGES = {
     "productos/sistema-contractual-empresarial.html": "product-contract-system",
     "productos/proteccion-datos-consumidor.html": "product-data-consumer",
 }
+PERSPECTIVE_PAGES = {
+    "perspectivas/gobierno-juridico-inteligencia-artificial.html",
+    "perspectivas/contratos-administrables.html",
+    "perspectivas/propiedad-intelectual-cadena-titularidad.html",
+    "perspectivas/socios-inversion-gobierno.html",
+    "perspectivas/proyectos-regulados-secuencia-viabilidad.html",
+    "perspectivas/legal-operations-modelo-operativo.html",
+}
 REQUIRED_FILES = {
-    "index.html", "firma.html", "demo.html", "experiencia.html", "404.html",
-    "styles.css", "site-v3.css", "clarity-v31.css", "catalog-v32.css", "enhancements.css", "experiencia.css", "firma.css",
+    "index.html", "firma.html", "perspectivas.html", "demo.html", "experiencia.html", "404.html",
+    "styles.css", "site-v3.css", "clarity-v31.css", "catalog-v32.css", "enhancements.css", "experiencia.css", "firma.css", "perspectivas.css",
     "site-v3.js", "catalog-v32.js", "catalog-home-v32.js", "demo.js", "experiencia.js",
     "manifest.webmanifest", "version.json", "robots.txt", "sitemap.xml",
     "assets/logo-meridiano.svg", "assets/logo-meridiano-v3.svg", "assets/logo-meridiano-v3-light.svg",
     "assets/hero-meridiano-v3.svg", "assets/route-meridiano-v3.svg",
     *CATALOG_PAGES.keys(),
+    *PERSPECTIVE_PAGES,
 }
 CANONICAL_INDEX_MARKERS = {
     "Dirección jurídica para empresas que avanzan",
@@ -56,6 +65,15 @@ CANONICAL_INDEX_MARKERS = {
     "Legal Operations",
     "Economía circular y aseo",
     "Meridiano Empresas",
+}
+PERSPECTIVE_LIBRARY_MARKERS = {
+    "PERSPECTIVAS MERIDIANO",
+    "Usar inteligencia artificial no es solo contratar una herramienta",
+    "Un contrato debe poder administrarse después de la firma",
+    "El valor de un activo no prueba quién es su titular",
+    "El acuerdo entre socios debe funcionar también cuando hay desacuerdo",
+    "La viabilidad jurídica depende de una secuencia",
+    "La tecnología no corrige una operación jurídica indefinida",
 }
 IGNORED_SCHEMES = {"http", "https", "mailto", "tel", "data", "javascript"}
 
@@ -138,9 +156,23 @@ def validate() -> list[str]:
         if missing_markers:
             errors.append(f"index.html no corresponde a la portada canónica vigente; faltan: {', '.join(missing_markers)}")
 
+    library_path = ROOT / "perspectivas.html"
+    if library_path.exists():
+        library_text = library_path.read_text(encoding="utf-8")
+        missing_library_markers = sorted(marker for marker in PERSPECTIVE_LIBRARY_MARKERS if marker not in library_text)
+        if missing_library_markers:
+            errors.append(f"perspectivas.html está incompleta; faltan: {', '.join(missing_library_markers)}")
+
     site_script = ROOT / "site-v3.js"
     if site_script.exists() and "catalog-home-v32.js" not in site_script.read_text(encoding="utf-8"):
         errors.append("site-v3.js no carga la navegación hacia las fichas profundas")
+
+    home_links_script = ROOT / "catalog-home-v32.js"
+    if home_links_script.exists():
+        home_links_text = home_links_script.read_text(encoding="utf-8")
+        for required_reference in ("perspectivas.html", "perspectivas/gobierno-juridico-inteligencia-artificial.html", "perspectivas/contratos-administrables.html", "perspectivas/proyectos-regulados-secuencia-viabilidad.html"):
+            if required_reference not in home_links_text:
+                errors.append(f"catalog-home-v32.js no enlaza {required_reference}")
 
     if not HTML_FILES:
         errors.append("No se encontraron archivos HTML")
@@ -151,7 +183,8 @@ def validate() -> list[str]:
         parser = SiteParser()
         relative = page.relative_to(ROOT).as_posix()
         try:
-            parser.feed(page.read_text(encoding="utf-8"))
+            page_text = page.read_text(encoding="utf-8")
+            parser.feed(page_text)
         except UnicodeDecodeError:
             errors.append(f"{relative}: no está codificado en UTF-8")
             continue
@@ -172,6 +205,10 @@ def validate() -> list[str]:
         expected_catalog_id = CATALOG_PAGES.get(relative)
         if expected_catalog_id and parser.catalog_id != expected_catalog_id:
             errors.append(f"{relative}: data-catalog-id debe ser {expected_catalog_id!r}")
+        if relative in PERSPECTIVE_PAGES:
+            for marker in ("article-hero", "article-body", "article-meta", "LECTURAS RELACIONADAS"):
+                if marker not in page_text:
+                    errors.append(f"{relative}: falta el bloque editorial {marker!r}")
 
     catalog_ids = [parser.catalog_id for parser in parsed_pages.values() if parser.catalog_id]
     duplicated_catalog_ids = [item for item, count in Counter(catalog_ids).items() if count > 1]
@@ -179,6 +216,10 @@ def validate() -> list[str]:
         errors.append(f"IDs de catálogo duplicados: {', '.join(sorted(duplicated_catalog_ids))}")
     if len(catalog_ids) != 16:
         errors.append(f"Se esperaban 16 fichas profundas y se encontraron {len(catalog_ids)}")
+
+    perspective_count = sum(1 for page in parsed_pages if page.relative_to(ROOT.resolve()).as_posix() in PERSPECTIVE_PAGES)
+    if perspective_count != 6:
+        errors.append(f"Se esperaban 6 perspectivas profundas y se encontraron {perspective_count}")
 
     for page, parser in parsed_pages.items():
         relative = page.relative_to(ROOT.resolve()).as_posix()
@@ -218,7 +259,7 @@ def main() -> int:
         for error in errors:
             print(f"- {error}")
         return 1
-    print(f"VALIDACIÓN OK: {len(HTML_FILES)} páginas, 16 fichas profundas y recursos internos íntegros.")
+    print(f"VALIDACIÓN OK: {len(HTML_FILES)} páginas, 16 fichas profundas, 6 perspectivas y recursos internos íntegros.")
     return 0
 
 
