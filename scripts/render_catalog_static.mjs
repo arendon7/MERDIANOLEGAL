@@ -6,6 +6,8 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SOURCE_PATH = path.join(ROOT, 'catalog-v32.js');
+const VERSION = JSON.parse(fs.readFileSync(path.join(ROOT, 'version.json'), 'utf8'));
+const RELEASE_YEAR = String(VERSION.release_date || '').slice(0, 4) || String(new Date().getFullYear());
 const START = '  const entries = ';
 const END = '\n\n  const create = ';
 const WHATSAPP = '573008507813';
@@ -43,7 +45,7 @@ const section = ({ id, eyebrow, title, description = '', className = '', body })
   </div>
 </section>`;
 
-const hero = (entry) => `<div>
+const heroInner = (entry) => `<div>
   <p class="detail-eyebrow">${escapeHtml(entry.type.toUpperCase())} · ${escapeHtml(entry.code)}</p>
   <h1>${escapeHtml(entry.title)}</h1>
   <p class="summary">${escapeHtml(entry.summary)}</p>
@@ -56,7 +58,7 @@ const hero = (entry) => `<div>
 ${[['Tipo', entry.type], ['Horizonte', entry.duration], ['Modalidad', entry.modality], ['Dirigido a', entry.audience]].map(([label, value]) => `  <article><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></article>`).join('\n')}
 </div>`;
 
-const body = (entry) => {
+const bodyInner = (entry) => {
   const method = `<ol class="method-list">${entry.method.map(([title, description], index) => `
     <li><b>${String(index + 1).padStart(2, '0')}</b><strong>${escapeHtml(title)}</strong><span>${escapeHtml(description)}</span></li>`).join('')}
   </ol>`;
@@ -88,23 +90,57 @@ const body = (entry) => {
   ].join('\n');
 };
 
+const ensureBlocks = (html) => {
+  if (!html.includes('STATIC-CATALOG-HERO:START')) {
+    html = html.replace(
+      '<div class="container detail-hero-grid" id="detail-hero-content"></div>',
+      '<!-- STATIC-CATALOG-HERO:START -->\n<div class="container detail-hero-grid" id="detail-hero-content" data-static-catalog="true"></div>\n<!-- STATIC-CATALOG-HERO:END -->',
+    );
+  }
+  if (!html.includes('STATIC-CATALOG-BODY:START')) {
+    html = html.replace(
+      '<main id="contenido"><div id="detail-page"></div></main>',
+      '<!-- STATIC-CATALOG-BODY:START -->\n<main id="contenido"><div id="detail-page" data-static-catalog="true"></div></main>\n<!-- STATIC-CATALOG-BODY:END -->',
+    );
+  }
+  return html;
+};
+
 const replaceBlock = (html, name, content) => {
   const pattern = new RegExp(`<!-- ${name}:START -->[\\s\\S]*?<!-- ${name}:END -->`);
   if (!pattern.test(html)) throw new Error(`Falta el bloque ${name}.`);
   return html.replace(pattern, `<!-- ${name}:START -->\n${content}\n<!-- ${name}:END -->`);
 };
 
+const enhanceHeadAndScripts = (html, entry) => {
+  if (!html.includes('property="og:site_name"')) {
+    html = html.replace('<meta property="og:type" content="website">', '<meta property="og:type" content="website">\n  <meta property="og:site_name" content="Meridiano Legal">');
+  }
+  if (!html.includes('name="twitter:title"')) {
+    html = html.replace('<meta name="twitter:card" content="summary_large_image">', `<meta name="twitter:card" content="summary_large_image">\n  <meta name="twitter:title" content="${escapeHtml(entry.title)} | Meridiano Legal">\n  <meta name="twitter:description" content="${escapeHtml(entry.summary)}">\n  <meta name="twitter:image" content="../assets/hero-meridiano-v3.svg">`);
+  }
+  html = html
+    .replace('<span id="year"></span>', `<span id="year">${RELEASE_YEAR}</span>`)
+    .replace(/Ficha v\d+(?:\.\d+){1,2}/, `Ficha v${VERSION.version}`)
+    .replace('<script src="../catalog-v32.js"></script>', '<script defer src="../catalog-page.js"></script>')
+    .replace('<script src="../page-context.js"></script>', '<script defer src="../page-context.js"></script>');
+  return html;
+};
+
+const catalogFiles = [
+  ...fs.readdirSync(path.join(ROOT, 'servicios')).filter((name) => name.endsWith('.html')).map((name) => `servicios/${name}`),
+  ...fs.readdirSync(path.join(ROOT, 'productos')).filter((name) => name.endsWith('.html')).map((name) => `productos/${name}`),
+];
+
 let updated = 0;
 for (const [catalogId, entry] of Object.entries(entries)) {
-  const match = source.match(new RegExp(`['\"]${catalogId}['\"]`));
-  if (!match) throw new Error(`Entrada no localizada: ${catalogId}`);
-  const pagePath = [...fs.readdirSync(path.join(ROOT, 'servicios')).map((name) => `servicios/${name}`), ...fs.readdirSync(path.join(ROOT, 'productos')).map((name) => `productos/${name}`)]
-    .find((relative) => fs.readFileSync(path.join(ROOT, relative), 'utf8').includes(`data-catalog-id="${catalogId}"`));
+  const pagePath = catalogFiles.find((relative) => fs.readFileSync(path.join(ROOT, relative), 'utf8').includes(`data-catalog-id="${catalogId}"`));
   if (!pagePath) throw new Error(`No existe una ficha para ${catalogId}.`);
   const absolute = path.join(ROOT, pagePath);
-  let html = fs.readFileSync(absolute, 'utf8');
-  html = replaceBlock(html, 'STATIC-CATALOG-HERO', hero(entry));
-  html = replaceBlock(html, 'STATIC-CATALOG-BODY', body(entry));
+  let html = ensureBlocks(fs.readFileSync(absolute, 'utf8'));
+  html = replaceBlock(html, 'STATIC-CATALOG-HERO', `<div class="container detail-hero-grid" id="detail-hero-content" data-static-catalog="true">\n${heroInner(entry)}\n</div>`);
+  html = replaceBlock(html, 'STATIC-CATALOG-BODY', `<main id="contenido"><div id="detail-page" data-static-catalog="true">\n${bodyInner(entry)}\n</div></main>`);
+  html = enhanceHeadAndScripts(html, entry);
   fs.writeFileSync(absolute, html, 'utf8');
   updated += 1;
 }
