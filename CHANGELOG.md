@@ -1,5 +1,30 @@
 # Historial de versiones
 
+## v3.5.0 — 2026-08-05
+
+### Selector y conversión
+
+- Se incorporó un selector guiado que recomienda orientación, servicio, producto o plan según materia, resultado esperado y horizonte.
+- Cada recomendación enlaza el alcance completo y permite trasladar la necesidad al formulario de contacto.
+- Se agregó una comparación compacta entre las cuatro modalidades de trabajo.
+
+### Contacto contextual
+
+- El formulario reconoce la página desde la que regresa el visitante o el resultado generado por el selector.
+- La necesidad correspondiente se preselecciona cuando puede inferirse con seguridad.
+- El contexto del recorrido se incorpora al mensaje sin solicitar información confidencial.
+
+### Navegación móvil
+
+- El menú móvil utiliza una ventana compacta, desplazable y con bloqueo del fondo.
+- Se incorporaron accesos móviles al centro de demostración y al área de clientes.
+
+### Arquitectura y calidad
+
+- `decision-flow.js` y `decision-flow.css` concentran el flujo de decisión, el contacto contextual y la navegación móvil.
+- Se creó una validación específica para rutas, marcadores, estilos e integración del selector.
+- GitHub Actions comprueba sintaxis y funcionamiento estructural antes de publicar.
+
 ## v3.4.0 — 2026-08-05
 
 ### Arquitectura sectorial
