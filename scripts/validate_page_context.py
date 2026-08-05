@@ -2,6 +2,7 @@
 """Valida continuidad de navegación, contexto explícito y SEO de fichas."""
 
 from pathlib import Path
+import json
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -28,6 +29,7 @@ REQUIRED_FILES = {
     "page-context.js",
     "page-context.css",
     "catalog-home-v32.js",
+    "version.json",
     *CATALOG_FILES,
 }
 
@@ -53,12 +55,11 @@ JS_MARKERS = {
     "window.MeridianoContext",
 }
 
-HOME_MARKERS = {
+BASE_HOME_MARKERS = {
     "page-context.css",
     "page-context.js",
     "data-page-context",
     "dataset.contextLabel",
-    "Web demostrativa v3.6.0",
 }
 
 
@@ -71,12 +72,14 @@ def validate() -> list[str]:
     context_js = (ROOT / "page-context.js").read_text(encoding="utf-8")
     home_js = (ROOT / "catalog-home-v32.js").read_text(encoding="utf-8")
     context_css = (ROOT / "page-context.css").read_text(encoding="utf-8")
+    version = json.loads((ROOT / "version.json").read_text(encoding="utf-8"))["version"]
+    home_markers = {*BASE_HOME_MARKERS, f"Web demostrativa v{version}"}
 
     for marker in sorted(JS_MARKERS):
         if marker not in context_js:
             errors.append(f"page-context.js no contiene {marker!r}")
 
-    for marker in sorted(HOME_MARKERS):
+    for marker in sorted(home_markers):
         if marker not in home_js:
             errors.append(f"catalog-home-v32.js no contiene {marker!r}")
 
@@ -104,7 +107,7 @@ def main() -> int:
         for error in errors:
             print(f"- {error}")
         return 1
-    print("VALIDACIÓN DE CONTEXTO OK: 16 fichas, navegación, contacto y datos estructurados íntegros.")
+    print("VALIDACIÓN DE CONTEXTO OK: 16 fichas, navegación, contacto, versión y datos estructurados íntegros.")
     return 0
 
 
