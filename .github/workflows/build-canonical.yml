@@ -5,7 +5,9 @@ on:
     branches: [main]
     paths:
       - version.json
+      - catalog-v32.js
       - scripts/build_catalog_shells.py
+      - scripts/render_catalog_static.mjs
       - scripts/enrich_editorial_pages.py
       - scripts/sync_public_version.py
       - .github/workflows/build-canonical.yml
@@ -21,7 +23,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 6
+    timeout-minutes: 8
     steps:
       - name: Checkout current main
         uses: actions/checkout@v6
@@ -29,6 +31,8 @@ jobs:
           fetch-depth: 0
       - name: Generate catalog shells
         run: python3 scripts/build_catalog_shells.py
+      - name: Pre-render catalog content
+        run: node scripts/render_catalog_static.mjs
       - name: Enrich editorial pages
         run: python3 scripts/enrich_editorial_pages.py
       - name: Synchronize public version
