@@ -21,12 +21,16 @@ jobs:
         uses: actions/checkout@v6
       - name: Validate HTML, catalog pages and local resources
         run: python3 scripts/validate_site.py
+      - name: Validate guided decision flow
+        run: python3 scripts/validate_decision_flow.py
       - name: Validate public JavaScript
         run: node --check site-v3.js
       - name: Validate catalog JavaScript
         run: node --check catalog-v32.js
       - name: Validate catalog links
         run: node --check catalog-home-v32.js
+      - name: Validate decision flow JavaScript
+        run: node --check decision-flow.js
       - name: Validate experience JavaScript
         run: node --check experiencia.js
       - name: Validate demo JavaScript
