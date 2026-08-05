@@ -2,6 +2,7 @@
 """Valida el selector guiado, el contacto contextual y su integración en portada."""
 
 from pathlib import Path
+import json
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -12,6 +13,7 @@ REQUIRED_FILES = {
     "page-context.js",
     "page-context.css",
     "catalog-home-v32.js",
+    "version.json",
 }
 
 FLOW_MARKERS = {
@@ -24,12 +26,11 @@ FLOW_MARKERS = {
     "decision-flow.css",
 }
 
-LOADER_MARKERS = {
+BASE_LOADER_MARKERS = {
     "decision-flow.js",
     "data-decision-flow",
     "page-context.js",
     "data-page-context",
-    "Web demostrativa v3.6.0",
 }
 
 RECOMMENDED_ROUTES = {
@@ -61,12 +62,14 @@ def validate() -> list[str]:
     flow_text = (ROOT / "decision-flow.js").read_text(encoding="utf-8")
     loader_text = (ROOT / "catalog-home-v32.js").read_text(encoding="utf-8")
     css_text = (ROOT / "decision-flow.css").read_text(encoding="utf-8")
+    version = json.loads((ROOT / "version.json").read_text(encoding="utf-8"))["version"]
+    loader_markers = {*BASE_LOADER_MARKERS, f"Web demostrativa v{version}"}
 
     missing_flow = sorted(marker for marker in FLOW_MARKERS if marker not in flow_text)
     if missing_flow:
         errors.append(f"decision-flow.js está incompleto; faltan: {', '.join(missing_flow)}")
 
-    missing_loader = sorted(marker for marker in LOADER_MARKERS if marker not in loader_text)
+    missing_loader = sorted(marker for marker in loader_markers if marker not in loader_text)
     if missing_loader:
         errors.append(f"catalog-home-v32.js no carga correctamente el flujo; faltan: {', '.join(missing_loader)}")
 
@@ -88,7 +91,7 @@ def main() -> int:
         for error in errors:
             print(f"- {error}")
         return 1
-    print("VALIDACIÓN DEL FLUJO OK: selector, rutas, contexto y navegación móvil íntegros.")
+    print("VALIDACIÓN DEL FLUJO OK: selector, rutas, contexto, versión y navegación móvil íntegros.")
     return 0
 
 
