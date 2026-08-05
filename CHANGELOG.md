@@ -1,5 +1,26 @@
 # Historial de versiones
 
+## v3.4.0 — 2026-08-05
+
+### Arquitectura sectorial
+
+- Se publicaron ocho páginas profundas para tecnología y software, servicios públicos y economía circular, agroindustria y sostenibilidad, salud y negocios regulados, comercio y distribución, startups e inversión, proyectos públicos y transformación de operaciones jurídicas.
+- Cada página incorpora decisiones frecuentes, mapa jurídico-operativo, riesgos tempranos, soluciones relacionadas y lecturas recomendadas.
+- Se unificó en la portada el frente de servicios públicos, aseo y economía circular.
+- La octava entrada sectorial se destinó a transformación de operaciones jurídicas y Legal Operations.
+
+### Navegación y posicionamiento
+
+- Las tarjetas sectoriales de la portada enlazan sus páginas completas.
+- El sitemap incorpora las ocho rutas sectoriales.
+- Los contenidos conectan sectores, servicios, productos y perspectivas en recorridos coherentes.
+
+### Calidad
+
+- El validador exige exactamente ocho páginas sectoriales.
+- Se comprueban sus bloques principales, recursos, anclas y enlaces desde la portada.
+- El despliegue continúa actualizando `stable` únicamente después de una publicación exitosa.
+
 ## v3.3.1 — 2026-08-05
 
 ### Biblioteca de perspectivas
