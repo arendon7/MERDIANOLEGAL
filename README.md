@@ -1,4 +1,4 @@
-# Meridiano Legal · Web canónica v3.8.0
+# Meridiano Legal · Web canónica v3.9.0
 
 Sitio público, responsive y autocontenido de Meridiano Legal, publicado directamente desde GitHub Pages.
 
@@ -14,81 +14,64 @@ Sitio público, responsive y autocontenido de Meridiano Legal, publicado directa
 
 - Portada comercial con selector guiado y contacto contextual.
 - Página institucional de la firma y su método.
-- 8 servicios profesionales con ficha profunda y contenido HTML estático.
-- 8 productos jurídicos de alcance cerrado con contenido HTML estático.
-- 8 páginas sectoriales.
-- Biblioteca con 6 perspectivas jurídicas.
-- 5 planes recurrentes y 6 documentos guiados.
-- Centro de demostración y portal demostrativo por perfiles.
+- 8 servicios profesionales y 8 productos jurídicos con HTML estático.
+- 8 páginas sectoriales y 6 perspectivas jurídicas.
+- 5 planes recurrentes, 6 documentos guiados, centro demo y portal demostrativo.
 - Páginas legales, sitemap, robots, manifiesto y página 404.
 
-## Archivos canónicos
+## Identidad visual canónica
+
+La v3.9 incorpora una base de marca única y reproducible:
+
+- `assets/brand/meridiano-logo-horizontal-dark.svg`: logotipo para fondos claros.
+- `assets/brand/meridiano-logo-horizontal-light.svg`: logotipo para fondos oscuros.
+- `assets/brand/meridiano-monogram.svg`: monograma M sobrio.
+- `assets/brand/favicon.svg`: favicon e icono PWA.
+- `assets/images/global/home-hero.webp`: hero fotográfico optimizado.
+- `visual-v39.css`: reglas visuales comunes, recortes y tratamiento responsive.
+- `visual-v39.js`: selección automática de variantes de marca y mejora progresiva del hero.
+- `scripts/apply_visual_assets.py`: aplicación idempotente de la identidad en páginas raíz y profundas.
+- `scripts/validate_visual_assets.py`: control de archivos, cabecera WebP, rutas, versión y ausencia de logotipos legados.
+
+La marca utiliza la M arquitectónica en azul marino, dos filetes dorados y el descriptor “Derecho, Empresa y Tecnología”. Se descartaron brújulas, globos, balanzas, escudos y variaciones generadas inconsistentes como sistema principal.
+
+## Archivos funcionales canónicos
 
 - `index.html`, `site-v3.css`, `clarity-v31.css` y `site-v3.js`: portada.
 - `catalog-home-v32.js`: enlaces entre portada, fichas, sectores y perspectivas.
 - `decision-flow.js` y `decision-flow.css`: selector, formulario contextual y menú móvil.
-- `page-context.js` y `page-context.css`: continuidad, autoría, revisión editorial, foco, movimiento reducido y CTA contextuales.
+- `page-context.js` y `page-context.css`: continuidad, autoría, revisión editorial y CTA contextuales.
 - `catalog-v32.js`: fuente única del contenido jurídico de las 16 fichas.
-- `catalog-v32.css`: presentación principal de las fichas.
-- `catalog-page.js`: controlador ligero para menú, teclado y regreso al inicio.
-- `scripts/build_catalog_shells.py`: plantilla y metadatos base de las fichas.
-- `scripts/render_catalog_static.mjs`: prerender del contenido jurídico desde `catalog-v32.js` hacia HTML semántico.
-- `scripts/enrich_editorial_pages.py`: SEO, breadcrumbs y navegación de firma, perspectivas y sectores.
-- `scripts/sync_public_version.py`: sincronización de etiquetas visibles con `version.json`.
-- `sectores/`, `perspectivas/`, `servicios/` y `productos/`: páginas públicas profundas.
+- `catalog-v32.css` y `catalog-page.js`: presentación y controlador ligero de fichas.
+- `scripts/build_catalog_shells.py`: plantilla y metadatos base.
+- `scripts/render_catalog_static.mjs`: prerender del catálogo hacia HTML semántico.
+- `scripts/enrich_editorial_pages.py`: SEO, breadcrumbs y navegación editorial.
+- `scripts/sync_public_version.py`: sincronización de etiquetas con `version.json`.
 
 ## Construcción canónica
 
-La construcción pública se concentra en un único workflow:
-
-`.github/workflows/build-canonical.yml`
-
-Este ejecuta, en orden:
+El workflow `.github/workflows/build-canonical.yml` ejecuta, en orden:
 
 ```bash
 python3 scripts/build_catalog_shells.py
 node scripts/render_catalog_static.mjs
 python3 scripts/enrich_editorial_pages.py
 python3 scripts/sync_public_version.py
+python3 scripts/apply_visual_assets.py
 ```
 
-El catálogo jurídico continúa administrándose en un solo lugar. Durante la compilación, sus datos se convierten en HTML visible e indexable. Las fichas no dependen de JavaScript para mostrar título, alcance, método, entregables, requisitos, límites, soluciones relacionadas o contacto.
-
-El navegador de una ficha descarga `catalog-page.js`, no el catálogo completo. Esto reduce procesamiento y conserva JavaScript únicamente para mejoras progresivas.
-
-## Características de las fichas
-
-Cada ficha incorpora:
-
-- contenido sustantivo disponible sin JavaScript;
-- un único `h1` y nueve secciones editoriales identificadas;
-- metadatos sociales específicos;
-- canonical y descripción individual;
-- esquema `Service` o `Product`;
-- breadcrumb estructurado;
-- contexto explícito hacia contacto;
-- barra de continuidad del recorrido;
-- scripts diferidos;
-- versión y año visibles como respaldo estático.
-
-La firma, las perspectivas y los sectores incorporan:
-
-- esquemas `AboutPage`, `Article` o `WebPage` según el caso;
-- autoría y fecha editorial cuando corresponde;
-- Open Graph y Twitter Card;
-- breadcrumbs estructurados;
-- navegación anterior y siguiente;
-- CTA con necesidad preseleccionada.
+La capa visual se aplica después de los generadores funcionales. El aplicador elimina cualquier copia previa de sus etiquetas y las reinserta en una única posición canónica, de modo que ejecuciones sucesivas producen exactamente el mismo HTML.
 
 ## Accesibilidad y rendimiento
 
+- contenido jurídico disponible sin JavaScript;
+- un único `h1` y secciones editoriales identificadas;
 - soporte de `prefers-reduced-motion`;
 - cierre del menú con `Escape` y recuperación de foco;
-- navegación móvil desplazable sin mover el fondo;
-- `content-visibility` para diferir secciones inferiores;
-- estilos de impresión sin navegación ni controles flotantes;
-- foco visible compartido;
-- títulos largos con ajuste seguro en pantallas estrechas.
+- `content-visibility` para diferir contenido inferior;
+- hero WebP con dimensiones, texto alternativo y prioridad alta;
+- favicon y manifiesto alineados con la marca vigente;
+- estilos de impresión y foco visible compartido.
 
 ## Validación
 
@@ -97,25 +80,27 @@ python3 scripts/build_catalog_shells.py
 node scripts/render_catalog_static.mjs
 python3 scripts/enrich_editorial_pages.py
 python3 scripts/sync_public_version.py
+python3 scripts/apply_visual_assets.py
 python3 scripts/validate_site.py
 python3 scripts/validate_static_catalog.py
 python3 scripts/validate_decision_flow.py
 python3 scripts/validate_page_context.py
 python3 scripts/validate_editorial_context.py
+python3 scripts/validate_visual_assets.py
 node --check site-v3.js
 node --check catalog-v32.js
 node --check catalog-page.js
-node --check scripts/render_catalog_static.mjs
 node --check catalog-home-v32.js
 node --check decision-flow.js
 node --check page-context.js
 node --check experiencia.js
 node --check demo.js
+node --check visual-v39.js
 python3 -m json.tool manifest.webmanifest
 python3 -m json.tool version.json
 ```
 
-El workflow `.github/workflows/pages.yml` comprueba la idempotencia de todos los generadores y despliega únicamente después de aprobar todas las verificaciones.
+El workflow `.github/workflows/pages.yml` comprueba la idempotencia de los generadores y despliega únicamente después de aprobar todas las verificaciones.
 
 ## Accesos
 
@@ -129,4 +114,4 @@ El workflow `.github/workflows/pages.yml` comprueba la idempotencia de todos los
 
 La versión publicada es demostrativa. No autentica usuarios reales, no almacena expedientes, no recibe archivos y no debe utilizarse para transmitir información confidencial o datos personales sensibles.
 
-El historial funcional se conserva exclusivamente en `CHANGELOG.md`.
+La biblioteca visual temática completa se incorporará por grupos funcionales, conservando una imagen maestra por ubicación y variantes derivadas para escritorio, móvil y Open Graph. El historial funcional se conserva en `CHANGELOG.md`.
