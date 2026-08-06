@@ -1,5 +1,29 @@
 # Historial de versiones
 
+## v3.9.0 — 2026-08-05
+
+### Identidad visual canónica
+
+- Se sustituyó la identidad angular y la brújula como sistema principal por una M arquitectónica sobria, con azul marino, marfil y dos filetes dorados.
+- Se crearon variantes SVG para fondos claros y oscuros, monograma y favicon.
+- Encabezados, pies, páginas profundas, centro demo y portal utilizan la misma familia de marca.
+- El manifiesto PWA y el favicon quedaron alineados con la identidad vigente.
+
+### Base fotográfica y experiencia
+
+- La portada utiliza un hero WebP optimizado, con contexto empresarial de Medellín, dimensiones declaradas, texto alternativo y prioridad alta.
+- `visual-v39.css` concentra el tratamiento de recortes, superposiciones, contraste, responsive y reducción de movimiento.
+- `visual-v39.js` selecciona las variantes de marca según el nivel de la página y aplica mejora progresiva al hero y al monograma institucional.
+- Se eliminaron dependencias visuales de versiones legadas dentro de las páginas activas.
+
+### Construcción y control de calidad
+
+- Se creó `scripts/apply_visual_assets.py` como aplicador idempotente posterior a los generadores funcionales.
+- El aplicador normaliza la posición de sus recursos para que ejecuciones sucesivas no alteren el orden del HTML.
+- Se creó `scripts/validate_visual_assets.py` para validar archivos, cabecera WebP, rutas, versión y ausencia de logotipos retirados.
+- `validate_site.py` exige ahora la identidad canónica, el favicon, el hero WebP y las hojas visuales vigentes.
+- GitHub Pages solo publicó después de aprobar idempotencia, 39 páginas, catálogo, contexto, datos estructurados, capa editorial, JavaScript y activos visuales.
+
 ## v3.8.0 — 2026-08-05
 
 ### Catálogo estático e indexable
