@@ -1,0 +1,80 @@
+name: Apply commercial legal catalog v4.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/apply-products-v41.yml'
+      - 'bootstrap/v41/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: meridiano-products-v41
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout current main
+        uses: actions/checkout@v6
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Reassemble and verify catalog package
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat bootstrap/v41/part-* > meridiano-products-v41.tar.gz
+          echo "dda9f6b3ee502705a611fbba5e3449f1560e0d337f5ded4dfa61eb0789d3ec64  meridiano-products-v41.tar.gz" | sha256sum -c -
+          tar -xzf meridiano-products-v41.tar.gz
+          rm -rf bootstrap/v41 meridiano-products-v41.tar.gz
+          rm -f .github/workflows/apply-products-v41.yml
+          rm -f .github/workflows/bootstrap-v40.yml
+
+      - name: Generate canonical public site
+        run: |
+          set -euo pipefail
+          python3 scripts/build_catalog_shells.py
+          node scripts/render_catalog_static.mjs
+          python3 scripts/enrich_editorial_pages.py
+          python3 scripts/sync_public_version.py
+          python3 scripts/apply_visual_assets.py
+
+      - name: Validate commercial legal catalog
+        run: |
+          set -euo pipefail
+          python3 scripts/validate_site.py
+          python3 scripts/validate_static_catalog.py
+          python3 scripts/validate_decision_flow.py
+          python3 scripts/validate_page_context.py
+          python3 scripts/validate_editorial_context.py
+          python3 scripts/validate_visual_assets.py
+          node --check site-v3.js
+          node --check catalog-v32.js
+          node --check catalog-page.js
+          node --check catalog-home-v32.js
+          node --check decision-flow.js
+          node --check page-context.js
+          node --check experiencia.js
+          node --check demo.js
+          node --check visual-v39.js
+          node --check scripts/render_catalog_static.mjs
+          python3 -m json.tool manifest.webmanifest > /dev/null
+          python3 -m json.tool version.json > /dev/null
+
+      - name: Commit catalog v4.1
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "feat: publica catálogo comercial-jurídico v4.1"
+          git pull --rebase origin main
+          git push origin HEAD:main
