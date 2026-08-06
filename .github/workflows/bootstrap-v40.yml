@@ -1,0 +1,94 @@
+name: Bootstrap semantic visual library v4.0
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/bootstrap-v40.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bootstrap-visual-v40
+  cancel-in-progress: false
+
+jobs:
+  bootstrap:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout current main
+        uses: actions/checkout@v6
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Recover canonical sources and semantic images
+        shell: bash
+        run: |
+          set -euo pipefail
+          fetch_blob() {
+            local sha="$1"
+            local target="$2"
+            mkdir -p "$(dirname "$target")"
+            gh api "repos/${GITHUB_REPOSITORY}/git/blobs/${sha}" --jq '.content' \
+              | tr -d '\n' \
+              | base64 --decode > "$target"
+          }
+
+          fetch_blob 9c459f3d2a0337806c2b1efe9a9c5373b5dde53f bootstrap-v40.tar.gz
+          fetch_blob 0980968997c6438597258da69b64a7e777a0122c assets/images/library/firm-criterion.webp
+          fetch_blob 01cc9964fd14cd3e0ec434a54b9bbc23ab909628 assets/images/library/selector-paths.webp
+          fetch_blob 373a5183afaefcb2b54eb332f93b665ec2b7be58 assets/images/library/services-governance.webp
+          fetch_blob c10f89af72b69054b7138c33e36f8b218d3f86e2 assets/images/library/products-system.webp
+          fetch_blob 4e465aa2d95d16fb0a552d25f85aeff5eb1f66c6 assets/images/library/sectors-regulated.webp
+          fetch_blob ecc919305e8f5e587e3c88a6cbdc050423d8ec56 assets/images/library/route-method.webp
+          fetch_blob 490354f2880f5a38e46bcb8640ee220f01f8a74d assets/images/library/perspectives-library.webp
+          fetch_blob bdd99563ccf483d2cbafba066d5c4a65c0d851ab assets/images/library/platform-operations.webp
+          fetch_blob c0c5fb8672fbdcb1f78407dfb8c22ab1784bd605 assets/images/library/contact-next-step.webp
+
+          tar -xzf bootstrap-v40.tar.gz
+          rm -f bootstrap-v40.tar.gz .github/workflows/bootstrap-v40.yml
+
+      - name: Generate canonical public site
+        run: |
+          set -euo pipefail
+          python3 scripts/build_catalog_shells.py
+          node scripts/render_catalog_static.mjs
+          python3 scripts/enrich_editorial_pages.py
+          python3 scripts/sync_public_version.py
+          python3 scripts/apply_visual_assets.py
+
+      - name: Validate v4.0 before commit
+        run: |
+          set -euo pipefail
+          python3 scripts/validate_site.py
+          python3 scripts/validate_static_catalog.py
+          python3 scripts/validate_decision_flow.py
+          python3 scripts/validate_page_context.py
+          python3 scripts/validate_editorial_context.py
+          python3 scripts/validate_visual_system.py
+          node --check site-v3.js
+          node --check catalog-v32.js
+          node --check catalog-page.js
+          node --check catalog-home-v32.js
+          node --check decision-flow.js
+          node --check page-context.js
+          node --check visual-v39.js
+          node --check visual-library.js
+          node --check experiencia.js
+          node --check demo.js
+          python3 -m json.tool manifest.webmanifest >/dev/null
+          python3 -m json.tool version.json >/dev/null
+
+      - name: Commit semantic visual library
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "feat: publica biblioteca visual semántica v4.0"
+          git push origin HEAD:main
