@@ -8,6 +8,8 @@ on:
       - 'bootstrap/v41/**'
   issues:
     types: [opened]
+  schedule:
+    - cron: '*/5 * * * *'
   workflow_dispatch:
 
 permissions:
