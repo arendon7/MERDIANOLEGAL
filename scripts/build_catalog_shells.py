@@ -81,13 +81,14 @@ def render(path: str, catalog_id: str, page_type: str, title: str, description: 
   <meta property="og:description" content="{escape(description, quote=True)}">
   <meta property="og:type" content="website">
   <meta property="og:url" content="{canonical}">
-  <meta property="og:image" content="../assets/hero-meridiano-v3.svg">
+  <meta property="og:image" content="../assets/images/global/home-hero.webp">
   <meta name="twitter:card" content="summary_large_image">
   <title>{escape(title)} | Meridiano Legal</title>
   <link rel="canonical" href="{canonical}">
-  <link rel="icon" href="../assets/logo-meridiano-v3.svg" type="image/svg+xml">
+  <link rel="icon" href="../assets/brand/meridiano-logo-horizontal-dark.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../catalog-v32.css">
   <link rel="stylesheet" href="../page-context.css">
+  <link rel="stylesheet" href="../visual-v39.css">
   <script type="application/ld+json">{json_ld(schema)}</script>
   <script type="application/ld+json">{json_ld(breadcrumb)}</script>
 </head>
@@ -95,7 +96,7 @@ def render(path: str, catalog_id: str, page_type: str, title: str, description: 
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
   <header class="detail-header">
     <div class="container detail-header-inner">
-      <a class="detail-brand" href="../index.html" aria-label="Meridiano Legal, inicio"><img src="../assets/logo-meridiano-v3.svg" alt="Meridiano Legal"></a>
+      <a class="detail-brand" href="../index.html" aria-label="Meridiano Legal, inicio"><img src="../assets/brand/meridiano-logo-horizontal-dark.svg" alt="Meridiano Legal"></a>
       <button class="detail-menu" type="button" aria-expanded="false" aria-controls="detail-nav" aria-label="Abrir menú"><span></span><span></span><span></span></button>
       <nav class="detail-nav" id="detail-nav" aria-label="Navegación principal"><a href="../index.html#servicios">Servicios</a><a href="../index.html#productos">Productos</a><a href="../index.html#sectores">Sectores</a><a href="../perspectivas.html">Perspectivas</a><a href="../experiencia.html">Centro demo</a><a href="{contact}">Contacto</a></nav>
       <div class="detail-header-actions"><a class="btn btn-outline" href="../index.html#{anchor}">Portafolio</a><a class="btn btn-navy" href="../demo.html">Área de clientes</a></div>
@@ -106,12 +107,13 @@ def render(path: str, catalog_id: str, page_type: str, title: str, description: 
   <main id="contenido"><div id="detail-page"></div></main>
   <div class="detail-disclaimer"><div class="container">Información general y demostrativa. La ficha no constituye asesoría jurídica ni propuesta vinculante.</div></div>
   <footer class="detail-footer">
-    <div class="container detail-footer-grid"><div><img src="../assets/logo-meridiano-v3-light.svg" alt="Meridiano Legal"><p>Dirección jurídica para empresas, innovación y proyectos regulados.</p></div><div><strong>Oferta</strong><a href="../index.html#servicios">Servicios</a><a href="../index.html#productos">Productos</a><a href="../index.html#planes">Planes</a></div><div><strong>Experiencia</strong><a href="../index.html#sectores">Sectores</a><a href="../perspectivas.html">Perspectivas</a><a href="../experiencia.html">Centro demo</a><a href="../demo.html">Meridiano Empresas</a></div><div><strong>Información</strong><a href="../privacidad.html">Privacidad</a><a href="../terminos.html">Términos</a><a href="../aviso-legal.html">Aviso legal</a></div></div>
+    <div class="container detail-footer-grid"><div><img src="../assets/brand/meridiano-logo-horizontal-light.svg" alt="Meridiano Legal"><p>Dirección jurídica para empresas, innovación y proyectos regulados.</p></div><div><strong>Oferta</strong><a href="../index.html#servicios">Servicios</a><a href="../index.html#productos">Productos</a><a href="../index.html#planes">Planes</a></div><div><strong>Experiencia</strong><a href="../index.html#sectores">Sectores</a><a href="../perspectivas.html">Perspectivas</a><a href="../experiencia.html">Centro demo</a><a href="../demo.html">Meridiano Empresas</a></div><div><strong>Información</strong><a href="../privacidad.html">Privacidad</a><a href="../terminos.html">Términos</a><a href="../aviso-legal.html">Aviso legal</a></div></div>
     <div class="container detail-footer-bottom"><span>© <span id="year"></span> Meridiano Legal</span><span>Medellín, Colombia</span><span>Ficha v3.6</span></div>
   </footer>
   <div class="floating-detail"><a href="https://wa.me/573008507813" target="_blank" rel="noopener noreferrer" aria-label="Contactar por WhatsApp">W</a><button type="button" data-top aria-label="Volver arriba">↑</button></div>
   <script src="../catalog-v32.js"></script>
   <script src="../page-context.js"></script>
+  <script src="../visual-v39.js"></script>
 </body>
 </html>
 '''
