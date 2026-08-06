@@ -6,10 +6,14 @@ on:
     paths-ignore:
       - version.json
       - catalog-v32.js
+      - visual-v39.css
+      - visual-v39.js
+      - assets/**
       - scripts/build_catalog_shells.py
       - scripts/render_catalog_static.mjs
       - scripts/enrich_editorial_pages.py
       - scripts/sync_public_version.py
+      - scripts/apply_visual_assets.py
       - .github/workflows/build-canonical.yml
   workflow_dispatch:
   workflow_run:
@@ -39,7 +43,8 @@ jobs:
           node scripts/render_catalog_static.mjs
           python3 scripts/enrich_editorial_pages.py
           python3 scripts/sync_public_version.py
-          git diff --exit-code -- index.html catalog-home-v32.js decision-flow.js servicios productos firma.html perspectivas sectores
+          python3 scripts/apply_visual_assets.py
+          git diff --exit-code -- index.html catalog-home-v32.js decision-flow.js servicios productos firma.html perspectivas sectores experiencia.html demo.html manifest.webmanifest scripts/build_catalog_shells.py
       - name: Validate HTML and local resources
         run: python3 scripts/validate_site.py
       - name: Validate static catalog
@@ -50,28 +55,24 @@ jobs:
         run: python3 scripts/validate_page_context.py
       - name: Validate firm, perspectives and sectors
         run: python3 scripts/validate_editorial_context.py
-      - name: Validate public JavaScript
-        run: node --check site-v3.js
-      - name: Validate catalog data source
-        run: node --check catalog-v32.js
-      - name: Validate catalog page controller
-        run: node --check catalog-page.js
-      - name: Validate catalog pre-renderer
-        run: node --check scripts/render_catalog_static.mjs
-      - name: Validate catalog links
-        run: node --check catalog-home-v32.js
-      - name: Validate decision flow JavaScript
-        run: node --check decision-flow.js
-      - name: Validate page context JavaScript
-        run: node --check page-context.js
-      - name: Validate experience JavaScript
-        run: node --check experiencia.js
-      - name: Validate demo JavaScript
-        run: node --check demo.js
-      - name: Validate web manifest
-        run: python3 -m json.tool manifest.webmanifest > /dev/null
-      - name: Validate version metadata
-        run: python3 -m json.tool version.json > /dev/null
+      - name: Validate canonical visual system
+        run: python3 scripts/validate_visual_assets.py
+      - name: Validate JavaScript
+        run: |
+          node --check site-v3.js
+          node --check catalog-v32.js
+          node --check catalog-page.js
+          node --check catalog-home-v32.js
+          node --check decision-flow.js
+          node --check page-context.js
+          node --check experiencia.js
+          node --check demo.js
+          node --check visual-v39.js
+          node --check scripts/render_catalog_static.mjs
+      - name: Validate JSON metadata
+        run: |
+          python3 -m json.tool manifest.webmanifest > /dev/null
+          python3 -m json.tool version.json > /dev/null
 
   deploy:
     name: Deploy GitHub Pages

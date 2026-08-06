@@ -1,0 +1,17 @@
+:root{--visual-gold:#a88454;--visual-gold-light:#d9bc8b;--visual-navy:#13263a;--visual-deep:#091725;--visual-ivory:#f5f1e8}
+.brand img,.detail-brand img,.firm-brand img,.insight-brand img,.experience-header .brand img,.app-brand img,.detail-footer img,.insight-footer img{object-fit:contain}
+.hero-art{position:relative;overflow:hidden;min-height:520px;background:#0b1928;border:1px solid rgba(255,255,255,.12);box-shadow:0 28px 80px rgba(0,0,0,.22)}
+.hero-art>img.visual-home-hero{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;filter:saturate(.82) contrast(1.03)}
+.hero-art:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(9,23,37,.08),rgba(9,23,37,.02) 45%,rgba(9,23,37,.3)),linear-gradient(0deg,rgba(9,23,37,.38),transparent 50%);pointer-events:none}
+.hero-art .hero-card{z-index:2}
+.visual-foundation{position:relative;overflow:hidden;background:linear-gradient(135deg,#0a1827,#173a55);color:#fff}
+.visual-foundation:before{content:"M";position:absolute;right:-.04em;bottom:-.22em;color:rgba(217,188,139,.055);font-family:Georgia,serif;font-size:min(42vw,520px);line-height:1;pointer-events:none}
+.visual-foundation>*{position:relative;z-index:1}
+.firm-hero,.library-hero,.experience-hero{position:relative;overflow:hidden}
+.firm-hero:after,.library-hero:after,.experience-hero:after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 83% 18%,rgba(217,188,139,.16),transparent 25%),linear-gradient(145deg,transparent 60%,rgba(44,88,120,.18));pointer-events:none}
+.firm-hero>.container,.library-hero>.container,.experience-hero>.container{position:relative;z-index:1}
+.service-card,.product-card,.choice-card,.sector-card,.insight-card{position:relative;overflow:hidden}
+.service-card:before,.product-card:before,.choice-card:before,.sector-card:before,.insight-card:before{content:"";position:absolute;inset:0 0 auto;height:3px;background:linear-gradient(90deg,var(--visual-gold),transparent 72%);opacity:.72}
+.visual-brand-rule{height:1px;background:linear-gradient(90deg,transparent,var(--visual-gold),transparent);opacity:.55}
+@media(max-width:800px){.hero-art{min-height:390px}.hero-art>img.visual-home-hero{object-position:58% center}}
+@media(prefers-reduced-motion:reduce){.hero-art>img.visual-home-hero{filter:saturate(.82)}}

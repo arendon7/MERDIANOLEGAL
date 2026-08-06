@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 100" role="img" aria-labelledby="title desc">
+  <title id="title">Monograma de Meridiano Legal</title>
+  <desc id="desc">Letra M arquitectónica en azul marino con dos líneas doradas.</desc>
+  <path fill="#13263A" d="M10 88V18h15l35 35 35-35h15v70H91V45L60 76 29 45v43H10Zm19-61 31 31 31-31h-9L60 49 38 27h-9Z"/>
+  <path fill="#A88454" d="M29 37h4v45h-4zM87 37h4v45h-4z"/>
+</svg>

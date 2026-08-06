@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 120" role="img" aria-labelledby="title desc">
+  <title id="title">Meridiano Legal</title>
+  <desc id="desc">Meridiano Legal, Derecho, Empresa y Tecnología.</desc>
+  <g transform="translate(8 10)">
+    <path fill="#13263A" d="M0 90V12h17l37 37 37-37h17v78H87V42L54 75 21 42v48H0Zm21-69 33 33 33-33h-9L54 45 30 21h-9Z"/>
+    <path fill="#A88454" d="M21 33h4v50h-4zM83 33h4v50h-4z"/>
+  </g>
+  <line x1="137" y1="20" x2="137" y2="100" stroke="#A88454" stroke-width="2"/>
+  <text x="165" y="61" fill="#13263A" font-family="Georgia, 'Times New Roman', serif" font-size="43" font-weight="600" letter-spacing="1.7">MERIDIANO LEGAL</text>
+  <line x1="166" y1="72" x2="650" y2="72" stroke="#A88454" stroke-width="1.5"/>
+  <text x="168" y="94" fill="#8B683B" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" letter-spacing="4.5">DERECHO, EMPRESA Y TECNOLOGÍA</text>
+</svg>
