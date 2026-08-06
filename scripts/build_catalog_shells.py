@@ -88,7 +88,6 @@ def render(path: str, catalog_id: str, page_type: str, title: str, description: 
   <link rel="icon" href="../assets/brand/meridiano-logo-horizontal-dark.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../catalog-v32.css">
   <link rel="stylesheet" href="../page-context.css">
-  <link rel="stylesheet" href="../visual-v39.css">
   <script type="application/ld+json">{json_ld(schema)}</script>
   <script type="application/ld+json">{json_ld(breadcrumb)}</script>
 </head>
@@ -113,7 +112,6 @@ def render(path: str, catalog_id: str, page_type: str, title: str, description: 
   <div class="floating-detail"><a href="https://wa.me/573008507813" target="_blank" rel="noopener noreferrer" aria-label="Contactar por WhatsApp">W</a><button type="button" data-top aria-label="Volver arriba">↑</button></div>
   <script src="../catalog-v32.js"></script>
   <script src="../page-context.js"></script>
-  <script src="../visual-v39.js"></script>
 </body>
 </html>
 '''
