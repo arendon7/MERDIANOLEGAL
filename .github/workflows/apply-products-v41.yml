@@ -6,6 +6,8 @@ on:
     paths:
       - '.github/workflows/apply-products-v41.yml'
       - 'bootstrap/v41/**'
+  issues:
+    types: [opened]
   workflow_dispatch:
 
 permissions:
@@ -17,7 +19,7 @@ concurrency:
 
 jobs:
   apply:
-    if: github.actor != 'github-actions[bot]'
+    if: github.actor != 'github-actions[bot]' && (github.event_name != 'issues' || github.event.issue.title == '[internal] apply catalog v4.1')
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
