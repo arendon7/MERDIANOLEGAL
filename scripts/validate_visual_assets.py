@@ -21,7 +21,7 @@ index=(ROOT/'index.html').read_text(encoding='utf-8')
 for marker in ['assets/brand/favicon.svg','assets/images/global/home-hero.webp']:
     if marker not in index: errors.append(f'index.html: falta {marker}')
 version=json.loads((ROOT/'version.json').read_text(encoding='utf-8'))
-if version.get('version')!='3.9.0': errors.append('version.json no registra 3.9.0')
+if version.get('version')!='4.1.0': errors.append('version.json no registra 4.1.0')
 if errors:
     print('VALIDACIÓN VISUAL FALLIDA'); print('\n'.join(f'- {e}' for e in errors)); sys.exit(1)
 print('VALIDACIÓN VISUAL OK')
