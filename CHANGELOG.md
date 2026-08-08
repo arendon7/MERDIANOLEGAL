@@ -1,5 +1,46 @@
 # Historial de versiones
 
+## v5.1.0 — 2026-08-08
+
+### Rutas por situación empresarial
+
+- La portada deja de exigir que un prospecto traduzca primero su problema al nombre de un servicio jurídico y conserva seis puntos de entrada static-first por situación empresarial.
+- Se creó el hub indexable `soluciones/` y seis rutas de alta intención: ordenar riesgo jurídico, dirección jurídica externa, gobernanza de IA, preparación para inversión, estructuración de proyectos regulados y Legal Operations.
+- Cada ruta explica señales de que la necesidad está abierta, preguntas de decisión, modalidades posibles, entregables, límites, evidencia pública y siguiente paso.
+- Las rutas no duplican las 16 fichas canónicas: funcionan como capa de calificación y derivan a producto cerrado, servicio adaptable o capacidad recurrente según el resultado y el perímetro.
+- Los CTA llevan contexto y necesidad al formulario público sin pedir documentos confidenciales antes de delimitar el asunto.
+
+### Evidencia pública y criterio comercial
+
+- Se incorporó a la portada un bloque de prueba verificable basado en activos existentes: 16 fichas profundas, 8 lecturas sectoriales, 6 perspectivas y Centro Demo.
+- La release prohíbe expresamente en su validador frases de prueba social no sustentada como “casos de éxito”, “nuestros clientes confían”, “tasa de éxito” o “testimonio de cliente”.
+- No se inventaron clientes, resultados, porcentajes ni endorsements. La lógica de credibilidad se apoya en alcance, método, límites, criterio publicado y experiencia demostrable.
+- La ruta de Legal Operations conserva continuidad con la arquitectura anterior: portada → página de decisión → servicio profesional de Legal Operations.
+
+### SEO, generación e interlinking
+
+- Se añadieron `growth-solutions-v51.json` y `growth-v51.css` como fuente estructurada y capa visual de crecimiento.
+- `scripts/apply_growth_v51.py` genera el hub, las seis páginas, el nuevo bloque de necesidades, la sección de evidencia y las entradas v5.1 de `sitemap.xml`.
+- `scripts/finalize_growth_v51.py` reutiliza la lógica de producción v5.0 para añadir canonical, `og:url`, runtime y telemetría a las páginas nuevas y normaliza el canonical limpio del hub a `/soluciones/`.
+- Las siete páginas nuevas publican HTML estático, `lang="es-CO"`, metadata indexable, JSON-LD y BreadcrumbList cuando corresponde.
+- La publicación pasa de 39 a **46 páginas HTML** sin alterar las ocho fichas de servicios, ocho productos, ocho sectores, seis perspectivas ni las superficies demo existentes.
+
+### Compatibilidad e idempotencia
+
+- La primera integración v5.1 reveló que v4.8 conserva un contrato literal de seis enlaces `class="need-card"` en portada. La salida final mantiene exactamente ese contrato mientras cambia contenido y destino hacia las nuevas rutas.
+- Un intento posterior demostró que la compatibilidad debía resolverse antes de ejecutar v4.8 en reconstrucciones sucesivas. Se añadió `scripts/normalize_growth_compat_v51.py` como fase previa y se conserva el finalizador v5.1 al cierre de la cadena.
+- `scripts/validate_quality_v48.py` se hizo version-aware para Legal Operations: desde v5.1 valida la cadena completa portada → ruta de operación jurídica → servicio Legal Operations, en vez de exigir un enlace directo de la arquitectura anterior.
+- El control de idempotencia terminó en verde después de estas correcciones; no se relajó el gate ni se excluyeron las salidas nuevas del diff canónico.
+
+### Canal público, validación y despliegue
+
+- El primer canal `github-pages-growth-ready` no contenía la señal `public`, por lo que el sincronizador lo interpretaba como demostrativo. Se corrigió a `github-pages-public-growth-ready` para conservar “Web pública v5.1.0” en la superficie pública.
+- Se añadieron `scripts/validate_growth_v51.py` y `scripts/validate_live_v51.py`.
+- El validador v5.1 exige seis slugs únicos, siete páginas exactas, canonical y `og:url`, profundidad mínima, tres rutas de modalidad, evidencia interna, sitemap y ausencia de prueba social inventada.
+- El smoke live v5.1 ejecuta primero todo el smoke v5.0 y después consulta portada, hub y las seis páginas de solución sobre la URL realmente servida.
+- La ejecución técnica final sobre `5318bc3aaf03a44a84665e7c81f34a6bff05829f` aprobó idempotencia, 46 páginas, catálogo, conversión, UX v4.5–v4.7, calidad v4.8, operación v4.9, producción v5.0, crecimiento v5.1, selector, contexto, editorial, visual, JavaScript y JSON.
+- GitHub Pages desplegó correctamente, el smoke público v5.1 terminó en verde y `stable` se sincronizó antes del cierre documental.
+
 ## v5.0.0 — 2026-08-08
 
 ### Configuración pública y dominio-ready
