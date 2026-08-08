@@ -30,6 +30,7 @@ on:
       - scripts/apply_editorial_ux_v47.py
       - scripts/normalize_editorial_v47.py
       - scripts/apply_quality_v48.py
+      - scripts/normalize_quality_v48.py
       - scripts/sync_public_version.py
       - .github/workflows/build-canonical.yml
   workflow_dispatch:
@@ -71,7 +72,9 @@ jobs:
           python3 scripts/apply_editorial_ux_v47.py
           python3 scripts/normalize_editorial_v47.py
       - name: Apply final quality polish v4.8
-        run: python3 scripts/apply_quality_v48.py
+        run: |
+          python3 scripts/apply_quality_v48.py
+          python3 scripts/normalize_quality_v48.py
       - name: Synchronize public version
         run: python3 scripts/sync_public_version.py
       - name: Commit canonical outputs
