@@ -1,58 +1,140 @@
-# Meridiano Legal · Web canónica v4.9.0
+# Meridiano Legal · Web canónica v5.0.0
 
-Sitio público, responsive y autocontenido de Meridiano Legal, publicado directamente desde GitHub Pages.
+Sitio público, responsive y autocontenido de Meridiano Legal, publicado mediante GitHub Pages y preparado para una transición controlada hacia dominio propio, verificación de buscadores y medición comercial cuando existan decisiones y credenciales reales.
 
 ## Estado de la release
 
-La v4.9 convierte la base pública cerrada en v4.8 en una versión preparada para operación comercial real dentro de las capacidades de una web estática. No introduce un backend ficticio ni cambia el contenido jurídico, los precios o los alcances aprobados: refuerza el contacto, la trazabilidad comercial y el control posterior al despliegue.
+La v5.0 consolida la web como una base **production-ready dentro de una arquitectura estática**. Esto significa que el sitio público, el catálogo jurídico, el contacto por WhatsApp, SEO, privacidad, configuración, construcción, despliegue y verificación live están gobernados y reproducibles. No significa que se hayan inventado o activado servicios externos que todavía no existen.
 
-La publicación vigente mantiene la arquitectura `static-first` de v4.8, las 16 fichas profundas, los ocho sectores, las seis perspectivas, cinco planes recurrentes, Centro Demo y Meridiano Empresas.
+La publicación mantiene íntegra la arquitectura comercial y jurídica acumulada: ocho servicios, ocho productos, cinco planes recurrentes, ocho sectores, seis perspectivas, Firma, Centro Demo y Meridiano Empresas.
 
-## Flujo operativo
+Actualmente:
 
-- `main`: código vigente y fuente de publicación.
-- `stable`: último commit que pasó validaciones locales, despliegue de GitHub Pages y smoke test sobre la URL pública real.
-- Los cambios funcionales activan `Build canonical public site`.
-- La construcción aplica todas las capas canónicas, sincroniza la versión y genera el HTML público.
-- `Site Quality and Deploy` vuelve a ejecutar toda la cadena y exige diff cero.
-- Después de validar, Pages despliega el commit actual.
-- Un smoke test HTTP revisa la versión realmente servida por GitHub.
-- `stable` solo se mueve si el smoke público también queda verde.
+- la URL pública canónica es `https://arendon7.github.io/MERDIANOLEGAL/`;
+- no hay dominio personalizado configurado;
+- WhatsApp continúa siendo el canal real de contacto;
+- no hay CRM, backend ni almacenamiento propio del formulario;
+- la analítica de terceros está desactivada;
+- no hay token de Google Search Console configurado;
+- `demo.html` continúa siendo un entorno ficticio y `noindex,nofollow`.
 
-## Contacto operativo v4.9
+Estas ausencias son deliberadas: v5.0 deja preparada la infraestructura para activarlas correctamente cuando exista un dominio, proveedor, identificador o credencial real.
 
-El formulario público sigue siendo deliberadamente estático y no almacena expedientes ni información confidencial.
+## Fuente única de configuración pública
 
-`scripts/apply_operations_v49.py` y `operations-v49.css` incorporan:
+`site-config.json` es la fuente canónica de configuración operacional:
 
-- honeypot silencioso contra automatizaciones básicas;
-- límites explícitos de longitud para nombre, empresa, correo y contexto;
-- referencia única por solicitud con formato `ML-YYYYMMDD-XXXXX`;
-- inclusión de necesidad, contexto comercial y ruta de origen en el mensaje preparado;
-- limpieza y acotación de valores antes de construir el texto de WhatsApp;
-- fallback de navegación si el navegador bloquea la nueva ventana;
+```json
+{
+  "name": "Meridiano Legal",
+  "base_url": "https://arendon7.github.io/MERDIANOLEGAL/",
+  "deployment": "github-pages",
+  "environment": "public",
+  "custom_domain": "",
+  "contact": {
+    "whatsapp": "573008507813"
+  },
+  "analytics": {
+    "enabled": false,
+    "provider": "none",
+    "site_id": ""
+  },
+  "search_console_verification": ""
+}
+```
+
+`scripts/site_config.py` valida la configuración antes de construir: URL HTTPS absoluta, ruta pública, coherencia de dominio, número de contacto, estado de analítica y token opcional de verificación.
+
+La consecuencia principal es que un cambio futuro de dominio no debe resolverse editando manualmente decenas de HTML, canonical, Open Graph, sitemap y robots. La capa v5.0 deriva esos elementos desde esta configuración.
+
+## Dominio personalizado y Search Console
+
+La release está preparada para dominio propio, pero no lo activa sin un dominio real.
+
+Cuando exista un dominio aprobado, el procedimiento canónico será:
+
+1. actualizar `base_url` con la URL HTTPS final;
+2. informar el hostname en `custom_domain`;
+3. configurar DNS en el proveedor del dominio;
+4. dejar que el constructor genere `CNAME` y sincronice canonical, `og:url`, sitemap, robots y contexto;
+5. ejecutar toda la matriz de calidad y el smoke live antes de mover `stable`.
+
+`CNAME` solo existe cuando `custom_domain` está configurado. El token de Search Console funciona de igual manera: `search_console_verification` permanece vacío y la meta de verificación solo se publica cuando se incorpora un valor real.
+
+## Runtime y estado público
+
+La capa v5.0 genera dos artefactos operativos:
+
+- `runtime-config.js`: configuración pública segura para JavaScript, sin secretos;
+- `site-status.json`: estado verificable de versión, URL, entorno, despliegue, canal de contacto, analítica y política de indexación del demo.
+
+Estos archivos permiten que el smoke post-deploy compruebe no solo que Pages responde, sino que está sirviendo la configuración que corresponde a la release actual.
+
+## Telemetría v5.0: preparada, pero sin transmisión
+
+`telemetry-v50.js` incorpora una capa de instrumentación first-party para preparar medición de funnel sin introducir todavía un proveedor externo.
+
+Actualmente registra únicamente en memoria del navegador, con un máximo acotado de eventos no identificadores:
+
+- `page_view`;
+- aperturas de CTA relevantes;
+- navegación hacia fichas, sectores, perspectivas o demos;
+- `lead_prepared` cuando el flujo de contacto prepara una referencia.
+
+La implementación base no utiliza:
+
+- `fetch`;
+- `XMLHttpRequest`;
+- `sendBeacon`;
+- cookies;
+- `localStorage`;
+- `sessionStorage` propio de telemetría;
+- píxeles ni scripts de analítica de terceros.
+
+`window.MeridianoTelemetry` expone el estado local para diagnóstico. Existe un punto de extensión `MeridianoAnalyticsAdapter`, pero solo podría transmitir si `analytics.enabled` se configura explícitamente en `true` con un proveedor e identificador válidos. La v5.0 mantiene `analytics.enabled=false` y `provider=none`.
+
+## Privacidad v1.1
+
+`privacidad.html` fue actualizada para reflejar con precisión el comportamiento técnico vigente.
+
+La política aclara que:
+
+- el formulario se procesa localmente y no se almacena en un servidor propio;
+- abrir WhatsApp no equivale a haber enviado la solicitud;
+- el mensaje se considera remitido cuando el usuario confirma el envío dentro de WhatsApp;
+- `sessionStorage` puede conservar durante la sesión únicamente contexto de navegación comercial ya utilizado por `page-context.js`;
+- la telemetría v5.0 permanece en memoria y no transmite eventos a terceros;
+- no se utilizan cookies, `localStorage`, píxeles o `sendBeacon` para esa instrumentación;
+- cualquier activación futura de analítica deberá reflejarse previamente en configuración y política.
+
+## Contacto operativo v4.9 preservado
+
+La v5.0 mantiene el flujo operativo validado en v4.9:
+
+- honeypot silencioso;
+- límites de longitud y saneamiento;
+- referencia `ML-YYYYMMDD-XXXXX`;
+- necesidad, contexto comercial y ruta de origen;
+- fallback si el navegador bloquea la nueva ventana;
 - acceso directo alternativo a WhatsApp;
-- mensajes de estado que distinguen correctamente entre “WhatsApp abierto” y “mensaje enviado”.
+- mensajes que distinguen correctamente entre abrir WhatsApp y enviar el mensaje.
 
-La solicitud solo se considera remitida cuando el usuario confirma el envío dentro de WhatsApp. La web no afirma una recepción que no pueda verificar.
+No se incorpora un backend o CRM ficticio.
 
-## Conversión y rutas
+## SEO y URLs canónicas
 
-`commercial-conversion-v44.js` conserva el contexto de planes, honorarios y fichas profundas y en v4.9 corrige la reconstrucción de URLs con fragmentos.
+`scripts/apply_production_v50.py` actúa como capa final después de v4.9 y sincroniza:
 
-Un enlace como:
+- canonical de páginas indexables;
+- `og:url`;
+- política `referrer=strict-origin-when-cross-origin`;
+- `sitemap.xml`;
+- `robots.txt`;
+- ruta pública usada por `page-context.js`;
+- verificación Search Console, únicamente si existe token;
+- `CNAME`, únicamente si existe dominio configurado.
 
-```text
-demo.html#documentos
-```
-
-se contextualiza correctamente como:
-
-```text
-demo.html?context=...&need=...#documentos
-```
-
-y no coloca la query después del fragmento.
+Las páginas `noindex` no reciben la instrumentación runtime pública. `demo.html` permanece fuera del sitemap.
 
 ## Arquitectura pública
 
@@ -65,33 +147,6 @@ y no coloca la query después del fragmento.
 - Centro de Demostración.
 - Meridiano Empresas con perfiles y datos ficticios, declarado `noindex,nofollow`.
 - Páginas legales, sitemap, robots, manifiesto y 404.
-
-## Calidad acumulada
-
-### v4.5 · Portada
-
-`ux-v45.css` y `scripts/apply_ux_v45.py` organizan la narrativa, reducen redundancias y simplifican navegación y CTA.
-
-### v4.6 · Fichas profundas
-
-`detail-v46.css`, `detail-v46.js` y `scripts/apply_detail_ux_v46.py` gobiernan las 16 fichas con navegación ejecutiva, CTA contextual, límites visibles y lectura completa sin JavaScript.
-
-### v4.7 · Editorial, sectores y demos
-
-`editorial-v47.css`, `editorial-v47.js`, `scripts/apply_editorial_ux_v47.py` y `scripts/normalize_editorial_v47.py` unifican Firma, Perspectivas, Sectores, Centro Demo y Meridiano Empresas.
-
-### v4.8 · Static-first, SEO y accesibilidad
-
-`quality-v48.css`, `scripts/apply_quality_v48.py`, `scripts/normalize_quality_v48.py` y `scripts/validate_quality_v48.py` consolidan HTML inicial, rutas, hero WebP, metadata, indexación, sitemap, ARIA, menú móvil y rendimiento.
-
-### v4.9 · Operación pública
-
-- `operations-v49.css`
-- `scripts/apply_operations_v49.py`
-- `scripts/validate_operations_v49.py`
-- `scripts/validate_live_v49.py`
-
-La validación v4.9 comprueba formulario, anti-bot, trazabilidad, contexto, fallback y reconstrucción de fragmentos. El smoke live consulta la URL desplegada y revisa portada, Firma, fichas, Perspectivas, Centro Demo, portal ficticio, JavaScript de conversión, sitemap y robots.
 
 ## Construcción canónica
 
@@ -112,32 +167,54 @@ python3 scripts/apply_quality_v48.py
 python3 scripts/normalize_quality_v48.py
 python3 scripts/apply_operations_v49.py
 python3 scripts/sync_public_version.py
+python3 scripts/apply_production_v50.py
 ```
 
-`pages.yml` repite la cadena y valida, entre otros controles:
+`Site Quality and Deploy` vuelve a ejecutar la cadena completa y exige diff cero antes de validar:
 
-- idempotencia de generadores;
-- HTML, rutas, IDs, anchors y recursos;
+- integridad HTML, rutas y recursos;
 - catálogo estático de 16 fichas;
-- conversión comercial;
+- conversión comercial v4.4;
 - UX v4.5, v4.6 y v4.7;
-- calidad v4.8;
+- calidad static-first v4.8;
 - operación pública v4.9;
+- **configuración de producción v5.0**;
 - selector guiado;
 - contexto y datos estructurados;
 - Firma, Perspectivas y Sectores;
-- identidad visual;
-- sintaxis JavaScript y JSON;
-- respuesta real del sitio desplegado.
+- sistema visual;
+- JavaScript;
+- JSON.
 
-## Identidad y SEO
+Después del deploy, `scripts/validate_live_v50.py` consulta la URL realmente servida y comprueba `site-status.json`, portada, canonical, Firma, fichas, Perspectivas, Privacidad, Demo, runtime, telemetría, conversión, sitemap y robots. `stable` solo se mueve después de superar este smoke.
 
-La identidad canónica continúa basada en la M arquitectónica de Meridiano Legal, azul marino, marfil y dorado. La portada conserva hero WebP priorizado, `lang="es-CO"`, canonical, Open Graph, Twitter Card y JSON-LD. `demo.html` permanece fuera del sitemap y declara `noindex,nofollow`.
+## Incidencias detectadas durante el cierre v5.0
 
-## Desarrollo local
+Las barreras automáticas bloquearon correctamente varios estados intermedios antes de publicación:
 
-Puede abrirse `index.html` para una revisión básica. Para reproducir el comportamiento de Pages, se recomienda servir el repositorio con un servidor estático y ejecutar previamente la cadena canónica completa.
+1. una carrera inicial dejó `version.json` temporalmente separado del resto del paquete; el cambio completo se reconstruyó sobre el HEAD nuevo sin forzar `main`;
+2. la primera salida v5.0 no era idempotente por la posición de `meta referrer` y whitespace de la nueva sección de privacidad;
+3. una segunda pasada reveló el caso específico de `<head>` compactados; el normalizador se hizo determinista desde la primera ejecución;
+4. el validador visual legado seguía exigiendo la etiqueta “Web demostrativa” en la portada pública; se alineó con `version.json.channel`, manteniendo “Web pública” para el sitio y “Web demostrativa” para componentes demo.
 
-## Dependencias externas pendientes
+Ninguno de estos controles fue desactivado. La release solo se publicó cuando la construcción produjo diff cero y toda la matriz quedó verde.
 
-La web está preparada para operar sobre GitHub Pages. Un dominio personalizado, correo transaccional, CRM o analítica de terceros solo deben incorporarse cuando exista una decisión explícita sobre proveedor, dominio, tratamiento de datos y configuración. v4.9 no introduce dependencias externas implícitas.
+## Flujo operativo
+
+- `main`: código vigente y fuente de publicación.
+- `stable`: último commit que pasó construcción, idempotencia, validadores, GitHub Pages y smoke live.
+- Los cambios funcionales activan `Build canonical public site`.
+- Los cambios documentales o de QA pueden pasar directamente por `Site Quality and Deploy` cuando no requieren regenerar salidas.
+- Pages despliega únicamente una versión validada.
+- `stable` solo avanza después de verificar la URL pública.
+
+## Próximas activaciones externas
+
+La infraestructura queda preparada, pero estas decisiones requieren datos reales antes de ejecutarse:
+
+- dominio personalizado y DNS;
+- Google Search Console y su token de verificación;
+- analítica real y privacy-friendly, con proveedor e identificador definidos;
+- CRM, formulario backend o correo transaccional, si se decide utilizar un canal adicional a WhatsApp.
+
+No deben activarse únicamente para “completar” la arquitectura: cada integración debe tener propósito, configuración verificable, tratamiento de datos documentado y prueba de extremo a extremo.

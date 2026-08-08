@@ -1,5 +1,51 @@
 # Historial de versiones
 
+## v5.0.0 — 2026-08-08
+
+### Configuración pública y dominio-ready
+
+- Se creó `site-config.json` como fuente única para URL pública, despliegue, entorno, dominio personalizado, WhatsApp, analítica y verificación de buscadores.
+- `scripts/site_config.py` valida que `base_url` sea HTTPS absoluta, que la ruta pública sea coherente, que un eventual dominio personalizado coincida con el host y que los parámetros externos no queden parcialmente configurados.
+- La URL pública vigente continúa siendo `https://arendon7.github.io/MERDIANOLEGAL/`; `custom_domain` permanece vacío y no se creó un dominio ficticio.
+- `scripts/apply_production_v50.py` deriva desde la configuración los canonical, `og:url`, `robots.txt`, `sitemap.xml`, la ruta pública de `page-context.js` y el estado runtime.
+- `CNAME` se genera únicamente si existe un `custom_domain` real configurado; en la base v5.0 no existe.
+- Se dejó preparado `search_console_verification`, pero permanece vacío. La meta de verificación solo se incorpora si existe un token real.
+- La portada pasa a declarar `Web pública v5.0.0`; los componentes orientados a demostración conservan deliberadamente la etiqueta `Web demostrativa v5.0.0`.
+
+### Runtime, estado y telemetría
+
+- Se añadió `runtime-config.js` como representación pública y segura de la configuración de ejecución, sin secretos.
+- Se añadió `site-status.json` para exponer de forma verificable versión, URL base, entorno, despliegue, estado de dominio, analítica, canal de contacto y política de indexación del demo.
+- Se añadió `telemetry-v50.js` como bus de eventos first-party en memoria del navegador para `page_view`, CTA relevantes y `lead_prepared`.
+- La telemetría base no utiliza `fetch`, `XMLHttpRequest`, `sendBeacon`, cookies, `localStorage`, `sessionStorage` propio, píxeles ni proveedores externos.
+- `analytics.enabled` permanece en `false`, `provider` en `none` y `site_id` vacío; no se activó analítica de terceros sin una decisión y configuración reales.
+- Se dejó un punto de extensión para un futuro `MeridianoAnalyticsAdapter`, condicionado a que la configuración pública habilite expresamente un proveedor válido.
+
+### Privacidad y contacto
+
+- `privacidad.html` se actualizó a versión 1.1 para reflejar el comportamiento técnico real de la web.
+- La política aclara que el formulario se procesa localmente, que abrir WhatsApp no equivale a enviar el mensaje y que la web no conserva una copia del formulario en un servidor propio.
+- Se documentó el uso ya existente de `sessionStorage` exclusivamente para conservar contexto comercial de navegación durante la sesión.
+- Se documentó que la instrumentación v5.0 mantiene eventos no identificadores solo en memoria y que la analítica de terceros está actualmente desactivada.
+- Se conservó íntegro el flujo operativo v4.9: referencia única, saneamiento, honeypot, contexto, fallback y WhatsApp como canal real.
+
+### Construcción, validación y despliegue
+
+- Se añadieron `scripts/validate_production_v50.py` y `scripts/validate_live_v50.py`.
+- La construcción canónica aplica ahora v5.0 después de v4.9 y de la sincronización visible de versión.
+- El control de calidad repite toda la cadena v4.1→v5.0 y exige diff cero antes de validar y desplegar.
+- El validador v5.0 comprueba configuración, runtime, status, canonical, `og:url`, robots, sitemap, privacidad, CNAME, Search Console condicional, telemetría sin red y sintaxis JavaScript.
+- El smoke live v5.0 consulta la URL realmente servida y comprueba `site-status.json`, portada, Firma, una ficha de servicio, una ficha de producto, Perspectivas, Privacidad, Demo, runtime, telemetría, conversión, sitemap y robots.
+- `stable` continúa condicionado al smoke post-deploy; un despliegue interno exitoso no basta para promover la versión.
+
+### Barreras detectadas y correcciones
+
+- Una carrera inicial movió temporalmente `version.json` antes de incorporar el paquete completo; se reconstruyó el cambio sobre el HEAD generado más reciente sin forzar `main`.
+- La primera salida canónica v5.0 fue bloqueada por idempotencia: `meta referrer` cambiaba de posición y la nueva subsección de privacidad acumulaba diferencias de whitespace.
+- Se estabilizó la subsección de privacidad y la posición de `referrer`; una segunda ejecución identificó además el caso de cabeceras HTML compactadas, que fue normalizado para producir desde la primera pasada un orden determinista.
+- El validador visual legado exigía “Web demostrativa” en la portada. Se actualizó para derivar la etiqueta esperada desde `version.json.channel`, manteniendo un control semántico más preciso.
+- No se deshabilitó ninguna barrera. La ejecución técnica final aprobó idempotencia, 39 páginas, 16 fichas, conversión, UX v4.5–v4.7, calidad v4.8, operación v4.9, producción v5.0, selector, contexto, editorial, visual, JavaScript y JSON; GitHub Pages desplegó, el smoke v5.0 fue verde y `stable` se sincronizó.
+
 ## v4.9.0 — 2026-08-08
 
 ### Preparación para operación pública
