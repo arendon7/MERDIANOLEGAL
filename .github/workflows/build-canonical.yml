@@ -6,6 +6,10 @@ on:
     paths:
       - version.json
       - site-config.json
+      - package.json
+      - .gitignore
+      - playwright.config.mjs
+      - tests/e2e/**
       - catalog-v32.js
       - catalog-products-v41/**
       - catalog-services-v42/**
@@ -49,6 +53,7 @@ on:
       - scripts/finalize_growth_v51.py
       - scripts/apply_cro_v52.py
       - scripts/apply_authority_v53.py
+      - scripts/validate_browser_v54.py
       - scripts/sync_public_version.py
       - .github/workflows/build-canonical.yml
   workflow_dispatch:

@@ -1,0 +1,12 @@
+{
+  "name": "meridiano-legal-browser-qa",
+  "version": "5.4.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.55.0"
+  }
+}
