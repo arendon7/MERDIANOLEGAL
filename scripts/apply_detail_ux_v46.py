@@ -23,8 +23,17 @@ TOC = '''<!-- DETAIL-V46-NAV:START -->
 <!-- DETAIL-V46-NAV:END -->'''
 
 
-def remove_managed(text: str, start: str, end: str) -> str:
-    return re.sub(r'\s*' + re.escape(start) + r'[\s\S]*?' + re.escape(end) + r'\s*', '\n', text, count=1)
+def remove_managed_block(text: str, start: str, end: str) -> str:
+    pattern = (
+        r'(?ms)^[ \t]*' + re.escape(start) + r'[ \t]*\r?\n'
+        r'.*?'
+        r'^[ \t]*' + re.escape(end) + r'[ \t]*(?:\r?\n)?'
+    )
+    return re.sub(pattern, '', text, count=1)
+
+
+def remove_managed_line(text: str, tag: str) -> str:
+    return re.sub(r'(?m)^[ \t]*' + re.escape(tag) + r'[ \t]*(?:\r?\n)?', '', text)
 
 
 def replace_one(text: str, pattern: str, replacement: str, label: str) -> str:
@@ -49,27 +58,27 @@ def patch(path: Path) -> None:
         f'acciones de cabecera de {path.name}',
     )
 
-    text = remove_managed(text, NAV_START, NAV_END)
+    text = remove_managed_block(text, NAV_START, NAV_END)
     hero_anchor = '<!-- STATIC-CATALOG-HERO:END --></section>'
     if hero_anchor not in text:
         raise RuntimeError(f'{path.name}: falta cierre canónico del hero')
     text = text.replace(hero_anchor, hero_anchor + '\n' + TOC, 1)
 
-    text = remove_managed(text, MOBILE_START, MOBILE_END)
+    text = remove_managed_block(text, MOBILE_START, MOBILE_END)
     title_match = re.search(r'data-page-title="([^"]+)"', text)
     title = title_match.group(1) if title_match else 'esta solución'
     message = quote(f'Hola, revisé {title} en Meridiano Legal y quiero evaluar si aplica a mi necesidad.')
-    mobile = f'''<!-- DETAIL-V46-MOBILE:START -->\n<div class="detail-mobile-cta-v46" aria-label="Acciones rápidas de la ficha"><a href="#contacto">Presentar necesidad</a><a href="https://wa.me/573008507813?text={message}" target="_blank" rel="noopener noreferrer">WhatsApp</a></div>\n<!-- DETAIL-V46-MOBILE:END -->'''
-    floating = '<div class="floating-detail">'
+    mobile = f'''  <!-- DETAIL-V46-MOBILE:START -->\n  <div class="detail-mobile-cta-v46" aria-label="Acciones rápidas de la ficha"><a href="#contacto">Presentar necesidad</a><a href="https://wa.me/573008507813?text={message}" target="_blank" rel="noopener noreferrer">WhatsApp</a></div>\n  <!-- DETAIL-V46-MOBILE:END -->'''
+    floating = '  <div class="floating-detail">'
     if floating not in text:
         raise RuntimeError(f'{path.name}: falta control flotante canónico')
-    text = text.replace(floating, mobile + '\n  ' + floating, 1)
+    text = text.replace(floating, mobile + '\n' + floating, 1)
 
     text = re.sub(r'Ficha v\d+\.\d+\.\d+', f'Ficha v{VERSION}', text)
 
-    text = re.sub(r'\s*<link rel="stylesheet" href="\.\./detail-v46\.css">\s*', '\n', text)
+    text = remove_managed_line(text, STYLE)
     text = text.replace('</head>', f'  {STYLE}\n</head>', 1)
-    text = re.sub(r'\s*<script defer src="\.\./detail-v46\.js"></script>\s*', '\n', text)
+    text = remove_managed_line(text, SCRIPT)
     text = text.replace('</body>', f'  {SCRIPT}\n</body>', 1)
 
     path.write_text(text, encoding='utf-8')
