@@ -15,6 +15,7 @@ on:
       - detail-v46.js
       - editorial-v47.css
       - editorial-v47.js
+      - quality-v48.css
       - visual-v39.css
       - visual-v39.js
       - assets/**
@@ -28,6 +29,7 @@ on:
       - scripts/apply_detail_ux_v46.py
       - scripts/apply_editorial_ux_v47.py
       - scripts/normalize_editorial_v47.py
+      - scripts/apply_quality_v48.py
       - scripts/sync_public_version.py
       - .github/workflows/build-canonical.yml
   workflow_dispatch:
@@ -68,6 +70,8 @@ jobs:
         run: |
           python3 scripts/apply_editorial_ux_v47.py
           python3 scripts/normalize_editorial_v47.py
+      - name: Apply final quality polish v4.8
+        run: python3 scripts/apply_quality_v48.py
       - name: Synchronize public version
         run: python3 scripts/sync_public_version.py
       - name: Commit canonical outputs
@@ -78,7 +82,7 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A -- assets index.html firma.html perspectivas.html experiencia.html demo.html 404.html aviso-legal.html privacidad.html terminos.html catalog-home-v32.js decision-flow.js servicios productos perspectivas sectores page-context.js manifest.webmanifest scripts/build_catalog_shells.py
+          git add -A -- assets index.html firma.html perspectivas.html experiencia.html demo.html 404.html aviso-legal.html privacidad.html terminos.html catalog-home-v32.js decision-flow.js site-v3.js sitemap.xml servicios productos perspectivas sectores page-context.js manifest.webmanifest scripts/build_catalog_shells.py
           git commit -m "build: sincroniza sitio público canónico"
           git pull --rebase origin main
           git push origin HEAD:main
