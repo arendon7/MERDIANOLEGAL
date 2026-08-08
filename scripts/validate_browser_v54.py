@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Valida Browser E2E, correcciones runtime/responsive y gate previo a stable de v5.4."""
+"""Valida Browser E2E, correcciones runtime/responsive y gate previo a stable de v5.4+."""
 from pathlib import Path
 import json
 import re
@@ -19,11 +19,13 @@ def require(condition: bool, message: str) -> None:
 
 
 def main() -> int:
-    require(semver(V.get("version", "")) >= (5, 4, 0), "version.json debe ser >= 5.4.0")
+    version = semver(V.get("version", ""))
+    require(version >= (5, 4, 0), "version.json debe ser >= 5.4.0")
 
     package = json.loads((R / "package.json").read_text(encoding="utf-8"))
     require(package.get("private") is True, "package.json debe ser privado")
-    require(package.get("devDependencies", {}).get("@playwright/test") == "1.55.0", "Playwright debe estar fijado en 1.55.0")
+    expected_playwright = "1.62.0" if version >= (5, 5, 0) else "1.55.0"
+    require(package.get("devDependencies", {}).get("@playwright/test") == expected_playwright, f"Playwright debe estar fijado en {expected_playwright}")
     require(package.get("scripts", {}).get("test:e2e") == "playwright test", "falta script test:e2e")
 
     config = (R / "playwright.config.mjs").read_text(encoding="utf-8")

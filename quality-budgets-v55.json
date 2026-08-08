@@ -1,0 +1,20 @@
+{
+  "version": "5.5.0",
+  "mode": "mobile-lab",
+  "budgets": {
+    "performanceScoreMin": 0.7,
+    "accessibilityScoreMin": 0.9,
+    "largestContentfulPaintMsMax": 4000,
+    "cumulativeLayoutShiftMax": 0.15,
+    "totalBlockingTimeMsMax": 350,
+    "totalByteWeightMax": 1500000
+  },
+  "surfaces": [
+    {"id": "home", "path": ""},
+    {"id": "solution-ai", "path": "soluciones/gobernar-inteligencia-artificial-empresa.html"},
+    {"id": "product-ai", "path": "productos/programa-gobernanza-ia.html"},
+    {"id": "sector-tech", "path": "sectores/tecnologia-software-ia.html"},
+    {"id": "perspective-ai", "path": "perspectivas/gobierno-juridico-inteligencia-artificial.html"},
+    {"id": "demo", "path": "demo.html"}
+  ]
+}

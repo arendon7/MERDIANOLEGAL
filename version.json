@@ -1,8 +1,8 @@
 {
   "name": "Meridiano Legal Web",
-  "version": "5.4.0",
+  "version": "5.5.0",
   "release_date": "2026-08-08",
-  "channel": "github-pages-public-browser-qa-ready",
-  "commit_scope": "browser-e2e-responsive-conversion-qa",
+  "channel": "github-pages-public-performance-accessibility-ready",
+  "commit_scope": "performance-accessibility-lighthouse-axe-quality-gates",
   "source_baseline": "main"
 }

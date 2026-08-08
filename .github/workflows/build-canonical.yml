@@ -7,6 +7,8 @@ on:
       - version.json
       - site-config.json
       - package.json
+      - package-lock.json
+      - quality-budgets-v55.json
       - .gitignore
       - playwright.config.mjs
       - tests/e2e/**
@@ -54,8 +56,11 @@ on:
       - scripts/apply_cro_v52.py
       - scripts/apply_authority_v53.py
       - scripts/validate_browser_v54.py
+      - scripts/run_quality_v55.mjs
+      - scripts/validate_quality_v55.py
       - scripts/sync_public_version.py
       - .github/workflows/build-canonical.yml
+      - .github/workflows/pages.yml
   workflow_dispatch:
 
 concurrency:
@@ -68,12 +73,14 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 10
     steps:
       - name: Checkout current main
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
+      - name: Generate QA dependency lockfile v5.5
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
       - name: Generate catalog shells
         run: python3 scripts/build_catalog_shells.py
       - name: Pre-render product catalog
@@ -122,7 +129,7 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A -- assets index.html firma.html perspectivas.html experiencia.html demo.html 404.html aviso-legal.html privacidad.html terminos.html catalog-home-v32.js decision-flow.js site-v3.js page-context.js sitemap.xml robots.txt runtime-config.js site-status.json manifest.webmanifest servicios productos perspectivas sectores soluciones scripts/build_catalog_shells.py
+          git add -A -- package-lock.json assets index.html firma.html perspectivas.html experiencia.html demo.html 404.html aviso-legal.html privacidad.html terminos.html catalog-home-v32.js decision-flow.js site-v3.js page-context.js sitemap.xml robots.txt runtime-config.js site-status.json manifest.webmanifest servicios productos perspectivas sectores soluciones scripts/build_catalog_shells.py
           if [ -e CNAME ] || git ls-files --error-unmatch CNAME >/dev/null 2>&1; then
             git add -A -- CNAME
           fi

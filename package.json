@@ -1,12 +1,18 @@
 {
   "name": "meridiano-legal-browser-qa",
-  "version": "5.4.0",
+  "version": "5.5.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "audit:quality": "node scripts/run_quality_v55.mjs"
   },
   "devDependencies": {
-    "@playwright/test": "1.55.0"
+    "@axe-core/playwright": "4.12.1",
+    "@playwright/test": "1.62.0",
+    "lighthouse": "13.4.1"
   }
 }
