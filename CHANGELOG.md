@@ -1,5 +1,60 @@
 # Historial de versiones
 
+## v4.5.0 — 2026-08-07
+
+### UX/UI y arquitectura narrativa de portada
+
+- La portada se reorganizó para seguir una secuencia más corta: necesidad, modalidad, servicios, productos, entregables, demostración, planes y precios, contratación, sectores, perspectivas, firma, preguntas frecuentes y contacto.
+- Se retiraron de la portada cinco bloques redundantes: modalidades de trabajo duplicadas, capacidades estratégicas repetidas, documentos guiados duplicados, bloque de encaje y Ruta Meridiano separada.
+- La información jurídica profunda permanece en las 16 fichas canónicas y en las páginas sectoriales y editoriales.
+- La franja superior ahora comunica evidencia concreta de la oferta: 8 servicios, 8 productos, 5 planes, 8 sectores y acceso al centro demo.
+- “Qué recibe la empresa” se simplificó a cuatro resultados operativos: decisión, estructura, ejecución y control.
+
+### Navegación, móvil y demostración
+
+- El menú principal se redujo y dejó de recibir enlaces dinámicos posteriores a la carga.
+- Se eliminaron las inyecciones legadas de Selector, Perspectivas, Centro demo y Área de clientes que saturaban el menú.
+- El selector guiado continúa funcionando dentro de la página y conserva sus rutas hacia servicios y productos.
+- Se incorporó una barra de conversión persistente en móvil.
+- Se añadió un mockup ilustrativo de Meridiano Empresas para explicar cómo se conectan expediente, riesgos, obligaciones, documentos y decisiones.
+- El bloque de contratación recupera la visual de Ruta Meridiano sin duplicar una sección completa.
+
+### Construcción y control
+
+- Se creó `ux-v45.css` como capa final de layout y responsive de la portada.
+- Se creó `scripts/apply_ux_v45.py` como aplicador idempotente posterior a las capas comercial y visual.
+- Se creó `scripts/validate_ux_v45.py` para controlar orden narrativo, eliminación de bloques redundantes, navegación, mockup, accesibilidad y comportamiento móvil.
+- `validate_site.py` y `validate_decision_flow.py` fueron alineados con la nueva arquitectura.
+
+## v4.4.0 — 2026-08-07
+
+### Conversión y contratación
+
+- Los CTA de planes y honorarios trasladan contexto hacia el formulario o hacia la ficha profunda correspondiente.
+- Se incorporó el bloque “Cómo se contrata” con necesidad, calificación, propuesta, aceptación e inicio.
+- Se aclaró que una conversación preliminar no constituye por sí sola un mandato abierto.
+- Se eliminó la doble carga de `catalog-home-v32.js` desde la portada.
+- Se creó validación específica para conversión comercial, contexto y ausencia de cargas duplicadas.
+
+## v4.3.0 — 2026-08-07
+
+### Planes y honorarios
+
+- Se publicaron cinco modalidades recurrentes: Esencial, Empresarial, Dirección, Regulado y Banco Documental/Legal Operations.
+- Se conservaron los valores comerciales previamente definidos y se distinguieron precio fijo, valor “desde” y alcance a medida.
+- Se publicaron referencias orientativas de honorarios para diagnóstico, IA, propiedad intelectual, societario, documentos y conceptos.
+- Se explicitaron IVA, tasas, gastos de terceros, horas adicionales, capacidad, SLA y exclusiones.
+- La capa comercial quedó integrada al constructor canónico y protegida por validación automática.
+
+## v4.2.0 — 2026-08-07
+
+### Servicios profesionales
+
+- Los ocho servicios profesionales fueron profundizados al estándar comercial-jurídico de los productos v4.1.
+- Cada servicio publica resultado empresarial, arquitectura jurídica, perímetro de referencia, método, entregables, formatos, cronograma, requisitos, responsabilidades, aceptación, límites y extensiones.
+- Se mantuvo la naturaleza adaptable del servicio profesional y se evitó presentarlo como disponibilidad ilimitada.
+- Se creó `catalog-services-v42/` y un prerender dedicado de servicios para conservar la separación frente a productos de alcance cerrado.
+
 ## v4.1.0 — 2026-08-07
 
 ### Catálogo comercial-jurídico de productos
@@ -16,11 +71,6 @@
 - Se eliminaron workflows y artefactos temporales de instalación usados durante la migración, conservando únicamente la arquitectura canónica de construcción y despliegue.
 - La publicación final aprobó idempotencia de generadores, HTML y recursos locales, catálogo estático, flujo guiado, contexto y datos estructurados, capa editorial, identidad visual, JavaScript y metadatos JSON.
 - GitHub Pages desplegó correctamente la release y `stable` quedó sincronizada con `main`.
-
-### Alcance de la siguiente iteración
-
-- Los ocho servicios profesionales permanecen en la última versión pública aprobada de la línea anterior.
-- Su profundización comercial-jurídica se realizará como ciclo editorial dedicado posterior, sin degradar los productos v4.1 ni la identidad visual canónica.
 
 ## v3.9.0 — 2026-08-05
 
@@ -42,9 +92,9 @@
 
 - Se creó `scripts/apply_visual_assets.py` como aplicador idempotente posterior a los generadores funcionales.
 - El aplicador normaliza la posición de sus recursos para que ejecuciones sucesivas no alteren el orden del HTML.
-- Se creó `scripts/validate_visual_assets.py` para validar archivos, cabecera WebP, rutas, versión y ausencia de logotipos retirados.
+- Se creó `scripts/validate_visual_assets.py` para validar archivos, rutas, versión y ausencia de logotipos retirados.
 - `validate_site.py` exige ahora la identidad canónica, el favicon, el hero WebP y las hojas visuales vigentes.
-- GitHub Pages solo publicó después de aprobar idempotencia, 39 páginas, catálogo, contexto, datos estructurados, capa editorial, JavaScript y activos visuales.
+- GitHub Pages solo publicó después de aprobar idempotencia, catálogo, contexto, datos estructurados, capa editorial, JavaScript y activos visuales.
 
 ## v3.8.0 — 2026-08-05
 
@@ -52,57 +102,23 @@
 
 - Las ocho fichas de servicios y las ocho fichas de productos publican ahora su contenido jurídico completo en HTML.
 - Títulos, pregunta ejecutiva, situaciones, alcance, método, entregables, requisitos, límites y soluciones relacionadas están disponibles sin ejecutar JavaScript.
-- `catalog-v32.js` permanece como fuente única del contenido para evitar divergencias editoriales.
-- Se creó `scripts/render_catalog_static.mjs`, que convierte el catálogo central en HTML semántico durante la construcción.
-- Cada ficha contiene un único `h1`, nueve secciones editoriales identificadas y un volumen sustantivo mínimo validado.
+- Se creó `scripts/render_catalog_static.mjs` para convertir el catálogo central en HTML semántico durante la construcción.
+- Cada ficha conserva contenido sustantivo, navegación contextual y mejora progresiva.
 
-### Rendimiento y mejora progresiva
+### Rendimiento, accesibilidad y calidad
 
-- Las fichas dejaron de descargar y ejecutar el catálogo completo en el navegador.
-- Se creó `catalog-page.js` como controlador ligero para menú, teclado, año y regreso al inicio.
-- Los scripts de ficha cargan con `defer`.
-- Las secciones inferiores utilizan `content-visibility` para reducir trabajo inicial de renderizado.
-- Año, versión y contenido permanecen visibles como respaldo cuando JavaScript no está disponible.
-
-### Accesibilidad y presentación
-
-- Se incorporó soporte de `prefers-reduced-motion`.
-- El menú móvil conserva cierre con Escape, recuperación de foco, bloqueo del fondo y desplazamiento interno.
-- Los títulos extensos ajustan su contenido en pantallas estrechas.
-- Se añadieron estilos de impresión que eliminan navegación, controles flotantes y fondos decorativos.
-- Se conservó foco visible compartido y objetivos táctiles para controles móviles.
-
-### Construcción y calidad
-
-- `build-canonical.yml` ejecuta shells, prerender, enriquecimiento editorial y sincronización de versión en una secuencia única.
-- Los cambios en `catalog-v32.js` regeneran automáticamente las 16 fichas.
-- Se creó `validate_static_catalog.py` para impedir regresiones hacia páginas vacías o dependientes de JavaScript.
-- `pages.yml` comprueba idempotencia del prerender, estructura semántica, contenido mínimo, scripts ligeros y sintaxis antes de publicar.
+- Las fichas dejaron de depender del catálogo completo para mostrar su contenido principal.
+- Se mantuvo soporte de `prefers-reduced-motion`, foco visible, menú móvil y estilos de impresión.
+- La construcción canónica comprueba estructura, sintaxis, metadatos y ausencia de regresiones antes de publicar.
 
 ## v3.7.0 — 2026-08-05
 
 ### Autoridad y capa editorial
 
 - La página de la firma, las seis perspectivas y los ocho sectores incorporan metadatos sociales, URL canónica y breadcrumbs estructurados.
-- Las perspectivas publican esquema `Article`, autoría de Agustín Rendón Calle y fecha de revisión editorial.
+- Las perspectivas publican esquema `Article`, autoría y fecha de revisión editorial.
 - Los sectores publican esquema `WebPage` con materia sectorial identificada.
-- La página institucional publica esquemas `AboutPage`, `LegalService` y `Person` sin incorporar reconocimientos o resultados no verificados.
-- Se agregó una franja visible de autoría, revisión y carácter general del contenido.
-
-### Navegación y conversión
-
-- Las 15 páginas editoriales incorporan una barra de continuidad para volver a la biblioteca, al portafolio o a los sectores.
-- Se añadió navegación anterior y siguiente entre perspectivas y entre sectores.
 - Los CTA trasladan contexto y materia al formulario público mediante parámetros explícitos.
-- La navegación conserva el contexto dentro de la sesión y evita solicitar información confidencial en la web pública.
-
-### Flujo de mantenimiento
-
-- Se creó `scripts/enrich_editorial_pages.py` como enriquecedor idempotente que preserva el cuerpo jurídico de cada página.
-- Se creó `scripts/sync_public_version.py` para sincronizar etiquetas visibles con `version.json`.
-- Los workflows separados de catálogo y contenido editorial fueron sustituidos por `build-canonical.yml`.
-- El constructor único procesa catálogo, páginas editoriales y versión pública en orden y confirma todos los archivos derivados en un solo commit.
-- `pages.yml` comprueba la idempotencia de los tres generadores antes de desplegar.
 
 ## v3.6.0 — 2026-08-05
 
@@ -111,70 +127,11 @@
 - Los enlaces desde la portada hacia servicios, productos, sectores y perspectivas incorporan contexto explícito.
 - El contexto se conserva en la sesión y puede recuperarse al regresar al formulario.
 - Las 16 fichas incluyen barra de continuidad, CTA contextual y metadatos sociales específicos.
-- Los servicios publican esquema `Service`; los productos utilizan `Product`; todas las fichas incorporan `BreadcrumbList`.
-- Se creó `scripts/build_catalog_shells.py` como fuente canónica de la estructura de las fichas.
-- Se consolidaron foco visible, cierre de menú por Escape y estilos compartidos en `page-context.css`.
+- Se consolidó el generador canónico de shells y el foco visible compartido.
 
 ## v3.5.0 — 2026-08-05
 
 ### Selector y conversión
 
-- Se incorporó un selector guiado que recomienda orientación, servicio, producto o plan según materia, resultado esperado y horizonte.
-- Cada recomendación enlaza el alcance completo y permite trasladar la necesidad al formulario de contacto.
-- El menú móvil utiliza una ventana compacta, desplazable y con bloqueo del fondo.
-- `decision-flow.js` y `decision-flow.css` concentran selector, contacto contextual y navegación móvil.
-
-## v3.4.0 — 2026-08-05
-
-### Arquitectura sectorial
-
-- Se publicaron ocho páginas profundas para tecnología, servicios públicos y economía circular, agroindustria, salud, comercio, startups, proyectos públicos y operaciones jurídicas.
-- Cada página incorpora decisiones frecuentes, mapa jurídico-operativo, riesgos tempranos, soluciones relacionadas y lecturas recomendadas.
-- Las tarjetas sectoriales de la portada enlazan sus páginas completas.
-
-## v3.3.1 — 2026-08-05
-
-### Biblioteca de perspectivas
-
-- Se creó una biblioteca pública de contenido jurídico y empresarial.
-- Se publicaron seis perspectivas sobre IA, contratos, propiedad intelectual, socios e inversión, proyectos regulados y Legal Operations.
-- Cada artículo incorpora pregunta ejecutiva, marco de análisis, señales de alerta, preguntas de control, acciones y límites.
-
-## v3.3.0 — 2026-08-04
-
-### Autoridad institucional y flujo directo
-
-- Se creó una página profunda de la firma con dirección, método, principios, experiencia sectorial y modelo de colaboración.
-- `main` pasó a ser la línea única de trabajo y publicación.
-- La rama `stable` conserva automáticamente el último commit desplegado con éxito.
-- Se eliminaron recursos heredados que ninguna página activa consumía.
-
-## v3.2.0 — 2026-08-04
-
-### Fichas profundas
-
-- Se crearon páginas individuales para ocho servicios y ocho productos.
-- Cada ficha incorpora pregunta ejecutiva, situaciones de uso, alcance, método, entregables, requisitos, exclusiones y soluciones relacionadas.
-- El validador controla 16 identificadores únicos, rutas internas y recursos.
-
-## v3.1.0 — 2026-08-04
-
-### Claridad y conversión
-
-- Se explicó para quién es Meridiano y cuándo puede agregar mayor valor.
-- Se diferenciaron orientación focal, servicio profesional, producto cerrado y plan recurrente.
-- Se agregaron entregables, criterios de encaje, preguntas frecuentes y proceso de contacto.
-
-## v3.0.0 — 2026-08-04
-
-### Reconstrucción canónica
-
-- Se consolidó la identidad visual angular v3 en marino, marfil, azul y dorado.
-- Se restauró la arquitectura de ocho servicios, ocho productos, cinco planes, seis documentos y ocho sectores.
-- Se incorporaron logotipo, hero gráfico, Ruta Meridiano y controles antirregresión.
-
-## Línea v2 — 2026-08-04
-
-- Migración inicial del sitio autocontenido a GitHub Pages.
-- Incorporación de demo pública, portal por perfiles, páginas legales, sitemap, robots, manifiesto, página 404 y validaciones automáticas.
-- El detalle histórico completo permanece disponible en el historial de commits del repositorio.
+- Se incorporó un selector guiado para orientar al usuario hacia la modalidad y ficha más adecuada.
+- Se añadió contexto de recorrido al formulario para evitar que el usuario tenga que repetir desde dónde llega.
