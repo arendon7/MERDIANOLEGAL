@@ -9,6 +9,8 @@ on:
       - catalog-v32.js
       - catalog-products-v41/**
       - catalog-services-v42/**
+      - growth-solutions-v51.json
+      - growth-v51.css
       - commercial-v43.css
       - commercial-conversion-v44.js
       - ux-v45.css
@@ -37,6 +39,8 @@ on:
       - scripts/apply_operations_v49.py
       - scripts/site_config.py
       - scripts/apply_production_v50.py
+      - scripts/apply_growth_v51.py
+      - scripts/finalize_growth_v51.py
       - scripts/sync_public_version.py
       - .github/workflows/build-canonical.yml
   workflow_dispatch:
@@ -87,6 +91,10 @@ jobs:
         run: python3 scripts/sync_public_version.py
       - name: Apply production configuration v5.0
         run: python3 scripts/apply_production_v50.py
+      - name: Apply growth and decision-entry system v5.1
+        run: |
+          python3 scripts/apply_growth_v51.py
+          python3 scripts/finalize_growth_v51.py
       - name: Commit canonical outputs
         run: |
           if git diff --quiet; then
@@ -95,7 +103,7 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A -- assets index.html firma.html perspectivas.html experiencia.html demo.html 404.html aviso-legal.html privacidad.html terminos.html catalog-home-v32.js decision-flow.js site-v3.js page-context.js sitemap.xml robots.txt runtime-config.js site-status.json manifest.webmanifest servicios productos perspectivas sectores scripts/build_catalog_shells.py
+          git add -A -- assets index.html firma.html perspectivas.html experiencia.html demo.html 404.html aviso-legal.html privacidad.html terminos.html catalog-home-v32.js decision-flow.js site-v3.js page-context.js sitemap.xml robots.txt runtime-config.js site-status.json manifest.webmanifest servicios productos perspectivas sectores soluciones scripts/build_catalog_shells.py
           if [ -e CNAME ] || git ls-files --error-unmatch CNAME >/dev/null 2>&1; then
             git add -A -- CNAME
           fi

@@ -1,0 +1,215 @@
+{
+  "version": "5.1.0",
+  "solutions": [
+    {
+      "slug": "ordenar-riesgo-juridico-empresa",
+      "title": "Ordenar el riesgo jurídico de una empresa",
+      "short": "Ordenar el riesgo jurídico",
+      "eyebrow": "RIESGO JURÍDICO EMPRESARIAL",
+      "description": "Ruta para empresas que necesitan identificar, priorizar y cerrar brechas jurídicas antes de que afecten operación, crecimiento, inversión o gobierno.",
+      "intent": "La empresa creció, acumuló contratos, decisiones, obligaciones o documentos y ya no es evidente qué riesgo debe resolverse primero.",
+      "signals": [
+        "Contratos relevantes existen, pero no hay un inventario de obligaciones, vencimientos o responsables.",
+        "Las decisiones societarias, laborales, de datos o comerciales se atienden de forma reactiva y sin una priorización común.",
+        "La gerencia percibe exposición jurídica, pero no cuenta con una lectura consolidada de criticidad, evidencia y plan de cierre.",
+        "Una inversión, auditoría, negociación o expansión exige demostrar orden jurídico en un plazo definido."
+      ],
+      "questions": [
+        "¿Qué frentes pueden afectar continuidad, caja, gobierno, activos o reputación?",
+        "¿Qué hallazgos requieren corrección inmediata y cuáles pueden programarse?",
+        "¿Qué documentos, decisiones o evidencias faltan para cerrar cada riesgo?",
+        "¿Qué debe quedar bajo seguimiento recurrente después del diagnóstico?"
+      ],
+      "routes": [
+        {"name": "Auditoría Jurídica Empresarial Integral", "href": "../productos/diagnostico-juridico-empresarial.html", "summary": "Producto cerrado para revisar un perímetro definido, documentar hallazgos, criticidad y acciones correctivas."},
+        {"name": "Diagnóstico Jurídico Empresarial", "href": "../servicios/diagnostico-juridico-empresarial.html", "summary": "Servicio profesional para delimitar una necesidad, priorizar riesgos y definir la intervención adecuada."},
+        {"name": "Dirección Jurídica Externa", "href": "../servicios/direccion-juridica-externa.html", "summary": "Acompañamiento recurrente cuando el problema no termina en un informe y exige gobierno, seguimiento y capacidad jurídica."}
+      ],
+      "deliverables": [
+        "Mapa ejecutivo de asuntos, riesgos y dependencias.",
+        "Priorización por impacto, urgencia, evidencia y responsable.",
+        "Instrumentos correctivos o rutas de regularización dentro del alcance acordado.",
+        "Hoja de ruta con decisiones, responsables, fechas y condiciones de cierre."
+      ],
+      "limits": "No sustituye automáticamente litigios, trámites ante autoridades, auditorías tributarias o especialidades no incluidas. Cada frente se confirma en la propuesta y puede requerir terceros.",
+      "perspective": {"name": "Contratos administrables", "href": "../perspectivas/contratos-administrables.html"},
+      "sector": {"name": "Explorar experiencia sectorial", "href": "../index.html#sectores"},
+      "need": "Diagnóstico jurídico"
+    },
+    {
+      "slug": "direccion-juridica-externa-empresa",
+      "title": "Dirección jurídica externa para empresas",
+      "short": "Dirección jurídica externa",
+      "eyebrow": "CAPACIDAD JURÍDICA RECURRENTE",
+      "description": "Ruta para empresas que necesitan criterio jurídico continuo, priorización y seguimiento sin convertir cada asunto en una contratación aislada.",
+      "intent": "La gerencia tiene asuntos jurídicos recurrentes que atraviesan contratos, gobierno, obligaciones y decisiones, pero no justifica o no desea ampliar de inmediato su estructura interna.",
+      "signals": [
+        "La gerencia termina coordinando directamente contratos, abogados externos, vencimientos y pendientes jurídicos.",
+        "Cada asunto se resuelve por separado y no existe una agenda jurídica común con prioridades y responsables.",
+        "El abogado interno necesita capacidad senior o especialidades adicionales para decisiones concretas.",
+        "Se requiere continuidad en comités, negociación, seguimiento y memoria institucional."
+      ],
+      "questions": [
+        "¿Qué materias deben entrar en la capacidad recurrente y cuáles quedar por fuera?",
+        "¿Qué asuntos requieren SLA, comité, escalamiento o coordinación de especialistas?",
+        "¿Cómo se medirá consumo de capacidad, pendientes, vencimientos y decisiones?",
+        "¿Qué información debe mantenerse trazable para evitar dependencia de conversaciones aisladas?"
+      ],
+      "routes": [
+        {"name": "Dirección Jurídica Externa", "href": "../servicios/direccion-juridica-externa.html", "summary": "Servicio recurrente para triage, criterio, coordinación y seguimiento dentro de un perímetro acordado."},
+        {"name": "Plan Dirección", "href": "../index.html#planes", "summary": "Capacidad mensual de referencia para empresas que necesitan una función jurídica externa integrada con gerencia."},
+        {"name": "Legal Operations", "href": "../servicios/legal-operations.html", "summary": "Complemento cuando además de criterio jurídico se requiere ordenar solicitudes, procesos, documentos, obligaciones e indicadores."}
+      ],
+      "deliverables": [
+        "Agenda jurídica priorizada y mecanismo de triage.",
+        "Comités y decisiones documentadas con responsables y próximos hitos.",
+        "Seguimiento a contratos, obligaciones, riesgos y vencimientos incluidos.",
+        "Coordinación de especialistas externos cuando el asunto lo exija."
+      ],
+      "limits": "La dirección externa no equivale a disponibilidad ilimitada ni incorpora automáticamente litigios, trámites, impuestos o cualquier especialidad. Capacidad, SLA, canales y exclusiones se pactan expresamente.",
+      "perspective": {"name": "Legal Operations y modelo operativo jurídico", "href": "../perspectivas/legal-operations-modelo-operativo.html"},
+      "sector": {"name": "Transformación de operaciones jurídicas", "href": "../sectores/operaciones-juridicas.html"},
+      "need": "Dirección jurídica externa"
+    },
+    {
+      "slug": "gobernar-inteligencia-artificial-empresa",
+      "title": "Gobernanza jurídica de inteligencia artificial para empresas",
+      "short": "Gobernar el uso de IA",
+      "eyebrow": "INTELIGENCIA ARTIFICIAL",
+      "description": "Ruta para organizaciones que ya usan o planean usar IA y necesitan convertir casos de uso, datos, proveedores y supervisión en reglas jurídicas administrables.",
+      "intent": "La empresa está adoptando herramientas o desarrollando casos de IA y necesita gobernarlos antes de que el uso se disperse entre áreas, proveedores y datos sin criterios comunes.",
+      "signals": [
+        "Las áreas contratan o usan herramientas de IA sin inventario central de casos, datos o responsables.",
+        "No existen criterios claros para clasificar riesgo, aprobar usos o exigir supervisión humana.",
+        "Los contratos con proveedores no reflejan suficientemente datos, propiedad intelectual, seguridad, continuidad o auditoría.",
+        "La empresa necesita demostrar gobierno responsable ante clientes, socios, inversionistas o su propio órgano de administración."
+      ],
+      "questions": [
+        "¿Qué casos de uso existen y qué impacto pueden producir sobre personas, información, activos o decisiones?",
+        "¿Qué usos requieren prohibición, aprobación reforzada, supervisión o evidencia adicional?",
+        "¿Qué obligaciones deben trasladarse a contratos y proveedores?",
+        "¿Cómo se documentarán incidentes, cambios de modelo, decisiones y revisiones periódicas?"
+      ],
+      "routes": [
+        {"name": "Programa de Gobernanza Jurídica y Uso Responsable de IA", "href": "../productos/programa-gobernanza-ia.html", "summary": "Producto de alcance cerrado para construir un sistema básico de gobierno jurídico de IA."},
+        {"name": "Tecnología e Inteligencia Artificial", "href": "../servicios/tecnologia-inteligencia-artificial.html", "summary": "Servicio adaptable para casos, contratos, políticas, proveedores y decisiones tecnológicas específicas."},
+        {"name": "Seguimiento recurrente de IA", "href": "../index.html#honorarios", "summary": "Capacidad periódica cuando el inventario, los proveedores o el riesgo cambian de forma continua."}
+      ],
+      "deliverables": [
+        "Inventario y clasificación jurídica de casos de uso.",
+        "Reglas de aprobación, supervisión, incidentes y responsabilidades.",
+        "Criterios contractuales para proveedores, datos, activos y continuidad.",
+        "Hoja de implementación con responsables, evidencias y ciclos de revisión."
+      ],
+      "limits": "La gobernanza jurídica no sustituye evaluaciones técnicas de ciberseguridad, desempeño, sesgo, calidad de modelos o arquitectura tecnológica cuando sean necesarias. Esas capacidades deben coordinarse expresamente.",
+      "perspective": {"name": "Gobierno jurídico de inteligencia artificial", "href": "../perspectivas/gobierno-juridico-inteligencia-artificial.html"},
+      "sector": {"name": "Tecnología, software e IA", "href": "../sectores/tecnologia-software-ia.html"},
+      "need": "Gobernanza de IA"
+    },
+    {
+      "slug": "preparar-empresa-para-inversion",
+      "title": "Preparar una empresa para inversión y due diligence",
+      "short": "Prepararse para inversión",
+      "eyebrow": "INVERSIÓN Y GOBIERNO",
+      "description": "Ruta para fundadores y empresas que necesitan ordenar gobierno, capital, contratos y activos antes de abrir una ronda, recibir un inversionista o someterse a due diligence.",
+      "intent": "Existe una conversación de inversión, una ronda prevista o un proceso de crecimiento que exige demostrar titularidad, gobierno, documentación y capacidad de ejecutar acuerdos.",
+      "signals": [
+        "La estructura de capital o los acuerdos entre socios no reflejan con claridad derechos, decisiones, permanencia o salida.",
+        "Existen activos relevantes creados por fundadores, empleados o contratistas cuya cadena de titularidad debe probarse.",
+        "Contratos, libros, actas, poderes o información corporativa están dispersos o incompletos.",
+        "La empresa necesita anticipar preguntas de un inversionista antes de entrar a una revisión acelerada."
+      ],
+      "questions": [
+        "¿La estructura societaria y la documentación corporativa soportan la operación y la inversión proyectada?",
+        "¿La empresa puede demostrar titularidad y licencias sobre sus activos críticos?",
+        "¿Qué riesgos deben corregirse antes de abrir información a terceros?",
+        "¿Qué materias requieren negociación entre socios o condiciones precedentes para la inversión?"
+      ],
+      "routes": [
+        {"name": "Empresa Lista para Inversión", "href": "../productos/empresa-lista-para-inversion.html", "summary": "Producto cerrado para preparar documentación, riesgos y decisiones de un perímetro estándar de inversión."},
+        {"name": "Sociedades, Gobierno e Inversión", "href": "../servicios/sociedades-gobierno-inversion.html", "summary": "Servicio para estructurar capital, acuerdos, órganos, negociación y operaciones societarias específicas."},
+        {"name": "Activos Intangibles Protegidos", "href": "../productos/activos-intangibles-protegidos.html", "summary": "Complemento cuando software, marca, contenidos, know-how u otros activos son materiales para la inversión."}
+      ],
+      "deliverables": [
+        "Mapa de brechas de preparación para inversión.",
+        "Matriz de documentos corporativos, contratos y activos críticos.",
+        "Instrumentos societarios o correctivos incluidos en el alcance.",
+        "Ruta de cierre previa a data room, negociación o due diligence."
+      ],
+      "limits": "No garantiza financiación, valoración, aprobación del inversionista ni cierre de una transacción. Aspectos financieros, tributarios, contables o de banca de inversión requieren sus respectivos especialistas cuando correspondan.",
+      "perspective": {"name": "Socios, inversión y gobierno", "href": "../perspectivas/socios-inversion-gobierno.html"},
+      "sector": {"name": "Startups e inversión", "href": "../sectores/startups-inversion.html"},
+      "need": "Socios, gobierno o inversión"
+    },
+    {
+      "slug": "estructurar-proyecto-regulado",
+      "title": "Estructurar jurídicamente un proyecto regulado",
+      "short": "Estructurar un proyecto regulado",
+      "eyebrow": "PROYECTOS REGULADOS",
+      "description": "Ruta para proyectos cuya viabilidad depende de actividad, territorio, autoridades, permisos, contratos, actores y una secuencia de condiciones que debe poder ejecutarse.",
+      "intent": "El proyecto tiene una oportunidad técnica o comercial, pero su viabilidad jurídica depende de permisos, habilitaciones, competencias, contratos y actuaciones que no pueden analizarse como una lista independiente.",
+      "signals": [
+        "Hay varias autoridades, permisos o registros y no está clara la secuencia ni la dependencia entre ellos.",
+        "La estructura contractual se está negociando antes de confirmar condiciones regulatorias o territoriales críticas.",
+        "Participan actores públicos, privados, operadores, financiadores o propietarios con responsabilidades distintas.",
+        "El cronograma técnico depende de decisiones jurídicas que todavía no tienen responsable, evidencia o fecha de cierre."
+      ],
+      "questions": [
+        "¿Qué actividad exacta se ejecutará, dónde y bajo qué régimen?",
+        "¿Qué autoridades y habilitaciones condicionan el inicio, construcción, operación o comercialización?",
+        "¿Qué contratos deben reflejar condiciones precedentes, asignación de riesgo y salida?",
+        "¿Cómo se conecta la ruta jurídica con el cronograma técnico y financiero?"
+      ],
+      "routes": [
+        {"name": "Proyecto Regulado Jurídicamente Estructurado", "href": "../productos/proyecto-regulado-estructurado.html", "summary": "Producto cerrado para construir una arquitectura de viabilidad sobre un perímetro definido."},
+        {"name": "Estructuración Jurídica de Proyectos Regulados", "href": "../servicios/proyectos-regulados.html", "summary": "Servicio adaptable para permisos, autoridades, contratos, actores y decisiones de un proyecto específico."},
+        {"name": "Plan Regulado", "href": "../index.html#planes", "summary": "Seguimiento recurrente cuando permisos, obligaciones, contratos y autoridades requieren gobierno continuo."}
+      ],
+      "deliverables": [
+        "Mapa de actividad, territorio, autoridades, actores y habilitaciones.",
+        "Secuencia de decisiones y condiciones de viabilidad.",
+        "Matriz contractual y regulatoria con responsables y dependencias.",
+        "Cronograma jurídico conectado con hitos técnicos y evidencia."
+      ],
+      "limits": "La estructuración no garantiza permisos ni decisiones de autoridades y no sustituye estudios técnicos, ambientales, financieros o sectoriales que condicionen el proyecto. Las dependencias externas deben quedar expresamente identificadas.",
+      "perspective": {"name": "Secuencia de viabilidad en proyectos regulados", "href": "../perspectivas/proyectos-regulados-secuencia-viabilidad.html"},
+      "sector": {"name": "Servicios públicos, aseo y economía circular", "href": "../sectores/servicios-publicos-aseo-economia-circular.html"},
+      "need": "Proyecto regulado"
+    },
+    {
+      "slug": "ordenar-operacion-juridica",
+      "title": "Legal Operations: ordenar la operación jurídica",
+      "short": "Ordenar la operación jurídica",
+      "eyebrow": "LEGAL OPERATIONS",
+      "description": "Ruta para áreas jurídicas y empresas que necesitan convertir solicitudes, documentos, obligaciones, aprobaciones y métricas en un modelo operativo claro antes de automatizar.",
+      "intent": "El problema ya no es una consulta jurídica aislada: hay volumen de solicitudes, documentos, vencimientos y aprobaciones que dependen de personas, correos y memoria individual.",
+      "signals": [
+        "Las solicitudes llegan por múltiples canales y no existe triage ni prioridad común.",
+        "Las versiones de contratos y documentos se duplican y cuesta identificar cuál está aprobada.",
+        "Obligaciones, renovaciones, hitos y decisiones se siguen en archivos o conversaciones desconectadas.",
+        "La organización quiere automatizar, pero todavía no tiene definidos servicio, proceso, responsables y datos."
+      ],
+      "questions": [
+        "¿Qué tipos de demanda recibe la función jurídica y qué SLA necesita cada uno?",
+        "¿Qué decisiones, plantillas, aprobaciones y excepciones deben estandarizarse?",
+        "¿Qué obligaciones y evidencias requieren seguimiento sistemático?",
+        "¿Qué indicadores deben medir capacidad, tiempos, riesgo, calidad y adopción?"
+      ],
+      "routes": [
+        {"name": "Legal Operations y Transformación de la Función Jurídica", "href": "../servicios/legal-operations.html", "summary": "Servicio para diseñar demanda, procesos, documentos, métricas, herramientas y adopción."},
+        {"name": "Sistema Contractual Empresarial", "href": "../productos/sistema-contractual-empresarial.html", "summary": "Producto cerrado cuando el foco principal está en contratos, playbooks, plantillas y administración posterior a la firma."},
+        {"name": "Centro Demo", "href": "../experiencia.html", "summary": "Entorno ficticio para visualizar cómo expedientes, riesgos, obligaciones, documentos y decisiones pueden conectarse."}
+      ],
+      "deliverables": [
+        "Catálogo de demanda, canales, triage y responsables.",
+        "Flujos, estados, aprobaciones y criterios de escalamiento.",
+        "Arquitectura documental, obligaciones e indicadores.",
+        "Hoja de implementación tecnológica y gestión del cambio por etapas."
+      ],
+      "limits": "Automatizar no corrige por sí solo un modelo operativo indefinido. La selección o implementación de software, integraciones y desarrollo técnico se delimitan de forma independiente cuando formen parte del proyecto.",
+      "perspective": {"name": "Legal Operations y modelo operativo jurídico", "href": "../perspectivas/legal-operations-modelo-operativo.html"},
+      "sector": {"name": "Transformación de operaciones jurídicas", "href": "../sectores/operaciones-juridicas.html"},
+      "need": "Legal Operations"
+    }
+  ]
+}
