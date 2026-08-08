@@ -34,6 +34,7 @@ on:
       - scripts/apply_detail_ux_v46.py
       - scripts/apply_editorial_ux_v47.py
       - scripts/normalize_editorial_v47.py
+      - scripts/normalize_growth_compat_v51.py
       - scripts/apply_quality_v48.py
       - scripts/normalize_quality_v48.py
       - scripts/apply_operations_v49.py
@@ -85,6 +86,7 @@ jobs:
           python3 scripts/apply_detail_ux_v46.py
           python3 scripts/apply_editorial_ux_v47.py
           python3 scripts/normalize_editorial_v47.py
+          python3 scripts/normalize_growth_compat_v51.py
           python3 scripts/apply_quality_v48.py
           python3 scripts/normalize_quality_v48.py
           python3 scripts/apply_operations_v49.py
