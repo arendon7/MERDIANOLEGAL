@@ -1,6 +1,6 @@
 import { expect, test as base } from '@playwright/test';
 
-const benignConsoleFragments = [
+const benignResourceFragments = [
   'favicon.ico',
 ];
 
@@ -8,10 +8,17 @@ export const test = base.extend({
   runtimeGuard: [async ({ page }, use) => {
     const failures = [];
     page.on('pageerror', (error) => failures.push(`pageerror: ${error.message}`));
+    page.on('response', (response) => {
+      if (response.status() < 400) return;
+      const url = response.url();
+      if (benignResourceFragments.some((fragment) => url.includes(fragment))) return;
+      failures.push(`http.${response.status()}: ${url}`);
+    });
     page.on('console', (message) => {
       if (message.type() !== 'error') return;
       const text = message.text();
-      if (benignConsoleFragments.some((fragment) => text.includes(fragment))) return;
+      if (text.startsWith('Failed to load resource:')) return;
+      if (benignResourceFragments.some((fragment) => text.includes(fragment))) return;
       failures.push(`console.error: ${text}`);
     });
     await use(failures);

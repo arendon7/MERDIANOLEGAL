@@ -1,4 +1,4 @@
-:root{--visual-gold:#a88454;--visual-gold-light:#d9bc8b;--visual-navy:#13263a;--visual-deep:#091725;--visual-ivory:#f5f1e8}
+:root{--visual-gold:#a88454;--visual-gold-light:#d9bc8b;--visual-navy:#13263a;--visual-deep:#091725;--visual-ivory:#f5f1e8;--visual-gold-text:#7b592d;--visual-muted-text:#5f6d75}
 .brand img,.detail-brand img,.firm-brand img,.insight-brand img,.experience-header .brand img,.app-brand img,.detail-footer img,.insight-footer img{object-fit:contain}
 .hero-art{position:relative;overflow:hidden;min-height:520px;background:#0b1928;border:1px solid rgba(255,255,255,.12);box-shadow:0 28px 80px rgba(0,0,0,.22)}
 .hero-art>img.visual-home-hero{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;filter:saturate(.82) contrast(1.03)}
@@ -13,5 +13,11 @@
 .service-card,.product-card,.choice-card,.sector-card,.insight-card{position:relative;overflow:hidden}
 .service-card:before,.product-card:before,.choice-card:before,.sector-card:before,.insight-card:before{content:"";position:absolute;inset:0 0 auto;height:3px;background:linear-gradient(90deg,var(--visual-gold),transparent 72%);opacity:.72}
 .visual-brand-rule{height:1px;background:linear-gradient(90deg,transparent,var(--visual-gold),transparent);opacity:.55}
+/* QUALITY-V55-CONTRAST:START · el dorado permanece como acento; el texto pequeño usa tonos AA sobre fondos claros. */
+.eyebrow.dark,.dark.eyebrow{color:var(--visual-gold-text)!important}
+.principles span{color:var(--visual-muted-text)!important}
+.journey-bar>.container>span,.detail-toc-label-v46 span,.detail-section .detail-heading>.eyebrow,.executive-question>span,.sector-quicknav-v47>.container>span,.decision-grid article>span,.risk-grid article>span,.solution-grid article>span,.related-grid a>span,.authority-v53 .related-grid a>span,.demo-guide-grid-v47>strong{color:var(--visual-gold-text)!important}
+.demo-guide-grid-v47 article>span{color:var(--visual-muted-text)!important}
+/* QUALITY-V55-CONTRAST:END */
 @media(max-width:800px){.hero-art{min-height:390px}.hero-art>img.visual-home-hero{object-position:58% center}}
 @media(prefers-reduced-motion:reduce){.hero-art>img.visual-home-hero{filter:saturate(.82)}}
