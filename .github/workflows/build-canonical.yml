@@ -6,12 +6,13 @@ on:
     paths:
       - version.json
       - catalog-v32.js
-      - catalog-products-v41/**
+      - catalog-services-v42/**
       - visual-v39.css
       - visual-v39.js
       - assets/**
       - scripts/build_catalog_shells.py
       - scripts/render_catalog_static.mjs
+      - scripts/render_services_v42.mjs
       - scripts/enrich_editorial_pages.py
       - scripts/sync_public_version.py
       - scripts/apply_visual_assets.py
@@ -36,8 +37,10 @@ jobs:
           fetch-depth: 0
       - name: Generate catalog shells
         run: python3 scripts/build_catalog_shells.py
-      - name: Pre-render catalog content
+      - name: Pre-render product catalog
         run: node scripts/render_catalog_static.mjs
+      - name: Pre-render service catalog v4.2
+        run: node scripts/render_services_v42.mjs
       - name: Enrich editorial pages
         run: python3 scripts/enrich_editorial_pages.py
       - name: Synchronize public version
