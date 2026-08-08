@@ -13,6 +13,8 @@ on:
       - ux-v45.css
       - detail-v46.css
       - detail-v46.js
+      - editorial-v47.css
+      - editorial-v47.js
       - visual-v39.css
       - visual-v39.js
       - assets/**
@@ -24,6 +26,7 @@ on:
       - scripts/apply_visual_assets.py
       - scripts/apply_ux_v45.py
       - scripts/apply_detail_ux_v46.py
+      - scripts/apply_editorial_ux_v47.py
       - scripts/sync_public_version.py
       - .github/workflows/build-canonical.yml
   workflow_dispatch:
@@ -60,6 +63,8 @@ jobs:
         run: python3 scripts/apply_ux_v45.py
       - name: Apply deep-page UX/UI v4.6
         run: python3 scripts/apply_detail_ux_v46.py
+      - name: Apply editorial and demo UX/UI v4.7
+        run: python3 scripts/apply_editorial_ux_v47.py
       - name: Synchronize public version
         run: python3 scripts/sync_public_version.py
       - name: Commit canonical outputs
