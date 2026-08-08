@@ -1,33 +1,37 @@
 #!/usr/bin/env python3
-"""Sincroniza las etiquetas visibles de versión con version.json."""
-
+"""Sincroniza la versión visible distinguiendo superficie pública y componentes demostrativos."""
 from pathlib import Path
 import json
 import re
 
 ROOT = Path(__file__).resolve().parents[1]
 VERSION_PATH = ROOT / "version.json"
-TARGETS = {
-    "index.html": re.compile(r"Web demostrativa v\d+\.\d+\.\d+"),
-    "catalog-home-v32.js": re.compile(r"Web demostrativa v\d+\.\d+\.\d+"),
-    "decision-flow.js": re.compile(r"Web demostrativa v\d+\.\d+\.\d+"),
-}
+PATTERN = re.compile(r"Web (?:demostrativa|pública) v\d+\.\d+\.\d+")
 
 
 def main() -> int:
-    version = json.loads(VERSION_PATH.read_text(encoding="utf-8"))["version"]
-    replacement = f"Web demostrativa v{version}"
+    data = json.loads(VERSION_PATH.read_text(encoding="utf-8"))
+    version = data["version"]
+    channel = str(data.get("channel", "")).lower()
+    public_label = "Web pública" if ("public" in channel or "production" in channel) else "Web demostrativa"
+    replacements = {
+        "index.html": f"{public_label} v{version}",
+        "catalog-home-v32.js": f"Web demostrativa v{version}",
+        "decision-flow.js": f"Web demostrativa v{version}",
+    }
     changed = []
-    for relative, pattern in TARGETS.items():
+
+    for relative, replacement in replacements.items():
         path = ROOT / relative
         if not path.exists():
             continue
         text = path.read_text(encoding="utf-8")
-        updated, count = pattern.subn(replacement, text)
+        updated, count = PATTERN.subn(replacement, text)
         if count and updated != text:
             path.write_text(updated, encoding="utf-8")
             changed.append(relative)
-    print(f"Versión pública sincronizada: {version}")
+
+    print(f"Versión pública sincronizada: {public_label} v{version}")
     for relative in changed:
         print(f"- {relative}")
     return 0

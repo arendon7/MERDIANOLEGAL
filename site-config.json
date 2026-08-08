@@ -1,0 +1,16 @@
+{
+  "name": "Meridiano Legal",
+  "base_url": "https://arendon7.github.io/MERDIANOLEGAL/",
+  "deployment": "github-pages",
+  "environment": "public",
+  "custom_domain": "",
+  "contact": {
+    "whatsapp": "573008507813"
+  },
+  "analytics": {
+    "enabled": false,
+    "provider": "none",
+    "site_id": ""
+  },
+  "search_console_verification": ""
+}

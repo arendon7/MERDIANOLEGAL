@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - version.json
+      - site-config.json
       - catalog-v32.js
       - catalog-products-v41/**
       - catalog-services-v42/**
@@ -17,6 +18,7 @@ on:
       - editorial-v47.js
       - quality-v48.css
       - operations-v49.css
+      - telemetry-v50.js
       - visual-v39.css
       - visual-v39.js
       - assets/**
@@ -33,6 +35,8 @@ on:
       - scripts/apply_quality_v48.py
       - scripts/normalize_quality_v48.py
       - scripts/apply_operations_v49.py
+      - scripts/site_config.py
+      - scripts/apply_production_v50.py
       - scripts/sync_public_version.py
       - .github/workflows/build-canonical.yml
   workflow_dispatch:
@@ -79,8 +83,10 @@ jobs:
           python3 scripts/normalize_quality_v48.py
       - name: Apply public operations v4.9
         run: python3 scripts/apply_operations_v49.py
-      - name: Synchronize public version
+      - name: Synchronize visible public version
         run: python3 scripts/sync_public_version.py
+      - name: Apply production configuration v5.0
+        run: python3 scripts/apply_production_v50.py
       - name: Commit canonical outputs
         run: |
           if git diff --quiet; then
@@ -89,7 +95,10 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A -- assets index.html firma.html perspectivas.html experiencia.html demo.html 404.html aviso-legal.html privacidad.html terminos.html catalog-home-v32.js decision-flow.js site-v3.js sitemap.xml servicios productos perspectivas sectores page-context.js manifest.webmanifest scripts/build_catalog_shells.py
+          git add -A -- assets index.html firma.html perspectivas.html experiencia.html demo.html 404.html aviso-legal.html privacidad.html terminos.html catalog-home-v32.js decision-flow.js site-v3.js page-context.js sitemap.xml robots.txt runtime-config.js site-status.json manifest.webmanifest servicios productos perspectivas sectores scripts/build_catalog_shells.py
+          if [ -e CNAME ] || git ls-files --error-unmatch CNAME >/dev/null 2>&1; then
+            git add -A -- CNAME
+          fi
           git commit -m "build: sincroniza sitio público canónico"
           git pull --rebase origin main
           git push origin HEAD:main
