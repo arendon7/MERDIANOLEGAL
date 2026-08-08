@@ -84,6 +84,7 @@ test('formulario prepara WhatsApp sin enviar ni salir de la web', async ({ page 
     await need.fill('Gobernanza de IA');
   }
   await form.locator('[name="message"]').fill('Necesitamos revisar el gobierno de un caso de uso de IA.');
+  await form.locator('[name="privacy"]').check();
 
   await page.waitForTimeout(900);
   await form.getByRole('button', { name: /Abrir solicitud en WhatsApp/i }).click();
@@ -116,6 +117,7 @@ test('honeypot bloquea preparación automatizada', async ({ page }) => {
   await form.locator('[name="name"]').fill('Bot de prueba');
   await form.locator('[name="email"]').fill('bot@example.com');
   await form.locator('[name="message"]').fill('Intento automatizado de prueba.');
+  await form.locator('[name="privacy"]').check();
   await form.locator('[name="website"]').evaluate((node) => { node.value = 'https://spam.invalid'; });
 
   const need = form.locator('[name="need"]');

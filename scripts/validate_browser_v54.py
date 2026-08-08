@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Valida la infraestructura Playwright y el gate browser E2E de la release v5.4."""
+"""Valida Browser E2E, correcciones runtime/responsive y gate previo a stable de v5.4."""
 from pathlib import Path
 import json
 import re
@@ -31,7 +31,7 @@ def main() -> int:
         require(marker in config, f"playwright.config.mjs no contiene {marker}")
 
     public = (R / "tests/e2e/public-site.spec.mjs").read_text(encoding="utf-8")
-    demo = (R / "tests/e2e/demo.spec.mjs").read_text(encoding="utf-8")
+    demo_tests = (R / "tests/e2e/demo.spec.mjs").read_text(encoding="utf-8")
     helpers = (R / "tests/e2e/helpers.mjs").read_text(encoding="utf-8")
     for marker in (
         ".need-card",
@@ -44,10 +44,35 @@ def main() -> int:
         "menú móvil",
     ):
         require(marker in public, f"suite pública no cubre {marker}")
-    for marker in ("cliente@empresa-demo.com", ".portal-nav", "#documentos", "Solicitud E2E"):
-        require(marker in demo, f"suite demo no cubre {marker}")
+    require(public.count("locator('[name=\"privacy\"]').check()") >= 2, "contacto y honeypot deben aceptar privacidad antes de submit")
+    for marker in ("cliente@empresa-demo.com", ".portal-nav", "#documentos", "Solicitud E2E", "#new-ticket"):
+        require(marker in demo_tests, f"suite demo no cubre {marker}")
     require("pageerror" in helpers and "console.error" in helpers, "helpers debe capturar errores runtime")
     require("scrollWidth" in helpers and "clientWidth" in helpers, "helpers debe controlar overflow horizontal")
+
+    authority_apply = (R / "scripts/apply_authority_v53.py").read_text(encoding="utf-8")
+    for marker in ("finalize_browser_v54", "BROWSER-V54-DEMO", "measurement-v53\\.js", ".portal-header-actions .btn"):
+        require(marker in authority_apply, f"aplicador final no contiene {marker}")
+
+    measurement_pages = [
+        *(R / "soluciones").glob("*.html"),
+        *(R / "perspectivas").glob("*.html"),
+        *(R / "sectores").glob("*.html"),
+    ]
+    checked = 0
+    for path in measurement_pages:
+        text = path.read_text(encoding="utf-8")
+        if "MEASUREMENT-V53:START" not in text:
+            continue
+        checked += 1
+        require('<script defer src="../measurement-v53.js"></script>' in text, f"{path.relative_to(R)} debe cargar measurement con defer")
+        require('<script src="../measurement-v53.js"></script>' not in text, f"{path.relative_to(R)} conserva carga síncrona de measurement")
+    require(checked == 20, f"se esperaban 20 páginas con measurement y se validaron {checked}")
+
+    demo = (R / "demo.html").read_text(encoding="utf-8")
+    require(demo.count("BROWSER-V54-DEMO:START") == 1, "demo debe tener un solo bloque responsive v5.4")
+    require('data-browser-v54="demo-mobile"' in demo, "demo no contiene estilo mobile v5.4")
+    require('.portal-header-actions .btn{display:inline-flex' in demo, "demo no restaura Nueva solicitud en móvil")
 
     pages = (R / ".github/workflows/pages.yml").read_text(encoding="utf-8")
     require("Validate browser E2E infrastructure v5.4" in pages, "quality no valida infraestructura v5.4")
@@ -59,10 +84,10 @@ def main() -> int:
     require("playwright-report" in pages and "test-results" in pages, "deben conservarse artefactos de fallo")
 
     build = (R / ".github/workflows/build-canonical.yml").read_text(encoding="utf-8")
-    for marker in ("package.json", "playwright.config.mjs", "tests/e2e/**", "scripts/validate_browser_v54.py"):
+    for marker in ("package.json", "playwright.config.mjs", "tests/e2e/**", "scripts/apply_authority_v53.py", "scripts/validate_browser_v54.py"):
         require(marker in build, f"build-canonical no vigila {marker}")
 
-    print("VALIDACIÓN BROWSER V5.4 OK: Playwright multi-browser, QA responsive y gate previo a stable configurados.")
+    print("VALIDACIÓN BROWSER V5.4 OK: runtime ordenado, CTA demo móvil, Playwright multi-browser y gate previo a stable íntegros.")
     return 0
 
 
