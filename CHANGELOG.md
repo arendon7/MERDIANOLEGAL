@@ -1,5 +1,36 @@
 # Historial de versiones
 
+## v4.8.0 — 2026-08-08
+
+### Calidad pública y arquitectura static-first
+
+- La portada deja de depender de JavaScript para alcanzar su estado canónico: hero, rutas por necesidad, nombres de productos, enlaces profundos, sectores, perspectivas y acceso a la firma están presentes desde el HTML inicial.
+- Las seis tarjetas de necesidad se convirtieron en enlaces nativos. “Mi operación jurídica” conduce ahora a Legal Operations, corrigiendo la asociación previa con el Sistema Contractual Empresarial.
+- Los ocho servicios y los ocho productos publican sus fichas profundas directamente desde la portada; los ocho productos muestran sus nombres y resúmenes v4.1 canónicos sin esperar a `catalog-home-v32.js`.
+- Los ocho sectores se alinearon con la taxonomía canónica y quedaron navegables en HTML estático.
+- Las tres perspectivas destacadas enlazan sus artículos completos y se añadieron rutas estáticas hacia la biblioteca de Perspectivas y la página institucional de la firma.
+
+### Rendimiento, accesibilidad y SEO
+
+- El hero fotográfico WebP se sirve desde el primer render con dimensiones declaradas, `loading="eager"`, `decoding="async"`, `fetchpriority="high"` y preload de imagen.
+- El idioma documental de las páginas públicas se normalizó a `es-CO`.
+- La portada incorpora metadata Open Graph, Twitter Card, `robots` y JSON-LD para `Organization`/`LegalService` y `WebSite`.
+- Los filtros de productos dejaron la semántica de tabs y utilizan un grupo de botones con `aria-pressed`.
+- El menú móvil actualiza su etiqueta Abrir/Cerrar, cierra con `Escape`, devuelve foco al control y bloquea el scroll del documento mientras está abierto.
+- Los desplazamientos programáticos respetan `prefers-reduced-motion` y se reforzó el foco visible de rutas y enlaces profundos.
+- `demo.html` declara `noindex,nofollow`; permanece fuera del sitemap por tratarse de un portal ficticio demostrativo.
+- Todos los `lastmod` de `sitemap.xml` se sincronizaron con la fecha de release, 2026-08-08.
+
+### Construcción y control
+
+- Se añadieron `quality-v48.css`, `scripts/apply_quality_v48.py`, `scripts/normalize_quality_v48.py` y `scripts/validate_quality_v48.py`.
+- La secuencia canónica aplica v4.8 después de las capas v4.5–v4.7 y antes de sincronizar la versión pública.
+- El control de idempotencia bloqueó inicialmente Pages por una línea vacía acumulativa antes del bloque SEO; se añadió una normalización determinista específica y se repitió la cadena hasta obtener diff cero.
+- `validate_site.py` fue actualizado para exigir el nuevo estado static-first: hero canónico en HTML, 16 enlaces profundos y ocho rutas sectoriales, en vez de conservar una etiqueta sectorial legada.
+- El validador v4.8 detectó una referencia defensiva restante a `aria-selected`; se eliminó de la salida canónica para mantener semántica `aria-pressed` de principio a fin.
+- La ejecución final aprobó idempotencia, integridad de 39 páginas, catálogo de 16 fichas, conversión v4.4, portada v4.5, fichas v4.6, editorial/demos v4.7, calidad v4.8, selector, contexto, sistema visual, JavaScript y JSON antes de desplegar.
+- GitHub Pages publicó correctamente la release y `stable` quedó sincronizada con el commit funcional desplegado.
+
 ## v4.7.0 — 2026-08-08
 
 ### UX/UI editorial, sectorial y demostrativa
@@ -151,15 +182,15 @@
 
 - Se creó `scripts/apply_visual_assets.py` como aplicador idempotente posterior a los generadores funcionales.
 - El aplicador normaliza la posición de sus recursos para que ejecuciones sucesivas no alteren el orden del HTML.
-- Se creó `scripts/validate_visual_assets.py` para validar archivos, cabecera WebP, rutas, versión y ausencia de logotipos retirados.
-- `validate_site.py` exige ahora la identidad canónica, el favicon, el hero WebP y las hojas visuales vigentes.
+- Se creó `scripts/validate_visual_assets.py` para validar archivos, rutas y ausencia de logotipos retirados.
+- `validate_site.py` exige la identidad canónica, favicon, hero WebP y hojas visuales vigentes.
 - GitHub Pages solo publicó después de aprobar idempotencia, catálogo, contexto, datos estructurados, capa editorial, JavaScript y activos visuales.
 
 ## v3.8.0 — 2026-08-05
 
 ### Catálogo estático e indexable
 
-- Las ocho fichas de servicios y las ocho fichas de productos publican ahora su contenido jurídico completo en HTML.
+- Las ocho fichas de servicios y las ocho fichas de productos publican su contenido jurídico completo en HTML.
 - Títulos, pregunta ejecutiva, situaciones, alcance, método, entregables, requisitos, límites y soluciones relacionadas están disponibles sin ejecutar JavaScript.
 - Se creó `scripts/render_catalog_static.mjs` para convertir el catálogo central en HTML semántico durante la construcción.
 - Cada ficha conserva contenido sustantivo, navegación contextual y mejora progresiva.
