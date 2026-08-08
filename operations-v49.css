@@ -1,0 +1,19 @@
+.contact-hp-v49 {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.contact-form[data-contact-v49="true"] { position: relative; }
+.contact-form[data-contact-v49="true"] .form-status { min-height: 1.45em; }
+.contact-form[data-contact-v49="true"] .form-status[data-state="error"],
+.contact-form[data-contact-v49="true"] .form-status[data-state="ready"] { font-weight: 700; }
+.contact-v49-direct { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: .75rem 1rem; align-items: center; margin-top: -.25rem; }
+.contact-v49-direct a { font-weight: 700; text-decoration: underline; text-underline-offset: .18em; }
+@media (max-width: 720px) { .contact-v49-direct { align-items: flex-start; flex-direction: column; } }

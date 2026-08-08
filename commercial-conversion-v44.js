@@ -17,7 +17,7 @@
       message.value = `Estoy interesado en ${label}. Quiero confirmar el alcance, la capacidad incluida, los tiempos de respuesta, las exclusiones y las condiciones de inicio.`;
     }
     form.dataset.commercialContext = label;
-    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    form.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
     window.setTimeout(() => form.querySelector('input[name="name"]')?.focus({ preventScroll: true }), 450);
   };
 
@@ -35,7 +35,10 @@
       const url = new URL(rawHref, window.location.href);
       url.searchParams.set('context', link.dataset.commercialContext || 'Referencia comercial');
       if (link.dataset.need) url.searchParams.set('need', link.dataset.need);
-      link.setAttribute('href', `${url.pathname.split('/').pop() ? rawHref.split('?')[0] : rawHref}?${url.searchParams.toString()}`);
+      const base = rawHref.split(/[?#]/)[0];
+      const query = url.searchParams.toString();
+      const hash = url.hash;
+      link.setAttribute('href', `${base}${query ? `?${query}` : ''}${hash}`);
     } catch {
       // El enlace estático sigue siendo funcional aunque no pueda contextualizarse.
     }
