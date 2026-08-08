@@ -124,7 +124,8 @@ def patch_site_js():
   });
 
   const year = document.getElementById('year');'''
-    updated, count = re.subn(pattern, "\n" + replacement.strip("\n"), t, count=1)
+    replacement_text = "\n" + replacement.strip("\n")
+    updated, count = re.subn(pattern, lambda _match: replacement_text, t, count=1)
     if count != 1:
         raise RuntimeError("No se pudo sustituir el flujo de contacto")
     S.write_text(updated, encoding="utf-8")
