@@ -42,13 +42,16 @@ for marker in ['assets/brand/favicon.svg', 'assets/images/global/home-hero.webp'
 
 version = json.loads((ROOT / 'version.json').read_text(encoding='utf-8'))
 version_value = str(version.get('version', '')).strip()
+channel = str(version.get('channel', '')).strip().lower()
+public_channel = 'public' in channel or 'production' in channel
+version_label = 'Web pública' if public_channel else 'Web demostrativa'
 if not re.fullmatch(r'\d+\.\d+\.\d+', version_value):
     errors.append('version.json no contiene una versión semántica válida')
-elif f'Web demostrativa v{version_value}' not in index:
-    errors.append(f'index.html no refleja la versión canónica {version_value}')
+elif f'{version_label} v{version_value}' not in index:
+    errors.append(f'index.html no refleja la versión canónica {version_label} v{version_value}')
 
 if errors:
     print('VALIDACIÓN VISUAL FALLIDA')
     print('\n'.join(f'- {e}' for e in errors))
     sys.exit(1)
-print(f'VALIDACIÓN VISUAL OK · versión {version_value}')
+print(f'VALIDACIÓN VISUAL OK · {version_label} v{version_value}')
