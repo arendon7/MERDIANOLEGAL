@@ -1,5 +1,27 @@
 # Historial de versiones
 
+## v4.1.0 — 2026-08-07
+
+### Catálogo comercial-jurídico de productos
+
+- Se consolidaron los ocho productos jurídicos de alcance cerrado en `catalog-products-v41/` como módulos editoriales independientes.
+- Las fichas de producto incorporan perímetro cuantificado, método, entregables, formatos, cronograma, requisitos, responsabilidades, criterios de aceptación, límites, complementos y soluciones relacionadas.
+- La Auditoría Jurídica Empresarial Integral quedó definida con alcance de una sociedad colombiana, hasta 8 entrevistas, hasta 60 documentos, hasta 8 frentes jurídicos, hasta 80 hallazgos y hasta 5 instrumentos correctivos de complejidad estándar.
+- Se reforzó la orientación comercial de las fichas para explicar con precisión qué recibe el cliente, en qué formato, dentro de qué alcance y bajo qué condiciones.
+
+### Construcción y preservación
+
+- `scripts/build_catalog_shells.py` genera en esta release únicamente las ocho fichas de producto y preserva deliberadamente los servicios profesionales hasta su ciclo editorial dedicado.
+- `scripts/render_catalog_static.mjs`, `validate_site.py` y `validate_static_catalog.py` fueron ajustados para soportar y validar el catálogo v4.1.
+- Se eliminaron workflows y artefactos temporales de instalación usados durante la migración, conservando únicamente la arquitectura canónica de construcción y despliegue.
+- La publicación final aprobó idempotencia de generadores, HTML y recursos locales, catálogo estático, flujo guiado, contexto y datos estructurados, capa editorial, identidad visual, JavaScript y metadatos JSON.
+- GitHub Pages desplegó correctamente la release y `stable` quedó sincronizada con `main`.
+
+### Alcance de la siguiente iteración
+
+- Los ocho servicios profesionales permanecen en la última versión pública aprobada de la línea anterior.
+- Su profundización comercial-jurídica se realizará como ciclo editorial dedicado posterior, sin degradar los productos v4.1 ni la identidad visual canónica.
+
 ## v3.9.0 — 2026-08-05
 
 ### Identidad visual canónica

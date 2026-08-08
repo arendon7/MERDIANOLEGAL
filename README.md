@@ -1,6 +1,10 @@
-# Meridiano Legal · Web canónica v3.9.0
+# Meridiano Legal · Web canónica v4.1.0
 
 Sitio público, responsive y autocontenido de Meridiano Legal, publicado directamente desde GitHub Pages.
+
+## Estado de la release
+
+La v4.1 consolida el catálogo comercial-jurídico de los ocho productos de alcance cerrado. Cada producto incorpora perímetro cuantificado, método, entregables, formatos, cronograma, requisitos, responsabilidades, criterios de aceptación, límites, complementos y soluciones relacionadas. Los ocho servicios profesionales permanecen preservados en su última versión pública aprobada y serán objeto de un ciclo editorial dedicado posterior, sin degradar la v4.1.
 
 ## Flujo operativo
 
@@ -19,9 +23,18 @@ Sitio público, responsive y autocontenido de Meridiano Legal, publicado directa
 - 5 planes recurrentes, 6 documentos guiados, centro demo y portal demostrativo.
 - Páginas legales, sitemap, robots, manifiesto y página 404.
 
+## Catálogo comercial-jurídico v4.1
+
+- `catalog-products-v41/`: ocho definiciones de producto con alcance comercial y jurídico detallado.
+- `catalog-home-v32.js`: navegación y presentación resumida del portafolio desde la portada.
+- `catalog-v32.js`: catálogo público compatible con las fichas y servicios preservados.
+- `scripts/build_catalog_shells.py`: genera únicamente las fichas de producto en esta release y preserva los servicios hasta su ciclo dedicado.
+- `scripts/render_catalog_static.mjs`: prerenderiza el contenido sustantivo hacia HTML semántico.
+- `scripts/validate_static_catalog.py`: controla que el contenido aprobado permanezca disponible sin depender de JavaScript.
+
 ## Identidad visual canónica
 
-La v3.9 incorpora una base de marca única y reproducible:
+La base visual vigente procede de la v3.9 y continúa siendo la identidad canónica de la v4.1:
 
 - `assets/brand/meridiano-logo-horizontal-dark.svg`: logotipo para fondos claros.
 - `assets/brand/meridiano-logo-horizontal-light.svg`: logotipo para fondos oscuros.
@@ -41,9 +54,10 @@ La marca utiliza la M arquitectónica en azul marino, dos filetes dorados y el d
 - `catalog-home-v32.js`: enlaces entre portada, fichas, sectores y perspectivas.
 - `decision-flow.js` y `decision-flow.css`: selector, formulario contextual y menú móvil.
 - `page-context.js` y `page-context.css`: continuidad, autoría, revisión editorial y CTA contextuales.
-- `catalog-v32.js`: fuente única del contenido jurídico de las 16 fichas.
+- `catalog-v32.js`: catálogo público de las 16 fichas y compatibilidad con los servicios preservados.
 - `catalog-v32.css` y `catalog-page.js`: presentación y controlador ligero de fichas.
-- `scripts/build_catalog_shells.py`: plantilla y metadatos base.
+- `catalog-products-v41/`: fuente editorial modular de los ocho productos v4.1.
+- `scripts/build_catalog_shells.py`: plantilla, metadatos y generación de fichas de producto.
 - `scripts/render_catalog_static.mjs`: prerender del catálogo hacia HTML semántico.
 - `scripts/enrich_editorial_pages.py`: SEO, breadcrumbs y navegación editorial.
 - `scripts/sync_public_version.py`: sincronización de etiquetas con `version.json`.
