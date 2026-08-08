@@ -13,6 +13,9 @@ on:
       - growth-v51.css
       - cro-solutions-v52.json
       - cro-v52.css
+      - authority-v53.json
+      - measurement-contract-v53.json
+      - measurement-v53.js
       - commercial-v43.css
       - commercial-conversion-v44.js
       - ux-v45.css
@@ -45,6 +48,7 @@ on:
       - scripts/apply_growth_v51.py
       - scripts/finalize_growth_v51.py
       - scripts/apply_cro_v52.py
+      - scripts/apply_authority_v53.py
       - scripts/sync_public_version.py
       - .github/workflows/build-canonical.yml
   workflow_dispatch:
@@ -103,6 +107,8 @@ jobs:
           python3 scripts/finalize_growth_v51.py
       - name: Apply CRO and search-intent system v5.2
         run: python3 scripts/apply_cro_v52.py
+      - name: Apply authority, discovery and measurement system v5.3
+        run: python3 scripts/apply_authority_v53.py
       - name: Commit canonical outputs
         run: |
           if git diff --quiet; then

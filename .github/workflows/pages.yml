@@ -13,6 +13,9 @@ on:
       - growth-v51.css
       - cro-solutions-v52.json
       - cro-v52.css
+      - authority-v53.json
+      - measurement-contract-v53.json
+      - measurement-v53.js
       - commercial-v43.css
       - commercial-conversion-v44.js
       - ux-v45.css
@@ -51,6 +54,9 @@ on:
       - scripts/apply_cro_v52.py
       - scripts/validate_cro_v52.py
       - scripts/validate_live_v52.py
+      - scripts/apply_authority_v53.py
+      - scripts/validate_authority_v53.py
+      - scripts/validate_live_v53.py
       - scripts/validate_operations_v49.py
       - scripts/validate_live_v49.py
       - scripts/sync_public_version.py
@@ -100,6 +106,7 @@ jobs:
           python3 scripts/apply_growth_v51.py
           python3 scripts/finalize_growth_v51.py
           python3 scripts/apply_cro_v52.py
+          python3 scripts/apply_authority_v53.py
           git diff --exit-code -- index.html catalog-home-v32.js decision-flow.js site-v3.js page-context.js sitemap.xml robots.txt runtime-config.js site-status.json servicios productos firma.html perspectivas perspectivas.html sectores soluciones experiencia.html demo.html 404.html aviso-legal.html privacidad.html terminos.html manifest.webmanifest CNAME scripts/build_catalog_shells.py
       - name: Validate HTML and local resources
         run: python3 scripts/validate_site.py
@@ -123,6 +130,8 @@ jobs:
         run: python3 scripts/validate_growth_v51.py
       - name: Validate CRO and search-intent v5.2
         run: python3 scripts/validate_cro_v52.py
+      - name: Validate authority, discovery and measurement v5.3
+        run: python3 scripts/validate_authority_v53.py
       - name: Validate guided decision flow
         run: python3 scripts/validate_decision_flow.py
       - name: Validate page context and structured data
@@ -147,6 +156,7 @@ jobs:
           node --check editorial-v47.js
           node --check runtime-config.js
           node --check telemetry-v50.js
+          node --check measurement-v53.js
           node --check scripts/render_catalog_static.mjs
           node --check scripts/render_services_v42.mjs
       - name: Validate JSON metadata
@@ -157,6 +167,8 @@ jobs:
           python3 -m json.tool site-status.json > /dev/null
           python3 -m json.tool growth-solutions-v51.json > /dev/null
           python3 -m json.tool cro-solutions-v52.json > /dev/null
+          python3 -m json.tool authority-v53.json > /dev/null
+          python3 -m json.tool measurement-contract-v53.json > /dev/null
           for f in catalog-services-v42/*.json; do python3 -m json.tool "$f" > /dev/null; done
           for f in catalog-products-v41/*.json; do python3 -m json.tool "$f" > /dev/null; done
 
@@ -204,7 +216,7 @@ jobs:
         with:
           ref: main
       - name: Smoke test public URL
-        run: python3 scripts/validate_live_v52.py
+        run: python3 scripts/validate_live_v53.py
 
   snapshot:
     name: Update stable snapshot

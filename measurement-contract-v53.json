@@ -1,0 +1,17 @@
+{
+  "version": "5.3.0",
+  "privacy": {
+    "pii_allowed": false,
+    "network_transport": false,
+    "persistent_storage": false,
+    "notes": "Los eventos describen navegación y etapa del funnel. No deben incluir nombre, correo, empresa, teléfono, mensaje, documentos ni contenido del formulario."
+  },
+  "events": [
+    {"name":"solution_view","trigger":"Carga de una ruta en soluciones/","fields":["stage","target","need"]},
+    {"name":"authority_open","trigger":"Clic desde una perspectiva o sector hacia una solución","fields":["stage","target","need"]},
+    {"name":"evidence_open","trigger":"Clic desde una solución hacia perspectiva o sector","fields":["stage","target","need"]},
+    {"name":"route_open","trigger":"Clic entre rutas de soluciones relacionadas","fields":["stage","target","need"]},
+    {"name":"faq_open","trigger":"Apertura de una pregunta frecuente v5.2","fields":["stage","target","need"]},
+    {"name":"contact_intent","trigger":"Clic desde una solución hacia contacto o WhatsApp","fields":["stage","target","need"]}
+  ]
+}
