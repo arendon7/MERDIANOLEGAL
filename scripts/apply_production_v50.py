@@ -69,7 +69,7 @@ def upsert_meta(text: str, name_or_property: str, value: str, *, prop: bool = Fa
 
 
 def normalize_referrer_meta(text: str) -> str:
-    """Coloca la política referrer tras viewport, fuera de zonas reordenadas por capas previas."""
+    """Coloca la política referrer tras viewport con whitespace determinista."""
     text = re.sub(
         r'(?m)^[ \t]*<meta name="referrer" content="[^"]*">[ \t]*(?:\r?\n)?',
         "",
@@ -77,8 +77,8 @@ def normalize_referrer_meta(text: str) -> str:
     )
     text = re.sub(r'<meta name="referrer" content="[^"]*">', "", text)
     updated, count = re.subn(
-        r'(<meta name="viewport"[^>]*>)',
-        lambda match: match.group(1) + "\n  " + REFERRER_TAG,
+        r'(<meta name="viewport"[^>]*>)[ \t\r\n]*',
+        lambda match: match.group(1) + "\n  " + REFERRER_TAG + "\n  ",
         text,
         count=1,
     )
