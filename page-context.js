@@ -1,6 +1,6 @@
 (() => {
   const CONTEXT_KEY = 'meridiano.contactContext';
-  const ROOT_PATH = '/MERDIANOLEGAL/';
+  const ROOT_PATH = "/MERDIANOLEGAL/";
   const body = document.body;
 
   const safeStorage = {
