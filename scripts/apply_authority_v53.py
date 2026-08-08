@@ -87,6 +87,9 @@ def finalize_browser_v54() -> int:
         "\n",
         before_demo,
     )
+    for href in ("visual-v39.css", "editorial-v47.css"):
+        tag = f'<link rel="stylesheet" href="{href}">'
+        demo = re.sub(rf'[ \t]*{re.escape(tag)}', "  " + tag, demo)
     if "</head>" not in demo:
         raise RuntimeError("demo.html: falta </head>")
     demo = demo.replace("</head>", BROWSER_V54_STYLE + "\n</head>", 1)
