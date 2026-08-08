@@ -1,5 +1,47 @@
 # Historial de versiones
 
+## v5.3.0 — 2026-08-08
+
+### Autoridad y descubrimiento
+
+- Se creó `authority-v53.json` como mapa canónico entre las seis rutas de `soluciones/`, las seis perspectivas editoriales y los ocho sectores públicos.
+- Las perspectivas incorporan un bloque “DE LA LECTURA A LA DECISIÓN” que conecta criterio general con una o dos rutas empresariales relacionadas.
+- Los sectores incorporan “RUTAS POR SITUACIÓN” para derivar el contexto sectorial hacia necesidades concretas sin duplicar servicios ni productos.
+- Las seis soluciones quedan cubiertas por el sistema de descubrimiento y conservan intactos sus bloques jurídicos, CRO, FAQ, honorarios, límites y CTA v5.2.
+- La relación funciona en ambos sentidos: soluciones → evidencia editorial/sectorial y perspectivas/sectores → soluciones.
+
+### Datos estructurados y señales de autoridad
+
+- El JSON-LD `Organization` de la portada añade el logotipo canónico como `ImageObject` y ocho materias `knowsAbout` coherentes con la oferta pública.
+- El hub `soluciones/` publica un `ItemList` con las seis rutas empresariales.
+- Cada solución publica un `ItemList` con sus modalidades relacionadas; perspectivas y sectores publican `ItemList` con las rutas de decisión que corresponden a su contenido.
+- Las seis perspectivas modificadas por v5.3 sincronizan `article:modified_time` y `dateModified` con `2026-08-08`.
+- No se crearon páginas artificiales para keywords ni se duplicó el catálogo: los datos estructurados describen relaciones ya presentes en el contenido público.
+
+### Contrato de medición CRO
+
+- Se añadieron `measurement-contract-v53.json` y `measurement-v53.js`.
+- El contrato define exactamente seis eventos: `solution_view`, `authority_open`, `evidence_open`, `route_open`, `faq_open` y `contact_intent`.
+- Los payloads se limitan a `stage`, `target` y `need` con valores controlados; no incorporan nombre, correo, empresa, teléfono, mensaje, documentos ni contenido del formulario.
+- La capa declara `piiAllowed: false`, `networkTransport: false` y `persistentStorage: false`.
+- `measurement-v53.js` utiliza `MeridianoTelemetry` y un `CustomEvent` local, sin `fetch`, XHR, `sendBeacon`, cookies ni almacenamiento persistente.
+- La analítica de terceros continúa desactivada y Search Console permanece sin token; v5.3 prepara un contrato de medición, no activa un proveedor ficticio.
+
+### Construcción, validación y smoke live
+
+- Se añadieron `scripts/apply_authority_v53.py`, `scripts/apply_authority_v53_core.py`, `scripts/validate_authority_v53.py` y `scripts/validate_live_v53.py`.
+- La cadena canónica ejecuta v5.3 después de v5.2 y vuelve a exigir diff cero sobre todas las salidas públicas.
+- El validador v5.3 comprueba 6 perspectivas, 8 sectores, cobertura de las 6 soluciones, 8 materias de autoridad, Organization/ItemList, fechas editoriales, contrato de eventos, ausencia de PII/red/almacenamiento y continuidad de v5.2.
+- El smoke live v5.3 ejecuta primero todo el smoke v5.2 y luego consulta portada, hub, seis soluciones, seis perspectivas, ocho sectores y `measurement-v53.js` sobre la URL realmente servida.
+
+### Barreras e incidencias
+
+- Una llamada de prueba del conector creó accidentalmente un archivo vacío temporal `__no_such_path__` en `main`. Fue eliminado inmediatamente antes de activar el paquete v5.3 y no formó parte de la release aprobada.
+- El primer constructor v5.3 generó correctamente contenido, schema y medición, pero la segunda pasada fue bloqueada por idempotencia: perspectivas y sectores alternaban un salto de línea alrededor de los bloques administrados.
+- La lógica funcional se preservó en `apply_authority_v53_core.py`; `apply_authority_v53.py` pasó a aplicar esa lógica y normalizar determinísticamente los límites de bloque.
+- La siguiente ejecución obtuvo diff cero y aprobó catálogo, conversión, UX v4.5–v4.7, calidad v4.8, operación v4.9, producción v5.0, crecimiento v5.1, CRO/SEO v5.2, autoridad/medición v5.3, selector, contexto, editorial, visual, JavaScript y JSON.
+- GitHub Pages desplegó correctamente, el smoke público v5.3 quedó verde y `stable` se sincronizó con el commit funcional antes del cierre documental.
+
 ## v5.2.0 — 2026-08-08
 
 ### Conversión y calificación

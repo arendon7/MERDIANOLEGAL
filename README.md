@@ -1,10 +1,10 @@
-# Meridiano Legal · Web canónica v5.2.0
+# Meridiano Legal · Web canónica v5.3.0
 
-Sitio público, responsive y autocontenido de Meridiano Legal, publicado mediante GitHub Pages. La v5.2 conserva íntegra la arquitectura jurídica, production-ready y static-first acumulada hasta v5.1 y añade un ciclo específico de **CRO, calificación comercial y SEO de intención** sobre las rutas de `soluciones/`.
+Sitio público, responsive, static-first y autocontenido de Meridiano Legal, publicado mediante GitHub Pages. La v5.3 conserva íntegra la base jurídica, comercial, CRO y production-ready acumulada hasta v5.2 y añade una capa específica de **autoridad, descubrimiento y preparación de medición**.
 
 ## Estado de la release
 
-La publicación mantiene **46 páginas HTML** y la arquitectura canónica existente:
+La publicación mantiene **46 páginas HTML**:
 
 - 8 servicios profesionales;
 - 8 productos jurídicos de alcance cerrado;
@@ -16,108 +16,74 @@ La publicación mantiene **46 páginas HTML** y la arquitectura canónica existe
 - Meridiano Empresas con información ficticia y `noindex,nofollow`;
 - 1 hub de soluciones y 6 rutas de decisión empresarial.
 
-La URL pública canónica continúa siendo `https://arendon7.github.io/MERDIANOLEGAL/`. No se ha inventado un dominio, CRM, backend, analítica de terceros ni token de Search Console. WhatsApp continúa siendo el canal real de contacto y `telemetry-v50.js` permanece como instrumentación first-party en memoria, sin transmisión externa.
+La URL pública canónica continúa siendo `https://arendon7.github.io/MERDIANOLEGAL/`. No existe todavía dominio personalizado, CRM, backend propio, analítica de terceros ni token de Search Console. WhatsApp continúa siendo el canal real de contacto.
 
-## v5.2 · Conversión sin simplificar el contenido jurídico
+## v5.3 · Autoridad conectada con decisiones empresariales
 
-v5.1 permitió que el prospecto empezara por su problema empresarial. v5.2 trabaja el siguiente tramo del funnel: **entender si la ruta realmente encaja, resolver objeciones razonables y llegar al contacto con expectativas más precisas**.
+Hasta v5.2, las soluciones ya podían conducir al visitante hacia perspectivas y sectores. v5.3 cierra el circuito en sentido inverso: **perspectivas y sectores conducen ahora explícitamente hacia las rutas empresariales que ayudan a convertir una lectura general en una decisión concreta**.
 
-Las seis páginas de solución conservan señales, decisiones, modalidades, entregables, límites y evidencia v5.1. Sobre esa base añaden:
+La fuente `authority-v53.json` mapea:
 
-1. **Criterio de encaje**: cuándo conviene explorar la ruta.
-2. **No encaje**: cuándo el problema probablemente exige otra intervención o especialidad.
-3. **Tres objeciones frecuentes** por necesidad, contestadas con razonamiento jurídico-comercial desarrollado.
-4. **Criterio de alcance y honorarios**, enlazando la fuente pública canónica de precios en vez de duplicar valores.
-5. **Tres preguntas frecuentes** por landing, para un total de 18 respuestas nuevas.
-6. **`FAQPage` JSON-LD** independiente en cada una de las seis rutas.
-7. **Dos rutas relacionadas** por página para mejorar continuidad e interlinking.
-8. **CTA final específico** de la necesidad, en lugar del cierre genérico de v5.1.
-9. Títulos y descripciones SEO orientados a intención de búsqueda empresarial.
+- 6 perspectivas → una o dos rutas de solución relacionadas;
+- 8 sectores → una o dos rutas de solución relacionadas;
+- las 6 soluciones v5.1/v5.2 quedan cubiertas por el sistema de descubrimiento;
+- 8 materias jurídicas canónicas para `Organization.knowsAbout`.
 
-El hub `soluciones/` conserva su arquitectura y añade una guía rápida para distinguir entre necesidad de priorizar riesgos, capacidad jurídica recurrente y decisiones de crecimiento/regulación.
+Las páginas editoriales incorporan el bloque **“DE LA LECTURA A LA DECISIÓN”**. Las páginas sectoriales incorporan **“RUTAS POR SITUACIÓN”**. Ninguno de esos bloques sustituye el contenido profundo existente: actúan como capa de continuidad hacia la decisión empresarial.
 
-## Las seis rutas optimizadas
+## Datos estructurados y autoridad semántica
 
-### 1. Ordenar el riesgo jurídico empresarial
+La portada conserva el JSON-LD `Organization` y añade:
 
-La página distingue entre percepción general de exposición y un asunto puntual. Responde objeciones como “ya tenemos abogado o contador”, explica por qué una auditoría debe tener perímetro cerrado y conecta diagnóstico, auditoría profunda y dirección jurídica externa.
+- `logo` como `ImageObject` con el logotipo canónico;
+- `knowsAbout` con ocho materias: riesgo jurídico empresarial, contratación, sociedades/gobierno/inversión, propiedad intelectual, datos/consumidor, tecnología/IA, proyectos regulados y Legal Operations.
 
-### 2. Dirección jurídica externa
+Además:
 
-Explica cuándo deja de ser eficiente contratar asunto por asunto, cómo controlar una capacidad mensual y por qué una dirección externa puede complementar —no necesariamente reemplazar— un equipo jurídico interno.
+- `soluciones/` publica un `ItemList` con las seis rutas empresariales;
+- cada solución publica un `ItemList` con sus modalidades relacionadas —producto, servicio o capacidad recurrente—;
+- cada perspectiva publica un `ItemList` con sus rutas empresariales relacionadas;
+- cada sector publica un `ItemList` con las rutas que mejor corresponden a su contexto;
+- las seis perspectivas actualizadas en esta release sincronizan `article:modified_time` y `dateModified` con `2026-08-08`.
 
-### 3. Gobernanza jurídica de IA
+La arquitectura no crea páginas artificiales para keywords ni duplica la oferta. El objetivo es hacer explícitas relaciones que ya existen jurídicamente entre criterio, contexto sectorial, necesidad y modalidad de intervención.
 
-Aclara que el riesgo puede existir antes de un “proyecto formal” de IA, diferencia gobernanza jurídica de ciberseguridad y evita presentar una política como sustituto de evaluaciones técnicas. Conecta casos de uso, datos, propiedad intelectual, contratos, consumidor, laboral, responsabilidad y gobierno corporativo.
+## Medición CRO preparada, pero sin tracking externo
 
-### 4. Preparación para inversión y due diligence
+`measurement-contract-v53.json` define un contrato estable de medición con seis eventos:
 
-Desarrolla el problema de llegar tarde a una revisión, la cadena de titularidad de activos, gobierno, capital y data room. Explica expresamente que la preparación jurídica no sustituye valoración, banca de inversión, contabilidad o tributación.
+1. `solution_view`: carga de una ruta de solución;
+2. `authority_open`: paso desde perspectiva o sector hacia una solución;
+3. `evidence_open`: paso desde una solución hacia perspectiva o sector;
+4. `route_open`: navegación entre soluciones relacionadas;
+5. `faq_open`: apertura de una FAQ v5.2;
+6. `contact_intent`: intención de pasar desde una solución a contacto o WhatsApp.
 
-### 5. Estructuración de proyectos regulados
+Los payloads se limitan a tokens controlados de `stage`, `target` y `need`. El contrato prohíbe expresamente incorporar nombre, correo, empresa, teléfono, mensaje, documentos o contenido del formulario.
 
-Diferencia una lista de permisos de una verdadera secuencia de viabilidad. Conecta autoridad, territorio, habilitaciones, contratos, condiciones precedentes, responsables y cronograma técnico/financiero.
+`measurement-v53.js` utiliza el bus local `MeridianoTelemetry` de v5.0 y un `CustomEvent` first-party. La capa v5.3 declara y valida:
 
-### 6. Legal Operations
+- `piiAllowed: false`;
+- `networkTransport: false`;
+- `persistentStorage: false`.
 
-Plantea la pregunta central “¿falta capacidad o falta sistema?” y evita vender software como respuesta automática. Prioriza demanda, procesos, taxonomías, estados, responsables, documentos, obligaciones e indicadores antes de automatizar.
+No utiliza `fetch`, `XMLHttpRequest`, `sendBeacon`, cookies, `localStorage` ni `sessionStorage` propio. La analítica externa continúa desactivada en `site-config.json` y Search Console permanece sin token.
 
-## SEO de intención y datos estructurados
+Cuando exista un proveedor real, deberá adaptarse a este contrato; no se permitirá redefinir el funnel enviando PII o contenido libre simplemente porque una herramienta externa lo soporte.
 
-`cro-solutions-v52.json` concentra la capa editorial/comercial v5.2 y separa esta optimización del catálogo jurídico canónico.
+## Archivos v5.3
 
-Cada landing recibe:
-
-- `<title>` específico de intención;
-- meta description específica;
-- Open Graph title/description alineados;
-- canonical y `og:url` heredados de la configuración v5.0/v5.1;
-- FAQ visible en HTML;
-- un segundo bloque JSON-LD `FAQPage` con exactamente tres preguntas y respuestas;
-- enlaces a rutas relacionadas;
-- continuidad hacia servicios, productos, sectores, perspectivas, Firma y Centro Demo.
-
-La v5.2 no crea nuevas páginas únicamente para capturar keywords. Se optimizan las páginas que ya corresponden a decisiones empresariales reales y que derivan a una oferta jurídica existente.
-
-## Honorarios: una sola fuente pública
-
-La capa CRO no replica valores monetarios dentro de `cro-solutions-v52.json`. Cada landing explica **qué variables determinan el alcance** y remite a las secciones canónicas `#honorarios` o `#planes`.
-
-Esto evita:
-
-- inconsistencias entre páginas;
-- precios desactualizados en landings SEO;
-- confundir un valor orientativo con una cotización definitiva;
-- presentar un plan recurrente como precio automático de cualquier asunto.
-
-La política pública se mantiene: honorarios orientativos, sujetos a alcance final e IVA; tasas y gastos de terceros no están incluidos salvo estipulación expresa.
-
-## Sin prueba social inventada
-
-La v5.2 conserva el principio de v5.1: no se publican testimonios, casos de éxito, tasas de éxito, logos de clientes ni resultados no sustentados.
-
-La credibilidad pública se apoya en elementos inspeccionables:
-
-- 16 fichas jurídicas profundas;
-- 8 lecturas sectoriales;
-- 6 perspectivas desarrolladas;
-- Centro Demo;
-- delimitación de alcance, responsabilidades y límites;
-- respuestas sustantivas a objeciones y FAQ.
-
-`scripts/validate_cro_v52.py` bloquea expresamente contenido de prueba social no sustentada y evita introducir precios monetarios duplicados en la fuente CRO.
-
-## Archivos v5.2
-
-- `cro-solutions-v52.json`: contenido CRO/SEO estructurado de las seis rutas y guía del hub.
-- `cro-v52.css`: estilos limitados a encaje, objeciones, honorarios, FAQ, rutas relacionadas y guía del hub.
-- `scripts/apply_cro_v52.py`: aplica la capa después del generador/finalizador v5.1.
-- `scripts/validate_cro_v52.py`: valida estructura, SEO, FAQ schema, honorarios, interlinking y ausencia de prueba social inventada.
-- `scripts/validate_live_v52.py`: ejecuta primero todo el smoke v5.1 y después comprueba la capa v5.2 sobre la URL realmente servida.
+- `authority-v53.json`: mapa canónico perspectiva/sector → solución y materias de autoridad.
+- `measurement-contract-v53.json`: contrato de eventos y restricciones de privacidad.
+- `measurement-v53.js`: instrumentación first-party sin transporte externo.
+- `scripts/apply_authority_v53.py`: wrapper de aplicación + normalización determinista.
+- `scripts/apply_authority_v53_core.py`: lógica de autoridad, schema y medición.
+- `scripts/validate_authority_v53.py`: gate local de relaciones, schema y contrato de medición.
+- `scripts/validate_live_v53.py`: smoke HTTP que conserva v5.2 y comprueba v5.3 sobre la URL servida.
 
 ## Construcción canónica
 
-El orden vigente es:
+La secuencia vigente culmina así:
 
 ```bash
 python3 scripts/build_catalog_shells.py
@@ -139,9 +105,10 @@ python3 scripts/apply_production_v50.py
 python3 scripts/apply_growth_v51.py
 python3 scripts/finalize_growth_v51.py
 python3 scripts/apply_cro_v52.py
+python3 scripts/apply_authority_v53.py
 ```
 
-`Site Quality and Deploy` repite la cadena y exige **diff cero** antes de validar:
+`Site Quality and Deploy` repite la cadena completa y exige **diff cero** antes de validar:
 
 - integridad de 46 páginas y recursos;
 - catálogo estático de 16 fichas;
@@ -152,46 +119,32 @@ python3 scripts/apply_cro_v52.py
 - producción v5.0;
 - rutas de decisión v5.1;
 - CRO y SEO de intención v5.2;
-- selector guiado;
-- contexto y datos estructurados;
-- Firma, Perspectivas y Sectores;
-- sistema visual;
-- JavaScript;
-- JSON.
+- autoridad, descubrimiento y medición v5.3;
+- selector, contexto, editorial, visual, JavaScript y JSON.
 
-Después de desplegar, `scripts/validate_live_v52.py` conserva todo el smoke v5.1 y comprueba hub, títulos SEO, calificación, objeciones, honorarios, FAQ schema y CTA específicos en las seis landings. `stable` solo se mueve después de ese control HTTP.
+Después del deploy, `scripts/validate_live_v53.py` ejecuta primero todo el smoke v5.2 y luego comprueba portada, hub, seis soluciones, seis perspectivas, ocho sectores y `measurement-v53.js` sobre la URL realmente servida. `stable` solo avanza después de esa verificación.
 
-## Compatibilidad histórica
+## Incidencias detectadas durante v5.3
 
-La v5.2 no reescribe ni debilita los contratos de releases anteriores. El único ajuste necesario fue hacer `scripts/validate_growth_v51.py` consciente de la nueva versión:
+Las barreras volvieron a bloquear estados que no debían publicarse:
 
-- hasta v5.1 exige el CTA genérico original;
-- desde v5.2 exige que el bloque `SIGUIENTE PASO` siga existiendo;
-- el validador v5.2 exige, adicionalmente, el CTA específico de cada ruta.
+1. durante una operación del conector se creó accidentalmente un archivo vacío temporal `__no_such_path__` en `main`; fue eliminado inmediatamente antes de activar el paquete v5.3 y no formó parte de la release aprobada;
+2. el primer constructor v5.3 generó correctamente autoridad, schema y medición, pero la segunda pasada falló idempotencia porque perspectivas y sectores alternaban un salto de línea alrededor de los bloques administrados;
+3. la lógica funcional se preservó en `apply_authority_v53_core.py` y el aplicador público añadió una normalización determinista de los límites de bloque;
+4. la siguiente ejecución produjo diff cero y aprobó toda la matriz v4.4→v5.3, Pages, smoke live y promoción de `stable`.
 
-Así se preserva la garantía v5.1 sin impedir que una release posterior mejore el texto comercial.
+No se debilitó ningún gate ni se excluyeron archivos de la comprobación de idempotencia.
 
-## Incidencias detectadas durante el cierre v5.2
+## Principios que se mantienen
 
-Las barreras automáticas volvieron a cumplir su función:
-
-1. una operación de actualización movió `version.json` antes que el paquete completo; el constructor generó una salida intermedia etiquetada v5.2 sobre la arquitectura anterior;
-2. el paquete completo se reconstruyó sobre el HEAD canónico nuevo y se integró mediante fast-forward sin forzar `main`;
-3. la primera matriz completa aprobó idempotencia y v4.8–v5.0, pero v5.1 bloqueó el CTA específico porque esperaba literalmente el cierre genérico anterior;
-4. el validador v5.1 se hizo version-aware y el job fallido se reejecutó sin relajar el control;
-5. la segunda ejecución aprobó toda la matriz, GitHub Pages, smoke v5.2 y promoción de `stable`.
-
-## Flujo operativo
-
-- `main`: código vigente y fuente de publicación.
-- `stable`: último commit que pasó construcción, idempotencia, validadores, Pages y smoke live.
-- Los cambios funcionales activan el constructor canónico.
-- Pages despliega únicamente una salida validada.
-- El smoke post-deploy verifica la URL servida.
-- `stable` avanza únicamente después del smoke.
+- No inventar clientes, testimonios, casos de éxito ni tasas de éxito.
+- No duplicar precios en landings: la fuente monetaria continúa en `#honorarios` y `#planes`.
+- No afirmar que la web recibe o almacena formularios en un backend inexistente.
+- No activar analítica, Search Console, CRM o dominio personalizado sin datos reales.
+- Mantener `main` como fuente vigente y `stable` como último commit desplegado y verificado en vivo.
 
 ## Próximo ciclo lógico
 
-La arquitectura ya no necesita nuevas capas por inercia. El siguiente ciclo debería basarse en **evidencia de comportamiento** cuando exista una fuente real de medición: qué rutas reciben visitas, dónde se abandona, qué CTA se usa y qué necesidades llegan efectivamente a conversación.
+La siguiente mejora no debería ser otra capa de contenido por inercia. Con autoridad, rutas, CRO y contrato de eventos ya definidos, el siguiente ciclo útil es **browser/E2E y revisión responsive real**: navegación, menús, filtros, FAQ, CTAs contextuales, formularios, enlaces con query/hash, Centro Demo, Meridiano Empresas, errores de consola y solicitudes 404.
 
-Sin datos reales, las siguientes mejoras útiles son de precisión editorial y autoridad: profundizar contenidos específicos con respaldo normativo cuando aporte valor, preparar el dominio propio y Search Console cuando existan datos reales, y revisar performance/UX con pruebas de navegador sin sobrecargar la interfaz.
+Una vez exista dominio o un proveedor real de medición, esa infraestructura podrá activarse sobre una base cuyo comportamiento y contrato de datos ya están definidos.
