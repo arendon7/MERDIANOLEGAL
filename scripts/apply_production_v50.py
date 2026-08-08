@@ -25,6 +25,7 @@ SEARCH_A = "<!-- PRODUCTION-V50-SEARCH:START -->"
 SEARCH_B = "<!-- PRODUCTION-V50-SEARCH:END -->"
 PRIVACY_A = "<!-- PRODUCTION-V50-PRIVACY:START -->"
 PRIVACY_B = "<!-- PRODUCTION-V50-PRIVACY:END -->"
+REFERRER_TAG = '<meta name="referrer" content="strict-origin-when-cross-origin">'
 
 
 def semver(value: str) -> tuple[int, int, int]:
@@ -67,6 +68,25 @@ def upsert_meta(text: str, name_or_property: str, value: str, *, prop: bool = Fa
     return text.replace("</head>", f"  {tag}\n</head>", 1)
 
 
+def normalize_referrer_meta(text: str) -> str:
+    """Coloca la política referrer tras viewport, fuera de zonas reordenadas por capas previas."""
+    text = re.sub(
+        r'(?m)^[ \t]*<meta name="referrer" content="[^"]*">[ \t]*(?:\r?\n)?',
+        "",
+        text,
+    )
+    text = re.sub(r'<meta name="referrer" content="[^"]*">', "", text)
+    updated, count = re.subn(
+        r'(<meta name="viewport"[^>]*>)',
+        lambda match: match.group(1) + "\n  " + REFERRER_TAG,
+        text,
+        count=1,
+    )
+    if count != 1:
+        raise RuntimeError("No se encontró meta viewport para ubicar política referrer")
+    return updated
+
+
 def upsert_canonical(text: str, url: str) -> str:
     tag = f'<link rel="canonical" href="{escape(url, quote=True)}">'
     if re.search(r'<link rel="canonical" href="[^"]*">', text):
@@ -85,7 +105,7 @@ def patch_html(path: Path) -> None:
     if path.name == "404.html":
         noindex = True
 
-    text = upsert_meta(text, "referrer", "strict-origin-when-cross-origin")
+    text = normalize_referrer_meta(text)
     if not noindex:
         canonical = BASE_URL + public_relative(path)
         text = upsert_canonical(text, canonical)
@@ -154,20 +174,29 @@ def patch_privacy() -> None:
         text,
         count=1,
     )
-    text = managed_remove(text, PRIVACY_A, PRIVACY_B)
-    anchor = re.search(r'(<h2>5\. Funcionamiento del formulario</h2><p>.*?</p>)', text)
-    if not anchor:
-        raise RuntimeError("privacidad.html: no se encontró la sección 5")
+    text = re.sub(
+        r'[ \t\r\n]*' + re.escape(PRIVACY_A) + r'[\s\S]*?' + re.escape(PRIVACY_B) + r'[ \t\r\n]*',
+        "\n        ",
+        text,
+        count=1,
+    )
     analytics_state = "desactivada" if not CONFIG["analytics"]["enabled"] else "habilitada"
     block = (
-        f"{PRIVACY_A}"
-        "<h2>5.1. Contexto de navegación e instrumentación técnica</h2>"
+        f"{PRIVACY_A}<h2>5.1. Contexto de navegación e instrumentación técnica</h2>"
         "<p>La web puede utilizar <code>sessionStorage</code> únicamente para conservar durante la sesión el contexto de navegación comercial —por ejemplo, la solución o sector desde el que una persona llegó al formulario— y evitar que tenga que repetir ese recorrido. Esa información de contexto se elimina al finalizar la sesión del navegador según el funcionamiento del propio navegador.</p>"
         f"<p>La instrumentación técnica de conversión v5.0 mantiene eventos no identificadores únicamente en memoria del navegador para depuración y preparación de medición —por ejemplo, vista de página, apertura de un CTA o preparación de una referencia—. No utiliza cookies, <code>localStorage</code>, píxeles, <code>sendBeacon</code> ni transmite esos eventos a un proveedor externo. La analítica de terceros se encuentra actualmente {analytics_state}. Cualquier activación futura deberá reflejarse previamente en la configuración pública y en esta política.</p>"
         f"{PRIVACY_B}"
     )
-    text = text[:anchor.end()] + block + text[anchor.end():]
-    path.write_text(text, encoding="utf-8")
+    pattern = r'(<h2>5\. Funcionamiento del formulario</h2><p>.*?</p>)[ \t\r\n]*(?=<h2>6\. Autorización y libertad</h2>)'
+    updated, count = re.subn(
+        pattern,
+        lambda match: match.group(1) + "\n        " + block + "\n        ",
+        text,
+        count=1,
+    )
+    if count != 1:
+        raise RuntimeError("privacidad.html: no se pudo normalizar el bloque 5.1")
+    path.write_text(updated, encoding="utf-8")
 
 
 def write_runtime_config() -> None:
