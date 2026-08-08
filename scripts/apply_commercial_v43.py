@@ -1,0 +1,61 @@
+#!/usr/bin/env python3
+"""Aplica la capa comercial canónica v4.3 sobre la portada pública."""
+
+from pathlib import Path
+import re
+
+ROOT = Path(__file__).resolve().parents[1]
+INDEX = ROOT / "index.html"
+START = "<!-- COMMERCIAL-V43:START -->"
+END = "<!-- COMMERCIAL-V43:END -->"
+STYLE = '<link rel="stylesheet" href="commercial-v43.css">'
+CATALOG_SCRIPT = '<script src="catalog-home-v32.js"></script>'
+
+BLOCK = r'''<!-- COMMERCIAL-V43:START -->
+    <section class="section" id="planes"><div class="container"><div class="section-heading heading-row"><div><p class="eyebrow dark">PLANES RECURRENTES</p><h2>Capacidad jurídica mensual con volumen, gobierno y límites definidos.</h2></div><p>Los planes convierten una demanda jurídica recurrente en capacidad programada. Cada propuesta confirma horas, responsables, canales, niveles de servicio, materias incluidas, exclusiones y reglas de escalamiento.</p></div><div class="commercial-plans">
+      <article class="plan-card-v43"><span class="plan-kicker">01 · ESENCIAL</span><h3>Plan Esencial</h3><div class="plan-price"><strong>$ 2.800.000 COP</strong><small>mensuales · más IVA cuando aplique</small></div><span class="plan-capacity">6 horas / mes</span><p>Para empresas con demanda jurídica preventiva focal y necesidad de contar con un canal profesional estable.</p><ul class="plan-includes"><li>Orientación y revisión jurídica dentro de la capacidad contratada.</li><li>Priorización de solicitudes y alertas materiales.</li><li>Seguimiento básico de pendientes y decisiones.</li><li>Canal y tiempos de respuesta definidos en la propuesta.</li></ul><a href="#contacto">Solicitar este plan →</a></article>
+      <article class="plan-card-v43"><span class="plan-kicker">02 · EMPRESARIAL</span><h3>Plan Empresarial</h3><div class="plan-price"><strong>$ 5.200.000 COP</strong><small>mensuales · más IVA cuando aplique</small></div><span class="plan-capacity">14 horas / mes</span><p>Para operaciones con contratos, decisiones societarias, obligaciones y consultas que requieren atención recurrente.</p><ul class="plan-includes"><li>Atención preventiva y revisión documental priorizada.</li><li>Apoyo contractual y societario dentro del perímetro.</li><li>Control de pendientes, renovaciones y decisiones críticas.</li><li>Resumen periódico de asuntos abiertos y próximos hitos.</li></ul><a href="#contacto">Solicitar este plan →</a></article>
+      <article class="plan-card-v43 featured"><span class="plan-kicker">03 · DIRECCIÓN</span><h3>Plan Dirección</h3><div class="plan-price"><strong>$ 8.500.000 COP</strong><small>mensuales · más IVA cuando aplique</small></div><span class="plan-capacity">25 horas / mes</span><p>Para empresas que requieren una dirección jurídica externa integrada con gerencia, áreas internas y decisiones estratégicas.</p><ul class="plan-includes"><li>Comité jurídico periódico con agenda ejecutiva.</li><li>Triage, priorización y coordinación de asuntos.</li><li>Tablero de riesgos, obligaciones, decisiones y vencimientos.</li><li>Coordinación de especialistas externos cuando sea necesaria.</li></ul><a href="servicios/direccion-juridica-externa.html">Ver dirección jurídica →</a></article>
+      <article class="plan-card-v43"><span class="plan-kicker">04 · REGULADO</span><h3>Plan Regulado</h3><div class="plan-price"><strong>Desde $ 12.000.000 COP</strong><small>mensuales · más IVA cuando aplique</small></div><span class="plan-capacity">35 horas / mes de referencia</span><p>Para proyectos y operaciones sujetos a permisos, autoridades, obligaciones periódicas y dependencias regulatorias relevantes.</p><ul class="plan-includes"><li>Seguimiento regulatorio y matriz de obligaciones.</li><li>Coordinación de permisos, hitos y actuaciones jurídicas.</li><li>Revisión contractual asociada al proyecto.</li><li>Comité de seguimiento y alertas de viabilidad.</li></ul><a href="servicios/proyectos-regulados.html">Ver práctica regulatoria →</a></article>
+      <article class="plan-card-v43"><span class="plan-kicker">05 · LEGAL OPERATIONS</span><h3>Banco Documental y Legal Operations</h3><div class="plan-price"><strong>Alcance a medida</strong><small>implementación y soporte recurrente</small></div><span class="plan-capacity">Capacidad según procesos y usuarios</span><p>Para organizaciones que necesitan gobernar plantillas, solicitudes, versiones, aprobaciones, obligaciones, indicadores y ciclos de actualización.</p><ul class="plan-includes"><li>Catálogo de servicios, flujos y responsables.</li><li>Banco documental con versiones y permisos.</li><li>Indicadores, expedientes y mecanismos de seguimiento.</li><li>Soporte de adopción y mejora continua.</li></ul><a href="servicios/legal-operations.html">Ver Legal Operations →</a></article>
+    </div><div class="commercial-note"><strong>Capacidad y excedentes.</strong> Los planes no implican disponibilidad ilimitada. La propuesta define consumo de horas, canales, SLA, materias incluidas, exclusiones y escalamiento. Como referencia, las horas adicionales se cotizan en $350.000, $450.000 o $550.000 COP según complejidad y especialidad.</div></div></section>
+
+    <section class="section pricing-section-v43" id="honorarios"><div class="container"><div class="section-heading light heading-row"><div><p class="eyebrow">REFERENCIAS DE HONORARIOS</p><h2>Precios visibles para orientar la decisión antes de solicitar una propuesta.</h2></div><p>Las cifras son orientativas y sirven para dimensionar el punto de entrada. El valor definitivo depende del perímetro, volumen, complejidad, urgencia, revisiones, terceros, especialidades e implementación requeridos.</p></div><div class="pricing-grid-v43">
+      <article class="pricing-card-v43"><span>01 · DIAGNÓSTICO</span><h3>Entrada y priorización</h3><dl class="fee-list"><div class="fee-row"><dt>Diagnóstico jurídico profesional</dt><dd>$ 3.500.000</dd></div><div class="fee-row"><dt>Mayor complejidad o perímetro ampliado</dt><dd>Desde $ 5.000.000</dd></div></dl></article>
+      <article class="pricing-card-v43"><span>02 · TECNOLOGÍA E IA</span><h3>Gobernanza de inteligencia artificial</h3><dl class="fee-list"><div class="fee-row"><dt>Diagnóstico de IA</dt><dd>$ 4.500.000</dd></div><div class="fee-row"><dt>Política de IA</dt><dd>Desde $ 3.500.000</dd></div><div class="fee-row"><dt>Programa integral de gobernanza</dt><dd>$ 12–25 millones</dd></div><div class="fee-row"><dt>Seguimiento recurrente</dt><dd>Desde $ 3.500.000 / mes</dd></div></dl></article>
+      <article class="pricing-card-v43"><span>03 · PI Y SOCIETARIO</span><h3>Activos y relaciones entre socios</h3><dl class="fee-list"><div class="fee-row"><dt>Marca</dt><dd>Desde $ 1.200.000 + tasas</dd></div><div class="fee-row"><dt>Paquete Marca Protegida</dt><dd>$ 2.500.000 + tasas</dd></div><div class="fee-row"><dt>Acuerdo de accionistas</dt><dd>$ 4–8 millones</dd></div></dl></article>
+      <article class="pricing-card-v43"><span>04 · DOCUMENTOS</span><h3>Documentos guiados y conceptos</h3><dl class="fee-list"><div class="fee-row"><dt>Acuerdo de confidencialidad</dt><dd>$ 600.000</dd></div><div class="fee-row"><dt>Prestación de servicios</dt><dd>$ 900.000</dd></div><div class="fee-row"><dt>Suministro</dt><dd>$ 1.200.000</dd></div><div class="fee-row"><dt>Distribución</dt><dd>$ 1.500.000</dd></div><div class="fee-row"><dt>Cesión o licencia de software</dt><dd>$ 1.800.000</dd></div><div class="fee-row"><dt>Términos y condiciones</dt><dd>$ 2.000.000</dd></div><div class="fee-row"><dt>Datos personales</dt><dd>$ 2.000.000</dd></div><div class="fee-row"><dt>Concepto jurídico</dt><dd>$ 2.500.000</dd></div></dl></article>
+    </div><div class="pricing-rules"><article><strong>Producto cerrado</strong><span>Precio y entregables definidos para un perímetro estándar.</span></article><article><strong>Servicio a medida</strong><span>Propuesta por asunto, proyecto, hitos o capacidad profesional.</span></article><article><strong>Plan recurrente</strong><span>Capacidad mensual, SLA, gobierno, exclusiones y escalamiento.</span></article><article><strong>Terceros y tasas</strong><span>No se incluyen salvo indicación expresa en la propuesta.</span></article></div><p class="commercial-legal-note"><strong>Condición comercial.</strong> Valores expresados en pesos colombianos, orientativos y sujetos al alcance definitivo y al IVA cuando corresponda. Tasas oficiales, gastos, desplazamientos, peritos, corresponsales y otros terceros se cotizan por separado salvo inclusión expresa.</p></div></section>
+<!-- COMMERCIAL-V43:END -->'''
+
+OLD_PRICE_FAQ = "<details><summary>¿Cómo se define el precio?</summary><p>Se consideran el resultado, la complejidad, el volumen de información, las especialidades, la urgencia, las revisiones, los actores, la implementación y el nivel de seguimiento. Los productos cerrados permiten una estimación más estandarizada.</p></details>"
+NEW_PRICE_FAQ = "<details><summary>¿Cómo se define el precio?</summary><p>Publicamos referencias de honorarios para facilitar una primera decisión. El valor definitivo se confirma después de delimitar resultado, perímetro, volumen, complejidad, urgencia, revisiones, actores, especialidades, implementación y seguimiento. Los productos cerrados y los planes recurrentes permiten mayor estandarización; los servicios a medida se cotizan por asunto, proyecto, hitos o capacidad.</p></details>"
+
+
+def main() -> int:
+    text = INDEX.read_text(encoding="utf-8")
+    block_pattern = re.compile(re.escape(START) + r"[\s\S]*?" + re.escape(END))
+    if block_pattern.search(text):
+        text = block_pattern.sub(BLOCK, text, count=1)
+    else:
+        plan_pattern = re.compile(r'<section class="section" id="planes">[\s\S]*?</section>')
+        if not plan_pattern.search(text):
+            raise RuntimeError("No se encontró la sección #planes para aplicar v4.3.")
+        text = plan_pattern.sub(BLOCK, text, count=1)
+
+    if OLD_PRICE_FAQ in text:
+        text = text.replace(OLD_PRICE_FAQ, NEW_PRICE_FAQ, 1)
+    if "<option>Plan recurrente</option>" not in text:
+        text = text.replace("<option>Documento guiado</option>", "<option>Plan recurrente</option><option>Documento guiado</option>", 1)
+    if STYLE not in text:
+        text = text.replace("</head>", f"  {STYLE}\n</head>", 1)
+    if CATALOG_SCRIPT not in text:
+        text = text.replace("</body>", f"  {CATALOG_SCRIPT}\n</body>", 1)
+
+    INDEX.write_text(text, encoding="utf-8")
+    print("Capa comercial v4.3 aplicada: planes, honorarios y contratación.")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -1,8 +1,8 @@
 {
   "name": "Meridiano Legal Web",
-  "version": "4.2.0",
+  "version": "4.3.0",
   "release_date": "2026-08-07",
   "channel": "github-pages-demo",
-  "commit_scope": "commercial-legal-service-catalog",
+  "commit_scope": "commercial-pricing-recurring-plans",
   "source_baseline": "main"
 }
