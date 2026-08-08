@@ -6,7 +6,7 @@
 .guide-form select{width:100%;min-height:50px;padding:0 42px 0 14px;border:1px solid #cfc6b7;border-radius:0;background:#fff;color:#13263a;font:inherit}
 .guide-form select:focus{outline:2px solid rgba(168,132,84,.35);outline-offset:2px;border-color:#a88454}
 .guide-form .btn{justify-content:center;min-height:50px}
-.guide-privacy{margin:0;color:#6f7b84;font-size:.72rem}
+.guide-privacy{margin:0;color:#5f6d75;font-size:.72rem}
 .guide-result{display:flex;flex-direction:column;justify-content:center;min-height:390px;padding:42px;background:linear-gradient(145deg,#13263a,#193b53);color:#fff}
 .guide-result>span{color:#d9bc8b;font-size:.68rem;font-weight:900;letter-spacing:.13em}
 .guide-result h3{max-width:640px;margin:18px 0 12px;color:#fff;font-size:clamp(1.8rem,3vw,2.7rem)}
@@ -20,20 +20,20 @@
 .guide-comparison article:last-child{border-right:0}
 .guide-comparison strong,.guide-comparison span,.guide-comparison small{display:block}
 .guide-comparison strong{color:#13263a;font-family:var(--serif);font-size:1.14rem}
-.guide-comparison span{margin-top:5px;color:#a88454;font-size:.68rem;font-weight:900;text-transform:uppercase;letter-spacing:.07em}
-.guide-comparison small{margin-top:7px;color:#6f7b84;line-height:1.45}
+.guide-comparison span{margin-top:5px;color:#7b592d;font-size:.68rem;font-weight:900;text-transform:uppercase;letter-spacing:.07em}
+.guide-comparison small{margin-top:7px;color:#5f6d75;line-height:1.45}
 
 /* Contexto de contacto */
 .contact-context{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:17px 18px;border:1px solid rgba(168,132,84,.4);background:#fbf7ef}
 .contact-context[hidden]{display:none}
 .contact-context span,.contact-context strong,.contact-context small{display:block}
-.contact-context span{color:#a88454;font-size:.62rem;font-weight:900;letter-spacing:.09em}
+.contact-context span{color:#7b592d;font-size:.62rem;font-weight:900;letter-spacing:.09em}
 .contact-context strong{margin-top:3px;color:#13263a;font-family:var(--serif);font-size:1.05rem}
-.contact-context small{margin-top:3px;color:#6f7b84;font-size:.69rem}
+.contact-context small{margin-top:3px;color:#5f6d75;font-size:.69rem}
 .contact-context button{border:0;background:transparent;color:#2c5878;font-size:.68rem;font-weight:900;text-transform:uppercase;letter-spacing:.05em;cursor:pointer}
 
 /* Navegación móvil compacta */
-.main-nav .nav-selector{color:#a88454}
+.main-nav .nav-selector{color:#7b592d}
 .nav-mobile-utility{display:none!important}
 @media(max-width:1050px){
   .guide-layout{grid-template-columns:1fr}
