@@ -1,152 +1,99 @@
-# Meridiano Legal · Web canónica v5.0.0
+# Meridiano Legal · Web canónica v5.1.0
 
-Sitio público, responsive y autocontenido de Meridiano Legal, publicado mediante GitHub Pages y preparado para una transición controlada hacia dominio propio, verificación de buscadores y medición comercial cuando existan decisiones y credenciales reales.
+Sitio público, responsive y autocontenido de Meridiano Legal, publicado mediante GitHub Pages. La v5.1 conserva la base production-ready de v5.0 y añade una capa de crecimiento orientada a que una empresa pueda empezar por su **situación o decisión empresarial**, sin tener que conocer previamente el nombre de un producto o servicio jurídico.
 
 ## Estado de la release
 
-La v5.0 consolida la web como una base **production-ready dentro de una arquitectura estática**. Esto significa que el sitio público, el catálogo jurídico, el contacto por WhatsApp, SEO, privacidad, configuración, construcción, despliegue y verificación live están gobernados y reproducibles. No significa que se hayan inventado o activado servicios externos que todavía no existen.
+La publicación v5.1 está compuesta por **46 páginas HTML** y mantiene como base:
 
-La publicación mantiene íntegra la arquitectura comercial y jurídica acumulada: ocho servicios, ocho productos, cinco planes recurrentes, ocho sectores, seis perspectivas, Firma, Centro Demo y Meridiano Empresas.
+- 8 servicios profesionales;
+- 8 productos jurídicos de alcance cerrado;
+- 5 planes recurrentes;
+- 8 lecturas sectoriales;
+- 6 perspectivas jurídicas;
+- página institucional de Firma;
+- Centro Demo;
+- Meridiano Empresas, con datos ficticios y `noindex,nofollow`;
+- 1 hub de soluciones y 6 nuevas rutas de decisión empresarial.
 
-Actualmente:
+La URL pública canónica continúa siendo `https://arendon7.github.io/MERDIANOLEGAL/`. No existe todavía dominio personalizado, CRM, backend propio, analítica de terceros ni token de Search Console. WhatsApp continúa siendo el canal real de contacto y la telemetría first-party v5.0 permanece local y sin transmisión externa.
 
-- la URL pública canónica es `https://arendon7.github.io/MERDIANOLEGAL/`;
-- no hay dominio personalizado configurado;
-- WhatsApp continúa siendo el canal real de contacto;
-- no hay CRM, backend ni almacenamiento propio del formulario;
-- la analítica de terceros está desactivada;
-- no hay token de Google Search Console configurado;
-- `demo.html` continúa siendo un entorno ficticio y `noindex,nofollow`.
+## v5.1 · Empezar por el problema, no por el catálogo
 
-Estas ausencias son deliberadas: v5.0 deja preparada la infraestructura para activarlas correctamente cuando exista un dominio, proveedor, identificador o credencial real.
+La portada conserva seis rutas navegables static-first, pero su contenido pasa de categorías jurídicas genéricas a situaciones de alta intención comercial:
 
-## Fuente única de configuración pública
+1. **Ordenar el riesgo jurídico de una empresa**.
+2. **Dirección jurídica externa para empresas**.
+3. **Gobernanza jurídica de inteligencia artificial**.
+4. **Preparar una empresa para inversión y due diligence**.
+5. **Estructurar jurídicamente un proyecto regulado**.
+6. **Legal Operations: ordenar la operación jurídica**.
 
-`site-config.json` es la fuente canónica de configuración operacional:
+El hub `soluciones/` reúne las seis rutas. Cada página explica:
 
-```json
-{
-  "name": "Meridiano Legal",
-  "base_url": "https://arendon7.github.io/MERDIANOLEGAL/",
-  "deployment": "github-pages",
-  "environment": "public",
-  "custom_domain": "",
-  "contact": {
-    "whatsapp": "573008507813"
-  },
-  "analytics": {
-    "enabled": false,
-    "provider": "none",
-    "site_id": ""
-  },
-  "search_console_verification": ""
-}
-```
+- cuándo conviene actuar;
+- señales observables de que la necesidad ya está abierta;
+- preguntas que deben quedar resueltas;
+- diferencia entre producto cerrado, servicio adaptable y capacidad recurrente;
+- entregables posibles;
+- límites que no deben asumirse dentro del alcance;
+- perspectivas, sectores, Centro Demo y Firma que pueden revisarse antes del contacto;
+- CTA contextual hacia la presentación de la necesidad.
 
-`scripts/site_config.py` valida la configuración antes de construir: URL HTTPS absoluta, ruta pública, coherencia de dominio, número de contacto, estado de analítica y token opcional de verificación.
+Las páginas son HTML estático, indexables, cuentan con canonical, `og:url`, datos estructurados, breadcrumbs y la misma configuración runtime/telemetría de la capa v5.0.
 
-La consecuencia principal es que un cambio futuro de dominio no debe resolverse editando manualmente decenas de HTML, canonical, Open Graph, sitemap y robots. La capa v5.0 deriva esos elementos desde esta configuración.
+## Prueba pública verificable
 
-## Dominio personalizado y Search Console
+La v5.1 no inventa testimonios, clientes, tasas de éxito ni cifras de resultados. La sección de evidencia de la portada se apoya únicamente en activos que el visitante puede inspeccionar directamente:
 
-La release está preparada para dominio propio, pero no lo activa sin un dominio real.
+- **16 fichas profundas** con alcance, entregables, responsabilidades y límites;
+- **8 lecturas sectoriales** con decisiones, dependencias y riesgos;
+- **6 perspectivas desarrolladas** que muestran criterio jurídico;
+- **Centro Demo** con información ficticia para visualizar método, entregables y seguimiento.
 
-Cuando exista un dominio aprobado, el procedimiento canónico será:
+El principio comercial es deliberado: antes de pedir información confidencial, la firma debe permitir revisar qué hace, cómo estructura el trabajo y dónde termina el alcance.
 
-1. actualizar `base_url` con la URL HTTPS final;
-2. informar el hostname en `custom_domain`;
-3. configurar DNS en el proveedor del dominio;
-4. dejar que el constructor genere `CNAME` y sincronice canonical, `og:url`, sitemap, robots y contexto;
-5. ejecutar toda la matriz de calidad y el smoke live antes de mover `stable`.
+## Fuente estructurada de las rutas
 
-`CNAME` solo existe cuando `custom_domain` está configurado. El token de Search Console funciona de igual manera: `search_console_verification` permanece vacío y la meta de verificación solo se publica cuando se incorpora un valor real.
+`growth-solutions-v51.json` concentra el contenido canónico de las seis rutas: slug, título, intención, señales, preguntas, modalidades relacionadas, entregables, límites, perspectiva, sector y necesidad comercial.
 
-## Runtime y estado público
+`scripts/apply_growth_v51.py` genera a partir de esa fuente:
 
-La capa v5.0 genera dos artefactos operativos:
+- `soluciones/index.html`;
+- las seis páginas de decisión;
+- el bloque `#necesidades` de la portada;
+- la sección de evidencia pública;
+- el bloque v5.1 de `sitemap.xml`.
 
-- `runtime-config.js`: configuración pública segura para JavaScript, sin secretos;
-- `site-status.json`: estado verificable de versión, URL, entorno, despliegue, canal de contacto, analítica y política de indexación del demo.
+`growth-v51.css` concentra el sistema visual de hub, páginas de solución y componentes de crecimiento.
 
-Estos archivos permiten que el smoke post-deploy compruebe no solo que Pages responde, sino que está sirviendo la configuración que corresponde a la release actual.
+## Compatibilidad e idempotencia
 
-## Telemetría v5.0: preparada, pero sin transmisión
+La arquitectura acumulada mantiene controles históricos estrictos. En particular, v4.8 exige que la portada conserve exactamente seis enlaces `need-card` navegables sin JavaScript.
 
-`telemetry-v50.js` incorpora una capa de instrumentación first-party para preparar medición de funnel sin introducir todavía un proveedor externo.
+Para que v5.1 pueda cambiar el destino y el contenido de esas rutas sin romper ese contrato:
 
-Actualmente registra únicamente en memoria del navegador, con un máximo acotado de eventos no identificadores:
+- `scripts/normalize_growth_compat_v51.py` normaliza el HTML previo **antes de v4.8** cuando se reconstruye una salida v5.1 ya generada;
+- `scripts/finalize_growth_v51.py` aplica la lógica de producción v5.0 a las siete páginas nuevas, normaliza el canonical limpio del hub `soluciones/` y restituye la compatibilidad exacta de las seis tarjetas de portada al final.
 
-- `page_view`;
-- aperturas de CTA relevantes;
-- navegación hacia fichas, sectores, perspectivas o demos;
-- `lead_prepared` cuando el flujo de contacto prepara una referencia.
+El validador v4.8 también se hizo version-aware para Legal Operations: en v5.1 exige la cadena completa **portada → ruta de decisión de operación jurídica → servicio Legal Operations**, en vez de limitarse a un enlace directo antiguo.
 
-La implementación base no utiliza:
+## Configuración de producción v5.0 preservada
 
-- `fetch`;
-- `XMLHttpRequest`;
-- `sendBeacon`;
-- cookies;
-- `localStorage`;
-- `sessionStorage` propio de telemetría;
-- píxeles ni scripts de analítica de terceros.
+`site-config.json` sigue siendo la fuente única para URL pública, despliegue, entorno, dominio, WhatsApp, analítica y verificación de buscadores.
 
-`window.MeridianoTelemetry` expone el estado local para diagnóstico. Existe un punto de extensión `MeridianoAnalyticsAdapter`, pero solo podría transmitir si `analytics.enabled` se configura explícitamente en `true` con un proveedor e identificador válidos. La v5.0 mantiene `analytics.enabled=false` y `provider=none`.
+La capa v5.0 continúa generando y validando:
 
-## Privacidad v1.1
+- `runtime-config.js`;
+- `site-status.json`;
+- canonical y `og:url`;
+- `robots.txt` y `sitemap.xml`;
+- `CNAME` únicamente si existe un dominio real;
+- Search Console únicamente si existe un token real;
+- telemetría first-party en memoria mediante `telemetry-v50.js`;
+- privacidad v1.1 coherente con el comportamiento técnico del sitio.
 
-`privacidad.html` fue actualizada para reflejar con precisión el comportamiento técnico vigente.
-
-La política aclara que:
-
-- el formulario se procesa localmente y no se almacena en un servidor propio;
-- abrir WhatsApp no equivale a haber enviado la solicitud;
-- el mensaje se considera remitido cuando el usuario confirma el envío dentro de WhatsApp;
-- `sessionStorage` puede conservar durante la sesión únicamente contexto de navegación comercial ya utilizado por `page-context.js`;
-- la telemetría v5.0 permanece en memoria y no transmite eventos a terceros;
-- no se utilizan cookies, `localStorage`, píxeles o `sendBeacon` para esa instrumentación;
-- cualquier activación futura de analítica deberá reflejarse previamente en configuración y política.
-
-## Contacto operativo v4.9 preservado
-
-La v5.0 mantiene el flujo operativo validado en v4.9:
-
-- honeypot silencioso;
-- límites de longitud y saneamiento;
-- referencia `ML-YYYYMMDD-XXXXX`;
-- necesidad, contexto comercial y ruta de origen;
-- fallback si el navegador bloquea la nueva ventana;
-- acceso directo alternativo a WhatsApp;
-- mensajes que distinguen correctamente entre abrir WhatsApp y enviar el mensaje.
-
-No se incorpora un backend o CRM ficticio.
-
-## SEO y URLs canónicas
-
-`scripts/apply_production_v50.py` actúa como capa final después de v4.9 y sincroniza:
-
-- canonical de páginas indexables;
-- `og:url`;
-- política `referrer=strict-origin-when-cross-origin`;
-- `sitemap.xml`;
-- `robots.txt`;
-- ruta pública usada por `page-context.js`;
-- verificación Search Console, únicamente si existe token;
-- `CNAME`, únicamente si existe dominio configurado.
-
-Las páginas `noindex` no reciben la instrumentación runtime pública. `demo.html` permanece fuera del sitemap.
-
-## Arquitectura pública
-
-- Portada comercial static-first con seis rutas por necesidad.
-- 8 servicios profesionales y 8 productos jurídicos con contenido profundo en HTML.
-- 5 planes recurrentes y referencias públicas de honorarios.
-- 8 páginas sectoriales.
-- 6 perspectivas jurídicas.
-- Página institucional de Firma.
-- Centro de Demostración.
-- Meridiano Empresas con perfiles y datos ficticios, declarado `noindex,nofollow`.
-- Páginas legales, sitemap, robots, manifiesto y 404.
+El canal de la release v5.1 es `github-pages-public-growth-ready`, por lo que la superficie pública declara **Web pública v5.1.0** y los componentes específicamente demostrativos conservan su etiqueta de demo.
 
 ## Construcción canónica
 
@@ -163,22 +110,26 @@ python3 scripts/apply_ux_v45.py
 python3 scripts/apply_detail_ux_v46.py
 python3 scripts/apply_editorial_ux_v47.py
 python3 scripts/normalize_editorial_v47.py
+python3 scripts/normalize_growth_compat_v51.py
 python3 scripts/apply_quality_v48.py
 python3 scripts/normalize_quality_v48.py
 python3 scripts/apply_operations_v49.py
 python3 scripts/sync_public_version.py
 python3 scripts/apply_production_v50.py
+python3 scripts/apply_growth_v51.py
+python3 scripts/finalize_growth_v51.py
 ```
 
-`Site Quality and Deploy` vuelve a ejecutar la cadena completa y exige diff cero antes de validar:
+`Site Quality and Deploy` repite la cadena completa y exige **diff cero** antes de validar:
 
-- integridad HTML, rutas y recursos;
+- integridad de 46 páginas, rutas y recursos;
 - catálogo estático de 16 fichas;
-- conversión comercial v4.4;
+- conversión v4.4;
 - UX v4.5, v4.6 y v4.7;
 - calidad static-first v4.8;
 - operación pública v4.9;
-- **configuración de producción v5.0**;
+- producción v5.0;
+- crecimiento y rutas de decisión v5.1;
 - selector guiado;
 - contexto y datos estructurados;
 - Firma, Perspectivas y Sectores;
@@ -186,35 +137,36 @@ python3 scripts/apply_production_v50.py
 - JavaScript;
 - JSON.
 
-Después del deploy, `scripts/validate_live_v50.py` consulta la URL realmente servida y comprueba `site-status.json`, portada, canonical, Firma, fichas, Perspectivas, Privacidad, Demo, runtime, telemetría, conversión, sitemap y robots. `stable` solo se mueve después de superar este smoke.
+Después del deploy, `scripts/validate_live_v51.py` ejecuta primero el smoke v5.0 y después consulta la portada, el hub y las seis nuevas rutas sobre la URL realmente servida. Comprueba contenido, canonical, `og:url`, telemetría e inclusión en sitemap. `stable` solo avanza después de ese smoke.
 
-## Incidencias detectadas durante el cierre v5.0
+## Incidencias detectadas durante el cierre v5.1
 
-Las barreras automáticas bloquearon correctamente varios estados intermedios antes de publicación:
+Las barreras automáticas bloquearon varios estados intermedios y permitieron corregir la arquitectura antes de publicar:
 
-1. una carrera inicial dejó `version.json` temporalmente separado del resto del paquete; el cambio completo se reconstruyó sobre el HEAD nuevo sin forzar `main`;
-2. la primera salida v5.0 no era idempotente por la posición de `meta referrer` y whitespace de la nueva sección de privacidad;
-3. una segunda pasada reveló el caso específico de `<head>` compactados; el normalizador se hizo determinista desde la primera ejecución;
-4. el validador visual legado seguía exigiendo la etiqueta “Web demostrativa” en la portada pública; se alineó con `version.json.channel`, manteniendo “Web pública” para el sitio y “Web demostrativa” para componentes demo.
+1. v4.8 exigía el contrato literal `class="need-card"` en las seis rutas; se conservó ese contrato en la portada y se reservó la nueva clase visual para el hub;
+2. una reconstrucción sucesiva demostró que la compatibilidad debía normalizarse **antes** de ejecutar v4.8, por lo que se añadió un normalizador previo además del finalizador;
+3. el validador v4.8 esperaba un enlace directo a Legal Operations; se convirtió en una comprobación version-aware de la cadena portada → ruta → servicio;
+4. el primer canal v5.1 no contenía la señal `public` y el sincronizador lo interpretó como demostrativo; se corrigió a `github-pages-public-growth-ready`.
 
-Ninguno de estos controles fue desactivado. La release solo se publicó cuando la construcción produjo diff cero y toda la matriz quedó verde.
+No se desactivó ninguna barrera. La salida técnica final aprobó idempotencia, los validadores acumulados, Pages, smoke v5.1 y sincronización de `stable`.
 
 ## Flujo operativo
 
 - `main`: código vigente y fuente de publicación.
 - `stable`: último commit que pasó construcción, idempotencia, validadores, GitHub Pages y smoke live.
 - Los cambios funcionales activan `Build canonical public site`.
-- Los cambios documentales o de QA pueden pasar directamente por `Site Quality and Deploy` cuando no requieren regenerar salidas.
-- Pages despliega únicamente una versión validada.
-- `stable` solo avanza después de verificar la URL pública.
+- Pages despliega únicamente una salida validada.
+- El smoke post-deploy verifica la URL servida, no solo el artefacto local.
+- `stable` se mueve únicamente después de superar ese smoke.
 
 ## Próximas activaciones externas
 
-La infraestructura queda preparada, pero estas decisiones requieren datos reales antes de ejecutarse:
+La arquitectura está preparada para crecer sin inventar dependencias. Las siguientes decisiones requieren datos reales antes de activarse:
 
 - dominio personalizado y DNS;
-- Google Search Console y su token de verificación;
-- analítica real y privacy-friendly, con proveedor e identificador definidos;
-- CRM, formulario backend o correo transaccional, si se decide utilizar un canal adicional a WhatsApp.
+- Google Search Console;
+- analítica privacy-friendly con proveedor e identificador definidos;
+- CRM, backend de formularios o correo transaccional si se decide ampliar WhatsApp;
+- medición CRO de las nuevas rutas de decisión una vez exista una fuente real de datos.
 
-No deben activarse únicamente para “completar” la arquitectura: cada integración debe tener propósito, configuración verificable, tratamiento de datos documentado y prueba de extremo a extremo.
+Cada integración debe tener propósito, configuración verificable, tratamiento de datos documentado y prueba de extremo a extremo.
