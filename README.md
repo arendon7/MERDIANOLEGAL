@@ -1,12 +1,12 @@
-# Meridiano Legal · Web canónica v4.6.0
+# Meridiano Legal · Web canónica v4.7.0
 
 Sitio público, responsive y autocontenido de Meridiano Legal, publicado directamente desde GitHub Pages.
 
 ## Estado de la release
 
-La v4.6 extiende a las 16 fichas profundas la arquitectura de experiencia consolidada en la portada v4.5. Conserva íntegramente los ocho productos jurídicos v4.1 y los ocho servicios profesionales v4.2, así como planes, honorarios, contratación, sectores, perspectivas y contenido jurídico previamente aprobado.
+La v4.7 completa la unificación de experiencia pública iniciada en la portada v4.5 y extendida a las 16 fichas profundas en v4.6. La nueva capa se aplica a la página de la firma, la biblioteca y las seis perspectivas, los ocho sectores, el Centro de Demostración y Meridiano Empresas.
 
-El cambio es de UX/UI y conversión: servicios y productos ahora comparten una navegación ejecutiva más corta, hero y cabecera de menor densidad, un índice sticky de seis hitos, jerarquía editorial más clara, CTA contextual y una experiencia móvil coherente con la portada. El contenido jurídico continúa disponible en HTML estático y no depende de JavaScript para poder leerse.
+El cambio es de UX/UI, continuidad y conversión. El contenido jurídico, editorial y demostrativo previo se conserva; la nueva capa mejora navegación móvil, lectura de páginas largas, conexión entre contenidos y oferta, rutas sectoriales y orientación dentro de los entornos demostrativos.
 
 ## Flujo operativo
 
@@ -14,18 +14,19 @@ El cambio es de UX/UI y conversión: servicios y productos ahora comparten una n
 - `stable`: último commit validado y desplegado correctamente.
 - Cada cambio en `main` activa construcción canónica, controles, despliegue y actualización automática de `stable`.
 - Si una validación falla, GitHub Pages conserva la última versión aprobada.
-- No se usan ramas ordinarias, pull requests temporales ni copias con nombres `final`, `nuevo` o sufijos de versión.
+- La construcción pública es reproducible e idempotente; un segundo ciclo sobre las mismas fuentes debe producir diff cero.
 
 ## Arquitectura pública
 
 - Portada comercial v4.5 con navegación simplificada, selector guiado, precios, mockup de Meridiano Empresas y contacto contextual.
-- Página institucional de la firma y su método.
+- Página institucional de la firma con método, principios, dirección y ocho rutas sectoriales navegables.
 - 8 servicios profesionales v4.2 y 8 productos jurídicos v4.1 con contenido estático profundo y UX/UI v4.6.
 - Navegación ejecutiva en las 16 fichas: decisión, alcance, entregables, implementación, límites y siguiente paso.
-- 8 páginas sectoriales y 6 perspectivas jurídicas.
-- 5 planes recurrentes con capacidad y límites definidos.
-- Referencias públicas de honorarios y documentos guiados.
-- Centro demo y portal demostrativo Meridiano Empresas.
+- 8 páginas sectoriales con recorrido rápido por enfoque, decisiones, riesgos y siguiente paso.
+- 6 perspectivas jurídicas únicas, sin duplicación entre destacadas y biblioteca, con índice de lectura y conversión contextual.
+- 5 planes recurrentes con capacidad y límites definidos y referencias públicas de honorarios.
+- Centro de Demostración con recorrido, entregables, caso integral, simulador y conexión con Meridiano Empresas.
+- Meridiano Empresas con tres perfiles ficticios y nueve módulos demostrativos.
 - Páginas legales, sitemap, robots, manifiesto y página 404.
 
 ## Catálogo comercial-jurídico
@@ -48,35 +49,37 @@ El proceso de contratación deja expresos necesidad, calificación, propuesta, a
 
 ## UX/UI de portada v4.5
 
-`ux-v45.css` y `scripts/apply_ux_v45.py` controlan la arquitectura final de la portada:
-
-- menú principal reducido y CTA visible;
-- navegación móvil y CTA persistente;
-- evidencia concreta de la oferta: 8 servicios, 8 productos, 5 planes y 8 sectores;
-- eliminación de bloques redundantes;
-- resumen de entregables en cuatro resultados operativos;
-- mockup demostrativo de Meridiano Empresas;
-- orden narrativo validado automáticamente.
+`ux-v45.css` y `scripts/apply_ux_v45.py` controlan la arquitectura final de la portada: menú principal reducido, navegación y CTA móvil, evidencia concreta de la oferta, eliminación de bloques redundantes, resumen de entregables, mockup demostrativo y orden narrativo validado automáticamente.
 
 ## UX/UI de fichas v4.6
 
-`detail-v46.css`, `detail-v46.js` y `scripts/apply_detail_ux_v46.py` aplican una capa única a las 16 fichas de servicios y productos, después de sus renderers jurídicos. La capa no modifica el contenido sustantivo.
+`detail-v46.css`, `detail-v46.js` y `scripts/apply_detail_ux_v46.py` aplican una capa única a las 16 fichas de servicios y productos sin modificar el contenido jurídico sustantivo.
 
-Incluye:
+Incluye cabecera compacta, hero de menor densidad, índice sticky de seis hitos, resaltado de sección activa, jerarquía editorial, panel de límites, CTA móvil contextual, soporte de reducción de movimiento e impresión, y lectura completa sin JavaScript.
 
-- cabecera compacta y navegación alineada con la portada;
-- hero con menor altura y metadatos más escaneables;
-- índice sticky con seis hitos: decisión, alcance, entregables, implementación, límites y siguiente paso;
-- resaltado progresivo de la sección activa mediante `IntersectionObserver`;
-- re-vinculación del índice cuando un producto se mejora dinámicamente, mediante `MutationObserver`;
-- encabezados editoriales de dos columnas y menor densidad vertical;
-- tarjetas, método, relaciones y límites con jerarquía visual más clara;
-- panel de límites sticky en escritorio;
-- CTA móvil persistente con mensaje contextual de WhatsApp;
-- soporte de `prefers-reduced-motion` e impresión;
-- lectura completa del contenido jurídico sin JavaScript.
+`scripts/validate_detail_ux_v46.py` exige exactamente 16 fichas profundas, una sola carga de la capa, seis hitos de navegación, CTA, responsive y versión pública correctos.
 
-`scripts/validate_detail_ux_v46.py` exige que las 16 fichas carguen la capa exactamente una vez, con navegación, anclas, CTA, versión y recursos correctos. Durante la implementación, el control de idempotencia detectó una alteración de espacios alrededor de los bloques gestionados; el aplicador fue corregido para preservar exactamente el HTML de las capas anteriores, sin relajar la validación.
+## UX/UI editorial, sectorial y demostrativa v4.7
+
+`editorial-v47.css`, `editorial-v47.js` y `scripts/apply_editorial_ux_v47.py` extienden una capa progresiva a 18 páginas: Firma, Biblioteca de Perspectivas, seis perspectivas, ocho sectores, Centro Demo y Meridiano Empresas.
+
+La capa incorpora:
+
+- menú móvil accesible en páginas institucionales, editoriales y sectoriales;
+- barra de progreso de lectura y resaltado de navegación activa;
+- corrección del offset entre cabeceras sticky y barra de continuidad;
+- CTA contextual persistente en móvil;
+- ocho enlaces sectoriales directos desde la página de la firma;
+- biblioteca de seis perspectivas únicas, sin repetir las tres lecturas destacadas;
+- cierre de conversión en cada perspectiva;
+- recorrido sectorial rápido por enfoque, decisiones, riesgos y siguiente paso;
+- franja de confianza en Centro Demo sobre datos ficticios, procesamiento local y ausencia de cargas sensibles;
+- cierre comercial entre recorrido demostrativo y alcance profesional;
+- guía de uso de Meridiano Empresas y continuidad móvil entre portal, centro demo y web pública.
+
+`scripts/normalize_editorial_v47.py` normaliza exclusivamente whitespace de las 18 salidas administradas por la capa. Se añadió después de que el control de idempotencia detectara acumulación de líneas vacías: el despliegue fue bloqueado, la normalización se hizo determinista y el ciclo completo volvió a ejecutarse hasta obtener diff cero.
+
+`scripts/validate_editorial_ux_v47.py` verifica conteos, recursos, navegación, CTA, rutas sectoriales, perspectivas únicas, recorridos internos, módulos demo y sintaxis JavaScript sin depender de paquetes Python externos.
 
 ## Identidad visual canónica
 
@@ -104,20 +107,22 @@ python3 scripts/apply_commercial_v43.py
 python3 scripts/apply_visual_assets.py
 python3 scripts/apply_ux_v45.py
 python3 scripts/apply_detail_ux_v46.py
+python3 scripts/apply_editorial_ux_v47.py
+python3 scripts/normalize_editorial_v47.py
 python3 scripts/sync_public_version.py
 ```
 
-La construcción completa debe ser idempotente: ejecutarla nuevamente sobre los mismos archivos no puede producir diferencias. `pages.yml` valida HTML, rutas, catálogo estático, conversión comercial, UX/UI de portada, UX/UI de fichas profundas, flujo guiado, contexto, capa editorial, sistema visual, JavaScript y metadatos antes de publicar.
+`pages.yml` repite la secuencia y exige diff cero antes de validar HTML, rutas, catálogo estático, conversión comercial, portada v4.5, fichas v4.6, capa editorial/demos v4.7, flujo guiado, contexto, capa editorial histórica, sistema visual, JavaScript y metadatos.
 
 ## Accesibilidad y rendimiento
 
 - contenido jurídico profundo disponible sin JavaScript en servicios y productos;
-- selector, resaltado activo y mejoras de navegación como mejora progresiva;
+- menús móviles con cierre por `Escape` y foco visible;
+- progreso de lectura e indicadores activos como mejora progresiva;
 - soporte de `prefers-reduced-motion`;
-- cierre de menús con `Escape` y foco visible para teclado;
-- navegación profunda horizontal desplazable en pantallas intermedias;
+- navegación horizontal desplazable en fichas, sectores y portal demo cuando corresponde;
 - CTA móvil persistente;
-- `content-visibility` en secciones inferiores;
+- `content-visibility` en secciones inferiores de fichas profundas;
 - activos locales y ausencia de dependencias externas para la operación básica de la web pública.
 
 ## Desarrollo local

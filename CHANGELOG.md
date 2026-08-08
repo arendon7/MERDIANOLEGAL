@@ -1,5 +1,38 @@
 # Historial de versiones
 
+## v4.7.0 — 2026-08-08
+
+### UX/UI editorial, sectorial y demostrativa
+
+- La capa de experiencia pública se extendió a 18 páginas: Firma, Biblioteca de Perspectivas, seis perspectivas, ocho sectores, Centro de Demostración y Meridiano Empresas.
+- Se incorporó navegación móvil accesible en las páginas institucionales, editoriales y sectoriales que antes ocultaban su menú en pantallas pequeñas.
+- Se añadió progreso de lectura y resaltado de navegación activa como mejora progresiva.
+- Se corrigió el offset entre cabeceras sticky y barra de continuidad para evitar superposiciones en páginas largas.
+- Todas las páginas v4.7 cuentan con CTA móvil contextual y rutas claras de regreso hacia oferta, biblioteca, sectores o demostración.
+
+### Firma, perspectivas y sectores
+
+- La tarjeta de dirección de la firma utiliza el monograma M canónico y los ocho frentes de experiencia enlazan ahora a sus páginas sectoriales correspondientes.
+- La Biblioteca de Perspectivas conserva seis lecturas únicas: tres destacadas y tres complementarias, eliminando duplicaciones de IA, contratos y proyectos regulados.
+- Las seis perspectivas mantienen su índice editorial y añaden un cierre de conversión que conecta la lectura con una necesidad profesional concreta.
+- Los ocho sectores incorporan un recorrido rápido por enfoque, decisiones, riesgos y siguiente paso, con resaltado progresivo de la sección activa.
+- Las secuencias anterior/siguiente y los metadatos editoriales existentes se preservaron.
+
+### Centro Demo y Meridiano Empresas
+
+- El Centro de Demostración incorpora una franja explícita sobre datos ficticios, procesamiento local y ausencia de cargas de información sensible.
+- Se añadió un cierre de conversión entre el recorrido demostrativo y la presentación de una necesidad profesional.
+- Meridiano Empresas incorpora una guía de uso en tres pasos y continuidad móvil hacia Centro Demo y la web pública.
+- Se conservaron los tres perfiles ficticios y los nueve módulos demostrativos: resumen, solicitudes, expedientes, documentos guiados, archivos, obligaciones, calendario, riesgos y analítica.
+
+### Construcción y control
+
+- Se añadieron `editorial-v47.css`, `editorial-v47.js`, `scripts/apply_editorial_ux_v47.py` y `scripts/validate_editorial_ux_v47.py`.
+- El primer control posterior al constructor detectó acumulación de whitespace alrededor de los bloques administrados por v4.7 y bloqueó Pages antes del despliegue.
+- Se añadió `scripts/normalize_editorial_v47.py` como fase determinista limitada a las 18 salidas v4.7; la cadena completa volvió a ejecutarse hasta obtener diff cero.
+- El validador v4.7 dejó de depender de `packaging` y utiliza comparación SemVer local para evitar dependencias incidentales del runner.
+- La ejecución final aprobó idempotencia, integridad HTML, catálogo, conversión v4.4, portada v4.5, fichas v4.6, capa v4.7, flujo guiado, contexto, editorial, identidad visual, JavaScript y metadatos antes de publicar.
+
 ## v4.6.0 — 2026-08-08
 
 ### UX/UI de fichas profundas
