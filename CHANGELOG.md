@@ -1,5 +1,53 @@
 # Historial de versiones
 
+## v5.2.0 — 2026-08-08
+
+### Conversión y calificación
+
+- Las seis rutas de `soluciones/` conservan el contenido jurídico v5.1 y añaden una capa de conversión orientada a reducir fricción antes del contacto, sin transformar las fichas en páginas comerciales superficiales.
+- Cada landing publica un bloque de encaje con al menos tres señales de que la ruta es pertinente y un bloque de no encaje con situaciones en las que conviene otra intervención o especialidad.
+- Se añadieron tres objeciones específicas por ruta, con respuestas desarrolladas que delimitan alcance, expectativas, coordinación con equipos internos y relación con otras disciplinas.
+- El cierre genérico v5.1 fue sustituido por un CTA específico para cada necesidad: riesgo jurídico, dirección externa, IA, inversión, proyectos regulados y Legal Operations.
+- El hub `soluciones/` conserva la arquitectura v5.1 y añade una guía rápida para distinguir entre priorización de riesgos, capacidad jurídica recurrente y decisiones de crecimiento o regulación.
+
+### SEO de intención y FAQ
+
+- Se creó `cro-solutions-v52.json` como fuente editorial/comercial de la capa v5.2, separada del catálogo jurídico canónico.
+- Las seis páginas reciben títulos SEO y meta descriptions de alta intención alineados con búsquedas empresariales reales.
+- Se incorporaron **18 preguntas frecuentes nuevas**, tres por landing, con respuestas visibles en HTML.
+- Cada ruta publica un bloque independiente `FAQPage` en JSON-LD con exactamente tres preguntas y respuestas.
+- El hub y las seis páginas cargan `cro-v52.css`, una hoja limitada a los componentes de calificación, objeciones, honorarios, FAQ, interlinking y guía rápida.
+- No se crearon páginas adicionales únicamente para capturar keywords: el SEO se concentra en rutas que ya corresponden a necesidades y ofertas jurídicas reales.
+
+### Honorarios e interlinking
+
+- Cada landing explica qué variables determinan el alcance y remite a las secciones canónicas `#honorarios` o `#planes`.
+- `cro-solutions-v52.json` no replica valores monetarios, evitando discrepancias entre páginas, desactualización de precios y confusión entre referencia pública y cotización definitiva.
+- Cada solución enlaza dos rutas relacionadas, además de conservar sus vínculos v5.1 hacia productos, servicios, sectores, perspectivas, Firma y Centro Demo.
+- Se mantiene la política pública de honorarios orientativos sujetos a alcance final e IVA, con tasas y gastos de terceros excluidos salvo estipulación expresa.
+
+### Credibilidad y límites
+
+- La v5.2 conserva la prohibición de inventar testimonios, casos de éxito, logos de clientes, tasas de éxito o resultados no sustentados.
+- La prueba pública continúa apoyándose en 16 fichas profundas, 8 lecturas sectoriales, 6 perspectivas, Centro Demo, método, límites y contenido jurídico inspeccionable.
+- Las FAQ aclaran expresamente cuándo la función jurídica debe coordinarse con capacidades técnicas, financieras, tributarias, contables, ambientales o de ingeniería en vez de simular que puede sustituirlas.
+
+### Construcción y control
+
+- Se añadieron `cro-v52.css`, `scripts/apply_cro_v52.py`, `scripts/validate_cro_v52.py` y `scripts/validate_live_v52.py`.
+- La cadena canónica ejecuta v5.2 después de `apply_growth_v51.py` y `finalize_growth_v51.py`, por lo que la nueva capa no altera la fuente de los 16 productos/servicios ni los contratos static-first anteriores.
+- `scripts/validate_cro_v52.py` exige seis slugs coincidentes con v5.1, SEO razonable, encaje/no encaje, tres objeciones, tres FAQ, JSON-LD válido, rutas relacionadas, enlaces de honorarios canónicos y ausencia de prueba social o precios duplicados.
+- `scripts/validate_live_v52.py` ejecuta primero todo el smoke v5.1 y después comprueba sobre la URL servida títulos SEO, calificación, objeciones, honorarios, FAQ schema y CTA específicos.
+
+### Barreras detectadas y correcciones
+
+- Una actualización movió inicialmente `version.json` antes que el paquete completo. El constructor produjo una salida intermedia etiquetada v5.2 sobre la arquitectura previa; no se forzó `main` ni se declaró publicada esa salida.
+- El paquete v5.2 se reconstruyó sobre el HEAD canónico más reciente y se integró mediante fast-forward.
+- La primera ejecución de calidad aprobó idempotencia, 46 páginas y todos los controles v4.8–v5.0, pero el validador v5.1 bloqueó los CTA específicos porque esperaba literalmente el cierre genérico anterior.
+- `scripts/validate_growth_v51.py` se hizo version-aware: hasta v5.1 exige el CTA original; desde v5.2 exige continuidad del bloque `SIGUIENTE PASO`, mientras el validador v5.2 verifica el CTA específico.
+- El job fallido se reejecutó sin relajar los gates. La ejecución funcional final aprobó idempotencia, catálogo, conversión, UX v4.5–v4.7, calidad v4.8, operación v4.9, producción v5.0, crecimiento v5.1, CRO/SEO v5.2, selector, contexto, editorial, visual, JavaScript y JSON.
+- GitHub Pages desplegó correctamente, el smoke público v5.2 terminó en verde y `stable` se sincronizó con el commit funcional antes del cierre documental.
+
 ## v5.1.0 — 2026-08-08
 
 ### Rutas por situación empresarial
