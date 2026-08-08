@@ -91,7 +91,7 @@
   }
 
   const tabs = [...document.querySelectorAll('.tab')];
-  tabs.forEach((tab) => { tab.removeAttribute('aria-selected'); tab.setAttribute('aria-pressed', String(tab.classList.contains('active'))); tab.addEventListener('click', () => { tabs.forEach((item) => { const active = item === tab; item.classList.toggle('active', active); item.setAttribute('aria-pressed', String(active)); }); document.querySelectorAll('.product-card').forEach((card) => card.classList.toggle('is-hidden', tab.dataset.filter !== 'all' && card.dataset.category !== tab.dataset.filter)); }); });
+  tabs.forEach((tab) => { tab.setAttribute('aria-pressed', String(tab.classList.contains('active'))); tab.addEventListener('click', () => { tabs.forEach((item) => { const active = item === tab; item.classList.toggle('active', active); item.setAttribute('aria-pressed', String(active)); }); document.querySelectorAll('.product-card').forEach((card) => card.classList.toggle('is-hidden', tab.dataset.filter !== 'all' && card.dataset.category !== tab.dataset.filter)); }); });
 
   function appendList(parent, items) { const list = create('ul'); items.forEach((item) => list.append(create('li', '', item))); parent.append(list); }
   function renderModal({ title, code, horizon, question, scope, outputs, limits, icon }) {
