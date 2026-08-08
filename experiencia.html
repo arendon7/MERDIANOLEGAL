@@ -12,13 +12,17 @@
   <link rel="stylesheet" href="enhancements.css">
   <link rel="stylesheet" href="experiencia.css">
   <link rel="stylesheet" href="visual-v39.css">
+  <link rel="stylesheet" href="editorial-v47.css">
 </head>
-<body class="experience-body">
+<body class="experience-body" data-page-type="Centro demo" data-page-title="Centro de demostración" data-page-need="Otra necesidad" data-editorial-v47="true">
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
   <header class="experience-header">
     <div class="container experience-header-inner">
       <a class="brand" href="index.html" aria-label="Meridiano Legal, volver al inicio"><img src="assets/brand/meridiano-logo-horizontal-dark.svg" alt="Meridiano Legal"></a>
-      <nav class="experience-nav" aria-label="Navegación del centro de demostración">
+      <!-- EDITORIAL-V47-MENU:START -->
+<button class="editorial-menu-toggle-v47" type="button" aria-expanded="false" aria-controls="editorial-nav-v47" aria-label="Abrir menú"><span></span><span></span><span></span><span class="sr-only">Abrir menú</span></button>
+<!-- EDITORIAL-V47-MENU:END -->
+<nav class="experience-nav editorial-nav-v47" id="editorial-nav-v47" aria-label="Navegación del centro de demostración">
         <a href="#recorrido">Recorrido</a>
         <a href="#entregables">Entregables</a>
         <a href="#caso">Caso integral</a>
@@ -49,8 +53,10 @@
         </div>
       </div>
     </section>
-
-    <section class="experience-index">
+<!-- EDITORIAL-V47-TRUST:START -->
+<section class="experience-trust-v47" aria-label="Condiciones de la demostración"><div class="container experience-trust-grid-v47"><article><strong>Datos ficticios</strong><span>Nombres, cifras, expedientes y resultados son exclusivamente demostrativos.</span></article><article><strong>Procesamiento local</strong><span>El simulador opera en el navegador y no envía la hipótesis a un servidor.</span></article><article><strong>Sin carga de información sensible</strong><span>El recorrido no requiere documentos, bases de datos ni expedientes reales.</span></article></div></section>
+<!-- EDITORIAL-V47-TRUST:END -->
+<section class="experience-index">
       <div class="container experience-index-grid">
         <button class="experience-tab active" type="button" data-target="recorrido"><span>01</span><strong>Recorrido ejecutivo</strong><small>10 o 20 minutos</small></button>
         <button class="experience-tab" type="button" data-target="entregables"><span>02</span><strong>Entregables</strong><small>Resultados verificables</small></button>
@@ -153,11 +159,18 @@
     </section>
   </main>
 
-  <footer class="experience-footer">
+  <!-- EDITORIAL-V47-CONVERSION:START -->
+<section class="experience-conversion-v47"><div class="container experience-conversion-grid-v47"><div><h2>Del recorrido demostrativo a un alcance profesional verificable.</h2><p>Si la lógica de trabajo coincide con su necesidad, presente únicamente el contexto inicial. La revisión de información sensible comienza después de validar alcance, conflicto y canal.</p></div><div class="experience-conversion-actions-v47"><a href="index.html?context=Centro+demo%3A+Centro+de+demostraci%C3%B3n&need=Otra+necesidad#contacto">Presentar necesidad</a><a href="demo.html">Abrir Meridiano Empresas</a></div></div></section>
+<!-- EDITORIAL-V47-CONVERSION:END -->
+<footer class="experience-footer">
     <div class="container footer-bottom"><span>Meridiano Legal · Medellín, Colombia</span><span>Centro demostrativo · v2.31.0</span></div>
   </footer>
 
   <script src="experiencia.js"></script>
   <script src="visual-v39.js"></script>
+<!-- EDITORIAL-V47-MOBILE:START -->
+<div class="editorial-mobile-cta-v47" aria-label="Acciones rápidas"><a href="index.html?context=Centro+demo%3A+Centro+de+demostraci%C3%B3n&need=Otra+necesidad#contacto">Presentar necesidad</a><a href="demo.html">Abrir Empresas</a></div>
+<!-- EDITORIAL-V47-MOBILE:END -->
+  <script defer src="editorial-v47.js"></script>
 </body>
 </html>
