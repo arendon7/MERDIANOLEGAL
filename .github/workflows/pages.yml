@@ -27,6 +27,7 @@ on:
       - scripts/apply_ux_v45.py
       - scripts/apply_detail_ux_v46.py
       - scripts/apply_editorial_ux_v47.py
+      - scripts/normalize_editorial_v47.py
       - scripts/validate_detail_ux_v46.py
       - scripts/validate_editorial_ux_v47.py
       - scripts/sync_public_version.py
@@ -65,6 +66,7 @@ jobs:
           python3 scripts/apply_ux_v45.py
           python3 scripts/apply_detail_ux_v46.py
           python3 scripts/apply_editorial_ux_v47.py
+          python3 scripts/normalize_editorial_v47.py
           python3 scripts/sync_public_version.py
           git diff --exit-code -- index.html catalog-home-v32.js decision-flow.js servicios productos firma.html perspectivas perspectivas.html sectores experiencia.html demo.html manifest.webmanifest scripts/build_catalog_shells.py
       - name: Validate HTML and local resources

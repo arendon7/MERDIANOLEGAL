@@ -27,6 +27,7 @@ on:
       - scripts/apply_ux_v45.py
       - scripts/apply_detail_ux_v46.py
       - scripts/apply_editorial_ux_v47.py
+      - scripts/normalize_editorial_v47.py
       - scripts/sync_public_version.py
       - .github/workflows/build-canonical.yml
   workflow_dispatch:
@@ -64,7 +65,9 @@ jobs:
       - name: Apply deep-page UX/UI v4.6
         run: python3 scripts/apply_detail_ux_v46.py
       - name: Apply editorial and demo UX/UI v4.7
-        run: python3 scripts/apply_editorial_ux_v47.py
+        run: |
+          python3 scripts/apply_editorial_ux_v47.py
+          python3 scripts/normalize_editorial_v47.py
       - name: Synchronize public version
         run: python3 scripts/sync_public_version.py
       - name: Commit canonical outputs

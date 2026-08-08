@@ -2,14 +2,12 @@
 """Valida la capa transversal de UX/UI editorial y demostrativa v4.7."""
 
 from pathlib import Path
-from packaging.version import Version
 import json
-import re
 import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = Version(json.loads((ROOT / 'version.json').read_text(encoding='utf-8'))['version'])
+VERSION_RAW = json.loads((ROOT / 'version.json').read_text(encoding='utf-8'))['version']
 PERSPECTIVES = sorted((ROOT / 'perspectivas').glob('*.html'))
 SECTORS = sorted((ROOT / 'sectores').glob('*.html'))
 ROOT_PAGES = [ROOT / 'firma.html', ROOT / 'perspectivas.html', ROOT / 'experiencia.html', ROOT / 'demo.html']
@@ -21,15 +19,25 @@ def fail(message: str) -> None:
     raise SystemExit(1)
 
 
-if VERSION < Version('4.7.0'):
-    fail(f'version.json está en {VERSION}, se requiere >= 4.7.0')
+def semver_tuple(value: str) -> tuple[int, int, int]:
+    try:
+        parts = value.split('-', 1)[0].split('.')
+        return tuple(int(parts[i]) if i < len(parts) else 0 for i in range(3))
+    except (TypeError, ValueError):
+        fail(f'versión inválida: {value!r}')
+        raise AssertionError('unreachable')
+
+
+if semver_tuple(VERSION_RAW) < (4, 7, 0):
+    fail(f'version.json está en {VERSION_RAW}, se requiere >= 4.7.0')
 if len(PERSPECTIVES) != 6 or len(SECTORS) != 8 or len(TARGETS) != 18:
     fail(f'conteo inesperado: perspectivas={len(PERSPECTIVES)}, sectores={len(SECTORS)}, total={len(TARGETS)}')
 
 css = ROOT / 'editorial-v47.css'
 js = ROOT / 'editorial-v47.js'
 applicator = ROOT / 'scripts' / 'apply_editorial_ux_v47.py'
-for path in (css, js, applicator):
+normalizer = ROOT / 'scripts' / 'normalize_editorial_v47.py'
+for path in (css, js, applicator, normalizer):
     if not path.exists() or path.stat().st_size < 500:
         fail(f'falta recurso sustantivo {path.relative_to(ROOT)}')
 
@@ -70,7 +78,6 @@ for slug in slugs:
     if count != 1:
         fail(f'perspectivas.html debe enlazar {slug} exactamente una vez y tiene {count}')
 if library.count('<a class="insight-card"') != 5:
-    # Dos de las cinco tarjetas insight están en el bloque destacado y tres en la biblioteca.
     fail('perspectivas.html debe conservar 5 tarjetas insight sin duplicar las 3 lecturas destacadas')
 
 for path in PERSPECTIVES:
