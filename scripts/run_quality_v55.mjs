@@ -23,8 +23,21 @@ function metric(lhr, key) {
   return lhr.audits?.[key]?.numericValue;
 }
 
+function layoutDiagnostics(lhr) {
+  return Object.entries(lhr.audits || {})
+    .filter(([id, audit]) => id.includes('layout') && (audit?.details?.items?.length || audit?.numericValue))
+    .map(([id, audit]) => ({
+      id,
+      title: audit.title,
+      score: audit.score,
+      numericValue: audit.numericValue ?? null,
+      items: (audit.details?.items || []).slice(0, 12),
+    }));
+}
+
 const failures = [];
 const summary = [];
+const diagnostics = {};
 
 for (const surface of config.surfaces) {
   const url = new URL(surface.path, baseURL).href;
@@ -73,7 +86,10 @@ for (const surface of config.surfaces) {
   ];
   for (const [name, actual, operator, limit] of checks) {
     const pass = Number.isFinite(actual) && (operator === '>=' ? actual >= limit : actual <= limit);
-    if (!pass) failures.push(`${surface.id}: ${name}=${actual} exige ${operator} ${limit}`);
+    if (!pass) {
+      failures.push(`${surface.id}: ${name}=${actual} exige ${operator} ${limit}`);
+      if (name === 'cumulativeLayoutShift') diagnostics[surface.id] = layoutDiagnostics(lhr);
+    }
   }
 }
 
@@ -86,12 +102,16 @@ const printable = summary.map((item) => ({
   totalBlockingTimeMs: round(item.totalBlockingTimeMs, 0),
   totalByteWeight: round(item.totalByteWeight, 0),
 }));
-writeFileSync(join(outputDir, 'summary.json'), `${JSON.stringify({ config, results: printable, failures }, null, 2)}\n`);
+writeFileSync(join(outputDir, 'summary.json'), `${JSON.stringify({ config, results: printable, failures, diagnostics }, null, 2)}\n`);
 console.table(printable);
 
 if (failures.length) {
   console.error('\nQUALITY V5.5 FALLÓ');
   failures.forEach((failure) => console.error(`- ${failure}`));
+  for (const [surface, detail] of Object.entries(diagnostics)) {
+    console.error(`\nCLS DIAGNÓSTICO · ${surface}`);
+    console.error(JSON.stringify(detail, null, 2));
+  }
   process.exit(1);
 }
 
