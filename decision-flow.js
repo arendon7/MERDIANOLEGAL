@@ -301,28 +301,6 @@
     });
   });
 
-  const mainNav = document.querySelector('.main-nav');
-  if (mainNav && !mainNav.querySelector('.nav-selector')) {
-    const selectorLink = document.createElement('a');
-    selectorLink.className = 'nav-selector';
-    selectorLink.href = '#selector';
-    selectorLink.textContent = 'Selector';
-    const servicesLink = [...mainNav.querySelectorAll('a')].find((item) => item.getAttribute('href') === '#servicios');
-    mainNav.insertBefore(selectorLink, servicesLink || null);
-  }
-
-  if (mainNav && !mainNav.querySelector('.nav-mobile-utility')) {
-    const demoLink = document.createElement('a');
-    demoLink.className = 'nav-mobile-utility';
-    demoLink.href = 'experiencia.html';
-    demoLink.textContent = 'Centro de demostración';
-    const portalLink = document.createElement('a');
-    portalLink.className = 'nav-mobile-utility';
-    portalLink.href = 'demo.html';
-    portalLink.textContent = 'Área de clientes';
-    mainNav.append(demoLink, portalLink);
-  }
-
   const menuButton = document.querySelector('.menu-toggle');
   if (menuButton) {
     const syncMenuState = () => document.body.classList.toggle('menu-open', menuButton.getAttribute('aria-expanded') === 'true');
@@ -331,5 +309,5 @@
   }
 
   const versionLabel = [...document.querySelectorAll('.footer-bottom span')].find((item) => item.textContent.includes('Web demostrativa'));
-  if (versionLabel) versionLabel.textContent = 'Web demostrativa v4.4.0';
+  if (versionLabel) versionLabel.textContent = 'Web demostrativa v4.5.0';
 })();
