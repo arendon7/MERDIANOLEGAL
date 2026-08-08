@@ -95,7 +95,10 @@ def main() -> int:
 
     text = replace_tag_block(text, r'  <footer class="site-footer">[\s\S]*?</footer>', FOOTER)
     text = re.sub(re.escape(MOBILE_START) + r'[\s\S]*?' + re.escape(MOBILE_END), '', text, count=1)
-    text = text.replace('  <dialog class="modal"', f'{MOBILE_CTA}\n\n  <dialog class="modal"', 1)
+    mobile_pattern = re.compile(r'</footer>[\s\n\r\t ]*<dialog class="modal"', re.S)
+    text, mobile_count = mobile_pattern.subn(lambda _match: f'</footer>\n\n{MOBILE_CTA}\n\n  <dialog class="modal"', text, count=1)
+    if mobile_count != 1:
+        raise RuntimeError("No se pudo normalizar la posición del CTA móvil v4.5")
 
     for candidate in (f'  {STYLE}\n', f'{STYLE}\n', f'  {STYLE}', STYLE):
         text = text.replace(candidate, '')
