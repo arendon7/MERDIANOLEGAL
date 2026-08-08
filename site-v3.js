@@ -127,12 +127,58 @@
   modal?.addEventListener('close', () => lastTrigger?.focus());
 
   const form = document.getElementById('contact-form');
+  const contactStartedAt = Date.now();
+  const cleanContactValue = (value, max = 2000) => String(value || '').trim().replace(/\s+/g, ' ').slice(0, max);
   form?.addEventListener('submit', async (event) => {
-    event.preventDefault(); if (!form.reportValidity()) return; const data = new FormData(form);
-    const summary = ['Hola, quiero presentar una necesidad a Meridiano Legal.', '', `Nombre: ${String(data.get('name') || '').trim()}`, `Empresa: ${String(data.get('company') || '').trim() || 'No indicada'}`, `Correo: ${String(data.get('email') || '').trim()}`, `Necesidad: ${String(data.get('need') || '').trim()}`, '', 'Contexto general:', String(data.get('message') || '').trim(), '', 'Confirmo que no estoy enviando información confidencial.'].join('\n');
-    const status = form.querySelector('.form-status'); if (status) status.textContent = 'Solicitud preparada. Se abrirá WhatsApp en una nueva ventana.';
-    try { await navigator.clipboard?.writeText(summary); } catch { /* opcional */ }
-    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(summary)}`; const opened = window.open(url, '_blank', 'noopener,noreferrer'); if (!opened) window.location.href = url;
+    event.preventDefault();
+    const status = form.querySelector('.form-status');
+    const setStatus = (message, state = '') => {
+      if (!status) return;
+      status.textContent = message;
+      if (state) status.dataset.state = state;
+      else delete status.dataset.state;
+    };
+    if (!form.reportValidity()) {
+      setStatus('Revise los campos obligatorios antes de continuar.', 'error');
+      return;
+    }
+    const data = new FormData(form);
+    if (cleanContactValue(data.get('website'), 120)) {
+      setStatus('No fue posible preparar la solicitud. Inténtelo nuevamente.', 'error');
+      return;
+    }
+    if (Date.now() - contactStartedAt < 800) {
+      setStatus('Revise la información antes de continuar.', 'error');
+      return;
+    }
+    const now = new Date();
+    const reference = `ML-${now.toISOString().slice(0, 10).replace(/-/g, '')}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
+    const current = new URL(window.location.href);
+    const context = cleanContactValue(form.dataset.commercialContext || current.searchParams.get('context') || '', 220);
+    const source = `${current.pathname}${current.search}`;
+    const lines = [
+      'Hola, quiero presentar una necesidad a Meridiano Legal.',
+      '',
+      `Referencia web: ${reference}`,
+      `Nombre: ${cleanContactValue(data.get('name'), 120)}`,
+      `Empresa: ${cleanContactValue(data.get('company'), 160) || 'No indicada'}`,
+      `Correo: ${cleanContactValue(data.get('email'), 180)}`,
+      `Necesidad: ${cleanContactValue(data.get('need'), 160)}`,
+    ];
+    if (context) lines.push(`Contexto comercial: ${context}`);
+    lines.push(`Origen: ${source}`, '', 'Contexto general:', cleanContactValue(data.get('message'), 2000), '', 'Confirmo que no estoy enviando información confidencial.');
+    const summary = lines.join('\n');
+    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(summary)}`;
+    setStatus('Abriendo WhatsApp. La solicitud solo queda enviada cuando confirme el envío allí.');
+    try { await navigator.clipboard?.writeText(summary); } catch { /* copia opcional */ }
+    window.dispatchEvent(new CustomEvent('meridiano:lead-prepared', { detail: { reference, need: cleanContactValue(data.get('need'), 160), context } }));
+    const opened = window.open(url, '_blank', 'noopener,noreferrer');
+    if (!opened) {
+      window.location.assign(url);
+      return;
+    }
+    form.dataset.lastLeadReference = reference;
+    setStatus(`WhatsApp se abrió con la referencia ${reference}. Revise el mensaje y pulse Enviar para completar la solicitud.`, 'ready');
   });
 
   const year = document.getElementById('year'); if (year) year.textContent = String(new Date().getFullYear());
