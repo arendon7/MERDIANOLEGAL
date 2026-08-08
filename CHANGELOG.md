@@ -1,5 +1,31 @@
 # Historial de versiones
 
+## v4.6.0 — 2026-08-08
+
+### UX/UI de fichas profundas
+
+- Las ocho fichas de servicios y las ocho fichas de productos comparten ahora una arquitectura visual y de navegación coherente con la portada v4.5.
+- Se redujeron la altura y la densidad de cabecera y hero sin eliminar metadatos, alcance ni contenido jurídico.
+- Se incorporó un índice ejecutivo sticky con acceso directo a decisión, alcance, entregables, implementación, límites y siguiente paso.
+- Los encabezados editoriales, tarjetas, método, relaciones y límites fueron reorganizados para facilitar lectura rápida y profundización posterior.
+- El contenido sustantivo de los productos v4.1 y servicios v4.2 permanece íntegro y disponible en HTML estático.
+
+### Navegación, conversión y móvil
+
+- Las fichas profundas usan una navegación común: Servicios, Productos, Planes y precios, Sectores y Firma.
+- Centro demo y Presentar necesidad funcionan como acciones principales de cabecera.
+- `detail-v46.js` resalta progresivamente el hito activo mediante `IntersectionObserver` y vuelve a enlazar el índice cuando el contenido de producto se actualiza mediante mejora progresiva.
+- En móvil, los controles circulares se sustituyen por una barra persistente con Presentar necesidad y WhatsApp contextualizado con el nombre de la ficha.
+- El panel de límites puede permanecer visible en escritorio mientras se revisan exclusiones, y el índice horizontal se adapta a pantallas intermedias.
+
+### Construcción y control
+
+- Se añadieron `detail-v46.css`, `detail-v46.js`, `scripts/apply_detail_ux_v46.py` y `scripts/validate_detail_ux_v46.py`.
+- El aplicador v4.6 se ejecuta después de los renderers jurídicos y de las capas visuales anteriores, por lo que no modifica la fuente sustantiva del catálogo.
+- La validación exige exactamente 16 fichas profundas, una sola carga de la capa v4.6, seis hitos de navegación, CTA contextual, responsive y versión pública correcta.
+- El primer control de idempotencia detectó una alteración de espacios producida por el normalizador; el despliegue fue bloqueado, se corrigió el aplicador y se repitió la secuencia sin relajar el control.
+- La ejecución final aprobó idempotencia, HTML y recursos, catálogo estático, conversión v4.4, portada v4.5, fichas v4.6, flujo guiado, contexto, editorial, identidad visual, JavaScript y metadatos antes de publicar.
+
 ## v4.5.0 — 2026-08-07
 
 ### UX/UI y arquitectura narrativa de portada
@@ -92,7 +118,7 @@
 
 - Se creó `scripts/apply_visual_assets.py` como aplicador idempotente posterior a los generadores funcionales.
 - El aplicador normaliza la posición de sus recursos para que ejecuciones sucesivas no alteren el orden del HTML.
-- Se creó `scripts/validate_visual_assets.py` para validar archivos, rutas, versión y ausencia de logotipos retirados.
+- Se creó `scripts/validate_visual_assets.py` para validar archivos, cabecera WebP, rutas, versión y ausencia de logotipos retirados.
 - `validate_site.py` exige ahora la identidad canónica, el favicon, el hero WebP y las hojas visuales vigentes.
 - GitHub Pages solo publicó después de aprobar idempotencia, catálogo, contexto, datos estructurados, capa editorial, JavaScript y activos visuales.
 
