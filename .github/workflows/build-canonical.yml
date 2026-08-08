@@ -9,6 +9,7 @@ on:
       - catalog-products-v41/**
       - catalog-services-v42/**
       - commercial-v43.css
+      - commercial-conversion-v44.js
       - visual-v39.css
       - visual-v39.js
       - assets/**
@@ -46,7 +47,7 @@ jobs:
         run: node scripts/render_services_v42.mjs
       - name: Enrich editorial pages
         run: python3 scripts/enrich_editorial_pages.py
-      - name: Apply commercial system v4.3
+      - name: Apply commercial and conversion system v4.4
         run: python3 scripts/apply_commercial_v43.py
       - name: Synchronize public version
         run: python3 scripts/sync_public_version.py
