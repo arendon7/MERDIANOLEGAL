@@ -1,5 +1,33 @@
 # Historial de versiones
 
+## v4.9.0 — 2026-08-08
+
+### Preparación para operación pública
+
+- El formulario público conserva WhatsApp como canal real y mantiene la arquitectura estática: la web no crea un backend ficticio ni afirma almacenar o recibir información que no puede verificar.
+- Cada solicitud preparada incorpora una referencia única `ML-YYYYMMDD-XXXXX`, necesidad seleccionada, contexto comercial y ruta de origen.
+- Se añadieron límites de longitud y normalización de valores antes de construir el mensaje.
+- El formulario incorpora un honeypot silencioso y un control temporal básico contra envíos automatizados.
+- La interfaz distingue expresamente entre abrir WhatsApp y enviar efectivamente el mensaje; la solicitud solo queda remitida cuando el usuario confirma el envío en WhatsApp.
+- Se añadió un acceso directo alternativo a WhatsApp y fallback de navegación cuando el navegador bloquea la nueva ventana.
+
+### Conversión y navegación
+
+- Se corrigió la reconstrucción de enlaces con fragmento en `commercial-conversion-v44.js`.
+- Rutas como `demo.html#documentos` conservan ahora correctamente los parámetros de contexto antes del fragmento: `demo.html?context=...&need=...#documentos`.
+- El desplazamiento hacia el formulario contextual respeta `prefers-reduced-motion`.
+
+### Despliegue y verificación live
+
+- Se añadieron `operations-v49.css`, `scripts/apply_operations_v49.py`, `scripts/validate_operations_v49.py` y `scripts/validate_live_v49.py`.
+- La construcción canónica aplica v4.9 después del cierre static-first v4.8 y antes de sincronizar la versión pública.
+- `pages.yml` ejecuta ahora un smoke test HTTP después del despliegue de GitHub Pages y antes de actualizar `stable`.
+- El smoke live valida la versión realmente servida, portada, Firma, fichas profundas, Perspectivas, Centro Demo, `noindex` del portal ficticio, JavaScript de conversión, sitemap y robots.
+- `stable` dejó de depender únicamente del éxito del job de despliegue: solo se mueve cuando la URL pública también supera el smoke test.
+- Se eliminó ruido de ejecuciones directas sobre commits canónicos generados; la ruta autoritativa sigue siendo constructor → calidad → deploy → smoke público → stable.
+- El primer constructor v4.9 fue bloqueado por una interpretación de `\s` en el reemplazo Python del JavaScript; se corrigió usando un reemplazo funcional que preserva literalmente el regex y se repitió la cadena completa sin relajar controles.
+- La ejecución funcional final aprobó idempotencia, 39 páginas, 16 fichas, conversión, UX v4.5–v4.7, calidad v4.8, operación v4.9, selector, contexto, visual, JavaScript y JSON; GitHub Pages desplegó y el smoke público terminó en verde antes de sincronizar `stable`.
+
 ## v4.8.0 — 2026-08-08
 
 ### Calidad pública y arquitectura static-first
