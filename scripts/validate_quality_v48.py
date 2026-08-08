@@ -60,8 +60,20 @@ for forbidden in ('assets/hero-meridiano-v3.svg', 'role="tablist"', 'data-route=
 
 if text.count('<a class="need-card"') != 6:
     errors.append("La portada debe tener exactamente 6 rutas por necesidad navegables sin JavaScript")
-if 'class="need-card" href="servicios/legal-operations.html"' not in text:
-    errors.append("Mi operación jurídica debe llevar a Legal Operations")
+if semver(VERSION) < (5, 1, 0):
+    if 'class="need-card" href="servicios/legal-operations.html"' not in text:
+        errors.append("Mi operación jurídica debe llevar a Legal Operations")
+else:
+    ops_route = 'class="need-card" href="soluciones/ordenar-operacion-juridica.html"'
+    if ops_route not in text:
+        errors.append("La ruta de operación jurídica v5.1 debe ser navegable desde la portada")
+    ops_page = ROOT / "soluciones" / "ordenar-operacion-juridica.html"
+    if not ops_page.exists():
+        errors.append("v5.1 debe publicar la ruta de decisión de Legal Operations")
+    else:
+        ops_text = ops_page.read_text(encoding="utf-8")
+        if '../servicios/legal-operations.html' not in ops_text:
+            errors.append("La ruta de operación jurídica v5.1 debe derivar al servicio Legal Operations")
 
 canonical_products = [
     "Auditoría Jurídica Empresarial Integral",
@@ -126,7 +138,7 @@ if "demo.html" in sitemap:
     errors.append("demo.html no debe estar en sitemap.xml")
 
 html_targets = list(ROOT.glob("*.html"))
-for folder in ("servicios", "productos", "sectores", "perspectivas"):
+for folder in ("servicios", "productos", "sectores", "perspectivas", "soluciones"):
     html_targets.extend((ROOT / folder).glob("*.html"))
 for path in html_targets:
     page = path.read_text(encoding="utf-8")
