@@ -22,7 +22,6 @@ FLOW_MARKERS = {
     "recommendationFor",
     "pageContextFromLocation",
     "applyContactContext",
-    "nav-mobile-utility",
     "decision-flow.css",
 }
 
@@ -77,9 +76,13 @@ def validate() -> list[str]:
     if missing_routes:
         errors.append(f"El selector perdió rutas recomendadas: {', '.join(missing_routes)}")
 
-    for marker in (".solution-guide-section", ".contact-context", ".main-nav.open", ".nav-mobile-utility"):
+    for marker in (".solution-guide-section", ".contact-context", ".main-nav.open"):
         if marker not in css_text:
             errors.append(f"decision-flow.css no contiene {marker}")
+
+    for legacy in ("nav-selector", "nav-mobile-utility"):
+        if legacy in flow_text:
+            errors.append(f"decision-flow.js conserva navegación dinámica retirada en v4.5: {legacy}")
 
     return errors
 
@@ -91,7 +94,7 @@ def main() -> int:
         for error in errors:
             print(f"- {error}")
         return 1
-    print("VALIDACIÓN DEL FLUJO OK: selector, rutas, contexto, versión y navegación móvil íntegros.")
+    print("VALIDACIÓN DEL FLUJO OK: selector, rutas, contexto y versión íntegros; navegación delegada a la capa UX canónica.")
     return 0
 
 
