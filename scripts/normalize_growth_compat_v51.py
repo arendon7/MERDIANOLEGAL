@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Normaliza compatibilidad de la portada v5.1 antes de ejecutar capas históricas."""
+"""Normaliza compatibilidad exacta de la portada v5.1 antes de capas históricas."""
 from __future__ import annotations
 
 from pathlib import Path
@@ -20,15 +20,16 @@ def main() -> int:
     if semver(VERSION) < (5, 1, 0):
         return 0
     text = INDEX.read_text(encoding="utf-8")
-    legacy = 'class="growth-route-card-v51" href="soluciones/'
-    canonical = 'class="need-card growth-route-card-v51" href="soluciones/'
-    if legacy in text:
-        text = text.replace(legacy, canonical)
-        INDEX.write_text(text, encoding="utf-8")
-    count = text.count(canonical)
+    for legacy in (
+        'class="growth-route-card-v51" href="soluciones/',
+        'class="need-card growth-route-card-v51" href="soluciones/',
+    ):
+        text = text.replace(legacy, 'class="need-card" href="soluciones/')
+    count = text.count('class="need-card" href="soluciones/')
     if "GROWTH-V51-PROOF:START" in text and count != 6:
-        raise RuntimeError(f"index.html: v5.1 esperaba 6 rutas compatibles y encontró {count}")
-    print(f"Compatibilidad previa v5.1 normalizada; rutas detectadas: {count}.")
+        raise RuntimeError(f"index.html: v5.1 esperaba 6 rutas need-card exactas y encontró {count}")
+    INDEX.write_text(text, encoding="utf-8")
+    print(f"Compatibilidad previa v5.1 normalizada; rutas need-card detectadas: {count}.")
     return 0
 
 

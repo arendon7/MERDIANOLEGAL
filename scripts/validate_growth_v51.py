@@ -31,6 +31,7 @@ for relative in (
     "growth-solutions-v51.json",
     "growth-v51.css",
     "scripts/apply_growth_v51.py",
+    "scripts/normalize_growth_compat_v51.py",
     "scripts/finalize_growth_v51.py",
     "scripts/validate_growth_v51.py",
     "scripts/validate_live_v51.py",
@@ -84,8 +85,8 @@ for marker in (
         errors.append(f"index.html: falta {marker!r}")
 if index.count("GROWTH-V51-PROOF:START") != 1 or index.count("GROWTH-V51-CSS:START") != 1:
     errors.append("index.html debe contener una sola capa gestionada v5.1")
-if index.count('class="need-card growth-route-card-v51"') != 6:
-    errors.append("index.html debe exponer exactamente 6 rutas v5.1 compatibles con need-card")
+if index.count('class="need-card" href="soluciones/') != 6:
+    errors.append("index.html debe exponer exactamente 6 rutas v5.1 con class=need-card exacta")
 if index.count('class="growth-proof-grid-v51"') != 1:
     errors.append("index.html debe contener un único bloque de evidencia pública")
 for slug in slugs:

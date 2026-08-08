@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Aplica canonical/runtime v5.0 y normaliza compatibilidad de las rutas v5.1."""
+"""Aplica canonical/runtime v5.0 y normaliza compatibilidad exacta de v5.1."""
 from pathlib import Path
 
 from apply_production_v50 import BASE_URL, patch_html
@@ -21,11 +21,13 @@ def main() -> int:
 
     index = R / "index.html"
     home = index.read_text(encoding="utf-8")
-    legacy = 'class="growth-route-card-v51" href="soluciones/'
-    canonical = 'class="need-card growth-route-card-v51" href="soluciones/'
-    home = home.replace(legacy, canonical)
-    if home.count(canonical) != 6:
-        raise RuntimeError("index.html: las seis rutas v5.1 deben conservar compatibilidad need-card")
+    for legacy in (
+        'class="growth-route-card-v51" href="soluciones/',
+        'class="need-card growth-route-card-v51" href="soluciones/',
+    ):
+        home = home.replace(legacy, 'class="need-card" href="soluciones/')
+    if home.count('class="need-card" href="soluciones/') != 6:
+        raise RuntimeError("index.html: las seis rutas v5.1 deben conservar class=need-card exacta")
     index.write_text(home, encoding="utf-8")
 
     print("Runtime/canonical v5.0 aplicado a v5.1; hub y seis rutas de portada normalizados.")
