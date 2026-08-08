@@ -6,15 +6,17 @@ from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
 import sys
+
 ROOT=Path(__file__).resolve().parents[1]
 HTML_FILES=sorted(ROOT.rglob("*.html"))
 CATALOG_PAGES={"servicios/diagnostico-juridico-empresarial.html":"service-diagnostic","servicios/direccion-juridica-externa.html":"service-direction","servicios/contratacion-estrategica.html":"service-contracts","servicios/sociedades-gobierno-inversion.html":"service-corporate","servicios/propiedad-intelectual.html":"service-ip","servicios/tecnologia-inteligencia-artificial.html":"service-ai","servicios/proyectos-regulados.html":"service-regulated","servicios/legal-operations.html":"service-ops","productos/diagnostico-juridico-empresarial.html":"product-diagnostic","productos/empresa-juridicamente-organizada.html":"product-organized","productos/activos-intangibles-protegidos.html":"product-assets","productos/empresa-lista-para-inversion.html":"product-investment","productos/programa-gobernanza-ia.html":"product-ai","productos/proyecto-regulado-estructurado.html":"product-regulated","productos/sistema-contractual-empresarial.html":"product-contract-system","productos/proteccion-datos-consumidor.html":"product-data-consumer"}
 PERSPECTIVE_PAGES={"perspectivas/gobierno-juridico-inteligencia-artificial.html","perspectivas/contratos-administrables.html","perspectivas/propiedad-intelectual-cadena-titularidad.html","perspectivas/socios-inversion-gobierno.html","perspectivas/proyectos-regulados-secuencia-viabilidad.html","perspectivas/legal-operations-modelo-operativo.html"}
 SECTOR_PAGES={"sectores/tecnologia-software-ia.html","sectores/servicios-publicos-aseo-economia-circular.html","sectores/agroindustria-fertilizantes-sostenibilidad.html","sectores/salud-negocios-regulados.html","sectores/comercio-distribucion.html","sectores/startups-inversion.html","sectores/proyectos-publicos-territoriales.html","sectores/operaciones-juridicas.html"}
-REQUIRED_FILES={"index.html","firma.html","perspectivas.html","demo.html","experiencia.html","404.html","styles.css","site-v3.css","clarity-v31.css","catalog-v32.css","enhancements.css","experiencia.css","firma.css","perspectivas.css","sectores.css","visual-v39.css","ux-v45.css","site-v3.js","catalog-v32.js","catalog-home-v32.js","demo.js","experiencia.js","visual-v39.js","manifest.webmanifest","version.json","robots.txt","sitemap.xml","assets/brand/favicon.svg","assets/brand/meridiano-monogram.svg","assets/brand/meridiano-logo-horizontal-dark.svg","assets/brand/meridiano-logo-horizontal-light.svg","assets/images/global/home-hero.webp","assets/route-meridiano-v3.svg",*CATALOG_PAGES.keys(),*PERSPECTIVE_PAGES,*SECTOR_PAGES}
-CANONICAL_INDEX_MARKERS={"Dirección jurídica para empresas que avanzan","assets/brand/meridiano-logo-horizontal-dark.svg","assets/brand/favicon.svg","assets/images/global/home-hero.webp","assets/route-meridiano-v3.svg","site-v3.css","clarity-v31.css","visual-v39.css","ux-v45.css","site-v3.js","CÓMO ELEGIR","PUNTO DE ENTRADA POR NECESIDAD","QUÉ RECIBE LA EMPRESA","PLANES RECURRENTES","CÓMO SE CONTRATA","Dirección jurídica externa","Tecnología e inteligencia artificial","Legal Operations","Economía circular y aseo","Meridiano Empresas"}
+REQUIRED_FILES={"index.html","firma.html","perspectivas.html","demo.html","experiencia.html","404.html","styles.css","site-v3.css","clarity-v31.css","catalog-v32.css","enhancements.css","experiencia.css","firma.css","perspectivas.css","sectores.css","visual-v39.css","ux-v45.css","quality-v48.css","page-context.css","site-v3.js","catalog-v32.js","catalog-home-v32.js","demo.js","experiencia.js","visual-v39.js","manifest.webmanifest","version.json","robots.txt","sitemap.xml","assets/brand/favicon.svg","assets/brand/meridiano-monogram.svg","assets/brand/meridiano-logo-horizontal-dark.svg","assets/brand/meridiano-logo-horizontal-light.svg","assets/images/global/home-hero.webp","assets/route-meridiano-v3.svg",*CATALOG_PAGES.keys(),*PERSPECTIVE_PAGES,*SECTOR_PAGES}
+CANONICAL_INDEX_MARKERS={"Dirección jurídica para empresas que avanzan","assets/brand/meridiano-logo-horizontal-dark.svg","assets/brand/favicon.svg","assets/images/global/home-hero.webp","assets/route-meridiano-v3.svg","site-v3.css","clarity-v31.css","visual-v39.css","ux-v45.css","quality-v48.css","page-context.css","site-v3.js","CÓMO ELEGIR","PUNTO DE ENTRADA POR NECESIDAD","QUÉ RECIBE LA EMPRESA","PLANES RECURRENTES","CÓMO SE CONTRATA","Dirección jurídica externa","Tecnología e inteligencia artificial","Legal Operations","Servicios públicos, aseo y economía circular","Transformación de operaciones jurídicas","Meridiano Empresas","Auditoría Jurídica Empresarial Integral","Programa de Gobernanza Jurídica y Uso Responsable de IA"}
 PERSPECTIVE_LIBRARY_MARKERS={"PERSPECTIVAS MERIDIANO","Usar inteligencia artificial no es solo contratar una herramienta","Un contrato debe poder administrarse después de la firma","El valor de un activo no prueba quién es su titular","El acuerdo entre socios debe funcionar también cuando hay desacuerdo","La viabilidad jurídica depende de una secuencia","La tecnología no corrige una operación jurídica indefinida"}
 IGNORED_SCHEMES={"http","https","mailto","tel","data","javascript"}
+
 class SiteParser(HTMLParser):
     def __init__(self):
         super().__init__(convert_charrefs=True); self.ids=[]; self.routes=[]; self.references=[]; self.images_without_alt=[]; self.catalog_id=None; self.has_lang=False; self.has_charset=False; self.has_viewport=False; self.has_title=False; self._inside_title=False; self._title_text=[]
@@ -34,6 +36,7 @@ class SiteParser(HTMLParser):
         if tag=="title": self._inside_title=False; self.has_title=bool("".join(self._title_text).strip())
     def handle_data(self,data):
         if self._inside_title: self._title_text.append(data)
+
 def local_target(source,reference):
     parsed=urlsplit(reference)
     if parsed.scheme.lower() in IGNORED_SCHEMES or reference.startswith("//"): return None
@@ -44,22 +47,30 @@ def local_target(source,reference):
     try: target.relative_to(ROOT.resolve())
     except ValueError as exc: raise ValueError("Referencia fuera del repositorio") from exc
     return target
+
 def validate():
-    errors=[]; missing=sorted(name for name in REQUIRED_FILES if not (ROOT/name).exists())
+    errors=[]
+    missing=sorted(name for name in REQUIRED_FILES if not (ROOT/name).exists())
     if missing: errors.append(f"Faltan archivos requeridos: {', '.join(missing)}")
     index_path=ROOT/"index.html"
     if index_path.exists():
-        index_text=index_path.read_text(encoding="utf-8"); missing_markers=sorted(marker for marker in CANONICAL_INDEX_MARKERS if marker not in index_text)
+        index_text=index_path.read_text(encoding="utf-8")
+        missing_markers=sorted(marker for marker in CANONICAL_INDEX_MARKERS if marker not in index_text)
         if missing_markers: errors.append(f"index.html no corresponde a la portada canónica vigente; faltan: {', '.join(missing_markers)}")
+        if 'assets/hero-meridiano-v3.svg' in index_text: errors.append("index.html conserva el hero legado en el primer render")
+        if index_text.count('class="full-detail-link"') != 16: errors.append("index.html debe exponer 16 enlaces profundos de servicios y productos sin depender de JavaScript")
+        if index_text.count('class="sector-deep-link"') != 8: errors.append("index.html debe enlazar los 8 sectores desde HTML estático")
     library_path=ROOT/"perspectivas.html"
     if library_path.exists():
-        library_text=library_path.read_text(encoding="utf-8"); missing_library_markers=sorted(marker for marker in PERSPECTIVE_LIBRARY_MARKERS if marker not in library_text)
+        library_text=library_path.read_text(encoding="utf-8")
+        missing_library_markers=sorted(marker for marker in PERSPECTIVE_LIBRARY_MARKERS if marker not in library_text)
         if missing_library_markers: errors.append(f"perspectivas.html está incompleta; faltan: {', '.join(missing_library_markers)}")
     site_script=ROOT/"site-v3.js"
-    if site_script.exists() and "catalog-home-v32.js" not in site_script.read_text(encoding="utf-8"): errors.append("site-v3.js no carga la navegación hacia las fichas profundas")
+    if site_script.exists() and "catalog-home-v32.js" not in site_script.read_text(encoding="utf-8"): errors.append("site-v3.js no carga la mejora progresiva hacia las fichas profundas")
     home_links_script=ROOT/"catalog-home-v32.js"
     if home_links_script.exists():
-        home_links_text=home_links_script.read_text(encoding="utf-8"); required_home_references={"perspectivas.html","perspectivas/gobierno-juridico-inteligencia-artificial.html","perspectivas/contratos-administrables.html","perspectivas/proyectos-regulados-secuencia-viabilidad.html",*SECTOR_PAGES}
+        home_links_text=home_links_script.read_text(encoding="utf-8")
+        required_home_references={"perspectivas.html","perspectivas/gobierno-juridico-inteligencia-artificial.html","perspectivas/contratos-administrables.html","perspectivas/proyectos-regulados-secuencia-viabilidad.html",*SECTOR_PAGES}
         for required_reference in sorted(required_home_references):
             if required_reference not in home_links_text: errors.append(f"catalog-home-v32.js no enlaza {required_reference}")
         for marker in ("Auditoría Jurídica Empresarial Integral","Programa de Gobernanza Jurídica y Uso Responsable de IA","Proyecto Regulado Jurídicamente Estructurado","Programa de Datos, Consumidor y Canales Digitales"):
@@ -70,7 +81,8 @@ def validate():
         parser=SiteParser(); relative=page.relative_to(ROOT).as_posix()
         try: page_text=page.read_text(encoding="utf-8"); parser.feed(page_text)
         except UnicodeDecodeError: errors.append(f"{relative}: no está codificado en UTF-8"); continue
-        parsed_pages[page.resolve()]=parser; duplicates=[item for item,count in Counter(parser.ids).items() if count>1]
+        parsed_pages[page.resolve()]=parser
+        duplicates=[item for item,count in Counter(parser.ids).items() if count>1]
         if duplicates: errors.append(f"{relative}: IDs duplicados: {', '.join(sorted(duplicates))}")
         if not parser.has_lang: errors.append(f"{relative}: falta atributo lang en <html>")
         if not parser.has_charset: errors.append(f"{relative}: falta meta charset")
@@ -85,7 +97,8 @@ def validate():
         if relative in SECTOR_PAGES:
             for marker in ("sector-hero","decision-grid","map-grid","INTERVENCIÓN MERIDIANO","LECTURAS RELACIONADAS"):
                 if marker not in page_text: errors.append(f"{relative}: falta el bloque sectorial {marker!r}")
-    catalog_ids=[parser.catalog_id for parser in parsed_pages.values() if parser.catalog_id]; duplicated_catalog_ids=[item for item,count in Counter(catalog_ids).items() if count>1]
+    catalog_ids=[parser.catalog_id for parser in parsed_pages.values() if parser.catalog_id]
+    duplicated_catalog_ids=[item for item,count in Counter(catalog_ids).items() if count>1]
     if duplicated_catalog_ids: errors.append(f"IDs de catálogo duplicados: {', '.join(sorted(duplicated_catalog_ids))}")
     if len(catalog_ids)!=16: errors.append(f"Se esperaban 16 fichas profundas y se encontraron {len(catalog_ids)}")
     perspective_count=sum(1 for page in parsed_pages if page.relative_to(ROOT.resolve()).as_posix() in PERSPECTIVE_PAGES)
@@ -110,11 +123,14 @@ def validate():
                     targets=set(target_parser.ids)|set(target_parser.routes)
                     if fragment not in targets: errors.append(f"{relative}:{line}: ancla o ruta #{fragment} inexistente en {target.relative_to(ROOT.resolve())}")
     return errors
+
 def main():
     errors=validate()
     if errors:
         print("VALIDACIÓN FALLIDA")
         for error in errors: print(f"- {error}")
         return 1
-    print(f"VALIDACIÓN OK: {len(HTML_FILES)} páginas, 16 fichas, 6 perspectivas, 8 sectores y recursos íntegros."); return 0
+    print(f"VALIDACIÓN OK: {len(HTML_FILES)} páginas, 16 fichas, 6 perspectivas, 8 sectores, rutas static-first y recursos íntegros.")
+    return 0
+
 if __name__=="__main__": sys.exit(main())
