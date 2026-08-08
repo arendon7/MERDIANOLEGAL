@@ -115,7 +115,7 @@ if hub.exists():
     if hub_text.count('class="growth-route-card-v51"') != 6:
         errors.append("soluciones/index.html debe mostrar las 6 rutas")
 
-required_page_markers = (
+required_page_markers = [
     'data-growth-v51="solution"',
     "CUÁNDO CONVIENE ACTUAR",
     "Las preguntas que deben quedar resueltas.",
@@ -123,10 +123,14 @@ required_page_markers = (
     "Qué puede recibir la empresa.",
     "Qué no debe asumirse dentro del alcance.",
     "REVISAR ANTES DE CONTACTAR",
-    "No necesita identificar el servicio correcto antes de escribir.",
     "../runtime-config.js",
     "../telemetry-v50.js",
-)
+]
+if semver(VERSION) < (5, 2, 0):
+    required_page_markers.append("No necesita identificar el servicio correcto antes de escribir.")
+else:
+    required_page_markers.append("SIGUIENTE PASO")
+
 for item in solutions:
     slug = item["slug"]
     path = folder / f"{slug}.html"
