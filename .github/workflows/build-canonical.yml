@@ -6,6 +6,7 @@ on:
     paths:
       - version.json
       - catalog-v32.js
+      - catalog-products-v41/**
       - catalog-services-v42/**
       - visual-v39.css
       - visual-v39.js
