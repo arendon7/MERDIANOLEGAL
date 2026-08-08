@@ -71,7 +71,6 @@
     'Programa de Protección de Datos y Consumidor': { service: 'ops', duration: '6 a 10 semanas', question: '¿La empresa puede demostrar cómo recoge datos, informa condiciones, atiende reclamos y corrige incidentes?', deliverables: ['Inventario de tratamientos y canales', 'Políticas, avisos y procedimientos', 'Matriz de proveedores y cláusulas', 'Programa de garantías, reclamos y capacitación'], limits: ['No incluye pruebas técnicas de seguridad', 'Investigaciones y litigios se separan', 'Adecuaciones internacionales requieren alcance específico'] },
   };
 
-  const routeMap = { empresa: 'Diagnóstico Jurídico Empresarial', ia: 'Programa de Gobernanza de IA', socios: 'Empresa Lista para Inversión', intangibles: 'Marca, Software y Activos Intangibles Protegidos', regulado: 'Proyecto Regulado Estructurado', operacion: 'Sistema Contractual Empresarial' };
   const menuButton = document.querySelector('.menu-toggle');
   const navigation = document.querySelector('.main-nav');
   const modal = document.getElementById('detail-modal');
@@ -79,11 +78,11 @@
   let lastTrigger = null;
 
   const create = (tag, className, text) => { const element = document.createElement(tag); if (className) element.className = className; if (text !== undefined) element.textContent = text; return element; };
-  function setMenu(open) { if (!menuButton || !navigation) return; menuButton.setAttribute('aria-expanded', String(open)); navigation.classList.toggle('open', open); }
+  function setMenu(open) { if (!menuButton || !navigation) return; menuButton.setAttribute('aria-expanded', String(open)); menuButton.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú'); navigation.classList.toggle('open', open); document.body.classList.toggle('menu-open', open); }
   menuButton?.addEventListener('click', () => setMenu(menuButton.getAttribute('aria-expanded') !== 'true'));
   navigation?.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setMenu(false)));
   document.addEventListener('click', (event) => { if (!navigation?.classList.contains('open')) return; if (navigation.contains(event.target) || menuButton?.contains(event.target)) return; setMenu(false); });
-  document.addEventListener('keydown', (event) => { if (event.key === 'Escape') setMenu(false); });
+  document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && navigation?.classList.contains('open')) { setMenu(false); menuButton?.focus(); } });
 
   const navLinks = [...document.querySelectorAll('.main-nav a[href^="#"]')];
   if ('IntersectionObserver' in window) {
@@ -92,7 +91,7 @@
   }
 
   const tabs = [...document.querySelectorAll('.tab')];
-  tabs.forEach((tab) => { tab.setAttribute('aria-selected', String(tab.classList.contains('active'))); tab.addEventListener('click', () => { tabs.forEach((item) => { const active = item === tab; item.classList.toggle('active', active); item.setAttribute('aria-selected', String(active)); }); document.querySelectorAll('.product-card').forEach((card) => card.classList.toggle('is-hidden', tab.dataset.filter !== 'all' && card.dataset.category !== tab.dataset.filter)); }); });
+  tabs.forEach((tab) => { tab.removeAttribute('aria-selected'); tab.setAttribute('aria-pressed', String(tab.classList.contains('active'))); tab.addEventListener('click', () => { tabs.forEach((item) => { const active = item === tab; item.classList.toggle('active', active); item.setAttribute('aria-pressed', String(active)); }); document.querySelectorAll('.product-card').forEach((card) => card.classList.toggle('is-hidden', tab.dataset.filter !== 'all' && card.dataset.category !== tab.dataset.filter)); }); });
 
   function appendList(parent, items) { const list = create('ul'); items.forEach((item) => list.append(create('li', '', item))); parent.append(list); }
   function renderModal({ title, code, horizon, question, scope, outputs, limits, icon }) {
@@ -123,7 +122,6 @@
 
   document.querySelectorAll('[data-service]').forEach((button) => button.addEventListener('click', () => { const service = services[button.dataset.service]; if (!service) return; lastTrigger = button; renderModal(service); }));
   document.querySelectorAll('[data-product]').forEach((button) => button.addEventListener('click', () => { const product = products[button.dataset.product]; if (!product) return; const service = services[product.service]; lastTrigger = button; renderModal({ title: button.dataset.product, code: 'PRODUCTO DE ALCANCE CERRADO', horizon: product.duration, question: product.question, outputs: product.deliverables, limits: product.limits, icon: service?.icon || 'i-compass' }); }));
-  document.querySelectorAll('[data-route]').forEach((card) => card.addEventListener('click', () => { const productName = routeMap[card.dataset.route]; const product = products[productName]; const service = services[product?.service]; if (!product) return; lastTrigger = card; renderModal({ title: productName, code: 'PUNTO DE ENTRADA SUGERIDO', horizon: product.duration, question: product.question, outputs: product.deliverables, limits: product.limits, icon: service?.icon }); }));
   document.querySelector('.modal-close')?.addEventListener('click', () => modal?.close());
   modal?.addEventListener('click', (event) => { if (event.target !== modal) return; const bounds = modal.getBoundingClientRect(); const inside = event.clientX >= bounds.left && event.clientX <= bounds.right && event.clientY >= bounds.top && event.clientY <= bounds.bottom; if (!inside) modal.close(); });
   modal?.addEventListener('close', () => lastTrigger?.focus());
@@ -138,7 +136,7 @@
   });
 
   const year = document.getElementById('year'); if (year) year.textContent = String(new Date().getFullYear());
-  const topButton = document.querySelector('.floating-actions button'); const updateTopButton = () => topButton?.classList.toggle('visible', window.scrollY > 700); window.addEventListener('scroll', updateTopButton, { passive: true }); topButton?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' })); updateTopButton();
+  const topButton = document.querySelector('.floating-actions button'); const updateTopButton = () => topButton?.classList.toggle('visible', window.scrollY > 700); window.addEventListener('scroll', updateTopButton, { passive: true }); topButton?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })); updateTopButton();
 
   const catalogEnhancer = document.createElement('script');
   catalogEnhancer.src = 'catalog-home-v32.js';
