@@ -1,0 +1,154 @@
+{
+  "version": "5.2.0",
+  "hub": {
+    "seo_title": "Soluciones jurídicas para empresas en Colombia | Meridiano Legal",
+    "seo_description": "Rutas jurídicas para empresas en Colombia: riesgo legal, dirección externa, IA, inversión, proyectos regulados y Legal Operations.",
+    "headline": "Identifique la decisión jurídica antes de escoger el servicio.",
+    "intro": "Una necesidad empresarial puede terminar en diagnóstico, producto de alcance cerrado, servicio especializado o capacidad recurrente. Estas rutas ayudan a entender qué problema existe, qué debe decidirse y qué evidencia conviene preparar antes de solicitar una propuesta.",
+    "guides": [
+      {"title": "Necesito saber qué corregir primero", "copy": "Cuando el problema es dispersión de riesgos, contratos, obligaciones o evidencia y la prioridad todavía no está clara.", "href": "ordenar-riesgo-juridico-empresa.html"},
+      {"title": "Necesito capacidad jurídica recurrente", "copy": "Cuando la gerencia requiere criterio continuo, seguimiento o una operación jurídica más ordenada.", "href": "direccion-juridica-externa-empresa.html"},
+      {"title": "Tengo una decisión de crecimiento o regulación", "copy": "Cuando existe inversión, adopción de IA o un proyecto cuya viabilidad depende de una secuencia jurídica concreta.", "href": "preparar-empresa-para-inversion.html"}
+    ]
+  },
+  "solutions": [
+    {
+      "slug": "ordenar-riesgo-juridico-empresa",
+      "seo_title": "Cómo ordenar el riesgo jurídico empresarial | Meridiano Legal",
+      "seo_description": "Diagnóstico y auditoría jurídica para priorizar riesgos, documentos y acciones correctivas antes de crecimiento, inversión o una decisión crítica.",
+      "decision_label": "¿Este es su punto de entrada?",
+      "decision_copy": "Sí, cuando la gerencia sabe que existen asuntos jurídicos abiertos pero todavía no tiene una lectura consolidada de criticidad, evidencia, responsables y secuencia de cierre.",
+      "fit": ["Existe exposición en varios frentes y falta una priorización común.", "Se aproxima una inversión, auditoría, expansión o negociación que exige orden documental.", "La empresa necesita convertir hallazgos dispersos en decisiones, responsables y fechas."],
+      "not_fit": ["Si ya existe un hallazgo único, claramente delimitado y solo se requiere ejecutar una actuación específica.", "Si la necesidad principal es litigiosa, tributaria o técnica y exige otra especialidad desde el inicio."],
+      "objections": [
+        ["Ya tenemos abogado o contador", "La auditoría no busca sustituir capacidades existentes. Su función es consolidar evidencia, dependencias y prioridades para que gerencia y asesores trabajen sobre una misma lectura de riesgo."],
+        ["No queremos una revisión interminable", "El perímetro se fija antes de iniciar. Sociedad, documentos, entrevistas, frentes y entregables deben quedar delimitados en propuesta; lo que exceda ese alcance se identifica y cotiza por separado."],
+        ["¿Un diagnóstico sirve si después no implementamos todo?", "Sí, si permite distinguir qué debe cerrarse de inmediato, qué puede programarse y qué riesgo se acepta de forma informada. La hoja de ruta evita tratar todos los hallazgos como si tuvieran la misma criticidad."]
+      ],
+      "pricing": {"title": "El honorario depende del perímetro que se revise", "copy": "Para una necesidad acotada puede bastar un diagnóstico profesional; cuando se requiere revisión documental profunda, entrevistas y un paquete correctivo, la modalidad adecuada suele ser una auditoría de alcance cerrado. Las referencias públicas de honorarios se mantienen en la página principal para evitar duplicar valores que podrían quedar desactualizados.", "href": "../index.html#honorarios"},
+      "faq": [
+        ["¿Una auditoría jurídica revisa toda la empresa?", "No necesariamente. Una auditoría seria parte de un perímetro pactado: sociedad, frentes jurídicos, documentos, entrevistas y entregables. El objetivo no es prometer una revisión ilimitada, sino producir una lectura suficientemente profunda y verificable para el resultado definido."],
+        ["¿Qué información conviene preparar antes de empezar?", "Como mínimo, estructura societaria, contratos relevantes, políticas, obligaciones materiales, litigios o reclamaciones conocidas y documentos asociados a la decisión que motiva la revisión. La lista final se ajusta después de la calificación inicial."],
+        ["¿Puede utilizarse antes de una inversión o due diligence?", "Sí. Una revisión previa permite identificar brechas antes de abrir un data room, separar asuntos corregibles de contingencias estructurales y ordenar responsables. No sustituye la revisión que posteriormente haga el inversionista."]
+      ],
+      "related": ["direccion-juridica-externa-empresa", "preparar-empresa-para-inversion"],
+      "cta_title": "Convierta la percepción de riesgo en una ruta verificable.",
+      "cta_copy": "Describa qué decisión está próxima, qué áreas le preocupan y qué evidencia existe hoy. La primera revisión permite definir si conviene diagnóstico, auditoría cerrada o una intervención especializada."
+    },
+    {
+      "slug": "direccion-juridica-externa-empresa",
+      "seo_title": "Dirección jurídica externa para empresas | Meridiano Legal",
+      "seo_description": "Dirección jurídica externa para gerencias que necesitan criterio senior, priorización, contratos y seguimiento sin ampliar de inmediato su estructura interna.",
+      "decision_label": "¿Cuándo deja de ser eficiente contratar asunto por asunto?",
+      "decision_copy": "Cuando la empresa ya no tiene problemas jurídicos aislados, sino una agenda recurrente que exige memoria, priorización, coordinación de especialistas y seguimiento de decisiones.",
+      "fit": ["Gerencia coordina personalmente contratos, vencimientos y asesores.", "El equipo interno requiere capacidad senior adicional para decisiones concretas.", "Existen asuntos recurrentes que pierden contexto cada vez que cambia el proveedor."],
+      "not_fit": ["Si solo existe una tarea puntual con alcance, responsable y fecha claramente definidos.", "Si la necesidad principal es aumentar capacidad operativa no jurídica o tercerizar funciones que requieren presencia permanente."],
+      "objections": [
+        ["Podemos llamar a un abogado cuando aparezca algo", "Ese modelo funciona mientras los asuntos sean realmente aislados. Cuando existen dependencias entre contratos, gobierno, obligaciones y decisiones, el costo oculto aparece en pérdida de contexto, reexplicación y falta de seguimiento."],
+        ["No queremos una bolsa de horas sin control", "La capacidad recurrente debe tener perímetro, reglas de consumo, prioridades, SLA y reporte. La propuesta puede estructurarse como plan mensual, pero no equivale a disponibilidad ilimitada ni a incluir cualquier especialidad."],
+        ["Ya tenemos abogado interno", "La dirección externa puede complementar, no reemplazar, al equipo interno. Es útil para capacidad senior, materias que requieren otra especialidad, comités de decisión o periodos de crecimiento en los que ampliar nómina no es todavía la mejor alternativa."]
+      ],
+      "pricing": {"title": "El precio depende de capacidad, complejidad y nivel de integración", "copy": "Meridiano publica planes mensuales de referencia con capacidades distintas. Antes de contratar se define qué materias entran, qué SLA se necesita, qué asuntos se cotizan por fuera y cómo se reportará el consumo. Esa delimitación protege tanto a la empresa como a la firma.", "href": "../index.html#planes"},
+      "faq": [
+        ["¿En qué se diferencia de contratar abogados por asunto?", "La diferencia principal es continuidad. Una dirección jurídica externa mantiene una agenda común, conoce decisiones previas, prioriza asuntos y coordina especialistas. Un encargo aislado puede ser suficiente para una tarea concreta, pero no resuelve por sí mismo la gobernanza de una agenda jurídica recurrente."],
+        ["¿La dirección jurídica externa incluye litigios?", "No de manera automática. Litigios, trámites ante autoridades, impuestos, investigaciones u otras especialidades pueden coordinarse, pero su inclusión debe constar expresamente en el alcance y, cuando corresponda, tener presupuesto independiente."],
+        ["¿Cómo se controla la capacidad mensual?", "Debe existir un mecanismo de triage, registro de solicitudes, priorización, responsables y reporte de consumo. El objetivo es que la empresa sepa qué está usando, qué queda pendiente y qué asuntos requieren una decisión adicional de alcance."]
+      ],
+      "related": ["ordenar-operacion-juridica", "ordenar-riesgo-juridico-empresa"],
+      "cta_title": "Deje de administrar la agenda jurídica desde conversaciones aisladas.",
+      "cta_copy": "Presente qué asuntos aparecen cada mes, quién los gestiona hoy y dónde se pierde tiempo o contexto. Con eso puede definirse una capacidad recurrente realmente gobernable."
+    },
+    {
+      "slug": "gobernar-inteligencia-artificial-empresa",
+      "seo_title": "Gobernanza jurídica de IA para empresas | Meridiano Legal",
+      "seo_description": "Gobernanza jurídica de inteligencia artificial para empresas: casos de uso, datos, proveedores, contratos, supervisión, evidencia y reglas internas.",
+      "decision_label": "¿La empresa ya usa IA aunque todavía no tenga un proyecto formal?",
+      "decision_copy": "En muchas organizaciones el riesgo aparece antes del proyecto: herramientas adquiridas por áreas, automatizaciones, asistentes, proveedores y decisiones apoyadas en modelos sin inventario ni reglas comunes.",
+      "fit": ["Las áreas ya usan IA con información corporativa, de clientes o trabajadores.", "Se contratan proveedores sin criterios uniformes sobre datos, PI, seguridad o continuidad.", "La empresa necesita aprobar, restringir o supervisar casos de uso con una lógica común."],
+      "not_fit": ["Si la necesidad es exclusivamente técnica y no involucra decisiones jurídicas, contratos, datos, personas o activos.", "Si se espera que una política jurídica sustituya pruebas de seguridad, desempeño, sesgo o arquitectura tecnológica."],
+      "objections": [
+        ["Solo usamos herramientas comerciales conocidas", "La marca del proveedor no elimina preguntas sobre información cargada, términos contractuales, retención, propiedad intelectual, supervisión o decisiones automatizadas. El nivel de control debe ser proporcional al caso de uso, no al prestigio del proveedor."],
+        ["Una política de IA podría frenar la innovación", "Una política mal diseñada sí. El objetivo de gobernanza es clasificar y habilitar: distinguir usos ordinarios, usos que requieren aprobación reforzada y usos que no deben permitirse. Eso permite innovar con reglas más claras."],
+        ["Esto parece un problema de ciberseguridad", "Ciberseguridad es una parte, no el todo. La gobernanza jurídica también conecta protección de datos, propiedad intelectual, contratos, consumidor, laboral, responsabilidad, evidencia y gobierno corporativo."]
+      ],
+      "pricing": {"title": "El alcance se define por casos de uso y nivel de gobierno requerido", "copy": "Una empresa puede necesitar desde un diagnóstico acotado hasta un programa completo con inventario, clasificación, política, reglas contractuales y seguimiento. Las referencias públicas de IA y seguimiento se conservan en la sección de honorarios.", "href": "../index.html#honorarios"},
+      "faq": [
+        ["¿Una empresa necesita gobernanza si usa IA generativa solo como apoyo?", "Puede necesitarla, dependiendo de qué información se introduce, qué decisiones se apoyan, quién accede a los resultados y qué impacto puede producir un error. La gobernanza sirve precisamente para clasificar usos y aplicar controles proporcionales."],
+        ["¿La gobernanza de IA es solo protección de datos personales?", "No. Los casos de IA pueden involucrar datos, propiedad intelectual, secretos empresariales, contratos con proveedores, relaciones laborales, consumidor, explicabilidad, responsabilidad y gobierno corporativo. El mapa jurídico depende de cómo se use la tecnología."],
+        ["¿El programa jurídico reemplaza evaluaciones técnicas?", "No. Las pruebas de seguridad, arquitectura, calidad, sesgo, robustez o desempeño deben ser realizadas por las capacidades técnicas correspondientes. La función jurídica debe integrarse con esas evidencias, no simular que puede producirlas."]
+      ],
+      "related": ["ordenar-operacion-juridica", "estructurar-proyecto-regulado"],
+      "cta_title": "Convierta el uso disperso de IA en decisiones gobernables.",
+      "cta_copy": "Cuéntenos qué herramientas y casos existen, qué datos utilizan y qué decisiones pueden afectar. La calificación inicial permite separar lo ordinario de lo que requiere control reforzado."
+    },
+    {
+      "slug": "preparar-empresa-para-inversion",
+      "seo_title": "Preparar empresa para inversión y due diligence | Meridiano Legal",
+      "seo_description": "Preparación jurídica para inversión y due diligence: gobierno, capital, contratos, propiedad intelectual, data room y brechas antes de negociar.",
+      "decision_label": "¿Qué suele descubrirse demasiado tarde en un due diligence?",
+      "decision_copy": "Inconsistencias de capital, actas incompletas, contratos materiales dispersos, obligaciones sin evidencia y activos críticos cuya titularidad no puede demostrarse con la velocidad que exige una negociación.",
+      "fit": ["Existe una ronda, socio estratégico, adquisición o revisión prevista.", "La empresa depende de software, marca, know-how o contenidos creados por varias personas.", "La documentación corporativa y contractual no está lista para un data room."],
+      "not_fit": ["Si todavía no existe una decisión real de inversión y el problema central es únicamente financiero o de valoración.", "Si se pretende que la revisión jurídica sustituya asesoría tributaria, contable o de banca de inversión."],
+      "objections": [
+        ["Podemos ordenar los documentos cuando el inversionista los pida", "Hacerlo durante la negociación consume tiempo crítico y reduce margen para corregir. Preparar antes permite distinguir brechas documentales de contingencias sustantivas y evita descubrir problemas básicos frente al tercero."],
+        ["Somos una empresa pequeña; un due diligence será sencillo", "El tamaño no elimina preguntas sobre propiedad de acciones, poderes, contratos, activos, obligaciones o propiedad intelectual. Una empresa pequeña puede tener menos documentos, pero una brecha crítica sigue siendo material si afecta el activo o la transacción."],
+        ["La estructura legal puede ajustarse después del term sheet", "Algunas materias sí; otras condicionan valoración, control, garantías, condiciones precedentes o incluso la viabilidad del cierre. Conviene identificar cuáles deben resolverse antes de asumir compromisos difíciles de revertir."]
+      ],
+      "pricing": {"title": "El costo depende de la etapa y del perímetro de preparación", "copy": "Un producto de inversión puede tener alcance cerrado cuando la sociedad y la transacción están bien delimitadas. Negociaciones, reorganizaciones, acuerdos complejos o rondas con múltiples actores requieren servicio adaptable. Las referencias societarias y de productos se revisan antes de cotizar.", "href": "../index.html#honorarios"},
+      "faq": [
+        ["¿Cuánto antes conviene empezar a preparar un due diligence?", "Conviene hacerlo antes de abrir formalmente el data room o recibir una lista extensa de requerimientos. El tiempo necesario depende de la calidad documental y de si existen correcciones societarias, contractuales o de propiedad intelectual que requieren decisiones de terceros."],
+        ["¿La preparación incluye valoración de la empresa?", "No. La valoración es una materia financiera. El trabajo jurídico puede revisar cómo la estructura de capital, derechos, contingencias, contratos y activos inciden en la transacción, pero no sustituye una valoración financiera o una asesoría de banca de inversión."],
+        ["¿Prepararse garantiza que el inversionista aprobará la operación?", "No. La decisión del inversionista depende de múltiples factores. El objetivo es que la empresa llegue con mejor evidencia, conozca sus contingencias, pueda responder con mayor velocidad y evite que problemas corregibles aparezcan por primera vez durante la negociación."]
+      ],
+      "related": ["ordenar-riesgo-juridico-empresa", "gobernar-inteligencia-artificial-empresa"],
+      "cta_title": "Llegue a la negociación con evidencia, no con explicaciones improvisadas.",
+      "cta_copy": "Indique la etapa de la conversación, quién podría invertir y qué activos o documentos son críticos. La revisión inicial permite priorizar lo que debe estar listo antes de abrir información."
+    },
+    {
+      "slug": "estructurar-proyecto-regulado",
+      "seo_title": "Estructuración jurídica de proyectos regulados | Meridiano Legal",
+      "seo_description": "Estructuración jurídica de proyectos regulados: permisos, autoridades, contratos, territorio, condiciones precedentes y ruta de viabilidad.",
+      "decision_label": "¿Por qué un proyecto técnicamente viable puede atascarse jurídicamente?",
+      "decision_copy": "Porque permisos, competencias, territorio, contratos, financiación y responsabilidades suelen tener dependencias. Analizarlos como una lista independiente puede ocultar condiciones que bloquean el cronograma completo.",
+      "fit": ["Hay varias autoridades, permisos, registros o habilitaciones conectadas.", "El contrato principal se negocia antes de cerrar condiciones regulatorias o territoriales.", "El cronograma técnico depende de hitos jurídicos que todavía no tienen responsable o evidencia."],
+      "not_fit": ["Si la consulta se limita a un trámite aislado, claramente identificado y sin dependencias relevantes.", "Si se requiere exclusivamente ingeniería, modelación financiera o estudios ambientales o técnicos sin componente jurídico."],
+      "objections": [
+        ["Ya tenemos una lista de permisos", "Una lista no muestra necesariamente secuencia, dependencia, condición de inicio ni responsable. La estructuración busca conectar cada habilitación con contratos, territorio, actores y cronograma para saber qué puede avanzar y qué debe esperar."],
+        ["Podemos firmar el contrato y resolver permisos después", "A veces es posible; otras veces genera obligaciones antes de confirmar viabilidad. La respuesta depende del régimen y del proyecto. El contrato debe reflejar condiciones precedentes, asignación de riesgo, hitos y salidas coherentes con la ruta regulatoria."],
+        ["La autoridad nos dijo informalmente que no habría problema", "La conversación puede orientar, pero la estructura debe identificar qué acto, registro, permiso, concepto o evidencia produce realmente el efecto jurídico necesario. La gestión de autoridad debe quedar trazable y conectada con el cronograma."]
+      ],
+      "pricing": {"title": "El honorario se define por perímetro regulatorio, actores y secuencia", "copy": "Un proyecto acotado puede estructurarse como producto cerrado; si exige interacción continua con autoridades, negociación contractual o cambios de alcance, suele requerir servicio especializado o seguimiento recurrente. El Plan Regulado funciona como referencia de capacidad, no como precio automático de cualquier proyecto.", "href": "../index.html#planes"},
+      "faq": [
+        ["¿La estructuración identifica todos los permisos necesarios?", "El objetivo es identificar los requisitos jurídicos dentro del perímetro contratado y ordenar su secuencia. No es responsable prometer que una lista inicial será exhaustiva sin conocer actividad, territorio, tecnología, actores y régimen aplicable; esos elementos se confirman durante la estructuración."],
+        ["¿Meridiano puede acompañar interacción con autoridades?", "Puede contemplarse según el servicio y el alcance. La preparación de reuniones, radicaciones, respuestas, conceptos o coordinación con especialistas debe definirse expresamente, porque no todos los proyectos requieren el mismo nivel de relacionamiento institucional."],
+        ["¿La estructuración jurídica reemplaza estudios técnicos o ambientales?", "No. Los estudios técnicos, financieros, ambientales o de ingeniería deben ser producidos por profesionales competentes. El trabajo jurídico utiliza sus resultados cuando son condición para permisos, contratos, asignación de riesgos o decisiones de viabilidad."]
+      ],
+      "related": ["ordenar-riesgo-juridico-empresa", "direccion-juridica-externa-empresa"],
+      "cta_title": "Conecte permisos, contratos y cronograma antes de comprometer el proyecto.",
+      "cta_copy": "Describa actividad, territorio, actores, estado regulatorio y próximo hito comercial o técnico. Con esa información puede delimitarse la ruta jurídica que condiciona la viabilidad."
+    },
+    {
+      "slug": "ordenar-operacion-juridica",
+      "seo_title": "Legal Operations para ordenar el área jurídica | Meridiano Legal",
+      "seo_description": "Legal Operations para empresas: solicitudes, contratos, documentos, obligaciones, responsables, indicadores y tecnología con un modelo operativo jurídico claro.",
+      "decision_label": "¿El problema es falta de abogados o falta de sistema?",
+      "decision_copy": "Cuando solicitudes, documentos, obligaciones y decisiones se gestionan por correo, chats y memoria individual, agregar capacidad puede aliviar el volumen sin resolver la causa operativa.",
+      "fit": ["No existe un punto único para recibir y priorizar solicitudes jurídicas.", "Contratos, obligaciones, documentos y decisiones viven en herramientas o carpetas separadas.", "La gerencia no puede ver carga, tiempos, pendientes, riesgos o responsables con claridad."],
+      "not_fit": ["Si el único problema es una necesidad jurídica sustantiva puntual y el proceso operativo funciona adecuadamente.", "Si se busca comprar software antes de definir proceso, datos, responsables y criterios de uso."],
+      "objections": [
+        ["Necesitamos una herramienta, no consultoría", "La herramienta puede ser parte de la solución, pero digitalizar un proceso ambiguo suele trasladar la desorganización al software. Primero conviene definir demanda, estados, responsables, datos y controles mínimos."],
+        ["Nuestro equipo ya conoce el proceso", "El conocimiento tácito no siempre es un modelo operativo. Legal Operations busca que solicitudes, criterios, handoffs, evidencias y métricas puedan entenderse y ejecutarse sin depender exclusivamente de memoria individual."],
+        ["Esto suena demasiado grande para empezar", "No tiene que comenzar con una transformación total. Puede delimitarse un flujo de alto volumen, medirlo, estabilizarlo y usar ese aprendizaje para decidir qué escalar."]
+      ],
+      "pricing": {"title": "El costo depende del proceso y del nivel de transformación", "copy": "Puede comenzar con un diagnóstico operativo o un flujo prioritario. Si el alcance incluye rediseño de procesos, biblioteca documental, automatización, tableros o acompañamiento de implementación, se cotiza como proyecto o capacidad a medida. No se recomienda comprar tecnología antes de delimitar el modelo.", "href": "../index.html#planes"},
+      "faq": [
+        ["¿Legal Operations requiere implementar software?", "No. Puede empezar con proceso, roles, taxonomías, plantillas, criterios de priorización e indicadores usando herramientas existentes. La tecnología se incorpora cuando existe un caso de uso claro y una definición mínima de datos, responsables e integración."],
+        ["¿En qué se diferencia de Dirección Jurídica Externa?", "Dirección Jurídica Externa aporta criterio y capacidad jurídica recurrente para decisiones y asuntos. Legal Operations trabaja sobre cómo entra, se asigna, se documenta, se mide y se mejora el trabajo jurídico. Pueden contratarse por separado o complementarse."],
+        ["¿Qué procesos suelen priorizarse primero?", "Depende del volumen y del costo de fricción. Son frecuentes la gestión de solicitudes, contratos, obligaciones, poderes, documentos recurrentes, aprobaciones y reportes. El mejor primer proceso suele ser uno repetitivo, visible y suficientemente delimitado para medir mejora."]
+      ],
+      "related": ["direccion-juridica-externa-empresa", "gobernar-inteligencia-artificial-empresa"],
+      "cta_title": "Ordene el trabajo jurídico antes de escalar equipo o tecnología.",
+      "cta_copy": "Cuéntenos dónde entran hoy las solicitudes, qué flujo concentra más volumen y qué información falta para gestionar. Eso permite escoger un primer proceso con impacto visible y alcance controlable."
+    }
+  ]
+}
