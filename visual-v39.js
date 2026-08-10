@@ -16,7 +16,6 @@
   const hero = document.querySelector('.hero-art > img');
   if (hero) {
     hero.src = 'assets/images/global/home-hero.webp';
-    hero.classList.add('visual-home-hero');
     hero.alt = 'Panorama empresarial de Medellín que representa dirección jurídica, empresa y territorio';
     hero.width = 800;
     hero.height = 450;

@@ -60,6 +60,15 @@ def patch(path: Path, prefix: str = '') -> None:
             text,
             count=1,
         )
+        # El hero debe entrar al primer layout con el mismo estado que tendrá
+        # después de ejecutar JS. Añadir esta clase en HTML evita que la imagen
+        # pase de elemento en flujo a position:absolute durante el arranque,
+        # que era la fuente del CLS de portada detectado por Lighthouse v5.5.
+        text = text.replace(
+            '<div class="hero-art"><img ',
+            '<div class="hero-art"><img class="visual-home-hero" ',
+            1,
+        )
     path.write_text(text, encoding='utf-8')
 
 
