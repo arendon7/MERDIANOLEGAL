@@ -7,87 +7,115 @@
 - Repositorio: `arendon7/MERDIANOLEGAL`.
 - Rama técnica/productiva: `main`.
 - Snapshot certificado: `stable`.
-- Último merge de infraestructura/memoria: PR #10 — Graphify + Obsidian, merge `0145b2ccbf217055b4b43bc02b1c05f9002f667b`.
-- `stable` observado al cerrar esta integración: `6d95d96d00e1ce15ad0c110ca7511e1d0873e933`.
-- Versión declarada en `version.json`: `5.5.0`.
+- Versión declarada: `5.5.0`.
+- Evidencia funcional de cierre: run `31431923694`, sobre la candidata `bd310076bbc098771dffd8fde03cabee9e16bc6f` antes del cierre documental.
 
-El SHA de `main` debe consultarse dinámicamente al retomar trabajo. Las notas registran hitos y contexto, pero `main` siempre gana si existe una discrepancia.
+Los SHA de `main` y `stable` deben consultarse dinámicamente. Las notas documentan hitos; los refs actuales son la autoridad del estado vigente.
 
 ## Estado funcional
 
-La última base completamente certificada y promovida sigue siendo v5.4 en `stable`.
+**v5.5 quedó funcionalmente certificada.**
 
-v5.5 está en fase de Performance + Accessibility QA. Ya quedaron incorporados:
+La cadena completa aprobó:
 
-- Node 22 para Browser QA;
-- dependencias QA fijadas mediante `package-lock.json` y `npm ci`;
-- Playwright 1.62.0;
-- axe-core 4.12.1;
-- Lighthouse 13.4.1;
-- siete superficies axe representativas;
-- presupuestos Lighthouse versionados;
-- correcciones transversales de contraste accesible.
+- idempotencia canónica;
+- validadores v4.4→v5.5;
+- 46 páginas y recursos;
+- catálogo estático de 16 fichas;
+- JavaScript y JSON;
+- GitHub Pages;
+- smoke HTTP público;
+- Playwright sobre Pages;
+- axe;
+- seis auditorías Lighthouse;
+- promoción de `stable`.
 
-## Evidencia v5.5 más reciente
+## Evidencia de navegador
 
-Sobre la candidata previa a esta memoria:
+Browser E2E + axe:
 
-- Playwright/axe: 35 pruebas pasaron y 2 quedaron skipped; ninguna falló.
-- Las 7 auditorías axe quedaron sin violaciones serias/críticas.
-- Cinco de seis superficies Lighthouse cumplen los presupuestos.
-- La portada cumple performance score, accesibilidad, LCP, TBT y peso.
-- Único bloqueo conocido: CLS de portada `0.303806...`, presupuesto `<= 0.15`.
-- Lighthouse identificó como responsable del desplazamiento a `main#contenido > section.hero > div.container > div.hero-art`.
-- LCP observado en portada: ~1206 ms.
-- TBT observado: 0 ms.
-- Transferencia observada: ~73.9 KB.
-- Performance score observado: 0.85.
-- Accessibility score observado: 0.97.
+- 37 entradas;
+- 35 aprobadas;
+- 2 omitidas por diseño;
+- 0 fallos;
+- 7 superficies axe sin violaciones serias/críticas.
 
-`stable` no debe avanzar hasta que CLS quede dentro del presupuesto y toda la cadena vuelva a estar verde.
+Lighthouse final:
+
+- portada: performance 1.00, accesibilidad 0.97, LCP 1207 ms, CLS 0, TBT 0, ~73.9 KB;
+- solución IA: performance 1.00, accesibilidad 1.00, CLS 0;
+- producto IA: performance 1.00, accesibilidad 1.00, CLS 0;
+- sector tecnología: performance 0.98, accesibilidad 1.00, CLS 0.087;
+- perspectiva IA: performance 0.98, accesibilidad 1.00, CLS 0.087;
+- demo: performance 1.00, accesibilidad 1.00, CLS 0.
+
+Las seis superficies cumplen los presupuestos versionados.
+
+## Incidente CLS y resolución
+
+El único bloqueo pendiente era CLS de portada ~0.304 frente a presupuesto <=0.15.
+
+Causa confirmada:
+
+- la imagen del hero nacía en flujo;
+- `visual-v39.js` añadía después `visual-home-hero`;
+- esa clase activa `position:absolute`;
+- el cambio tardío obligaba a recalcular el grid/hero.
+
+Corrección:
+
+- el HTML inicial materializa `visual-home-hero`;
+- JS ya no añade esa clase;
+- `normalize_quality_v48.py` preserva el contrato después de la reconstrucción histórica v4.8;
+- el validator v4.8 valida semánticamente la imagen sin depender del orden de atributos;
+- el validator visual exige la clase inicial y prohíbe la mutación tardía.
+
+Resultado: CLS ~0.304 → 0 y performance ~0.85 → 1.00, sin modificar el presupuesto.
 
 ## Estado de integraciones externas
 
 Activas:
 
 - GitHub Pages;
-- WhatsApp como handoff de contacto;
+- WhatsApp como handoff real de contacto;
 - contexto comercial en sesión/local según contratos vigentes;
-- telemetría local en memoria y semántica de eventos preparada;
-- sitemap, robots, canonical, Open Graph y estado público;
+- telemetría local en memoria y semántica de eventos sin PII;
+- sitemap, robots, canonical y Open Graph;
 - demo estático/noindex;
-- build canónico, validación, Pages, smoke y snapshot estable.
+- build canónico, validadores, smoke, Browser E2E, axe, Lighthouse y snapshot `stable`.
 
 No deben declararse activas sin evidencia/configuración real:
 
 - dominio personalizado/CNAME;
 - Search Console;
-- proveedor de analítica externo;
+- proveedor externo de analítica;
 - CRM/backend de leads;
-- formulario con almacenamiento servidor;
+- almacenamiento servidor del formulario;
 - email transaccional.
 
 ## Memoria de ingeniería
 
-Graphify + Obsidian quedó integrado mediante PR #10. El piloto de PR validó el corpus optimizado con:
+Graphify + Obsidian está operativo:
 
-- 341 nodos;
-- 520 relaciones;
-- 56 comunidades;
-- 67 notas wiki;
-- ejecución `--code-only`, sin backend LLM;
-- JSON jurídicos/comerciales excluidos del grafo de código para evitar ruido.
+- `AGENTS.md` define protocolo de entrada;
+- `knowledge/HOME.md` es el MOC de Obsidian;
+- `knowledge/00_CANON/` conserva contexto, estado y tarea;
+- `knowledge/10_DECISIONES/` conserva ADR;
+- `knowledge/20_ARQUITECTURA/` conserva mapa humano;
+- `knowledge/30_RUNBOOKS/` conserva el flujo;
+- `knowledge/99_HANDOFF/` conserva reanudación entre chats;
+- `knowledge/graphify-live` contiene memoria estructural regenerable.
 
-La arquitectura adoptada es:
+Corpus Graphify de referencia: 341 nodos, 520 relaciones, 56 comunidades y 67 notas wiki, ejecutado `--code-only` sin backend LLM.
 
-- `knowledge/` conserva memoria humana y handoff;
-- `knowledge/graphify-live` conserva la fotografía estructural regenerable;
-- `graphify-out/BUILD_META.json` declara el `source_commit` del snapshot;
-- `graphify-out/PROJECT_SNAPSHOT.md` resume versión, canal, conteos y grafo;
-- Obsidian puede abrir la raíz del repositorio como vault;
-- ChatGPT continúa como agente principal y no requiere Codex;
-- GitHub Actions y validadores continúan siendo la autoridad funcional.
+Los cambios exclusivamente de memoria regeneran Graphify sin desplegar el sitio público.
 
 ## Regla de continuidad
 
-No reconstruir Meridiano desde conversaciones largas si `main`, `knowledge/` y Graphify contienen un estado más reciente. Empezar por el contexto canónico, verificar frescura del grafo y abrir solo el conjunto mínimo de fuentes/tests afectados.
+Al retomar:
+
+1. confirmar `main` y `stable`;
+2. leer `CONTEXTO_RAPIDO.md`, `ESTADO_ACTUAL.md` y `TAREA_ACTIVA.md`;
+3. verificar `graphify-out/BUILD_META.json.source_commit` contra `main`;
+4. usar Graphify para definir el conjunto mínimo de impacto;
+5. verificar en fuente y tests antes de modificar.
