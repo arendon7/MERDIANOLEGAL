@@ -10,6 +10,14 @@ START = '<!-- QUALITY-V48-SEO:START -->'
 
 index_text = INDEX.read_text(encoding='utf-8')
 index_updated = re.sub(r'\n(?:[ \t]*\n)+(?=' + re.escape(START) + r')', '\n', index_text)
+# Compatibilidad v5.5: apply_quality_v48.py reconstruye el <img> del hero.
+# La clase que activa su posicionamiento definitivo debe quedar materializada
+# antes del primer layout, no añadirse después mediante JavaScript.
+index_updated = index_updated.replace(
+    '<div class="hero-art"><img src="assets/images/global/home-hero.webp"',
+    '<div class="hero-art"><img class="visual-home-hero" src="assets/images/global/home-hero.webp"',
+    1,
+)
 if index_updated != index_text:
     INDEX.write_text(index_updated, encoding='utf-8')
     print('Formato v4.8 normalizado en index.html.')
