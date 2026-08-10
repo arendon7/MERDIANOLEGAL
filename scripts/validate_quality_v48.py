@@ -44,7 +44,6 @@ required_index = [
     'name="twitter:card" content="summary_large_image"',
     'rel="preload" as="image" href="assets/images/global/home-hero.webp"',
     '"@type":["Organization","LegalService"]',
-    '<img src="assets/images/global/home-hero.webp"',
     'width="800" height="450"',
     'fetchpriority="high"',
     '<span id="year">2026</span>',
@@ -53,6 +52,13 @@ required_index = [
 for marker in required_index:
     if marker not in text:
         errors.append(f"index.html: falta {marker!r}")
+
+# El contrato v4.8 exige la imagen canónica del hero, pero no un orden rígido
+# de atributos HTML. Versiones posteriores pueden añadir class, decoding u otros
+# atributos sin dejar de cumplir el requisito de imagen, dimensiones y prioridad.
+hero_image = re.search(r'<img\b[^>]*\bsrc="assets/images/global/home-hero\.webp"[^>]*>', text)
+if not hero_image:
+    errors.append('index.html: falta la imagen canónica assets/images/global/home-hero.webp')
 
 for forbidden in ('assets/hero-meridiano-v3.svg', 'role="tablist"', 'data-route=', ' aria-selected='):
     if forbidden in text:
