@@ -7,11 +7,11 @@
 - Repositorio: `arendon7/MERDIANOLEGAL`.
 - Rama técnica/productiva: `main`.
 - Snapshot certificado: `stable`.
-- Base técnica sobre la que se inicializa esta memoria: `a6559ea0e5288c0e2b86e189ce6856acedcbac57`.
-- `stable` al inicializar esta memoria: `6d95d96d00e1ce15ad0c110ca7511e1d0873e933`.
+- Último merge de infraestructura/memoria: PR #10 — Graphify + Obsidian, merge `0145b2ccbf217055b4b43bc02b1c05f9002f667b`.
+- `stable` observado al cerrar esta integración: `6d95d96d00e1ce15ad0c110ca7511e1d0873e933`.
 - Versión declarada en `version.json`: `5.5.0`.
 
-El SHA de `main` cambiará al integrar esta infraestructura. Por eso, al retomar trabajo siempre debe confirmarse el ref real antes de usar cualquier SHA escrito en una nota.
+El SHA de `main` debe consultarse dinámicamente al retomar trabajo. Las notas registran hitos y contexto, pero `main` siempre gana si existe una discrepancia.
 
 ## Estado funcional
 
@@ -69,10 +69,21 @@ No deben declararse activas sin evidencia/configuración real:
 
 ## Memoria de ingeniería
 
-A partir de esta integración:
+Graphify + Obsidian quedó integrado mediante PR #10. El piloto de PR validó el corpus optimizado con:
+
+- 341 nodos;
+- 520 relaciones;
+- 56 comunidades;
+- 67 notas wiki;
+- ejecución `--code-only`, sin backend LLM;
+- JSON jurídicos/comerciales excluidos del grafo de código para evitar ruido.
+
+La arquitectura adoptada es:
 
 - `knowledge/` conserva memoria humana y handoff;
-- Graphify conserva la fotografía estructural regenerable en `knowledge/graphify-live`;
+- `knowledge/graphify-live` conserva la fotografía estructural regenerable;
+- `graphify-out/BUILD_META.json` declara el `source_commit` del snapshot;
+- `graphify-out/PROJECT_SNAPSHOT.md` resume versión, canal, conteos y grafo;
 - Obsidian puede abrir la raíz del repositorio como vault;
 - ChatGPT continúa como agente principal y no requiere Codex;
 - GitHub Actions y validadores continúan siendo la autoridad funcional.
