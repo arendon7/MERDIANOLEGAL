@@ -1,6 +1,6 @@
 # ADR-001 — Graphify + Obsidian como memoria de ingeniería
 
-Estado: adopción propuesta mediante PR de infraestructura.
+Estado: adoptado mediante PR #10; optimización de ruteo CI incorporada en ciclo posterior.
 Fecha: 2026-08-10.
 
 ## Contexto
@@ -27,7 +27,19 @@ ChatGPT continúa como agente principal. Codex no es requisito.
 - Mantener `TAREA_ACTIVA.md` como handoff explícito del ciclo en curso.
 - Generar `graphify-out/BUILD_META.json` con el SHA fuente y métricas, evitando inferir frescura desde el texto del reporte.
 - Generar `graphify-out/PROJECT_SNAPSHOT.md` con versión, canal, conteos de superficies y tamaño del grafo.
-- Excluir del corpus Graphify las salidas HTML y assets generados para concentrar el análisis en código fuente, generadores, runtime y tests.
+- Excluir del corpus Graphify las salidas HTML, assets y JSON de contenido para concentrar el análisis en código fuente, generadores, runtime y tests.
+
+## Ruteo de CI
+
+La memoria de ingeniería tiene un ciclo distinto al de publicación pública. Los cambios exclusivamente en `AGENTS.md`, `.graphifyignore`, `knowledge/**`, los scripts Graphify y su workflow deben:
+
+1. regenerar y validar Graphify;
+2. actualizar `knowledge/graphify-live` cuando ocurren en `main`;
+3. **no** disparar por sí solos `Site Quality and Deploy`.
+
+Esto evita ejecutar idempotencia, Pages, Playwright, axe y Lighthouse cuando la aplicación pública no cambió. Si el mismo commit contiene además una fuente del sitio que requiere build/deploy, prevalecen los workflows normales de esa fuente.
+
+README, CHANGELOG y documentos de release no se incluyen en esta exclusión general porque algunos cierres de release usan commits documentales finales que deben atravesar la política de certificación existente.
 
 ## Reglas
 
@@ -41,6 +53,11 @@ ChatGPT continúa como agente principal. Codex no es requisito.
 8. GitHub Actions, Playwright, axe, Lighthouse, validadores e idempotencia siguen siendo la autoridad de certificación.
 9. La memoria no debe modificar el runtime público ni alterar el contenido legal/comercial por sí sola.
 10. Cuando una decisión cambie arquitectura, contrato de build, definición comercial o política de release, debe registrarse o actualizarse un ADR.
+11. Las actualizaciones de memoria deben ser baratas: Graphify sí; deploy público solo cuando el sitio o su cadena canónica lo exige.
+
+## Evidencia de adopción
+
+El piloto de Meridiano validó el corpus optimizado con 341 nodos, 520 relaciones, 56 comunidades y 67 notas wiki. La extracción se ejecutó `--code-only`, sin backend LLM. La rama `knowledge/graphify-live` publica `BUILD_META.json` y permite verificar el SHA fuente sin reconstruirlo desde el reporte.
 
 ## Resultado esperado
 
