@@ -15,6 +15,7 @@ servicios/
 soluciones/
 sectores/
 perspectivas/
+*.json
 *.zip
 *.log
 *.tmp
