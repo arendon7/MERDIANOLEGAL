@@ -1,0 +1,21 @@
+# MERDIANOLEGAL — corpus canónico para Graphify
+# Objetivo: mapear código fuente y automatización, no salidas estáticas ni artefactos.
+graphify-out/
+knowledge/90_GRAPHIFY_AUTO/
+node_modules/
+playwright-report/
+test-results/
+quality-artifacts/
+coverage/
+_site/
+dist/
+assets/
+productos/
+servicios/
+soluciones/
+sectores/
+perspectivas/
+*.zip
+*.log
+*.tmp
+*.bak
