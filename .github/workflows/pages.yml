@@ -69,6 +69,12 @@ on:
       - scripts/validate_operations_v49.py
       - scripts/validate_live_v49.py
       - scripts/sync_public_version.py
+      - AGENTS.md
+      - .graphifyignore
+      - knowledge/**
+      - scripts/build_graphify_snapshot.py
+      - scripts/refresh_graphify_knowledge.sh
+      - .github/workflows/graphify-knowledge.yml
       - .github/workflows/build-canonical.yml
       - .github/workflows/pages.yml
   workflow_dispatch:
