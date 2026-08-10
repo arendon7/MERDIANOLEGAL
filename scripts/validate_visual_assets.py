@@ -40,6 +40,19 @@ for marker in ['assets/brand/favicon.svg', 'assets/images/global/home-hero.webp'
     if marker not in index:
         errors.append(f'index.html: falta {marker}')
 
+# v5.5: el estado visual del hero debe estar presente en el HTML inicial. Si la
+# clase se añade por JavaScript, la imagen cambia de elemento en flujo a
+# position:absolute después del primer layout y puede provocar CLS.
+hero_match = re.search(r'<div class="hero-art"><img\b([^>]*)>', index)
+if not hero_match:
+    errors.append('index.html: falta imagen del hero canónico')
+elif not re.search(r'\bclass="[^"]*\bvisual-home-hero\b[^"]*"', hero_match.group(0)):
+    errors.append('index.html: el hero no nace con class="visual-home-hero"')
+
+visual_js = (ROOT / 'visual-v39.js').read_text(encoding='utf-8')
+if "classList.add('visual-home-hero')" in visual_js or 'classList.add("visual-home-hero")' in visual_js:
+    errors.append('visual-v39.js: no debe añadir tardíamente la clase visual-home-hero')
+
 version = json.loads((ROOT / 'version.json').read_text(encoding='utf-8'))
 version_value = str(version.get('version', '')).strip()
 channel = str(version.get('channel', '')).strip().lower()
