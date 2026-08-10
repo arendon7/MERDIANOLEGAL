@@ -1,216 +1,182 @@
-# Meridiano Legal · Web canónica v5.4.0
+# Meridiano Legal · Web canónica v5.5.0
 
-Sitio público, responsive, static-first y autocontenido de Meridiano Legal, publicado mediante GitHub Pages. La v5.4 conserva íntegra la arquitectura jurídica, comercial, CRO, SEO, autoridad y privacidad acumulada hasta v5.3 y añade un nuevo estándar de aprobación: **la versión publicada debe funcionar también en navegador real antes de convertirse en `stable`**.
+Sitio público, responsive, static-first y autocontenido de Meridiano Legal, publicado mediante GitHub Pages. La v5.5 conserva la arquitectura jurídica, comercial, CRO, SEO, autoridad, privacidad y Browser E2E acumulada hasta v5.4 y añade una barrera medible de **performance y accesibilidad sobre la URL realmente desplegada**.
 
-## Estado de la release
+## Estado actual
 
-La publicación conserva **46 páginas HTML** y la arquitectura pública existente:
+La publicación conserva **46 páginas HTML** y esta arquitectura pública:
 
 - 8 servicios profesionales;
 - 8 productos jurídicos de alcance cerrado;
 - 5 planes recurrentes;
+- 1 hub de soluciones y 6 rutas de decisión empresarial;
 - 8 lecturas sectoriales;
 - 6 perspectivas jurídicas;
 - página institucional de Firma;
 - Centro Demo;
-- Meridiano Empresas con información ficticia y `noindex,nofollow`;
-- 1 hub de soluciones y 6 rutas de decisión empresarial.
+- Meridiano Empresas con datos ficticios y `noindex,nofollow`.
 
-La URL pública canónica continúa siendo `https://arendon7.github.io/MERDIANOLEGAL/`.
+URL pública canónica:
 
-No se ha inventado ni activado un dominio personalizado, CRM, backend propio, Search Console o analítica externa. WhatsApp continúa siendo el canal real de contacto; la telemetría v5.0/v5.3 sigue siendo first-party, local, sin PII y sin transporte de red.
+`https://arendon7.github.io/MERDIANOLEGAL/`
 
-## v5.4 · Browser E2E como barrera real de publicación
+La política de release mantiene dos refs:
 
-Hasta v5.3, una candidata debía aprobar construcción, idempotencia, validadores estáticos, GitHub Pages y smoke HTTP. v5.4 añade un quinto nivel: **Playwright ejecutado contra la URL realmente desplegada**.
+- `main`: fuente/candidata vigente;
+- `stable`: último commit que superó construcción, idempotencia, validadores, Pages, smoke, Browser E2E, axe y Lighthouse.
 
-La secuencia de aprobación queda así:
+Una candidata puede estar temporalmente publicada y seguir sin estar aprobada. `stable` solo se mueve al final de la cadena completa.
 
-1. construcción canónica;
-2. segunda pasada con `git diff --exit-code`;
-3. validadores v4.4→v5.4, JavaScript y JSON;
+## v5.5 · Performance + Accessibility QA
+
+La infraestructura de navegador usa Node 22 o superior y dependencias fijadas mediante `package-lock.json` + `npm ci`:
+
+- `@playwright/test` 1.62.0;
+- `@axe-core/playwright` 4.12.1;
+- `lighthouse` 13.4.1.
+
+La suite Browser E2E cubre Chromium desktop, Chromium mobile y WebKit desktop. axe se ejecuta sobre siete superficies representativas. Lighthouse mide seis superficies públicas con presupuestos versionados en `quality-budgets-v55.json`.
+
+## Resultado certificado de v5.5
+
+El run funcional `31431923694` certificó la candidata `bd310076bbc098771dffd8fde03cabee9e16bc6f` antes del cierre documental.
+
+### Browser E2E + axe
+
+- 37 entradas de prueba;
+- 35 aprobadas;
+- 2 omitidas por diseño;
+- 0 fallos;
+- las 7 auditorías axe quedaron sin violaciones serias/críticas.
+
+### Lighthouse
+
+| Superficie | Performance | Accesibilidad | LCP | CLS | TBT | Transferencia |
+|---|---:|---:|---:|---:|---:|---:|
+| Portada | 1.00 | 0.97 | 1207 ms | **0** | 0 ms | 73,930 B |
+| Solución IA | 1.00 | 1.00 | 904 ms | 0 | 0 ms | 23,509 B |
+| Producto IA | 1.00 | 1.00 | 906 ms | 0 | 0 ms | 33,142 B |
+| Sector tecnología | 0.98 | 1.00 | 907 ms | 0.087 | 0 ms | 24,557 B |
+| Perspectiva IA | 0.98 | 1.00 | 908 ms | 0.087 | 0 ms | 26,153 B |
+| Demo | 1.00 | 1.00 | 917 ms | 0 | 0 ms | 21,905 B |
+
+Las seis superficies cumplen sus presupuestos.
+
+## Incidente CLS de portada y aprendizaje
+
+La primera candidata v5.5 tenía un CLS de aproximadamente `0.304`, por encima del presupuesto `<= 0.15`. Lighthouse identificó `section.hero > .container > .hero-art` como zona desplazada.
+
+La causa no era la descarga de la imagen: el HTML ya contenía `src`, dimensiones, prioridad y preload. El problema era de **estado de layout**:
+
+1. el HTML inicial cargaba la imagen sin `visual-home-hero`;
+2. `visual-v39.js` añadía la clase después del primer layout;
+3. esa clase activa `position:absolute`;
+4. la imagen pasaba tardíamente de participar en el grid a quedar fuera de flujo;
+5. el navegador recalculaba el hero y acumulaba CLS.
+
+La corrección materializa `visual-home-hero` desde el HTML inicial y elimina la mutación tardía en JavaScript.
+
+Durante la reconstrucción apareció un segundo contrato histórico: `apply_quality_v48.py` volvía a materializar el `<img>` del hero después de la capa visual. `normalize_quality_v48.py` se convirtió en el punto determinista de compatibilidad para conservar la clase después de v4.8.
+
+Finalmente, el validator v4.8 todavía exigía un orden literal de atributos (`<img src=...`). Se hizo semánticamente robusto: sigue exigiendo la imagen canónica, dimensiones, preload y prioridad, pero permite atributos adicionales de capas posteriores. El validator v5.5 exige además que `visual-home-hero` esté presente desde HTML y prohíbe que JavaScript vuelva a añadirla tarde.
+
+**Resultado:** CLS de portada pasó de ~0.304 a **0**, performance de ~0.85 a **1.00**, manteniendo LCP ~1.2 s y TBT 0.
+
+## Cadena de aprobación
+
+`Site Quality and Deploy` exige:
+
+1. reconstrucción canónica e idempotencia;
+2. validadores históricos y actuales v4.4→v5.5;
+3. JavaScript y JSON válidos;
 4. despliegue en GitHub Pages;
-5. smoke HTTP de la URL pública;
-6. Browser E2E sobre la URL desplegada;
-7. promoción de `stable` únicamente si todo lo anterior es verde.
+5. smoke HTTP sobre la URL pública;
+6. Browser E2E sobre Pages;
+7. axe sobre superficies representativas;
+8. Lighthouse sobre seis superficies y presupuestos versionados;
+9. promoción de `stable`.
 
-Una candidata puede, por tanto, existir temporalmente en Pages y seguir sin ser una release aprobada. `stable` representa ahora una versión que fue observada funcionando dentro del navegador, no solo una colección de archivos válidos.
+No se modifica un presupuesto para hacer pasar una candidata: se corrige la causa del incumplimiento.
 
-## Navegadores y perfiles
+## Memoria de ingeniería · Graphify + Obsidian
 
-`playwright.config.mjs` define tres proyectos:
+Meridiano incorpora una capa persistente de continuidad para evitar reconstruir el proyecto desde conversaciones largas.
 
-- **Chromium desktop**: viewport 1440 × 1000;
-- **Chromium mobile**: emulación Pixel 7;
-- **WebKit desktop**: perfil Desktop Safari, viewport 1440 × 1000.
+- `AGENTS.md`: protocolo de entrada para agentes.
+- `knowledge/00_CANON/`: contexto rápido, estado y tarea activa.
+- `knowledge/10_DECISIONES/`: ADR y decisiones persistentes.
+- `knowledge/20_ARQUITECTURA/`: mapa humano de fuentes, generadores y gates.
+- `knowledge/30_RUNBOOKS/`: flujo de trabajo.
+- `knowledge/HOME.md`: MOC para Obsidian.
+- `knowledge/99_HANDOFF/`: protocolo para retomar en un chat nuevo.
+- rama `knowledge/graphify-live`: grafo, reporte, wiki, `BUILD_META.json` y `PROJECT_SNAPSHOT.md` regenerables.
 
-En CI se utiliza un solo worker para mantener trazabilidad determinista. Los reintentos solo se habilitan en CI y las evidencias de fallo se conservan mediante trace, screenshot y reporte HTML.
+Graphify se ejecuta `--code-only`, sin backend LLM. Se usa para reducir el conjunto de impacto; toda relación inferida debe confirmarse contra `main`.
 
-La instalación de Chromium y WebKit está limitada explícitamente a **360 segundos**. Si la infraestructura del runner se atasca, la release falla de forma controlada en lugar de permanecer indefinidamente en ejecución.
+Los cambios exclusivamente de memoria regeneran Graphify, pero no disparan Pages + Playwright + axe + Lighthouse. Esto permite mantener contexto al día sin pagar el costo del pipeline público cuando la aplicación no cambió.
 
-## Cobertura del Browser E2E
+## Desarrollo local / QA
 
-La suite se divide en web pública y Meridiano Empresas.
-
-### Web pública
-
-Se comprueba en navegador:
-
-- portada, H1, navegación y seis rutas por necesidad;
-- presencia de las 16 fichas profundas;
-- navegación real desde una necesidad hacia una solución;
-- ausencia de overflow horizontal relevante;
-- carga de schema `ItemList` en solución;
-- evento `solution_view` de v5.3;
-- apertura de FAQ y evento `faq_open`;
-- contrato de medición con `piiAllowed: false`, `networkTransport: false` y `persistentStorage: false`;
-- paso perspectiva → solución y evento `authority_open`;
-- paso sector → solución;
-- formulario público completo;
-- consentimiento de privacidad obligatorio;
-- generación de referencia `ML-YYYYMMDD-XXXXX`;
-- construcción correcta de URL `wa.me` sin enviar un mensaje real;
-- evento local `lead_prepared`;
-- honeypot y bloqueo de preparación automatizada;
-- menú móvil, `Escape`, devolución de foco y bloqueo de scroll;
-- errores JavaScript mediante `pageerror`;
-- errores de consola mediante `console.error`.
-
-Durante las pruebas, `window.open` se intercepta. La suite valida el handoff a WhatsApp, pero **no remite solicitudes reales**.
-
-### Meridiano Empresas
-
-La suite utiliza únicamente perfiles y datos ficticios y verifica:
-
-- ingreso con el perfil demo de cliente;
-- los 9 módulos del portal;
-- navegación profunda mediante `?context=...#documentos`;
-- creación de una vista previa documental ficticia;
-- apertura de “Nueva solicitud”;
-- creación de un ticket ficticio únicamente durante la sesión;
-- funcionamiento de estas superficies en desktop, móvil y WebKit.
-
-## Resultado final de Playwright
-
-La ejecución funcional aprobada sobre la URL pública produjo:
-
-- **30 entradas de test ejecutadas**;
-- **28 aprobadas**;
-- **2 omitidas por diseño**;
-- **0 fallos**;
-- **55,8 segundos** de ejecución de la suite.
-
-Las dos omisiones corresponden al test específicamente móvil del menú, que no se ejecuta en los dos proyectos de escritorio. Ese mismo escenario sí se ejecuta y aprueba en Chromium mobile.
-
-## Qué encontró el primer Browser E2E
-
-El valor de v5.4 quedó demostrado en su primera ejecución. La candidata había aprobado Pages y smoke HTTP, pero Playwright terminó con **18 aprobadas, 2 omitidas y 10 fallidas**. `stable` no avanzó.
-
-El análisis separó tres categorías:
-
-### 1. Evento inicial de medición perdido — defecto real
-
-`measurement-v53.js` se cargaba de forma síncrona después de scripts `defer` de runtime/telemetría. En navegador, `measurement-v53.js` intentaba emitir `solution_view` antes de que `MeridianoTelemetry` existiera, por lo que la primera vista se perdía.
-
-La corrección v5.4 normaliza las 20 páginas instrumentadas —6 soluciones, 6 perspectivas y 8 sectores— para cargar:
-
-```html
-<script defer src="../measurement-v53.js"></script>
-```
-
-El orden efectivo queda alineado con `telemetry-v50.js` y el evento inicial es observable en navegador.
-
-### 2. Formulario sin submit — defecto de la prueba, no de producción
-
-La primera prueba completaba nombre, correo, necesidad y mensaje, pero omitía marcar el checkbox obligatorio de privacidad. El propio navegador bloqueaba correctamente el `submit` por validación HTML nativa antes de llegar a JavaScript.
-
-No se relajó el formulario. Se corrigió la prueba para comportarse como un usuario válido y aceptar expresamente privacidad antes del envío simulado.
-
-El mismo ajuste se aplicó al caso honeypot para comprobar el control anti-bot después de cumplir los requisitos legítimos del formulario.
-
-### 3. “Nueva solicitud” oculta en móvil — defecto responsive real
-
-El portal contenía una regla previa:
-
-```css
-.portal-header-actions .btn { display: none; }
-```
-
-en viewport móvil. El botón existía en DOM, pero no era accionable y no había una alternativa equivalente visible.
-
-v5.4 incorpora una normalización responsive administrada que mantiene accesible el CTA “Nueva solicitud” en móvil, con tamaño y wrapping adecuados.
-
-## Idempotencia de las correcciones
-
-La primera corrección funcional reveló además una diferencia puramente determinista en `demo.html`: una segunda reconstrucción cambiaba la indentación de dos enlaces CSS del `<head>`.
-
-La calidad bloqueó Pages antes del deploy. No se excluyó `demo.html` del diff.
-
-El aplicador final normaliza explícitamente esas líneas y la siguiente construcción produjo **diff cero**. La corrección browser y la salida HTML son ahora reproducibles en pasadas sucesivas.
-
-## Archivos v5.4
-
-- `package.json`: dependencia de QA de navegador, fijada en `@playwright/test` 1.55.0.
-- `.gitignore`: excluye `node_modules`, reportes y resultados Playwright.
-- `playwright.config.mjs`: tres proyectos, timeouts, retries y artefactos de fallo.
-- `tests/e2e/helpers.mjs`: guardas de errores runtime y overflow.
-- `tests/e2e/public-site.spec.mjs`: recorridos de web pública, conversión, medición y móvil.
-- `tests/e2e/demo.spec.mjs`: login, módulos, documentos y solicitudes ficticias del portal.
-- `scripts/validate_browser_v54.py`: gate estático de la infraestructura Browser E2E y de las correcciones v5.4.
-- `scripts/apply_authority_v53.py`: desde v5.4 conserva v5.3 y añade las dos normalizaciones browser detectadas por la suite.
-- `.github/workflows/pages.yml`: incorpora `Browser E2E on deployed Pages` antes de `stable`.
-- `.github/workflows/build-canonical.yml`: vigila las nuevas fuentes de QA.
-- `RELEASE-v5.4.md`: nota técnica detallada de esta release.
-
-## Construcción y aprobación canónica
-
-La construcción continúa culminando en:
+Instalar dependencias bloqueadas:
 
 ```bash
-python3 scripts/apply_cro_v52.py
-python3 scripts/apply_authority_v53.py
+npm ci --ignore-scripts --no-audit --no-fund
 ```
 
-El aplicador de autoridad es version-aware: desde v5.4 conserva la salida v5.3 y normaliza el orden de medición y la accesibilidad del CTA demo móvil.
+Ejecutar Browser E2E:
 
-`Site Quality and Deploy` exige después:
+```bash
+npm run test:e2e
+```
 
-- diff cero;
-- integridad de 46 páginas y recursos;
-- catálogo estático de 16 fichas;
-- conversión v4.4;
-- UX v4.5, v4.6 y v4.7;
-- calidad static-first v4.8;
-- operación pública v4.9;
-- producción v5.0;
-- rutas v5.1;
-- CRO/SEO v5.2;
-- autoridad y medición v5.3;
-- infraestructura/correcciones browser v5.4;
-- selector, contexto, editorial, visual, JavaScript y JSON;
-- deploy Pages;
-- smoke HTTP;
-- Browser E2E;
-- `stable`.
+Ejecutar presupuestos Lighthouse contra la URL configurada:
 
-## Principios que se mantienen
+```bash
+npm run audit:quality
+```
+
+Regenerar Graphify local:
+
+```bash
+./scripts/refresh_graphify_knowledge.sh
+```
+
+Abrir la raíz del repositorio como vault de Obsidian y comenzar por `knowledge/HOME.md`.
+
+## Integraciones externas: estado verdadero
+
+Activas:
+
+- GitHub Pages;
+- WhatsApp como canal real de contacto;
+- contexto comercial de navegación;
+- telemetría first-party/local sin PII;
+- sitemap, robots, canonical y Open Graph;
+- demo estático/noindex;
+- pipeline canónico, smoke, Browser E2E, axe, Lighthouse y `stable`.
+
+Preparadas pero **no activas** sin configuración real:
+
+- dominio personalizado/CNAME;
+- Search Console;
+- proveedor externo de analítica;
+- CRM/backend de leads;
+- almacenamiento servidor del formulario;
+- email transaccional.
+
+## Documentación
+
+- `RELEASE-v5.5.md`: cierre técnico detallado de esta release.
+- `RELEASE-v5.4.md`: incorporación de Browser E2E.
+- `CHANGELOG.md`: historial acumulado de las capas anteriores.
+- `knowledge/HOME.md`: entrada a la memoria operativa.
+
+## Principios vigentes
 
 - No inventar clientes, testimonios, casos de éxito ni resultados.
-- No duplicar precios fuera de las fuentes públicas canónicas.
-- No afirmar que existe un backend que la web no tiene.
-- No enviar datos personales a la telemetría.
-- No activar analítica externa, Search Console, CRM o dominio personalizado sin configuración real.
-- No debilitar un gate para hacer pasar una release.
-- Mantener `main` como fuente vigente y `stable` como último commit que superó **archivo + HTTP + navegador**.
-
-## Próximo ciclo lógico
-
-Después de v5.4, la prioridad ya no debería ser añadir capas por inercia. Los siguientes ciclos de mayor valor son:
-
-1. **performance y accesibilidad medidos en navegador**, incluyendo presupuestos objetivos y auditorías reproducibles;
-2. optimización del costo/tiempo del Browser E2E sin perder cobertura;
-3. dominio propio y Search Console únicamente cuando existan datos reales;
-4. conexión de un proveedor de analítica únicamente si se decide hacerlo y respetando el contrato de eventos sin PII;
-5. mejoras comerciales posteriores basadas en evidencia de uso real, no en supuestos de conversión.
-
-El historial acumulado de releases anteriores se conserva en `CHANGELOG.md`.
+- No duplicar precios fuera de fuentes canónicas.
+- No afirmar que existe un backend o integración que no esté activa.
+- No enviar PII a telemetría.
+- No mover `stable` con un gate rojo.
+- No debilitar un validator para ocultar un defecto.
+- Usar Graphify para navegar; usar `main` y pruebas para decidir.
