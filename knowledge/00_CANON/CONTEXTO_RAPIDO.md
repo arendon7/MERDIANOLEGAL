@@ -39,7 +39,7 @@ Principio comercial: el usuario puede empezar por su situación empresarial y no
 - `measurement-contract-v53.json` — contrato de eventos sin PII.
 - `commercial-v43.css` / `commercial-conversion-v44.js` — planes y conversión.
 - `site-v3.js` + `catalog-home-v32.js` + `decision-flow.js` — runtime principal de portada.
-- `release-governance-v57.json` — policy versionada de Actions, runtimes, dependencias QA e invariantes de release.
+- `release-governance-v57.json` — policy versionada de Actions, runtimes, dependencias QA, permisos e invariantes.
 - `scripts/validate_release_governance_v57.py` — validator y generador del release-health v5.7.
 - `scripts/` — construcción, normalización y validación canónica.
 - `tests/e2e/` — contrato funcional de navegador.
@@ -54,12 +54,14 @@ Nunca promover `stable` antes de que todos los gates aplicables estén verdes.
 
 ## Estado actual resumido
 
-- v5.6: release pública certificada; Browser E2E/axe y Lighthouse corren en paralelo tras deploy+smoke.
-- baseline v5.5: 279 s hasta gate estable; v5.6: 160 s, mejora 42.7% sin reducir cobertura ni budgets.
+- Versión declarada: v5.7.0.
+- La fundación funcional v5.7 quedó certificada en el run `31534382576` sobre `945abb9c4e35c87d4f9a9ecd5ff161707b7d716e` antes del cierre documental.
+- El commit documental de cierre solo es definitivo después de atravesar la misma certificación pública y terminar con `main == stable`.
+- Browser E2E/axe y Lighthouse continúan en paralelo tras deploy+smoke.
+- v5.7 protege SHA pinning de Actions, permisos, dependencias QA, Dependabot controlado, higiene de runs y reporte `release-health`.
+- Invariantes: 37 entradas E2E, 7 superficies axe, 6 superficies Lighthouse, budgets v5.5 y gate dual Browser + Lighthouse.
+- La referencia temporal limpia continúa siendo v5.6: 160 s frente a baseline v5.5 de 279 s. El run v5.7 con reintento de infraestructura no se usa como benchmark comparable.
 - `main` y `stable` deben verificarse dinámicamente antes de actuar.
-- v5.7: ciclo activo de release governance, dependencias y salud operativa.
-- v5.7 protege pinning SHA de Actions, permisos, dependencias QA, Dependabot controlado, higiene de runs y reporte `release-health`.
-- Se conservan como invariantes 37 entradas E2E, 7 superficies axe, 6 superficies Lighthouse y budgets v5.5.
 
 ## Cómo usar Graphify
 
