@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Valida la infraestructura de performance y accesibilidad incorporada en v5.5."""
+"""Valida la infraestructura de performance y accesibilidad incorporada en v5.5 y preservada en releases posteriores."""
 from pathlib import Path
 import json
 import re
@@ -19,11 +19,13 @@ def require(condition: bool, message: str) -> None:
 
 
 def main() -> int:
-    require(semver(V.get("version", "")) >= (5, 5, 0), "version.json debe ser >= 5.5.0")
+    site_version = semver(V.get("version", ""))
+    require(site_version >= (5, 5, 0), "version.json debe ser >= 5.5.0")
 
     package = json.loads((R / "package.json").read_text(encoding="utf-8"))
     deps = package.get("devDependencies", {})
-    require(package.get("version") == "5.5.0", "package.json debe declarar 5.5.0")
+    package_version = semver(package.get("version", ""))
+    require(package_version >= (5, 5, 0), "package.json debe declarar versión QA >= 5.5.0")
     require(package.get("engines", {}).get("node") == ">=22", "Node debe ser >=22")
     require(deps.get("@playwright/test") == "1.62.0", "Playwright debe estar fijado en 1.62.0")
     require(deps.get("@axe-core/playwright") == "4.12.1", "axe Playwright debe estar fijado en 4.12.1")
@@ -34,7 +36,7 @@ def main() -> int:
     require(lock.exists(), "package-lock.json debe existir")
     lock_data = json.loads(lock.read_text(encoding="utf-8"))
     root_pkg = lock_data.get("packages", {}).get("", {})
-    require(root_pkg.get("version") == "5.5.0", "lockfile no está sincronizado con package 5.5.0")
+    require(root_pkg.get("version") == package.get("version"), "lockfile no está sincronizado con package.json")
     for name, expected in (("@playwright/test", "1.62.0"), ("@axe-core/playwright", "4.12.1"), ("lighthouse", "13.4.1")):
         require(root_pkg.get("devDependencies", {}).get(name) == expected, f"lockfile no fija {name}={expected}")
 
@@ -48,7 +50,7 @@ def main() -> int:
     require(axe.count("['") >= 6, "suite axe debe cubrir superficies públicas representativas")
 
     budgets = json.loads((R / "quality-budgets-v55.json").read_text(encoding="utf-8"))
-    require(budgets.get("version") == "5.5.0", "budgets debe declarar 5.5.0")
+    require(budgets.get("version") == "5.5.0", "budgets debe conservar contrato 5.5.0")
     require(budgets.get("mode") == "mobile-lab", "Lighthouse debe usar contrato mobile-lab")
     b = budgets.get("budgets", {})
     require(b.get("performanceScoreMin", 0) >= 0.70, "performanceScoreMin no puede ser < 0.70")
@@ -87,9 +89,13 @@ def main() -> int:
         "npm ci --ignore-scripts --no-audit --no-fund",
         "npm run audit:quality",
         "quality-artifacts",
-        "needs: browser_e2e",
     ):
         require(marker in pages, f"pages.yml no contiene {marker}")
+    if site_version >= (5, 6, 0):
+        require("lighthouse_quality:" in pages, "v5.6+ debe preservar Lighthouse como gate independiente")
+        require("needs: [browser_e2e, lighthouse_quality]" in pages, "stable debe depender de browser_e2e y lighthouse_quality")
+    else:
+        require("needs: browser_e2e" in pages, "stable debe depender del Browser QA v5.5")
     require("npm install --no-audit --no-fund" not in pages, "Browser QA debe usar npm ci, no npm install")
 
     build = (R / ".github/workflows/build-canonical.yml").read_text(encoding="utf-8")

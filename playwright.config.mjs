@@ -13,7 +13,12 @@ export default defineConfig({
   timeout: 30_000,
   expect: { timeout: 7_000 },
   reporter: process.env.CI
-    ? [['line'], ['html', { outputFolder: 'playwright-report', open: 'never' }]]
+    ? [
+        ['line'],
+        ['github'],
+        ['./tests/e2e/ci-summary-reporter.mjs'],
+        ['html', { outputFolder: 'playwright-report', open: 'never' }],
+      ]
     : [['list']],
   use: {
     baseURL,
