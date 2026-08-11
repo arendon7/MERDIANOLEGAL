@@ -67,8 +67,9 @@ def validate_detail(path: Path, catalog: dict[str, dict]) -> None:
     text = path.read_text(encoding='utf-8')
     if text.count('<!-- DECISION-V58-DETAIL:START -->') != 1 or text.count('<!-- DECISION-V58-DETAIL:END -->') != 1:
         fail(f'{path}: bloque v5.8 duplicado o ausente')
-    if text.count('class="buying-clarity-card-v58') != 5:
-        fail(f'{path}: se esperaban 5 tarjetas de claridad')
+    card_count = len(re.findall(r'class="buying-clarity-card-v58(?:\s+[^"]*)?"', text))
+    if card_count != 5:
+        fail(f'{path}: se esperaban 5 tarjetas de claridad y se encontraron {card_count}')
     if 'data-buying-clarity-v58="true"' not in text or 'data-decision-v58-cta="true"' not in text:
         fail(f'{path}: faltan selectores estables v5.8')
     if '<link rel="stylesheet" href="../decision-v58.css">' not in text:
