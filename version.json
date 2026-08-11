@@ -1,8 +1,8 @@
 {
   "name": "Meridiano Legal Web",
-  "version": "5.6.0",
-  "release_date": "2026-08-10",
-  "channel": "github-pages-public-ci-observability-ready",
-  "commit_scope": "ci-efficiency-quality-observability-parallel-gates",
+  "version": "5.7.0",
+  "release_date": "2026-08-11",
+  "channel": "github-pages-release-governance-ready",
+  "commit_scope": "release-governance-dependency-health-sha-pinning",
   "source_baseline": "main"
 }
