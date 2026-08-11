@@ -318,11 +318,13 @@ jobs:
           cache-dependency-path: package-lock.json
       - name: Install locked QA dependencies
         run: npm ci --ignore-scripts --no-audit --no-fund
-      - name: Resolve runner Chrome
+      - name: Install pinned Lighthouse Chromium
+        run: timeout 180s npx playwright install chromium
+      - name: Resolve pinned Lighthouse Chromium
         run: |
-          CHROME_BIN="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
-          if [ -z "$CHROME_BIN" ]; then
-            echo "No se encontró Chrome/Chromium en ubuntu-latest." >&2
+          CHROME_BIN="$(node -e 'console.log(require("playwright").chromium.executablePath())')"
+          if [ ! -x "$CHROME_BIN" ]; then
+            echo "No se encontró el Chromium fijado por Playwright." >&2
             exit 1
           fi
           echo "CHROME_PATH=$CHROME_BIN" >> "$GITHUB_ENV"
