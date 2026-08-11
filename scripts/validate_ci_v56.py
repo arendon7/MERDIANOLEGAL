@@ -41,8 +41,23 @@ def main() -> int:
     require(policy.get("coverageReductionAllowed") is False, "v5.6 no puede autorizar reducción de cobertura")
     require(policy.get("budgetRelaxationAllowed") is False, "v5.6 no puede autorizar relajación de budgets")
     require(policy.get("browserBinaryCache") is False, "v5.6 no debe cachear binarios Playwright")
+    require(policy.get("lighthouseBrowser") == "playwright-pinned-chromium", "Lighthouse debe usar Chromium fijado por Playwright")
+    require(policy.get("lighthouseBrowserInstallWithDeps") is False, "el job Lighthouse no debe duplicar instalación --with-deps")
     require(policy.get("qualityJobsParallelAfterSmoke") is True, "gates de calidad deben paralelizarse tras smoke")
     require(policy.get("stableRequiresAllQualityJobs") is True, "stable debe exigir ambos gates")
+    require(policy.get("lighthouseVerificationRunsOnFailure") == 2, "un outlier verificable debe generar exactamente dos muestras adicionales")
+    require(policy.get("lighthouseMaxSamplesPerSurface") == 3, "Lighthouse debe limitarse a tres muestras por superficie")
+    require(policy.get("lighthouseAggregation") == "median-of-three", "la agregación verificadora debe ser mediana de tres")
+    require(policy.get("lighthouseVerificationMetrics") == [
+        "performanceScore",
+        "largestContentfulPaintMs",
+        "cumulativeLayoutShift",
+        "totalBlockingTimeMs",
+    ], "métricas Lighthouse verificables inesperadas")
+    require(policy.get("lighthouseNonRetryableMetrics") == [
+        "accessibilityScore",
+        "totalByteWeight",
+    ], "a11y y peso deben permanecer como fallos no reintentables")
 
     budgets = json.loads((R / "quality-budgets-v55.json").read_text(encoding="utf-8"))
     require(budgets.get("version") == "5.5.0", "v5.6 debe preservar el contrato de budgets v5.5")
@@ -68,8 +83,21 @@ def main() -> int:
         require(marker in reporter, f"reporter CI no contiene {marker}")
 
     runner = (R / "scripts/run_quality_v55.mjs").read_text(encoding="utf-8")
-    for marker in ("summary.json", "summary.md", "GITHUB_STEP_SUMMARY", "Presupuestos:"):
-        require(marker in runner, f"runner Lighthouse no publica {marker}")
+    for marker in (
+        "summary.json",
+        "summary.md",
+        "GITHUB_STEP_SUMMARY",
+        "Presupuestos:",
+        "median-of-three",
+        "verificationTriggered",
+        "lighthouseVerificationRunsOnFailure",
+        "lighthouseVerificationMetrics",
+        "lighthouseNonRetryableMetrics",
+        "budgetsRelaxed: false",
+    ):
+        require(marker in runner, f"runner Lighthouse no contiene {marker}")
+    require("successfulSamples.length === maxSamples" in runner, "mediana solo puede decidir con tres muestras válidas")
+    require("initialFailures.every" in runner, "los reintentos deben activarse solo si todos los fallos iniciales son verificables")
 
     summarizer = (R / "scripts/summarize_ci_v56.py").read_text(encoding="utf-8")
     for marker in ("quality-start-to-snapshot-start", "criticalPathSeconds", "baselineCriticalPathSeconds", "improvementPercent", "coverageReduced", "budgetsRelaxed"):
@@ -89,8 +117,10 @@ def main() -> int:
 
     require("needs: [deploy, live_smoke]" in lighthouse, "Lighthouse debe iniciar en paralelo después de deploy + smoke")
     require("npm run audit:quality" in lighthouse, "job Lighthouse debe ejecutar audit:quality")
-    require("command -v google-chrome" in lighthouse, "Lighthouse debe usar Chrome del runner")
-    require("npx playwright install" not in lighthouse, "Lighthouse no debe descargar binarios Playwright")
+    require("timeout 180s npx playwright install chromium" in lighthouse, "Lighthouse debe instalar solo Chromium pinneado y con timeout")
+    require("chromium.executablePath()" in lighthouse, "Lighthouse debe exportar el ejecutable Chromium fijado por Playwright")
+    require("command -v google-chrome" not in lighthouse, "Lighthouse no debe depender del Chrome mutable del runner")
+    require("--with-deps chromium" not in lighthouse, "Lighthouse no debe duplicar la instalación de dependencias del browser")
     require("cache: 'npm'" in lighthouse and "cache-dependency-path: package-lock.json" in lighthouse, "Lighthouse debe reutilizar caché npm segura")
     require("quality-artifacts/v5.5/summary.json" in lighthouse and "quality-artifacts/v5.5/summary.md" in lighthouse, "Lighthouse debe publicar resumen compacto")
 
@@ -114,7 +144,7 @@ def main() -> int:
     ):
         require(marker in build, f"builder no vigila {marker}")
 
-    print("VALIDACIÓN CI V5.6 OK: gates paralelos, Chrome del runner, caché npm, observabilidad y stable dual preservados.")
+    print("VALIDACIÓN CI V5.6 OK: gates paralelos, Chromium pinneado, mediana de tres, caché npm, observabilidad y stable dual preservados.")
     return 0
 
 
