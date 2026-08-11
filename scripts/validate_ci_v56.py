@@ -108,7 +108,7 @@ def main() -> int:
     require("if: ${{ !startsWith(github.event.head_commit.message, 'build') }}" in build, "builder debe omitir commits canónicos generados con condición YAML segura")
     for marker in (
         "ci-baseline-v56.json",
-        "tests/e2e/ci-summary-reporter.mjs",
+        "tests/e2e/**",
         "scripts/summarize_ci_v56.py",
         "scripts/validate_ci_v56.py",
     ):
