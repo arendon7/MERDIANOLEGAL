@@ -10,6 +10,7 @@ on:
       - package-lock.json
       - quality-budgets-v55.json
       - ci-baseline-v56.json
+      - release-governance-v57.json
       - .gitignore
       - playwright.config.mjs
       - tests/e2e/**
@@ -69,6 +70,7 @@ on:
       - scripts/validate_quality_v55.py
       - scripts/summarize_ci_v56.py
       - scripts/validate_ci_v56.py
+      - scripts/validate_release_governance_v57.py
       - scripts/validate_operations_v49.py
       - scripts/validate_live_v49.py
       - scripts/sync_public_version.py
@@ -106,9 +108,10 @@ jobs:
       contents: read
     steps:
       - name: Checkout current main
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: main
+          persist-credentials: false
       - name: Check canonical generators are idempotent
         run: |
           python3 scripts/build_catalog_shells.py
@@ -162,6 +165,8 @@ jobs:
         run: python3 scripts/validate_quality_v55.py
       - name: Validate CI efficiency and observability v5.6
         run: python3 scripts/validate_ci_v56.py
+      - name: Validate release governance v5.7
+        run: python3 scripts/validate_release_governance_v57.py
       - name: Validate guided decision flow
         run: python3 scripts/validate_decision_flow.py
       - name: Validate page context and structured data
@@ -206,6 +211,7 @@ jobs:
           python3 -m json.tool package-lock.json > /dev/null
           python3 -m json.tool quality-budgets-v55.json > /dev/null
           python3 -m json.tool ci-baseline-v56.json > /dev/null
+          python3 -m json.tool release-governance-v57.json > /dev/null
           python3 -m json.tool growth-solutions-v51.json > /dev/null
           python3 -m json.tool cro-solutions-v52.json > /dev/null
           python3 -m json.tool authority-v53.json > /dev/null
@@ -229,18 +235,19 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout validated main
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: main
+          persist-credentials: false
       - name: Configure Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
       - name: Upload current repository
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
         with:
           path: .
       - name: Deploy current main
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
 
   live_smoke:
     name: Verify deployed Pages
@@ -253,9 +260,10 @@ jobs:
       MERIDIANO_BASE_URL: ${{ needs.deploy.outputs.page_url }}
     steps:
       - name: Checkout deployed main
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: main
+          persist-credentials: false
       - name: Smoke test public URL
         run: python3 scripts/validate_live_v53.py
 
@@ -270,11 +278,12 @@ jobs:
       MERIDIANO_BASE_URL: ${{ needs.deploy.outputs.page_url }}
     steps:
       - name: Checkout deployed main
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: main
+          persist-credentials: false
       - name: Setup Node.js with npm cache
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: '22'
           cache: 'npm'
@@ -287,7 +296,7 @@ jobs:
         run: npm run test:e2e
       - name: Upload browser failure artifacts
         if: failure()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: browser-e2e-failure-artifacts
           path: |
@@ -307,11 +316,12 @@ jobs:
       MERIDIANO_BASE_URL: ${{ needs.deploy.outputs.page_url }}
     steps:
       - name: Checkout deployed main
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: main
+          persist-credentials: false
       - name: Setup Node.js with npm cache
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: '22'
           cache: 'npm'
@@ -333,7 +343,7 @@ jobs:
         run: npm run audit:quality
       - name: Upload compact Lighthouse summary
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: lighthouse-quality-summary-v55
           path: |
@@ -343,7 +353,7 @@ jobs:
           retention-days: 14
       - name: Upload Lighthouse failure artifacts
         if: failure()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: lighthouse-quality-failure-artifacts
           path: quality-artifacts
@@ -360,7 +370,7 @@ jobs:
       actions: read
     steps:
       - name: Checkout deployed main
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: main
           fetch-depth: 0
@@ -376,12 +386,25 @@ jobs:
             --json ci-artifacts/v5.6/summary.json
           cat ci-artifacts/v5.6/summary.md >> "$GITHUB_STEP_SUMMARY"
       - name: Upload CI certification summary
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: ci-certification-summary-v56
           path: |
             ci-artifacts/v5.6/summary.md
             ci-artifacts/v5.6/summary.json
+          if-no-files-found: error
+          retention-days: 30
+      - name: Build release governance health report
+        run: |
+          python3 scripts/validate_release_governance_v57.py --report-dir ci-artifacts/v5.7
+          cat ci-artifacts/v5.7/release-health.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload release governance health report
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: release-governance-health-v57
+          path: |
+            ci-artifacts/v5.7/release-health.md
+            ci-artifacts/v5.7/release-health.json
           if-no-files-found: error
           retention-days: 30
       - name: Move stable to deployed commit
