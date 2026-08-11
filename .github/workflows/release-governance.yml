@@ -12,10 +12,16 @@ on:
       - release-governance-v57.json
       - quality-budgets-v55.json
       - decision-v58.css
+      - commercial-intake-v59.json
+      - commercial-intake-v59.css
+      - commercial-intake-v59.js
       - catalog-products-v41/**
       - catalog-services-v42/**
       - scripts/apply_decision_v58.py
       - scripts/validate_decision_v58.py
+      - scripts/apply_commercial_v59.py
+      - scripts/validate_commercial_v59.py
+      - scripts/validate_operations_v49.py
       - scripts/validate_static_catalog.py
       - scripts/validate_quality_v55.py
       - scripts/validate_ci_v56.py
@@ -53,6 +59,10 @@ jobs:
         run: |
           python3 scripts/apply_decision_v58.py
           python3 scripts/validate_decision_v58.py
+      - name: Validate commercial intake contract v5.9
+        run: |
+          python3 scripts/apply_commercial_v59.py
+          python3 scripts/validate_commercial_v59.py
       - name: Publish release-health report
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
