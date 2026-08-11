@@ -1,10 +1,10 @@
-# Meridiano Legal · Web canónica v5.5.0
+# Meridiano Legal · Web canónica v5.6.0
 
-Sitio público, responsive, static-first y autocontenido de Meridiano Legal, publicado mediante GitHub Pages. La v5.5 conserva la arquitectura jurídica, comercial, CRO, SEO, autoridad, privacidad y Browser E2E acumulada hasta v5.4 y añade una barrera medible de **performance y accesibilidad sobre la URL realmente desplegada**.
+Sitio público, responsive, static-first y autocontenido de Meridiano Legal, publicado mediante GitHub Pages. La v5.6 conserva íntegra la arquitectura jurídica, comercial, CRO, SEO, privacidad y los gates Browser E2E + axe + Lighthouse de v5.5, y mejora **la eficiencia y la observabilidad del pipeline sin reducir cobertura ni relajar presupuestos**.
 
 ## Estado actual
 
-La publicación conserva **46 páginas HTML** y esta arquitectura pública:
+La publicación conserva **46 páginas HTML**:
 
 - 8 servicios profesionales;
 - 8 productos jurídicos de alcance cerrado;
@@ -20,128 +20,163 @@ URL pública canónica:
 
 `https://arendon7.github.io/MERDIANOLEGAL/`
 
-La política de release mantiene dos refs:
+Política de release:
 
 - `main`: fuente/candidata vigente;
-- `stable`: último commit que superó construcción, idempotencia, validadores, Pages, smoke, Browser E2E, axe y Lighthouse.
+- `stable`: último commit que aprobó construcción, idempotencia, validadores, Pages, smoke, Browser E2E, axe y Lighthouse.
 
-Una candidata puede estar temporalmente publicada y seguir sin estar aprobada. `stable` solo se mueve al final de la cadena completa.
+Una candidata puede estar temporalmente publicada y seguir sin estar certificada. `stable` se mueve únicamente después de todos los gates.
 
-## v5.5 · Performance + Accessibility QA
+## v5.6 · Eficiencia de CI y observabilidad
 
-La infraestructura de navegador usa Node 22 o superior y dependencias fijadas mediante `package-lock.json` + `npm ci`:
+La cadena pública conserva todos los controles de v5.5, pero cambia su topología:
 
-- `@playwright/test` 1.62.0;
-- `@axe-core/playwright` 4.12.1;
-- `lighthouse` 13.4.1.
+```text
+quality
+  ↓
+deploy
+  ↓
+live_smoke
+  ├──→ browser_e2e ───────┐
+  └──→ lighthouse_quality ├──→ snapshot / stable
+                          ┘
+```
 
-La suite Browser E2E cubre Chromium desktop, Chromium mobile y WebKit desktop. axe se ejecuta sobre siete superficies representativas. Lighthouse mide seis superficies públicas con presupuestos versionados en `quality-budgets-v55.json`.
+Después del smoke, Browser E2E/axe y Lighthouse se ejecutan como **gates paralelos e independientes**. `stable` exige que ambos terminen en `success`.
 
-## Resultado certificado de v5.5
+### Lo que no se redujo
 
-El run funcional `31431923694` certificó la candidata `bd310076bbc098771dffd8fde03cabee9e16bc6f` antes del cierre documental.
+- Chromium desktop;
+- Chromium mobile;
+- WebKit desktop;
+- siete superficies axe;
+- seis superficies Lighthouse;
+- 37 entradas Playwright;
+- workers de Playwright en CI: 1;
+- presupuestos de performance/accesibilidad de v5.5.
+
+`quality-budgets-v55.json` permanece como contrato vigente:
+
+- performance >= 0.70;
+- accesibilidad >= 0.90;
+- LCP <= 4000 ms;
+- CLS <= 0.15;
+- TBT <= 350 ms;
+- transferencia <= 1.5 MB.
+
+## Resultado funcional certificado
+
+Run de certificación v5.6: `31458580456`.
+
+Candidata funcional certificada antes del cierre documental:
+
+`c4f48e43a1681cdbd24db4c6308878efeb801700`
 
 ### Browser E2E + axe
 
-- 37 entradas de prueba;
-- 35 aprobadas;
-- 2 omitidas por diseño;
+- 37 tests observados;
+- 35 `passed`;
+- 2 `skipped` por diseño;
 - 0 fallos;
-- las 7 auditorías axe quedaron sin violaciones serias/críticas.
+- 0 tests con retry;
+- siete auditorías axe sin violaciones serias/críticas.
 
 ### Lighthouse
 
+Las seis superficies aprobaron con **una sola muestra**; la verificación mediana-de-tres no tuvo que activarse.
+
 | Superficie | Performance | Accesibilidad | LCP | CLS | TBT | Transferencia |
 |---|---:|---:|---:|---:|---:|---:|
-| Portada | 1.00 | 0.97 | 1207 ms | **0** | 0 ms | 73,930 B |
-| Solución IA | 1.00 | 1.00 | 904 ms | 0 | 0 ms | 23,509 B |
-| Producto IA | 1.00 | 1.00 | 906 ms | 0 | 0 ms | 33,142 B |
-| Sector tecnología | 0.98 | 1.00 | 907 ms | 0.087 | 0 ms | 24,557 B |
-| Perspectiva IA | 0.98 | 1.00 | 908 ms | 0.087 | 0 ms | 26,153 B |
-| Demo | 1.00 | 1.00 | 917 ms | 0 | 0 ms | 21,905 B |
+| Portada | 1.00 | 0.97 | 1239 ms | 0 | 0 ms | 73,834 B |
+| Solución IA | 1.00 | 1.00 | 964 ms | 0 | 0 ms | 23,235 B |
+| Producto IA | 1.00 | 1.00 | 911 ms | 0 | 0 ms | 33,351 B |
+| Sector tecnología | 1.00 | 1.00 | 935 ms | 0 | 0 ms | 24,272 B |
+| Perspectiva IA | 0.98 | 1.00 | 904 ms | 0.087 | 0 ms | 25,985 B |
+| Demo | 1.00 | 1.00 | 944 ms | 0 | 0 ms | 22,003 B |
 
-Las seis superficies cumplen sus presupuestos.
+## Mejora de tiempo medida
 
-## Incidente CLS de portada y aprendizaje
+`ci-baseline-v56.json` fija como baseline el run v5.5 `31433199058` y usa una métrica comparable: desde el inicio de `quality` hasta que quedan habilitados todos los gates previos a `stable`.
 
-La primera candidata v5.5 tenía un CLS de aproximadamente `0.304`, por encima del presupuesto `<= 0.15`. Lighthouse identificó `section.hero > .container > .hero-art` como zona desplazada.
+- baseline v5.5: **279 s**;
+- v5.6 final funcional: **160 s**;
+- mejora: **42.7%**;
+- objetivo interno v5.6: 20%.
 
-La causa no era la descarga de la imagen: el HTML ya contenía `src`, dimensiones, prioridad y preload. El problema era de **estado de layout**:
+La mejora no se usa como threshold rígido de release: sirve como observabilidad. La seguridad de publicación sigue dependiendo de los gates funcionales.
 
-1. el HTML inicial cargaba la imagen sin `visual-home-hero`;
-2. `visual-v39.js` añadía la clase después del primer layout;
-3. esa clase activa `position:absolute`;
-4. la imagen pasaba tardíamente de participar en el grid a quedar fuera de flujo;
-5. el navegador recalculaba el hero y acumulaba CLS.
+## Cómo se obtuvo la mejora
 
-La corrección materializa `visual-home-hero` desde el HTML inicial y elimina la mutación tardía en JavaScript.
+### 1. Gates de navegador en paralelo
 
-Durante la reconstrucción apareció un segundo contrato histórico: `apply_quality_v48.py` volvía a materializar el `<img>` del hero después de la capa visual. `normalize_quality_v48.py` se convirtió en el punto determinista de compatibilidad para conservar la clase después de v4.8.
+Antes, Lighthouse esperaba a que terminara Browser E2E. Desde v5.6 ambos arrancan después del mismo smoke y `stable` espera los dos resultados.
 
-Finalmente, el validator v4.8 todavía exigía un orden literal de atributos (`<img src=...`). Se hizo semánticamente robusto: sigue exigiendo la imagen canónica, dimensiones, preload y prioridad, pero permite atributos adicionales de capas posteriores. El validator v5.5 exige además que `visual-home-hero` esté presente desde HTML y prohíbe que JavaScript vuelva a añadirla tarde.
+### 2. Caché npm segura
 
-**Resultado:** CLS de portada pasó de ~0.304 a **0**, performance de ~0.85 a **1.00**, manteniendo LCP ~1.2 s y TBT 0.
+`actions/setup-node@v6` reutiliza la caché del package manager con `package-lock.json`. No se cachean `node_modules` ni binarios Playwright.
 
-## Cadena de aprobación
+### 3. Chromium comparable para Lighthouse
 
-`Site Quality and Deploy` exige:
+Lighthouse usa el Chromium fijado por la misma versión de Playwright del proyecto. Su job instala únicamente Chromium, sin WebKit y sin repetir `--with-deps`.
 
-1. reconstrucción canónica e idempotencia;
-2. validadores históricos y actuales v4.4→v5.5;
-3. JavaScript y JSON válidos;
-4. despliegue en GitHub Pages;
-5. smoke HTTP sobre la URL pública;
-6. Browser E2E sobre Pages;
-7. axe sobre superficies representativas;
-8. Lighthouse sobre seis superficies y presupuestos versionados;
-9. promoción de `stable`.
+Esto conserva comparabilidad con la certificación v5.5 y evita depender de la versión mutable de Google Chrome incluida en la imagen del runner.
 
-No se modifica un presupuesto para hacer pasar una candidata: se corrige la causa del incumplimiento.
+### 4. Menos ciclos canónicos redundantes
+
+Los commits automáticos `build: sincroniza sitio público canónico` quedan reconocidos por la cadena para no abrir una nueva ronda útil de construcción/certificación cuando el único cambio es el output ya generado.
+
+Si el builder comprueba que los outputs ya están canónicos, termina sin crear un commit adicional.
+
+### 5. Observabilidad compacta
+
+- Playwright publica conteos, retries y tiempo mediante `ci-summary-reporter.mjs`.
+- Lighthouse publica `summary.json` y `summary.md`.
+- el snapshot publica `ci-certification-summary-v56` con tiempos por gate y comparación contra baseline.
+- los artefactos directos de QA usan `actions/upload-artifact@v7`.
+
+## Robustez Lighthouse sin relajar budgets
+
+Durante el desarrollo, una ejecución experimental con el Chrome mutable del runner produjo un TBT aislado de 497 ms en portada. El análisis comparativo mostró que v5.5 usaba el Chromium fijado por Playwright.
+
+La release final restaura ese browser comparable y añade una política acotada contra outliers de laboratorio:
+
+- a11y y peso son fallos no reintentables;
+- solo performance, LCP, CLS y TBT pueden activar verificación;
+- únicamente si **todos** los fallos iniciales pertenecen a esas métricas;
+- se ejecutan exactamente dos muestras adicionales;
+- deben existir tres muestras válidas;
+- la decisión se toma por mediana de tres, nunca por el mejor resultado;
+- los presupuestos permanecen exactamente iguales.
+
+En el run funcional final no fue necesario activar esta verificación.
+
+## Cadena de aprobación vigente
+
+1. construcción canónica;
+2. segunda pasada idempotente;
+3. validadores v4.4→v5.6;
+4. JavaScript y JSON;
+5. GitHub Pages;
+6. smoke público;
+7. Browser E2E + axe;
+8. Lighthouse + budgets;
+9. resumen de certificación;
+10. promoción de `stable`.
 
 ## Memoria de ingeniería · Graphify + Obsidian
 
-Meridiano incorpora una capa persistente de continuidad para evitar reconstruir el proyecto desde conversaciones largas.
+Meridiano mantiene continuidad estructural mediante:
 
-- `AGENTS.md`: protocolo de entrada para agentes.
-- `knowledge/00_CANON/`: contexto rápido, estado y tarea activa.
-- `knowledge/10_DECISIONES/`: ADR y decisiones persistentes.
-- `knowledge/20_ARQUITECTURA/`: mapa humano de fuentes, generadores y gates.
-- `knowledge/30_RUNBOOKS/`: flujo de trabajo.
-- `knowledge/HOME.md`: MOC para Obsidian.
-- `knowledge/99_HANDOFF/`: protocolo para retomar en un chat nuevo.
-- rama `knowledge/graphify-live`: grafo, reporte, wiki, `BUILD_META.json` y `PROJECT_SNAPSHOT.md` regenerables.
+- `AGENTS.md`;
+- `knowledge/HOME.md`;
+- `knowledge/00_CANON/`;
+- `knowledge/10_DECISIONES/`;
+- `knowledge/20_ARQUITECTURA/`;
+- `knowledge/30_RUNBOOKS/`;
+- `knowledge/99_HANDOFF/`;
+- rama regenerable `knowledge/graphify-live` con `BUILD_META.json`, snapshot, reporte y wiki.
 
-Graphify se ejecuta `--code-only`, sin backend LLM. Se usa para reducir el conjunto de impacto; toda relación inferida debe confirmarse contra `main`.
-
-Los cambios exclusivamente de memoria regeneran Graphify, pero no disparan Pages + Playwright + axe + Lighthouse. Esto permite mantener contexto al día sin pagar el costo del pipeline público cuando la aplicación no cambió.
-
-## Desarrollo local / QA
-
-Instalar dependencias bloqueadas:
-
-```bash
-npm ci --ignore-scripts --no-audit --no-fund
-```
-
-Ejecutar Browser E2E:
-
-```bash
-npm run test:e2e
-```
-
-Ejecutar presupuestos Lighthouse contra la URL configurada:
-
-```bash
-npm run audit:quality
-```
-
-Regenerar Graphify local:
-
-```bash
-./scripts/refresh_graphify_knowledge.sh
-```
-
-Abrir la raíz del repositorio como vault de Obsidian y comenzar por `knowledge/HOME.md`.
+Graphify se utiliza para reducir el conjunto de impacto; `main` y los tests siguen siendo la autoridad funcional. Los cambios exclusivamente de memoria regeneran Graphify sin desplegar de nuevo la web.
 
 ## Integraciones externas: estado verdadero
 
@@ -166,17 +201,17 @@ Preparadas pero **no activas** sin configuración real:
 
 ## Documentación
 
-- `RELEASE-v5.5.md`: cierre técnico detallado de esta release.
-- `RELEASE-v5.4.md`: incorporación de Browser E2E.
-- `CHANGELOG.md`: historial acumulado de las capas anteriores.
+- `RELEASE-v5.6.md`: cierre técnico de esta release.
+- `RELEASE-v5.5.md`: performance y accesibilidad.
+- `RELEASE-v5.4.md`: Browser E2E.
+- `CHANGELOG.md`: historial de capas anteriores.
 - `knowledge/HOME.md`: entrada a la memoria operativa.
 
 ## Principios vigentes
 
-- No inventar clientes, testimonios, casos de éxito ni resultados.
-- No duplicar precios fuera de fuentes canónicas.
-- No afirmar que existe un backend o integración que no esté activa.
-- No enviar PII a telemetría.
+- No reducir cobertura para acelerar CI.
+- No relajar presupuestos para hacer pasar una candidata.
+- No tomar el mejor resultado de una serie de métricas volátiles.
 - No mover `stable` con un gate rojo.
-- No debilitar un validator para ocultar un defecto.
-- Usar Graphify para navegar; usar `main` y pruebas para decidir.
+- No inventar integraciones, clientes, testimonios ni resultados.
+- Usar Graphify para navegar; usar `main`, Pages y pruebas para decidir.
