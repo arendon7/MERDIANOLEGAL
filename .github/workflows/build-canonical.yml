@@ -37,6 +37,9 @@ on:
       - visual-v39.css
       - visual-v39.js
       - decision-v58.css
+      - commercial-intake-v59.json
+      - commercial-intake-v59.css
+      - commercial-intake-v59.js
       - assets/**
       - scripts/build_catalog_shells.py
       - scripts/render_catalog_static.mjs
@@ -60,6 +63,8 @@ on:
       - scripts/apply_authority_v53.py
       - scripts/apply_decision_v58.py
       - scripts/validate_decision_v58.py
+      - scripts/apply_commercial_v59.py
+      - scripts/validate_commercial_v59.py
       - scripts/validate_browser_v54.py
       - scripts/run_quality_v55.mjs
       - scripts/validate_quality_v55.py
@@ -132,6 +137,8 @@ jobs:
         run: python3 scripts/apply_authority_v53.py
       - name: Apply buying decision architecture v5.8
         run: python3 scripts/apply_decision_v58.py
+      - name: Apply commercial intake and proposal handoff v5.9
+        run: python3 scripts/apply_commercial_v59.py
       - name: Commit canonical outputs
         run: |
           if git diff --quiet; then
