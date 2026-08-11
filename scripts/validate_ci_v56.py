@@ -105,7 +105,7 @@ def main() -> int:
     require("~/.cache/ms-playwright" not in pages and "actions/cache@" not in pages, "v5.6 no debe cachear binarios Playwright")
 
     build = (R / ".github/workflows/build-canonical.yml").read_text(encoding="utf-8")
-    require("if: ${{ !startsWith(github.event.head_commit.message, 'build: sincroniza sitio público canónico') }}" in build, "builder debe omitir commits canónicos generados")
+    require("if: ${{ !startsWith(github.event.head_commit.message, 'build') }}" in build, "builder debe omitir commits canónicos generados con condición YAML segura")
     for marker in (
         "ci-baseline-v56.json",
         "tests/e2e/ci-summary-reporter.mjs",

@@ -75,7 +75,7 @@ permissions:
 
 jobs:
   build:
-    if: ${{ !startsWith(github.event.head_commit.message, 'build: sincroniza sitio público canónico') }}
+    if: ${{ !startsWith(github.event.head_commit.message, 'build') }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
