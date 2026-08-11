@@ -1,0 +1,67 @@
+{
+  "version": "5.9.0",
+  "purpose": "Calificar el siguiente paso comercial sin puntuar personas ni almacenar el formulario.",
+  "privacy": {
+    "pii_in_telemetry": false,
+    "network_transport": false,
+    "persistent_storage": false,
+    "form_storage": false,
+    "handoff": "whatsapp-user-confirmed"
+  },
+  "fields": {
+    "decision_stage": {
+      "required": true,
+      "label": "Momento de decisión",
+      "options": [
+        "Quiero recibir una propuesta",
+        "Necesito definir mejor el alcance",
+        "Estoy comparando alternativas",
+        "Estoy explorando la necesidad"
+      ]
+    },
+    "urgency": {
+      "required": true,
+      "label": "Horizonte para decidir o iniciar",
+      "options": [
+        "Esta semana",
+        "En 2 a 4 semanas",
+        "En 1 a 3 meses",
+        "Sin fecha definida"
+      ]
+    },
+    "budget": {
+      "required": false,
+      "label": "Rango de inversión jurídica previsto",
+      "options": [
+        "Por definir",
+        "Hasta $3 millones COP",
+        "$3 a $8 millones COP",
+        "$8 a $20 millones COP",
+        "Más de $20 millones COP"
+      ]
+    }
+  },
+  "next_steps": {
+    "proposal_ready": {
+      "label": "Propuesta estructurada",
+      "when": ["Quiero recibir una propuesta", "Estoy comparando alternativas"],
+      "description": "La conversación puede concentrarse en confirmar alcance, disponibilidad, honorarios, cronograma y condiciones de inicio."
+    },
+    "scope_first": {
+      "label": "Llamada de alcance",
+      "when": ["Necesito definir mejor el alcance"],
+      "description": "Primero conviene delimitar resultado, perímetro, información mínima, actores y dependencias antes de cotizar."
+    },
+    "orientation_first": {
+      "label": "Orientación inicial",
+      "when": ["Estoy explorando la necesidad"],
+      "description": "El primer paso es comprender la decisión y determinar si corresponde orientación, diagnóstico, producto, proyecto o plan recurrente."
+    }
+  },
+  "guardrails": [
+    "La clasificación orienta el siguiente paso; no acepta el encargo ni garantiza disponibilidad.",
+    "El rango de inversión es opcional y no determina por sí solo si Meridiano atenderá la solicitud.",
+    "No enviar documentos, secretos, datos sensibles ni información confidencial desde la web pública.",
+    "La solicitud solo se transmite cuando el usuario confirma el envío del mensaje en WhatsApp."
+  ]
+}

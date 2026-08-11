@@ -8,6 +8,7 @@ import re
 
 from apply_authority_v53_core import main as apply_core
 from apply_decision_v58 import main as apply_decision_v58
+from apply_commercial_v59 import main as apply_commercial_v59
 
 R = Path(__file__).resolve().parents[1]
 VERSION = json.loads((R / "version.json").read_text(encoding="utf-8")).get("version", "")
@@ -114,9 +115,12 @@ def main() -> int:
         result = finalize_browser_v54()
         if result != 0:
             return result
-    # Hook canónico vigente: v5.8 debe reconstruirse después de los renderers
-    # históricos para que la segunda pasada de idempotencia no elimine la capa.
-    return apply_decision_v58()
+    # Hooks canónicos vigentes: las capas v5.8 y v5.9 se reconstruyen al final
+    # para sobrevivir a renderers históricos y mantener idempotencia.
+    result = apply_decision_v58()
+    if result != 0:
+        return result
+    return apply_commercial_v59()
 
 
 if __name__ == "__main__":

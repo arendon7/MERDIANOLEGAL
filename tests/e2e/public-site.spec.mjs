@@ -76,23 +76,26 @@ test('formulario prepara WhatsApp sin enviar ni salir de la web', async ({ page 
       return { closed: false };
     };
   });
-  await page.goto('./#contacto');
+  await page.goto('./?context=Programa%20de%20Gobernanza%20de%20IA&need=Programa%20de%20Gobernanza%20de%20IA#contacto');
   const form = page.locator('form[data-contact-v49="true"]');
   await expect(form).toBeVisible();
+  await expect(form).toHaveAttribute('data-commercial-intake-v59', 'true');
+  await expect(form.locator('[data-qualification-v59="true"]')).toBeVisible();
+  await expect(form.locator('[name="need"]')).toHaveValue('Gobernanza de IA');
+
   await form.locator('[name="name"]').fill('Prueba E2E');
   await form.locator('[name="company"]').fill('Empresa de prueba');
   await form.locator('[name="email"]').fill('e2e@example.com');
-
-  const need = form.locator('[name="need"]');
-  const needTag = await need.evaluate((node) => node.tagName);
-  if (needTag === 'SELECT') {
-    const options = await need.locator('option').count();
-    await need.selectOption({ index: Math.min(1, Math.max(0, options - 1)) });
-  } else {
-    await need.fill('Gobernanza de IA');
-  }
+  await form.locator('[name="decision_stage"]').selectOption({ label: 'Quiero recibir una propuesta' });
+  await form.locator('[name="urgency"]').selectOption({ label: 'En 2 a 4 semanas' });
+  await form.locator('[name="budget"]').selectOption({ label: '$8 a $20 millones COP' });
   await form.locator('[name="message"]').fill('Necesitamos revisar el gobierno de un caso de uso de IA.');
   await form.locator('[name="privacy"]').check();
+
+  await expect(form).toHaveAttribute('data-proposal-readiness', 'proposal_ready');
+  await expect(form.locator('[data-qualification-next-step-v59]').first()).toContainText('Propuesta estructurada');
+  await expect(form.locator('[data-qualification-context-v59]')).toContainText('Programa de Gobernanza de IA');
+  await expectNoHorizontalOverflow(page);
 
   await page.waitForTimeout(900);
   await form.getByRole('button', { name: /Abrir solicitud en WhatsApp/i }).click();
@@ -103,6 +106,11 @@ test('formulario prepara WhatsApp sin enviar ni salir de la web', async ({ page 
   const opened = await page.evaluate(() => window.__meridianoOpenedUrls || []);
   expect(opened).toHaveLength(1);
   expect(opened[0]).toMatch(/^https:\/\/wa\.me\/573008507813\?text=/);
+  const whatsappText = new URL(opened[0]).searchParams.get('text') || '';
+  expect(whatsappText).toContain('Etapa de decisión: Quiero recibir una propuesta');
+  expect(whatsappText).toContain('Horizonte comercial: En 2 a 4 semanas');
+  expect(whatsappText).toContain('Presupuesto orientativo: $8 a $20 millones COP');
+  expect(whatsappText).toContain('Siguiente paso sugerido: Propuesta estructurada');
   expect(page.url()).toMatch(/#contacto$/);
 
   const events = await telemetrySnapshot(page);
@@ -110,6 +118,11 @@ test('formulario prepara WhatsApp sin enviar ni salir de la web', async ({ page 
     name: 'lead_prepared',
     detail: expect.objectContaining({ target: 'whatsapp' }),
   }));
+  const telemetryText = JSON.stringify(events);
+  expect(telemetryText).not.toContain('Prueba E2E');
+  expect(telemetryText).not.toContain('Empresa de prueba');
+  expect(telemetryText).not.toContain('e2e@example.com');
+  expect(telemetryText).not.toContain('Necesitamos revisar el gobierno');
 });
 
 test('honeypot bloquea preparación automatizada', async ({ page }) => {
@@ -125,6 +138,8 @@ test('honeypot bloquea preparación automatizada', async ({ page }) => {
   await form.locator('[name="name"]').fill('Bot de prueba');
   await form.locator('[name="email"]').fill('bot@example.com');
   await form.locator('[name="message"]').fill('Intento automatizado de prueba.');
+  await form.locator('[name="decision_stage"]').selectOption({ label: 'Estoy explorando la necesidad' });
+  await form.locator('[name="urgency"]').selectOption({ label: 'Sin fecha definida' });
   await form.locator('[name="privacy"]').check();
   await form.locator('[name="website"]').evaluate((node) => { node.value = 'https://spam.invalid'; });
 

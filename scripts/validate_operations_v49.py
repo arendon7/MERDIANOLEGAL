@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-"""Valida preparación operativa v4.9 del sitio público."""
+"""Valida preparación operativa v4.9 y extensión comercial vigente del sitio público."""
 from pathlib import Path
 import json
 import sys
+
+from validate_commercial_v59 import main as validate_commercial_v59
 
 R = Path(__file__).resolve().parents[1]
 
@@ -48,7 +50,11 @@ def main():
         for error in errors:
             print(f"- {error}")
         return 1
-    print("VALIDACIÓN OPERATIVA V4.9 OK: contacto, anti-bot, contexto, fragmentos y fallback íntegros.")
+
+    commercial_result = validate_commercial_v59()
+    if commercial_result != 0:
+        return commercial_result
+    print("VALIDACIÓN OPERATIVA V4.9 OK: contacto, anti-bot, contexto, fragmentos y fallback íntegros; intake comercial v5.9 validado.")
     return 0
 
 
