@@ -18,6 +18,21 @@ def require(condition: bool, message: str) -> None:
         raise SystemExit(f"VALIDACIÓN QUALITY V5.5 FALLÓ: {message}")
 
 
+def action_major_present(text: str, action: str, major: int) -> bool:
+    """Accept the historical major tag or a stronger SHA pin declared by v5.7 policy."""
+    if f"{action}@v{major}" in text:
+        return True
+    policy_path = R / "release-governance-v57.json"
+    if not policy_path.exists():
+        return False
+    policy = json.loads(policy_path.read_text(encoding="utf-8"))
+    spec = policy.get("actions", {}).get(action, {})
+    if spec.get("major") != major:
+        return False
+    sha = spec.get("sha", "")
+    return bool(re.fullmatch(r"[0-9a-f]{40}", sha)) and f"{action}@{sha}" in text and f"# v{major}" in text
+
+
 def main() -> int:
     site_version = semver(V.get("version", ""))
     require(site_version >= (5, 5, 0), "version.json debe ser >= 5.5.0")
@@ -84,13 +99,13 @@ def main() -> int:
     pages = (R / ".github/workflows/pages.yml").read_text(encoding="utf-8")
     for marker in (
         "Validate performance and accessibility QA v5.5",
-        "actions/setup-node@v6",
         "node-version: '22'",
         "npm ci --ignore-scripts --no-audit --no-fund",
         "npm run audit:quality",
         "quality-artifacts",
     ):
         require(marker in pages, f"pages.yml no contiene {marker}")
+    require(action_major_present(pages, "actions/setup-node", 6), "pages.yml no conserva actions/setup-node v6 o un pin SHA v6 más fuerte")
     if site_version >= (5, 6, 0):
         require("lighthouse_quality:" in pages, "v5.6+ debe preservar Lighthouse como gate independiente")
         require("needs: [browser_e2e, lighthouse_quality]" in pages, "stable debe depender de browser_e2e y lighthouse_quality")
