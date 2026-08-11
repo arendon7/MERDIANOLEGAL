@@ -17,9 +17,23 @@
     "coverageReductionAllowed": false,
     "budgetRelaxationAllowed": false,
     "browserBinaryCache": false,
-    "lighthouseBrowser": "github-hosted-runner-system-chrome",
+    "lighthouseBrowser": "playwright-pinned-chromium",
+    "lighthouseBrowserInstallWithDeps": false,
     "qualityJobsParallelAfterSmoke": true,
-    "stableRequiresAllQualityJobs": true
+    "stableRequiresAllQualityJobs": true,
+    "lighthouseVerificationRunsOnFailure": 2,
+    "lighthouseMaxSamplesPerSurface": 3,
+    "lighthouseAggregation": "median-of-three",
+    "lighthouseVerificationMetrics": [
+      "performanceScore",
+      "largestContentfulPaintMs",
+      "cumulativeLayoutShift",
+      "totalBlockingTimeMs"
+    ],
+    "lighthouseNonRetryableMetrics": [
+      "accessibilityScore",
+      "totalByteWeight"
+    ]
   },
   "goal": {
     "description": "Reducir tiempo de pared del pipeline sin disminuir cobertura ni presupuestos.",
