@@ -4,37 +4,50 @@ Actualizado: 2026-08-11.
 
 ## Ciclo en cierre
 
-**v5.7 — Release governance, dependencias y salud operativa del pipeline.**
+**v5.8 — Arquitectura de decisión y claridad de compra.**
 
-La implementación funcional está certificada. Este commit documental declara `5.7.0` y solo constituye el cierre definitivo cuando atraviesa la certificación pública completa y `main == stable`.
+La implementación funcional está certificada. Este cierre declara `5.8.0` y solo constituye la release definitiva cuando atraviesa nuevamente la certificación pública completa y termina con `main == stable`.
 
 ## Implementado
 
-1. `release-governance-v57.json` como policy versionada de Actions, runtimes, dependencias QA, permisos e invariantes;
-2. `scripts/validate_release_governance_v57.py` como validator obligatorio y generador de release-health;
-3. Actions oficiales fijadas por SHA completo y major documentado;
-4. checkouts read-only sin credenciales persistentes;
-5. Dependabot semanal limitado a minor/patch y máximo dos PR por ecosistema;
-6. workflow `Release governance health` para PR, schedule y ejecución manual;
-7. validator v5.7 integrado al quality gate público;
-8. artefacto `release-governance-health-v57` generado antes de promover `stable`;
-9. `Actions hygiene` para runs queued huérfanos, aplazado si Site Quality está activo o queued;
-10. validators históricos v5.5/v5.6 compatibles con el pinning SHA reforzado, sin reducir sus contratos;
-11. `RELEASE-v5.7.md`, README y memoria canónica alineados con la release.
+1. selector de cuatro formas de contratación en portada;
+2. capa ejecutiva en las 16 fichas con `ENCAJA SI`, `QUÉ COMPRA`, `QUÉ RECIBE`, `QUÉ APORTA` y `QUÉ NO ASUMIR`;
+3. generación determinista desde `situations`, `perimeter`, `deliverables`, `requirements`, `limits`, duración, modalidad y audiencia de las fuentes jurídicas existentes;
+4. CTA contextual para solicitar propuesta con el alcance identificado;
+5. `decision-v58.css` como capa visual específica;
+6. `scripts/apply_decision_v58.py` como generador canónico;
+7. `scripts/validate_decision_v58.py` como contrato fuente→resumen y runtime-safe;
+8. integración v5.8 dentro del gate de catálogo estático;
+9. integración de la generación v5.8 al final de la cadena canónica para preservar idempotencia;
+10. cobertura Browser añadida dentro de la entrada existente, sin incrementar ni reducir las 37 entradas protegidas;
+11. parser histórico v4.5 robustecido frente a indentación variable;
+12. bloque v5.8 movido fuera de `#detail-page` para sobrevivir al render de `catalog-page.js`;
+13. validator reforzado para impedir futuras regresiones de ubicación runtime;
+14. `RELEASE-v5.8.md`, README y memoria canónica alineados con la release.
 
 ## Evidencia funcional previa al cierre documental
 
-Run `31534382576`, SHA `945abb9c4e35c87d4f9a9ecd5ff161707b7d716e`:
+Run `31541197197`, SHA `681c252f09a50447af0557a2039b34b8a79faed9`:
 
-- validadores v4.4→v5.7: success;
+- construcción e idempotencia: success;
+- validadores históricos v4.4→v5.7 + contrato v5.8: success;
 - Pages + smoke: success;
 - Browser E2E: 35 passed / 2 skipped / 0 failed / 0 retries;
 - axe: 7 superficies sin violaciones serias/críticas;
 - Lighthouse: 6/6 superficies dentro de presupuesto;
-- release governance: 5 workflows / 22 usos de Actions, SHA pinning + permisos + dependencias + gates protegidos;
+- CI: 232 s hasta gate de `stable`, 16.8% mejor que baseline v5.5;
+- cobertura reducida: no;
+- budgets relajados: no;
 - `stable` promovido correctamente.
 
-La primera tentativa Browser agotó el timeout durante instalación por lentitud transitoria del mirror Ubuntu antes de ejecutar tests. El runner limpio posterior instaló correctamente y aprobó la suite completa. No se redujo cobertura, no se relajaron budgets y no se amplió el timeout para ocultar la incidencia.
+## Regresiones detectadas durante el ciclo
+
+Los controles bloquearon dos problemas antes de certificación:
+
+1. una dependencia histórica de indentación exacta rompía la segunda pasada idempotente;
+2. el runtime de productos eliminaba la primera ubicación del bloque v5.8 al reemplazar `#detail-page`.
+
+Ambos se corrigieron en generadores/contratos. No se modificó la suite para ocultarlos y `stable` no avanzó con gates rojos.
 
 ## Contratos preservados
 
@@ -50,21 +63,24 @@ La primera tentativa Browser agotó el timeout durante instalación por lentitud
 - Actions inventariadas y fijadas a SHA;
 - permisos controlados;
 - no upgrades major automáticos;
-- full public certification antes de `stable`.
+- full public certification antes de `stable`;
+- fuente jurídica única para alcance y entregables;
+- persistencia v5.8 con y sin JavaScript.
 
 ## Condición de cierre
 
-La v5.7 queda cerrada cuando el commit que contiene esta declaración cumple simultáneamente:
+La v5.8 queda cerrada cuando el commit que contiene esta declaración cumple simultáneamente:
 
 1. builder/idempotencia verdes;
-2. validadores v4.4→v5.7 verdes;
+2. validadores históricos + contrato v5.8 verdes;
 3. Pages + smoke verdes;
 4. Browser E2E/axe verde;
 5. Lighthouse verde;
 6. release-health verde;
 7. `main == stable`;
-8. Graphify regenerado con `BUILD_META.json.source_commit == main`.
+8. `version.json` y etiqueta pública declaran 5.8.0;
+9. Graphify queda alineado con el estado final o se documenta de forma verificable cualquier diferencia puramente generada.
 
 ## Próximo ciclo después del cierre
 
-No iniciar otra actualización de infraestructura por inercia. El siguiente ciclo debe volver a priorizar producto/web y crecimiento verificable, usando la nueva governance como red de seguridad y manteniendo cambios de dependencias pequeños, independientes y medibles.
+Priorizar mejora comercial medible sobre nueva infraestructura: hacer más fuerte el paso desde claridad de alcance hacia **calificación del lead, propuesta y cierre**, preservando privacidad y sin declarar CRM, analítica externa o automatizaciones que todavía no estén realmente configuradas.
