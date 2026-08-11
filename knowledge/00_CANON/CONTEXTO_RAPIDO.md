@@ -39,6 +39,8 @@ Principio comercial: el usuario puede empezar por su situación empresarial y no
 - `measurement-contract-v53.json` — contrato de eventos sin PII.
 - `commercial-v43.css` / `commercial-conversion-v44.js` — planes y conversión.
 - `site-v3.js` + `catalog-home-v32.js` + `decision-flow.js` — runtime principal de portada.
+- `release-governance-v57.json` — policy versionada de Actions, runtimes, dependencias QA e invariantes de release.
+- `scripts/validate_release_governance_v57.py` — validator y generador del release-health v5.7.
 - `scripts/` — construcción, normalización y validación canónica.
 - `tests/e2e/` — contrato funcional de navegador.
 
@@ -46,16 +48,18 @@ Principio comercial: el usuario puede empezar por su situación empresarial y no
 
 El orden conceptual es:
 
-fuentes → generadores/aplicadores históricos → normalizadores → validadores → idempotencia → Pages → smoke live → Playwright/axe/Lighthouse → `stable`.
+fuentes → generadores/aplicadores históricos → normalizadores → validadores → idempotencia → Pages → smoke live → Playwright/axe/Lighthouse → release-health → `stable`.
 
 Nunca promover `stable` antes de que todos los gates aplicables estén verdes.
 
 ## Estado actual resumido
 
-- v5.4: última base certificada en `stable`.
-- v5.5: candidata de Performance + Accessibility QA.
-- Playwright + axe ya están verdes.
-- Único bloqueo conocido: CLS de portada causado por `.hero-art`; Lighthouse observó ~0.304 frente a presupuesto <=0.15.
+- v5.6: release pública certificada; Browser E2E/axe y Lighthouse corren en paralelo tras deploy+smoke.
+- baseline v5.5: 279 s hasta gate estable; v5.6: 160 s, mejora 42.7% sin reducir cobertura ni budgets.
+- `main` y `stable` deben verificarse dinámicamente antes de actuar.
+- v5.7: ciclo activo de release governance, dependencias y salud operativa.
+- v5.7 protege pinning SHA de Actions, permisos, dependencias QA, Dependabot controlado, higiene de runs y reporte `release-health`.
+- Se conservan como invariantes 37 entradas E2E, 7 superficies axe, 6 superficies Lighthouse y budgets v5.5.
 
 ## Cómo usar Graphify
 
