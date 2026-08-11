@@ -36,7 +36,11 @@ def replace_tag_block(text: str, pattern: str, replacement: str) -> str:
 
 
 def section(text: str, section_id: str) -> str:
-    match = re.search(rf'    <section\b(?=[^>]*\bid="{re.escape(section_id)}")[^>]*>[\s\S]*?</section>', text)
+    match = re.search(
+        rf'^[ \t]*<section\b(?=[^>]*\bid="{re.escape(section_id)}")[^>]*>[\s\S]*?</section>',
+        text,
+        flags=re.M,
+    )
     if not match:
         raise RuntimeError(f"No se encontró la sección #{section_id}")
     return match.group(0)
