@@ -82,7 +82,10 @@ def main() -> int:
     require("needs: [deploy, live_smoke]" in pages, "Browser E2E debe depender de deploy y smoke HTTP")
     require("timeout 360s npx playwright install --with-deps chromium webkit" in pages, "instalación de navegadores debe tener timeout explícito")
     require("npm run test:e2e" in pages, "job Browser E2E no ejecuta la suite")
-    require("needs: browser_e2e" in pages, "stable debe depender del gate Browser E2E")
+    if version >= (5, 6, 0):
+        require("needs: [browser_e2e, lighthouse_quality]" in pages, "stable debe depender de Browser E2E y Lighthouse desde v5.6")
+    else:
+        require("needs: browser_e2e" in pages, "stable debe depender del gate Browser E2E")
     require("playwright-report" in pages and "test-results" in pages, "deben conservarse artefactos de fallo")
 
     build = (R / ".github/workflows/build-canonical.yml").read_text(encoding="utf-8")
