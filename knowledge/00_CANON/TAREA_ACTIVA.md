@@ -2,70 +2,69 @@
 
 Actualizado: 2026-08-11.
 
-## Ciclo activo
+## Ciclo en cierre
 
 **v5.7 — Release governance, dependencias y salud operativa del pipeline.**
 
-Base certificada de partida:
+La implementación funcional está certificada. Este commit documental declara `5.7.0` y solo constituye el cierre definitivo cuando atraviesa la certificación pública completa y `main == stable`.
 
-- v5.6 funcionalmente certificada;
-- 37 entradas E2E;
-- 7 superficies axe;
-- 6 superficies Lighthouse;
-- budgets v5.5 sin relajación;
-- gate dual Browser + Lighthouse;
-- baseline v5.5: 279 s;
-- v5.6: 160 s, mejora 42.7%.
+## Implementado
 
-## Implementación v5.7 en curso
-
-Candidata inicial: PR `#26` / rama `release/v57-governance-foundation`.
-
-La fundación implementada incluye:
-
-1. `release-governance-v57.json` como policy versionada de Actions, runtimes, dependencias QA e invariantes;
+1. `release-governance-v57.json` como policy versionada de Actions, runtimes, dependencias QA, permisos e invariantes;
 2. `scripts/validate_release_governance_v57.py` como validator obligatorio y generador de release-health;
-3. Actions oficiales fijadas por SHA completo, conservando el major documentado;
+3. Actions oficiales fijadas por SHA completo y major documentado;
 4. checkouts read-only sin credenciales persistentes;
 5. Dependabot semanal limitado a minor/patch y máximo dos PR por ecosistema;
 6. workflow `Release governance health` para PR, schedule y ejecución manual;
-7. validator v5.7 integrado al job `quality` de la certificación pública;
+7. validator v5.7 integrado al quality gate público;
 8. artefacto `release-governance-health-v57` generado antes de promover `stable`;
-9. `Actions hygiene` semanal para runs queued huérfanos, aplazado si Site Quality está activo o queued.
+9. `Actions hygiene` para runs queued huérfanos, aplazado si Site Quality está activo o queued;
+10. validators históricos v5.5/v5.6 compatibles con el pinning SHA reforzado, sin reducir sus contratos;
+11. `RELEASE-v5.7.md`, README y memoria canónica alineados con la release.
 
-## Evidencia de la candidata
+## Evidencia funcional previa al cierre documental
 
-Sobre el primer head del PR #26 (`107f5aece5c3ad8a050e7ffe0dd9d684546e5e26`):
+Run `31534382576`, SHA `945abb9c4e35c87d4f9a9ecd5ff161707b7d716e`:
 
-- `Release governance health`: success;
-- `Graphify — memoria estructural Meridiano Legal`: success.
+- validadores v4.4→v5.7: success;
+- Pages + smoke: success;
+- Browser E2E: 35 passed / 2 skipped / 0 failed / 0 retries;
+- axe: 7 superficies sin violaciones serias/críticas;
+- Lighthouse: 6/6 superficies dentro de presupuesto;
+- release governance: 5 workflows / 22 usos de Actions, SHA pinning + permisos + dependencias + gates protegidos;
+- `stable` promovido correctamente.
 
-La candidata todavía debe atravesar la certificación pública completa después del merge antes de declarar v5.7 cerrada.
+La primera tentativa Browser agotó el timeout durante instalación por lentitud transitoria del mirror Ubuntu antes de ejecutar tests. El runner limpio posterior instaló correctamente y aprobó la suite completa. No se redujo cobertura, no se relajaron budgets y no se amplió el timeout para ocultar la incidencia.
 
-## Contratos que v5.7 protege
+## Contratos preservados
 
-- ningún Action remoto fuera del inventario;
-- Actions remotos fijados a SHA completo;
-- majors documentados y policy explícita para cualquier cambio;
-- ausencia de `pull_request_target`;
-- prohibición de `permissions: write-all`;
-- permisos mínimos conocidos por workflow/job;
-- runtimes Node/Python y herramientas Graphify fijados;
-- dependencias Playwright/axe/Lighthouse exactas;
-- no upgrades mayores automáticos;
-- gate `stable` dependiente de Browser E2E + Lighthouse;
-- 37 E2E, 7 axe, 6 Lighthouse y budgets v5.5 preservados.
+- 37 entradas E2E;
+- Chromium desktop/mobile;
+- WebKit desktop;
+- 7 superficies axe;
+- 6 superficies Lighthouse;
+- budgets v5.5;
+- workers Playwright CI = 1;
+- gate dual Browser + Lighthouse;
+- idempotencia;
+- Actions inventariadas y fijadas a SHA;
+- permisos controlados;
+- no upgrades major automáticos;
+- full public certification antes de `stable`.
 
-## Próximos pasos del ciclo
+## Condición de cierre
 
-1. terminar QA del PR #26;
-2. mergear únicamente con governance + Graphify verdes;
-3. observar builder, Pages, smoke, Browser E2E/axe, Lighthouse y release-health en `main`;
-4. corregir cualquier regresión sin relajar contratos;
-5. promover/corroborar `stable` solo desde la cadena automática;
-6. cerrar versión/documentación v5.7 y actualizar `ESTADO_ACTUAL.md`;
-7. limpiar ramas temporales únicamente después del cierre certificado.
+La v5.7 queda cerrada cuando el commit que contiene esta declaración cumple simultáneamente:
 
-## Regla para v5.7
+1. builder/idempotencia verdes;
+2. validadores v4.4→v5.7 verdes;
+3. Pages + smoke verdes;
+4. Browser E2E/axe verde;
+5. Lighthouse verde;
+6. release-health verde;
+7. `main == stable`;
+8. Graphify regenerado con `BUILD_META.json.source_commit == main`.
 
-No convertir mantenimiento en una actualización masiva. Cada cambio de runtime, Action o dependencia debe demostrar compatibilidad con el pipeline actual y conservar cobertura, presupuestos, idempotencia y el gate dual antes de `stable`.
+## Próximo ciclo después del cierre
+
+No iniciar otra actualización de infraestructura por inercia. El siguiente ciclo debe volver a priorizar producto/web y crecimiento verificable, usando la nueva governance como red de seguridad y manteniendo cambios de dependencias pequeños, independientes y medibles.
