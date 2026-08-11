@@ -11,6 +11,12 @@ on:
       - package-lock.json
       - release-governance-v57.json
       - quality-budgets-v55.json
+      - decision-v58.css
+      - catalog-products-v41/**
+      - catalog-services-v42/**
+      - scripts/apply_decision_v58.py
+      - scripts/validate_decision_v58.py
+      - scripts/validate_static_catalog.py
       - scripts/validate_quality_v55.py
       - scripts/validate_ci_v56.py
       - scripts/validate_release_governance_v57.py
@@ -43,6 +49,10 @@ jobs:
           python3 scripts/validate_quality_v55.py
           python3 scripts/validate_ci_v56.py
           python3 scripts/validate_release_governance_v57.py --report-dir governance-artifacts/v5.7
+      - name: Validate buying decision contract v5.8
+        run: |
+          python3 scripts/apply_decision_v58.py
+          python3 scripts/validate_decision_v58.py
       - name: Publish release-health report
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
