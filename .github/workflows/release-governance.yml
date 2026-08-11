@@ -19,6 +19,7 @@ on:
       - catalog-services-v42/**
       - scripts/apply_decision_v58.py
       - scripts/validate_decision_v58.py
+      - scripts/apply_operations_v49.py
       - scripts/apply_commercial_v59.py
       - scripts/validate_commercial_v59.py
       - scripts/validate_operations_v49.py
@@ -61,6 +62,7 @@ jobs:
           python3 scripts/validate_decision_v58.py
       - name: Validate commercial intake contract v5.9
         run: |
+          python3 scripts/apply_operations_v49.py
           python3 scripts/apply_commercial_v59.py
           python3 scripts/validate_commercial_v59.py
       - name: Publish release-health report

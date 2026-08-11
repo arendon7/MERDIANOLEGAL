@@ -27,13 +27,19 @@ def patch_index():
     t = t.replace(anchor, anchor + '\n  ' + tag, 1)
 
     t = re.sub(re.escape(CONTACT_A) + r"[\s\S]*?" + re.escape(CONTACT_B), "", t, count=1)
-    t = t.replace('<form class="contact-form" id="contact-form" data-contact-v49="true">', '<form class="contact-form" id="contact-form">', 1)
-    marker = '<form class="contact-form" id="contact-form">'
-    if marker not in t:
+
+    # v4.9 es una capa histórica: debe reconocer el formulario aunque capas
+    # posteriores añadan data-* propios. Solo normaliza su atributo y preserva
+    # cualquier extensión que no le pertenezca para que el generador posterior
+    # pueda reconstruirla de forma determinista.
+    form_match = re.search(r'<form class="contact-form" id="contact-form"(?P<attrs>[^>]*)>', t)
+    if not form_match:
         raise RuntimeError("No se encontró el formulario de contacto")
-    marker49 = '<form class="contact-form" id="contact-form" data-contact-v49="true">'
+    attrs = form_match.group("attrs")
+    attrs = re.sub(r'\s+data-contact-v49="true"', '', attrs)
+    marker49 = '<form class="contact-form" id="contact-form" data-contact-v49="true"' + attrs + '>'
     block = CONTACT_A + '<label class="contact-hp-v49" aria-hidden="true">Sitio web<input type="text" name="website" tabindex="-1" autocomplete="off"></label>' + CONTACT_B
-    t = t.replace(marker, marker49 + block, 1)
+    t = t[:form_match.start()] + marker49 + block + t[form_match.end():]
 
     replacements = {
         '<input type="text" name="name" autocomplete="name" required>': '<input type="text" name="name" autocomplete="name" maxlength="120" required>',
