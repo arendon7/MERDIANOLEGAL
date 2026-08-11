@@ -7,21 +7,20 @@
 - Repositorio: `arendon7/MERDIANOLEGAL`.
 - Rama técnica/productiva: `main`.
 - Snapshot certificado: `stable`.
-- Versión declarada: `5.7.0`.
-- Evidencia funcional de la fundación v5.7: run `31534382576`, SHA `945abb9c4e35c87d4f9a9ecd5ff161707b7d716e`, antes del cierre documental.
+- Versión declarada en cierre: `5.8.0`.
+- Evidencia funcional v5.8: run `31541197197`, SHA `681c252f09a50447af0557a2039b34b8a79faed9`, antes del cierre documental.
 
 Los SHA de `main` y `stable` deben consultarse dinámicamente. Las notas documentan hitos; los refs actuales, Pages y los gates son la autoridad del estado vigente.
 
 ## Estado funcional
 
-**La fundación funcional v5.7 quedó certificada y el cierre documental declara 5.7.0.**
+**La implementación funcional v5.8 quedó certificada. El cierre documental declara 5.8.0 y debe volver a atravesar la certificación pública antes de considerarse definitivo.**
 
-El commit documental solo queda cerrado definitivamente cuando vuelve a atravesar la misma certificación pública y `main == stable`.
-
-La cadena v5.7 exige:
+La cadena vigente exige:
 
 - idempotencia canónica;
-- validadores v4.4→v5.7;
+- validadores históricos v4.4→v5.7;
+- contrato fuente/runtime v5.8;
 - 46 páginas y recursos;
 - catálogo estático de 16 fichas;
 - JavaScript y JSON;
@@ -34,9 +33,73 @@ La cadena v5.7 exige:
 - release-health v5.7;
 - promoción de `stable` únicamente después de Browser + Lighthouse.
 
-## Release governance v5.7
+## Arquitectura de decisión v5.8
 
-`release-governance-v57.json` protege:
+La portada incorpora cuatro formas de contratación:
+
+1. entender primero el problema;
+2. contratar un resultado cerrado;
+3. obtener dirección jurídica recurrente;
+4. abordar una decisión o proyecto especializado.
+
+Las 16 fichas profundas incorporan cinco bloques ejecutivos derivados de sus fuentes:
+
+- `ENCAJA SI` ← `situations`;
+- `QUÉ COMPRA` ← `perimeter`;
+- `QUÉ RECIBE` ← `deliverables`;
+- `QUÉ APORTA` ← `requirements`;
+- `QUÉ NO ASUMIR` ← `limits`.
+
+También se derivan duración, modalidad y audiencia. No existe una segunda fuente paralela de marketing para esos datos.
+
+`scripts/validate_decision_v58.py` protege la correspondencia fuente→resumen y exige que la capa se ubique antes de `#detail-page`, fuera del contenedor que `catalog-page.js` puede reemplazar. El resumen debe persistir con JavaScript y seguir disponible sin JavaScript.
+
+## Incidencias de construcción v5.8
+
+Los gates bloquearon dos incompatibilidades antes de promover `stable`:
+
+- idempotencia detectó que un parser histórico v4.5 dependía de cuatro espacios exactos antes de `<section>`; se volvió tolerante a indentación;
+- Browser detectó que la primera ubicación del bloque v5.8 era eliminada por el render runtime de productos; se movió fuera de `#detail-page` y se añadió un contrato explícito de persistencia.
+
+En ambos casos `stable` permaneció inmóvil y no se redujo cobertura ni se suavizaron pruebas.
+
+## Evidencia funcional v5.8
+
+Run `31541197197`, SHA `681c252f09a50447af0557a2039b34b8a79faed9`:
+
+### Browser E2E + axe
+
+- 37 entradas;
+- 35 aprobadas;
+- 2 omitidas por diseño;
+- 0 fallos;
+- 0 retries;
+- Chromium desktop/mobile;
+- WebKit desktop;
+- 7 superficies axe sin violaciones serias/críticas.
+
+### Lighthouse
+
+- portada: performance 1.00, a11y 0.97, LCP 1425 ms, CLS 0, TBT 0 ms, 76,009 B;
+- solución IA: performance 1.00, a11y 1.00, LCP 978 ms, CLS 0, TBT 0 ms, 23,234 B;
+- producto IA: performance 1.00, a11y 1.00, LCP 909 ms, CLS 0, TBT 0 ms, 35,406 B;
+- sector tecnología: performance 1.00, a11y 1.00, LCP 938 ms, CLS 0, TBT 0 ms, 24,260 B;
+- perspectiva IA: performance 1.00, a11y 1.00, LCP 1003 ms, CLS 0, TBT 0 ms, 25,728 B;
+- demo: performance 1.00, a11y 1.00, LCP 970 ms, CLS 0, TBT 0 ms, 22,045 B.
+
+Las seis superficies aprobaron con una sola muestra y sin relajar presupuestos.
+
+### Eficiencia CI
+
+- baseline v5.5: 279 s;
+- run funcional v5.8: 232 s hasta gate de `stable`;
+- mejora frente a baseline: 16.8%;
+- cobertura reducida: no;
+- presupuestos relajados: no.
+
+## Release governance v5.7 preservada
+
+`release-governance-v57.json` continúa protegiendo:
 
 - inventario de Actions oficiales;
 - SHA exacto y major validado de cada Action;
@@ -81,40 +144,6 @@ Después del smoke público se ejecutan dos rails paralelos:
 No se cachean binarios Playwright. Sí se usa caché npm reproducible mediante `package-lock.json`.
 
 Lighthouse usa Chromium fijado por Playwright, no el Chrome mutable del runner.
-
-## Evidencia v5.7 de navegador
-
-Browser E2E + axe, tentativa limpia certificada:
-
-- 37 entradas;
-- 35 aprobadas;
-- 2 omitidas por diseño;
-- 0 fallos;
-- 0 retries;
-- 7 superficies axe sin violaciones serias/críticas.
-
-La primera tentativa Browser del run `31534382576` agotó 360 s durante la instalación Chromium+WebKit por lentitud transitoria del mirror Ubuntu, antes de ejecutar tests. `stable` no se movió. La repetición limpia instaló correctamente y aprobó la suite completa; no se redujo cobertura ni se alteró el timeout.
-
-Lighthouse de la fundación v5.7:
-
-- portada: performance 1.00, a11y 0.97, LCP 1484 ms, CLS 0, TBT 62 ms, 73,826 B;
-- solución IA: performance 1.00, a11y 1.00, LCP 904 ms, CLS 0, TBT 0;
-- producto IA: performance 1.00, a11y 1.00, LCP 1005 ms, CLS 0, TBT 0;
-- sector tecnología: performance 0.98, a11y 1.00, LCP 996 ms, CLS 0.087, TBT 0;
-- perspectiva IA: performance 0.98, a11y 1.00, LCP 916 ms, CLS 0.087, TBT 0;
-- demo: performance 1.00, a11y 1.00, LCP 986 ms, CLS 0, TBT 0.
-
-Las seis superficies aprobaron con una sola muestra y sin relajar presupuestos.
-
-## Eficiencia CI
-
-Se conserva como referencia limpia:
-
-- baseline v5.5: 279 s;
-- run funcional limpio v5.6: 160 s;
-- mejora v5.6: 42.7%.
-
-El total de 634 s informado por el run de fundación v5.7 no se adopta como benchmark porque incorpora la tentativa Browser fallida por infraestructura y su reejecución. No representa una nueva topología ni una reducción de eficiencia comparable.
 
 ## Robustez Lighthouse
 
@@ -171,4 +200,4 @@ Al retomar:
 3. verificar `graphify-out/BUILD_META.json.source_commit` contra `main`;
 4. usar Graphify para definir el conjunto mínimo de impacto;
 5. verificar en fuente y tests antes de modificar;
-6. conservar release-health y el gate dual Browser + Lighthouse antes de `stable`.
+6. conservar los contratos v5.8, release-health y el gate dual Browser + Lighthouse antes de `stable`.
