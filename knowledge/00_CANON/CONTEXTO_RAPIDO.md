@@ -15,6 +15,8 @@ Sitio público y centro demostrativo de Meridiano Legal. La propuesta combina se
 - 8 sectores.
 - 6 perspectivas desarrolladas más biblioteca.
 - Firma/método y Centro Demo como superficies de autoridad y prueba pública.
+- 4 formas de contratación en portada para orientar al usuario por tipo de necesidad.
+- 5 bloques ejecutivos de compra en cada una de las 16 fichas profundas.
 
 Principio comercial: el usuario puede empezar por su situación empresarial y no necesita conocer el nombre del servicio correcto.
 
@@ -39,6 +41,9 @@ Principio comercial: el usuario puede empezar por su situación empresarial y no
 - `measurement-contract-v53.json` — contrato de eventos sin PII.
 - `commercial-v43.css` / `commercial-conversion-v44.js` — planes y conversión.
 - `site-v3.js` + `catalog-home-v32.js` + `decision-flow.js` — runtime principal de portada.
+- `decision-v58.css` — presentación de selector de contratación y claridad ejecutiva.
+- `scripts/apply_decision_v58.py` — deriva la capa de compra directamente de las 16 fuentes jurídicas.
+- `scripts/validate_decision_v58.py` — valida fuente→resumen y persistencia frente al runtime.
 - `release-governance-v57.json` — policy versionada de Actions, runtimes, dependencias QA, permisos e invariantes.
 - `scripts/validate_release_governance_v57.py` — validator y generador del release-health v5.7.
 - `scripts/` — construcción, normalización y validación canónica.
@@ -48,20 +53,24 @@ Principio comercial: el usuario puede empezar por su situación empresarial y no
 
 El orden conceptual es:
 
-fuentes → generadores/aplicadores históricos → normalizadores → validadores → idempotencia → Pages → smoke live → Playwright/axe/Lighthouse → release-health → `stable`.
+fuentes → generadores/aplicadores históricos → capa de decisión v5.8 → normalizadores/validadores → idempotencia → Pages → smoke live → Playwright/axe/Lighthouse → release-health → `stable`.
 
 Nunca promover `stable` antes de que todos los gates aplicables estén verdes.
 
 ## Estado actual resumido
 
-- Versión declarada: v5.7.0.
-- La fundación funcional v5.7 quedó certificada en el run `31534382576` sobre `945abb9c4e35c87d4f9a9ecd5ff161707b7d716e` antes del cierre documental.
-- El commit documental de cierre solo es definitivo después de atravesar la misma certificación pública y terminar con `main == stable`.
-- Browser E2E/axe y Lighthouse continúan en paralelo tras deploy+smoke.
-- v5.7 protege SHA pinning de Actions, permisos, dependencias QA, Dependabot controlado, higiene de runs y reporte `release-health`.
+- Versión declarada en cierre: v5.8.0.
+- La implementación funcional v5.8 quedó certificada en el run `31541197197` sobre `681c252f09a50447af0557a2039b34b8a79faed9`.
+- En esa certificación `main == stable`.
+- Browser E2E: 35 passed / 2 skipped / 0 failed / 0 retries sobre 37 entradas.
+- axe: 7 superficies sin violaciones serias/críticas.
+- Lighthouse: 6/6 superficies dentro de budget; portada 1.00 performance / 0.97 a11y y producto IA 1.00 / 1.00.
+- CI funcional: 232 s hasta el gate de `stable`, 16.8% mejor que baseline v5.5 de 279 s.
+- v5.8 añade cuatro formas de contratación y cinco bloques ejecutivos derivados de fuente en las 16 fichas.
+- El validator v5.8 protege que esos bloques sobrevivan al render JavaScript y funcionen también static-first.
+- v5.7 continúa protegiendo SHA pinning de Actions, permisos, dependencias QA, Dependabot controlado, higiene de runs y reporte `release-health`.
 - Invariantes: 37 entradas E2E, 7 superficies axe, 6 superficies Lighthouse, budgets v5.5 y gate dual Browser + Lighthouse.
-- La referencia temporal limpia continúa siendo v5.6: 160 s frente a baseline v5.5 de 279 s. El run v5.7 con reintento de infraestructura no se usa como benchmark comparable.
-- `main` y `stable` deben verificarse dinámicamente antes de actuar.
+- El commit documental de cierre 5.8.0 solo es definitivo después de repetir la certificación y terminar nuevamente con `main == stable`.
 
 ## Cómo usar Graphify
 
