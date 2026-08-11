@@ -133,6 +133,8 @@ def main() -> int:
     require("github.event.workflow_run.head_commit.message" in pages, "workflow_run debe filtrar commits canónicos generados")
     require(pages.count("build: sincroniza sitio público canónico") >= 2, "deben filtrarse commits generados en push y workflow_run")
     require("~/.cache/ms-playwright" not in pages and "actions/cache@" not in pages, "v5.6 no debe cachear binarios Playwright")
+    require(pages.count("actions/upload-artifact@v7") == 4, "las cuatro cargas directas de artefactos QA deben usar upload-artifact@v7")
+    require("actions/upload-artifact@v5" not in pages, "v5.6 no puede reintroducir upload-artifact@v5/Node 20")
 
     build = (R / ".github/workflows/build-canonical.yml").read_text(encoding="utf-8")
     require("if: ${{ !startsWith(github.event.head_commit.message, 'build') }}" in build, "builder debe omitir commits canónicos generados con condición YAML segura")
@@ -144,7 +146,7 @@ def main() -> int:
     ):
         require(marker in build, f"builder no vigila {marker}")
 
-    print("VALIDACIÓN CI V5.6 OK: gates paralelos, Chromium pinneado, mediana de tres, caché npm, observabilidad y stable dual preservados.")
+    print("VALIDACIÓN CI V5.6 OK: gates paralelos, Chromium pinneado, mediana de tres, caché npm, upload-artifact v7, observabilidad y stable dual preservados.")
     return 0
 
 
