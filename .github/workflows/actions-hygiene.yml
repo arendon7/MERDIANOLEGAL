@@ -2,10 +2,6 @@ name: Actions hygiene
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/actions-hygiene.yml
   schedule:
     - cron: "17 3 * * 1"
 
@@ -28,6 +24,26 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
+
+          active_quality="$({
+            gh api "repos/${GITHUB_REPOSITORY}/actions/runs?status=in_progress&per_page=100" \
+              --jq '[.workflow_runs[] | select(.name == "Site Quality and Deploy")] | length'
+          } 2>/dev/null)"
+          queued_quality="$({
+            gh api "repos/${GITHUB_REPOSITORY}/actions/runs?status=queued&per_page=100" \
+              --jq '[.workflow_runs[] | select(.name == "Site Quality and Deploy")] | length'
+          } 2>/dev/null)"
+
+          if [ "${active_quality:-0}" -gt 0 ] || [ "${queued_quality:-0}" -gt 0 ]; then
+            {
+              echo "### Actions hygiene"
+              echo
+              echo "- Limpieza aplazada: existe una certificación pública activa o en cola."
+              echo "- Site Quality in progress: ${active_quality:-0}"
+              echo "- Site Quality queued: ${queued_quality:-0}"
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
 
           cutoff_epoch="$(date -u -d '6 hours ago' +%s)"
           inspected=0
