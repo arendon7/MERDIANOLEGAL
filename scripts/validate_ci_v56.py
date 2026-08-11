@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Valida eficiencia, paralelismo y observabilidad CI incorporados en v5.6."""
+"""Valida eficiencia, paralelismo y observabilidad CI incorporados en v5.6 y preservados en releases posteriores."""
 from pathlib import Path
 import json
 import re
@@ -25,9 +25,27 @@ def section(text: str, start: str, end: str) -> str:
     return tail.split(end, 1)[0]
 
 
+def action_ref(action: str, major: int) -> str | None:
+    """Return the stronger v5.7 SHA ref when policy exists, otherwise historical @vN."""
+    policy_path = R / "release-governance-v57.json"
+    if policy_path.exists():
+        governance = json.loads(policy_path.read_text(encoding="utf-8"))
+        spec = governance.get("actions", {}).get(action, {})
+        sha = spec.get("sha", "")
+        if spec.get("major") == major and re.fullmatch(r"[0-9a-f]{40}", sha):
+            return f"{action}@{sha}"
+    return f"{action}@v{major}"
+
+
+def action_count(text: str, action: str, major: int) -> int:
+    return text.count(action_ref(action, major) or "")
+
+
 def main() -> int:
-    require(semver(V.get("version", "")) >= (5, 6, 0), "version.json debe ser >= 5.6.0")
-    require(V.get("channel") == "github-pages-public-ci-observability-ready", "canal v5.6 incorrecto")
+    site_version = semver(V.get("version", ""))
+    require(site_version >= (5, 6, 0), "version.json debe ser >= 5.6.0")
+    if site_version == (5, 6, 0):
+        require(V.get("channel") == "github-pages-public-ci-observability-ready", "canal v5.6 incorrecto")
 
     baseline = json.loads((R / "ci-baseline-v56.json").read_text(encoding="utf-8"))
     require(baseline.get("version") == "5.6.0", "baseline debe declarar 5.6.0")
@@ -133,7 +151,8 @@ def main() -> int:
     require("github.event.workflow_run.head_commit.message" in pages, "workflow_run debe filtrar commits canónicos generados")
     require(pages.count("build: sincroniza sitio público canónico") >= 2, "deben filtrarse commits generados en push y workflow_run")
     require("~/.cache/ms-playwright" not in pages and "actions/cache@" not in pages, "v5.6 no debe cachear binarios Playwright")
-    require(pages.count("actions/upload-artifact@v7") == 4, "las cuatro cargas directas de artefactos QA deben usar upload-artifact@v7")
+    uploads = action_count(pages, "actions/upload-artifact", 7)
+    require(uploads >= 4, f"v5.6+ debe conservar al menos cuatro cargas directas upload-artifact v7; observadas: {uploads}")
     require("actions/upload-artifact@v5" not in pages, "v5.6 no puede reintroducir upload-artifact@v5/Node 20")
 
     build = (R / ".github/workflows/build-canonical.yml").read_text(encoding="utf-8")
@@ -146,7 +165,7 @@ def main() -> int:
     ):
         require(marker in build, f"builder no vigila {marker}")
 
-    print("VALIDACIÓN CI V5.6 OK: gates paralelos, Chromium pinneado, mediana de tres, caché npm, upload-artifact v7, observabilidad y stable dual preservados.")
+    print("VALIDACIÓN CI V5.6 OK: gates paralelos, Chromium pinneado, mediana de tres, caché npm, upload-artifact v7+, observabilidad y stable dual preservados.")
     return 0
 
 
