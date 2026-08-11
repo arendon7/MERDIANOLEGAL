@@ -122,10 +122,17 @@ def patch_detail(path: Path, catalog: dict[str, dict]) -> None:
         raise RuntimeError(f'{path.name}: ID {catalog_id} no existe en las fuentes')
 
     text = remove_managed_block(text, DETAIL_START, DETAIL_END)
-    anchor = '<main id="contenido"><div id="detail-page" data-static-catalog="true">'
-    if anchor not in text:
+    # El runtime de productos reemplaza #detail-page.innerHTML. v5.8 debe ser un
+    # hermano anterior del contenedor mutable para sobrevivir con y sin JavaScript.
+    anchor = re.compile(r'<main id="contenido">\s*<div id="detail-page" data-static-catalog="true">')
+    replacement = (
+        '<main id="contenido">\n'
+        + build_detail_block(catalog[catalog_id])
+        + '\n<div id="detail-page" data-static-catalog="true">'
+    )
+    text, count = anchor.subn(lambda _match: replacement, text, count=1)
+    if count != 1:
         raise RuntimeError(f'{path.name}: falta ancla canónica del cuerpo')
-    text = text.replace(anchor, anchor + '\n' + build_detail_block(catalog[catalog_id]), 1)
     text = ensure_style(text, DETAIL_STYLE)
     path.write_text(text, encoding='utf-8')
 
