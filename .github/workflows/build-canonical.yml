@@ -10,6 +10,7 @@ on:
       - package-lock.json
       - quality-budgets-v55.json
       - ci-baseline-v56.json
+      - release-governance-v57.json
       - .gitignore
       - playwright.config.mjs
       - tests/e2e/**
@@ -61,6 +62,7 @@ on:
       - scripts/validate_quality_v55.py
       - scripts/summarize_ci_v56.py
       - scripts/validate_ci_v56.py
+      - scripts/validate_release_governance_v57.py
       - scripts/sync_public_version.py
       - .github/workflows/build-canonical.yml
       - .github/workflows/pages.yml
@@ -80,7 +82,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout current main
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           fetch-depth: 0
       - name: Generate QA dependency lockfile v5.5+
