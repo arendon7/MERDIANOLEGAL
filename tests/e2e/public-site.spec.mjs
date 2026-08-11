@@ -7,6 +7,14 @@ test('portada pública conserva rutas, profundidad y layout', async ({ page }) =
   await expect(page.locator('.need-card')).toHaveCount(6);
   await expect(page.locator('.full-detail-link')).toHaveCount(16);
   await expect(page.getByRole('link', { name: /Centro demo/i }).first()).toBeVisible();
+  await expect(page.locator('[data-engagement-router-v58="true"]')).toBeVisible();
+  await expect(page.locator('.engagement-router-card-v58')).toHaveCount(4);
+  await expectNoHorizontalOverflow(page);
+
+  await page.goto('./productos/programa-gobernanza-ia.html');
+  await expect(page.locator('[data-buying-clarity-v58="true"]')).toBeVisible();
+  await expect(page.locator('.buying-clarity-card-v58')).toHaveCount(5);
+  await expect(page.locator('[data-decision-v58-cta="true"]')).toBeVisible();
   await expectNoHorizontalOverflow(page);
 });
 
