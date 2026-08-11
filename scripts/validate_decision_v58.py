@@ -75,6 +75,15 @@ def validate_detail(path: Path, catalog: dict[str, dict]) -> None:
     if '<link rel="stylesheet" href="../decision-v58.css">' not in text:
         fail(f'{path}: falta decision-v58.css')
 
+    runtime_safe = re.search(
+        r'<main id="contenido">\s*'
+        r'<!-- DECISION-V58-DETAIL:START -->[\s\S]*?<!-- DECISION-V58-DETAIL:END -->\s*'
+        r'<div id="detail-page" data-static-catalog="true">',
+        text,
+    )
+    if not runtime_safe:
+        fail(f'{path}: el bloque v5.8 debe ser hermano anterior de #detail-page para sobrevivir al render JavaScript')
+
     match = re.search(r'data-catalog-id="([^"]+)"', text)
     if not match:
         fail(f'{path}: falta data-catalog-id')
@@ -112,7 +121,7 @@ def main() -> int:
     validate_home()
     for path in TARGETS:
         validate_detail(path, catalog)
-    print('DECISION V5.8 OK: portada + 16 fichas preservan fuente, alcance y rutas de contratación.')
+    print('DECISION V5.8 OK: portada + 16 fichas preservan fuente, alcance, rutas y persistencia runtime.')
     return 0
 
 
