@@ -1,0 +1,28 @@
+{
+  "version": "5.6.0",
+  "baseline": {
+    "runId": 31433199058,
+    "headSha": "440c09c235c3826c7b0031fd5ac9ddaed9748379",
+    "recordedAt": "2026-08-10",
+    "measurement": "quality-start-to-snapshot-start",
+    "criticalPathSeconds": 279,
+    "totalRunSeconds": 288,
+    "browserQualityJobSeconds": 215,
+    "qualityJobSeconds": 9,
+    "deployJobSeconds": 18,
+    "smokeJobSeconds": 11,
+    "snapshotJobSeconds": 5
+  },
+  "policy": {
+    "coverageReductionAllowed": false,
+    "budgetRelaxationAllowed": false,
+    "browserBinaryCache": false,
+    "lighthouseBrowser": "github-hosted-runner-system-chrome",
+    "qualityJobsParallelAfterSmoke": true,
+    "stableRequiresAllQualityJobs": true
+  },
+  "goal": {
+    "description": "Reducir tiempo de pared del pipeline sin disminuir cobertura ni presupuestos.",
+    "criticalPathImprovementTargetPercent": 20
+  }
+}

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { spawnSync } from 'node:child_process';
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { appendFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -102,8 +102,33 @@ const printable = summary.map((item) => ({
   totalBlockingTimeMs: round(item.totalBlockingTimeMs, 0),
   totalByteWeight: round(item.totalByteWeight, 0),
 }));
-writeFileSync(join(outputDir, 'summary.json'), `${JSON.stringify({ config, results: printable, failures, diagnostics }, null, 2)}\n`);
+
+const summaryPayload = { config, results: printable, failures, diagnostics };
+writeFileSync(join(outputDir, 'summary.json'), `${JSON.stringify(summaryPayload, null, 2)}\n`);
 console.table(printable);
+
+const markdown = [
+  '### Lighthouse · performance + accesibilidad',
+  '',
+  `Estado: **${failures.length ? 'FALLÓ' : 'OK'}** · ${printable.length}/${config.surfaces.length} superficies medidas.`,
+  '',
+  '| Superficie | Perf. | A11y | LCP ms | CLS | TBT ms | Bytes |',
+  '|---|---:|---:|---:|---:|---:|---:|',
+  ...printable.map((item) => `| ${item.id} | ${item.performanceScore} | ${item.accessibilityScore} | ${item.largestContentfulPaintMs} | ${item.cumulativeLayoutShift} | ${item.totalBlockingTimeMs} | ${item.totalByteWeight} |`),
+  '',
+  `Presupuestos: performance >= ${config.budgets.performanceScoreMin}; a11y >= ${config.budgets.accessibilityScoreMin}; LCP <= ${config.budgets.largestContentfulPaintMsMax} ms; CLS <= ${config.budgets.cumulativeLayoutShiftMax}; TBT <= ${config.budgets.totalBlockingTimeMsMax} ms; transferencia <= ${config.budgets.totalByteWeightMax} B.`,
+  '',
+  ...(failures.length ? ['Fallos:', ...failures.map((failure) => `- ${failure}`), ''] : []),
+].join('\n');
+writeFileSync(join(outputDir, 'summary.md'), `${markdown}\n`);
+
+if (process.env.GITHUB_STEP_SUMMARY) {
+  try {
+    appendFileSync(process.env.GITHUB_STEP_SUMMARY, `${markdown}\n`, 'utf8');
+  } catch (error) {
+    console.warn(`No fue posible escribir GITHUB_STEP_SUMMARY: ${error.message}`);
+  }
+}
 
 if (failures.length) {
   console.error('\nQUALITY V5.5 FALLÓ');

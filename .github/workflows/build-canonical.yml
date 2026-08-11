@@ -9,6 +9,7 @@ on:
       - package.json
       - package-lock.json
       - quality-budgets-v55.json
+      - ci-baseline-v56.json
       - .gitignore
       - playwright.config.mjs
       - tests/e2e/**
@@ -58,6 +59,8 @@ on:
       - scripts/validate_browser_v54.py
       - scripts/run_quality_v55.mjs
       - scripts/validate_quality_v55.py
+      - scripts/summarize_ci_v56.py
+      - scripts/validate_ci_v56.py
       - scripts/sync_public_version.py
       - .github/workflows/build-canonical.yml
       - .github/workflows/pages.yml
@@ -72,6 +75,7 @@ permissions:
 
 jobs:
   build:
+    if: ${{ !startsWith(github.event.head_commit.message, 'build: sincroniza sitio público canónico') }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -79,7 +83,7 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - name: Generate QA dependency lockfile v5.5
+      - name: Generate QA dependency lockfile v5.5+
         run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
       - name: Generate catalog shells
         run: python3 scripts/build_catalog_shells.py
