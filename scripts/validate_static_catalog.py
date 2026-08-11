@@ -6,6 +6,8 @@ from pathlib import Path
 import re
 import sys
 
+from validate_decision_v58 import main as validate_decision_v58
+
 ROOT = Path(__file__).resolve().parents[1]
 CATALOG_PAGES = {
     "servicios/diagnostico-juridico-empresarial.html",
@@ -85,6 +87,9 @@ def validate() -> list[str]:
         "catalog-products-v41/p06-regulado.json",
         "catalog-products-v41/p07-contractual.json",
         "catalog-products-v41/p08-datos-consumidor.json",
+        "decision-v58.css",
+        "scripts/apply_decision_v58.py",
+        "scripts/validate_decision_v58.py",
         *CATALOG_PAGES,
     }
     missing = sorted(name for name in required_files if not (ROOT / name).exists())
@@ -158,7 +163,10 @@ def main() -> int:
         for error in errors:
             print(f"- {error}")
         return 1
-    print("VALIDACIÓN DEL CATÁLOGO ESTÁTICO OK: 8 servicios v4.2 y 8 productos v4.1 con 15 secciones, indexables y funcionales sin JavaScript.")
+    decision_result = validate_decision_v58()
+    if decision_result != 0:
+        return decision_result
+    print("VALIDACIÓN DEL CATÁLOGO ESTÁTICO OK: 8 servicios v4.2 y 8 productos v4.1 con 15 secciones, indexables y funcionales sin JavaScript; claridad de compra v5.8 alineada con fuente.")
     return 0
 
 
