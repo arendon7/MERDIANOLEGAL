@@ -164,6 +164,10 @@
       `Empresa: ${cleanContactValue(data.get('company'), 160) || 'No indicada'}`,
       `Correo: ${cleanContactValue(data.get('email'), 180)}`,
       `Necesidad: ${cleanContactValue(data.get('need'), 160)}`,
+      `Etapa de decisión: ${cleanContactValue(data.get('decision_stage'), 160)}`,
+      `Horizonte comercial: ${cleanContactValue(data.get('urgency'), 160)}`,
+      `Presupuesto orientativo: ${cleanContactValue(data.get('budget'), 160) || 'Por definir'}`,
+      `Siguiente paso sugerido: ${cleanContactValue(form.dataset.proposalNextStep, 120) || 'Orientación inicial'}`,
     ];
     if (context) lines.push(`Contexto comercial: ${context}`);
     lines.push(`Origen: ${source}`, '', 'Contexto general:', cleanContactValue(data.get('message'), 2000), '', 'Confirmo que no estoy enviando información confidencial.');
@@ -171,7 +175,7 @@
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(summary)}`;
     setStatus('Abriendo WhatsApp. La solicitud solo queda enviada cuando confirme el envío allí.');
     try { await navigator.clipboard?.writeText(summary); } catch { /* copia opcional */ }
-    window.dispatchEvent(new CustomEvent('meridiano:lead-prepared', { detail: { reference, need: cleanContactValue(data.get('need'), 160), context } }));
+    window.dispatchEvent(new CustomEvent('meridiano:lead-prepared', { detail: { reference, need: cleanContactValue(data.get('need'), 160), context, readiness: cleanContactValue(form.dataset.proposalReadiness, 32) } }));
     const opened = window.open(url, '_blank', 'noopener,noreferrer');
     if (!opened) {
       window.location.assign(url);
