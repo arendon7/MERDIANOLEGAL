@@ -287,7 +287,7 @@ jobs:
         run: npm run test:e2e
       - name: Upload browser failure artifacts
         if: failure()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: browser-e2e-failure-artifacts
           path: |
@@ -333,7 +333,7 @@ jobs:
         run: npm run audit:quality
       - name: Upload compact Lighthouse summary
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: lighthouse-quality-summary-v55
           path: |
@@ -343,7 +343,7 @@ jobs:
           retention-days: 14
       - name: Upload Lighthouse failure artifacts
         if: failure()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: lighthouse-quality-failure-artifacts
           path: quality-artifacts
@@ -376,7 +376,7 @@ jobs:
             --json ci-artifacts/v5.6/summary.json
           cat ci-artifacts/v5.6/summary.md >> "$GITHUB_STEP_SUMMARY"
       - name: Upload CI certification summary
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: ci-certification-summary-v56
           path: |
