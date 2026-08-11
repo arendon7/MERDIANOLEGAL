@@ -1,7 +1,7 @@
 # Meridiano Legal — Release v5.7.0
 
 Fecha de cierre: 2026-08-11.
-Canal: `github-pages-release-governance-ready`.
+Canal: `github-pages-public-release-governance-ready`.
 
 ## Objetivo
 
