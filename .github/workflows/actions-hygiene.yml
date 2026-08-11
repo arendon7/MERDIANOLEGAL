@@ -1,0 +1,76 @@
+name: Actions hygiene
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/actions-hygiene.yml
+  schedule:
+    - cron: "17 3 * * 1"
+
+permissions:
+  actions: write
+  contents: read
+
+concurrency:
+  group: meridiano-actions-hygiene
+  cancel-in-progress: true
+
+jobs:
+  cleanup:
+    name: Cancel stale queued runs
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Cancel orphaned canonical-build runs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          cutoff_epoch="$(date -u -d '6 hours ago' +%s)"
+          inspected=0
+          cancelled=0
+          deleted=0
+
+          while IFS=$'\t' read -r run_id created_at head_sha; do
+            [ -n "${run_id:-}" ] || continue
+            inspected=$((inspected + 1))
+
+            created_epoch="$(date -u -d "$created_at" +%s)"
+            if [ "$created_epoch" -ge "$cutoff_epoch" ]; then
+              continue
+            fi
+
+            if [ "$head_sha" = "$GITHUB_SHA" ]; then
+              continue
+            fi
+
+            job_count="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${run_id}/jobs?per_page=1" --jq '.total_count')"
+            if [ "$job_count" -ne 0 ]; then
+              continue
+            fi
+
+            echo "Run huérfano detectado: ${run_id} · ${created_at} · ${head_sha}"
+            if gh api --method POST "repos/${GITHUB_REPOSITORY}/actions/runs/${run_id}/force-cancel" >/dev/null 2>&1; then
+              cancelled=$((cancelled + 1))
+              echo "Force-cancel aceptado para ${run_id}."
+            else
+              echo "Force-cancel no resolvió ${run_id}; eliminando únicamente este run sin jobs y >6h."
+              gh api --method DELETE "repos/${GITHUB_REPOSITORY}/actions/runs/${run_id}"
+              deleted=$((deleted + 1))
+            fi
+          done < <(
+            gh api --paginate "repos/${GITHUB_REPOSITORY}/actions/runs?status=queued&per_page=100" \
+              --jq '.workflow_runs[] | select(.name == "Build canonical public site") | [.id, .created_at, .head_sha] | @tsv'
+          )
+
+          {
+            echo "### Actions hygiene"
+            echo
+            echo "- Runs queued inspeccionados: ${inspected}"
+            echo "- Runs force-cancelados: ${cancelled}"
+            echo "- Runs huérfanos eliminados como fallback: ${deleted}"
+            echo "- Regla: solo \`Build canonical public site\` con >6h, cero jobs y SHA distinto del actual."
+          } >> "$GITHUB_STEP_SUMMARY"
