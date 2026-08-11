@@ -1,0 +1,85 @@
+{
+  "version": "5.7.0",
+  "status": "candidate",
+  "policy_date": "2026-08-11",
+  "actions": {
+    "actions/checkout": {
+      "major": 6,
+      "sha": "d23441a48e516b6c34aea4fa41551a30e30af803"
+    },
+    "actions/setup-node": {
+      "major": 6,
+      "sha": "249970729cb0ef3589644e2896645e5dc5ba9c38"
+    },
+    "actions/setup-python": {
+      "major": 7,
+      "sha": "5fda3b95a4ea91299a34e894583c3862153e4b97"
+    },
+    "actions/configure-pages": {
+      "major": 5,
+      "sha": "983d7736d9b0ae728b81ab479565c72886d7745b"
+    },
+    "actions/upload-pages-artifact": {
+      "major": 4,
+      "sha": "7b1f4a764d45c48632c6b24a0339c27f5614fb0b"
+    },
+    "actions/deploy-pages": {
+      "major": 4,
+      "sha": "d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e"
+    },
+    "actions/upload-artifact": {
+      "major": 7,
+      "sha": "043fb46d1a93c77aae656e7c1c64a875d1fc6a0a"
+    }
+  },
+  "qa_runtime": {
+    "node": "22",
+    "python": "3.12",
+    "uv": "0.12.3",
+    "graphify": "0.9.26"
+  },
+  "qa_dependencies": {
+    "@axe-core/playwright": "4.12.1",
+    "@playwright/test": "1.62.0",
+    "lighthouse": "13.4.1"
+  },
+  "required_workflows": [
+    "actions-hygiene.yml",
+    "build-canonical.yml",
+    "graphify-knowledge.yml",
+    "pages.yml",
+    "release-governance.yml"
+  ],
+  "protected_invariants": {
+    "e2e_entries": 37,
+    "axe_surfaces": 7,
+    "lighthouse_surfaces": 6,
+    "lighthouse_budget_file": "quality-budgets-v55.json",
+    "stable_gate": [
+      "browser_e2e",
+      "lighthouse_quality"
+    ]
+  },
+  "permission_contracts": {
+    "actions-hygiene.yml": [
+      "actions: write",
+      "contents: read"
+    ],
+    "build-canonical.yml": [
+      "contents: write"
+    ],
+    "graphify-knowledge.yml": [
+      "contents: write"
+    ],
+    "pages.yml": [
+      "contents: read",
+      "contents: write",
+      "pages: write",
+      "id-token: write",
+      "actions: read"
+    ],
+    "release-governance.yml": [
+      "contents: read"
+    ]
+  }
+}
