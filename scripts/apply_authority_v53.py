@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Aplica v5.3 y, desde v5.4, normaliza integración runtime y CTA demo móvil."""
+"""Aplica v5.3 y normaliza las extensiones canónicas posteriores."""
 from __future__ import annotations
 
 from pathlib import Path
@@ -7,6 +7,7 @@ import json
 import re
 
 from apply_authority_v53_core import main as apply_core
+from apply_decision_v58 import main as apply_decision_v58
 
 R = Path(__file__).resolve().parents[1]
 VERSION = json.loads((R / "version.json").read_text(encoding="utf-8")).get("version", "")
@@ -110,8 +111,12 @@ def main() -> int:
         return result
     normalize_outputs()
     if semver(VERSION) >= (5, 4, 0):
-        return finalize_browser_v54()
-    return 0
+        result = finalize_browser_v54()
+        if result != 0:
+            return result
+    # Hook canónico vigente: v5.8 debe reconstruirse después de los renderers
+    # históricos para que la segunda pasada de idempotencia no elimine la capa.
+    return apply_decision_v58()
 
 
 if __name__ == "__main__":
