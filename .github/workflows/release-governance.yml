@@ -20,6 +20,9 @@ on:
       - conversion-close-v510.js
       - engagement-v511.css
       - proof-v512.css
+      - commercial-brief-v513.css
+      - commercial-brief-v513.js
+      - site-v3.js
       - catalog-products-v41/**
       - catalog-services-v42/**
       - tests/e2e/**
@@ -34,6 +37,8 @@ on:
       - scripts/validate_engagement_v511.py
       - scripts/apply_proof_v512.py
       - scripts/validate_proof_v512.py
+      - scripts/apply_commercial_brief_v513.py
+      - scripts/validate_commercial_brief_v513.py
       - scripts/validate_operations_v49.py
       - scripts/validate_static_catalog.py
       - scripts/validate_quality_v55.py
@@ -92,6 +97,10 @@ jobs:
         run: |
           python3 scripts/apply_proof_v512.py
           python3 scripts/validate_proof_v512.py
+      - name: Validate commercial brief continuity v5.13
+        run: |
+          python3 scripts/apply_commercial_brief_v513.py
+          python3 scripts/validate_commercial_brief_v513.py
       - name: Publish release-health report
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
