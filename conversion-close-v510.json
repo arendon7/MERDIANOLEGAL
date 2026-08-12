@@ -1,0 +1,69 @@
+{
+  "version": "5.10.0",
+  "purpose": "Conservar la intención comercial desde la ficha hasta el contacto y explicar qué falta para pasar de interés a propuesta y de propuesta a inicio, sin CRM ni almacenamiento del formulario.",
+  "privacy": {
+    "pii_in_telemetry": false,
+    "network_transport": false,
+    "persistent_storage": false,
+    "form_storage": false,
+    "handoff": "whatsapp-user-confirmed"
+  },
+  "intents": {
+    "proposal": {
+      "source": "producto de alcance cerrado",
+      "decision_stage": "Quiero recibir una propuesta",
+      "route": "proposal",
+      "cta": "Preparar solicitud de propuesta en WhatsApp"
+    },
+    "scope": {
+      "source": "servicio especializado",
+      "decision_stage": "Necesito definir mejor el alcance",
+      "route": "scope",
+      "cta": "Preparar llamada de alcance en WhatsApp"
+    },
+    "orientation": {
+      "source": "entrada general",
+      "decision_stage": "Estoy explorando la necesidad",
+      "route": "orientation",
+      "cta": "Preparar orientación inicial en WhatsApp"
+    }
+  },
+  "proposal_contents": [
+    "Objetivo y resultado esperado",
+    "Perímetro y entregables",
+    "Cronograma e hitos",
+    "Honorarios y forma de pago",
+    "Responsabilidades del cliente y de Meridiano",
+    "Supuestos, exclusiones y dependencias",
+    "Condiciones para iniciar y cerrar el alcance"
+  ],
+  "close_path": [
+    "Solicitud y contexto mínimo",
+    "Validación de encaje, disponibilidad y conflictos",
+    "Confirmación de alcance y propuesta",
+    "Aceptación expresa y habilitación del canal de trabajo"
+  ],
+  "telemetry": {
+    "allowed_fields": ["stage", "target", "need"],
+    "events": [
+      "close_intent_applied",
+      "close_route_view",
+      "close_handoff_prepared"
+    ],
+    "forbidden_content": [
+      "name",
+      "email",
+      "company",
+      "message",
+      "phone",
+      "document"
+    ]
+  },
+  "guardrails": [
+    "La intención comercial preselecciona un punto de partida; el usuario puede cambiarlo antes de continuar.",
+    "Una propuesta solo puede emitirse después de validar alcance, disponibilidad, conflictos y la información mínima aplicable.",
+    "La aceptación del encargo exige confirmación expresa de alcance, honorarios y condiciones; un clic o un mensaje no crea por sí solo la relación profesional.",
+    "La información confidencial y los documentos deben compartirse únicamente después de habilitar un canal seguro.",
+    "La web pública no puntúa el valor del lead, no rechaza automáticamente solicitudes y no promete disponibilidad ni resultado."
+  ]
+}

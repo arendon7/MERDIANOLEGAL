@@ -36,6 +36,13 @@ on:
       - telemetry-v50.js
       - visual-v39.css
       - visual-v39.js
+      - decision-v58.css
+      - commercial-intake-v59.json
+      - commercial-intake-v59.css
+      - commercial-intake-v59.js
+      - conversion-close-v510.json
+      - conversion-close-v510.css
+      - conversion-close-v510.js
       - assets/**
       - scripts/build_catalog_shells.py
       - scripts/render_catalog_static.mjs
@@ -65,6 +72,12 @@ on:
       - scripts/apply_authority_v53.py
       - scripts/validate_authority_v53.py
       - scripts/validate_live_v53.py
+      - scripts/apply_decision_v58.py
+      - scripts/validate_decision_v58.py
+      - scripts/apply_commercial_v59.py
+      - scripts/validate_commercial_v59.py
+      - scripts/apply_conversion_v510.py
+      - scripts/validate_conversion_v510.py
       - scripts/validate_browser_v54.py
       - scripts/run_quality_v55.mjs
       - scripts/validate_quality_v55.py
@@ -134,6 +147,9 @@ jobs:
           python3 scripts/finalize_growth_v51.py
           python3 scripts/apply_cro_v52.py
           python3 scripts/apply_authority_v53.py
+          python3 scripts/apply_decision_v58.py
+          python3 scripts/apply_commercial_v59.py
+          python3 scripts/apply_conversion_v510.py
           git diff --exit-code -- index.html catalog-home-v32.js decision-flow.js site-v3.js page-context.js sitemap.xml robots.txt runtime-config.js site-status.json servicios productos firma.html perspectivas perspectivas.html sectores soluciones experiencia.html demo.html 404.html aviso-legal.html privacidad.html terminos.html manifest.webmanifest CNAME scripts/build_catalog_shells.py
       - name: Validate HTML and local resources
         run: python3 scripts/validate_site.py
@@ -167,6 +183,12 @@ jobs:
         run: python3 scripts/validate_ci_v56.py
       - name: Validate release governance v5.7
         run: python3 scripts/validate_release_governance_v57.py
+      - name: Validate buying decision architecture v5.8
+        run: python3 scripts/validate_decision_v58.py
+      - name: Validate commercial intake v5.9
+        run: python3 scripts/validate_commercial_v59.py
+      - name: Validate conversion-to-close v5.10
+        run: python3 scripts/validate_conversion_v510.py
       - name: Validate guided decision flow
         run: python3 scripts/validate_decision_flow.py
       - name: Validate page context and structured data
@@ -192,6 +214,8 @@ jobs:
           node --check runtime-config.js
           node --check telemetry-v50.js
           node --check measurement-v53.js
+          node --check commercial-intake-v59.js
+          node --check conversion-close-v510.js
           node --check playwright.config.mjs
           node --check tests/e2e/helpers.mjs
           node --check tests/e2e/public-site.spec.mjs
@@ -216,6 +240,8 @@ jobs:
           python3 -m json.tool cro-solutions-v52.json > /dev/null
           python3 -m json.tool authority-v53.json > /dev/null
           python3 -m json.tool measurement-contract-v53.json > /dev/null
+          python3 -m json.tool commercial-intake-v59.json > /dev/null
+          python3 -m json.tool conversion-close-v510.json > /dev/null
           for f in catalog-services-v42/*.json; do python3 -m json.tool "$f" > /dev/null; done
           for f in catalog-products-v41/*.json; do python3 -m json.tool "$f" > /dev/null; done
 
