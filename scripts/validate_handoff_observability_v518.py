@@ -114,16 +114,19 @@ def main() -> int:
 
     public_spec = (ROOT / "tests/e2e/public-site.spec.mjs").read_text(encoding="utf-8")
     helpers = (ROOT / "tests/e2e/helpers.mjs").read_text(encoding="utf-8")
+    require("formulario prepara WhatsApp sin enviar ni salir de la web" in public_spec,
+            "debe preservarse el test histórico de handoff")
     for marker in (
         "MeridianoHandoffObservabilityV518",
         "handoff_prepared",
         "handoff_reopen_requested",
         "handoff_copy_succeeded",
         "handoff_edit_requested",
+        "handoff_draft_stale",
+        "__meridianoClipboard",
+        "telemetryBeforeChange",
     ):
-        require(marker in public_spec, f"E2E formulario no cubre {marker}")
-    require("handoff_draft_stale" in helpers, "fixture E2E debe verificar stale telemetry")
-    require("__meridianoClipboard" in public_spec, "E2E debe controlar portapapeles para verificar copy_succeeded")
+        require(marker in helpers, f"fixture E2E no cubre {marker}")
     for forbidden_event in FORBIDDEN_EVENTS:
         require(forbidden_event not in public_spec and forbidden_event not in helpers,
                 f"tests no deben normalizar evento semánticamente falso {forbidden_event}")
