@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Aplica v5.15: consolida selector + recomendación y alinea la ruta comercial sin automatismos."""
+"""Aplica v5.15+ y consolida decisión comercial sin automatismos ni duplicación de portada."""
 from __future__ import annotations
 
 from html import escape, unescape
@@ -11,11 +11,16 @@ import re
 ROOT = Path(__file__).resolve().parents[1]
 HOME = ROOT / "index.html"
 CONTRACT = ROOT / "recommendation-v514.json"
+VERSION = ROOT / "version.json"
 DETAIL_TARGETS = sorted((ROOT / "servicios").glob("*.html")) + sorted((ROOT / "productos").glob("*.html"))
 HOME_START = "<!-- RECOMMENDATION-V514-HOME:START -->"
 HOME_END = "<!-- RECOMMENDATION-V514-HOME:END -->"
 FORM_START = "<!-- RECOMMENDATION-V514-FORM:START -->"
 FORM_END = "<!-- RECOMMENDATION-V514-FORM:END -->"
+PROOF_START = "<!-- PROOF-V512-HOME:START -->"
+PROOF_END = "<!-- PROOF-V512-HOME:END -->"
+DECISION_START = "<!-- DECISION-V58-HOME:START -->"
+DECISION_END = "<!-- DECISION-V58-HOME:END -->"
 STYLE = '<link rel="stylesheet" href="decision-action-v515.css">'
 SCRIPT = '<script src="decision-action-v515.js"></script>'
 
@@ -31,6 +36,17 @@ ROUTE_LABEL = {
     "scope": "Definición de alcance",
     "orientation": "Orientación inicial",
 }
+
+
+def current_version_at_least(major: int, minor: int) -> bool:
+    payload = json.loads(VERSION.read_text(encoding="utf-8"))
+    raw = str(payload.get("version", "0.0.0"))
+    parts = raw.split(".")
+    try:
+        current = (int(parts[0]), int(parts[1]))
+    except (ValueError, IndexError):
+        return False
+    return current >= (major, minor)
 
 
 def load_contract() -> dict:
@@ -54,6 +70,11 @@ def replace_marked(text: str, start: str, end: str, replacement: str) -> str:
     if count != 1:
         raise RuntimeError(f"No se pudo reemplazar bloque {start}")
     return text
+
+
+def remove_marked_optional(text: str, start: str, end: str) -> str:
+    pattern = re.compile(r'\s*' + re.escape(start) + r".*?" + re.escape(end) + r'\s*', re.S)
+    return pattern.sub("\n", text, count=1)
 
 
 def recommendation_card(code: str, rule: dict, idx: int) -> str:
@@ -114,6 +135,79 @@ def recommendation_form() -> str:
 {FORM_END}'''
 
 
+def home_decision_v520(contract: dict) -> str:
+    context_copy = {
+        "diagnostic": "Cuando todavía debe delimitarse el problema y ordenar qué revisar primero.",
+        "audit": "Cuando necesita una revisión transversal cerrada, documentada y comparable.",
+        "product": "Cuando el resultado puede fijarse con cantidades, entregables y aceptación desde el inicio.",
+        "specialist": "Cuando la decisión está identificada, pero el alcance debe adaptarse a hechos, actores o regulación.",
+        "recurring": "Cuando existe demanda jurídica continua y se necesita priorización, memoria y seguimiento.",
+    }
+    legacy_entries = {"diagnostic", "product", "specialist", "recurring"}
+    cards: list[str] = []
+    for code, rule in contract["modalities"].items():
+        anchor = (
+            f'<a class="proof-model-card-v512" data-proof-model-v512="{escape(code)}" '
+            f'data-commercial-modality-v513="{escape(code)}" data-decision-action-source-v515="{escape(code)}" '
+            f'href="{escape(rule["href"], quote=True)}">'
+            f'<span>{escape(rule["label"])}</span><h3>{escape(rule["label"])}</h3>'
+            f'<p>{escape(context_copy[code])}</p>'
+            f'<em class="proof-fit-v515"><small>Encaja si</small>{escape(rule["fit"])}</em>'
+            f'<b>{escape(rule["cta"])} →</b></a>'
+        )
+        if code in legacy_entries:
+            anchor = f'<div class="home-decision-entry-v520 engagement-router-card-v58" data-engagement-entry-v520="{escape(code)}">{anchor}</div>'
+        cards.append(anchor)
+    return f'''{PROOF_START}
+<section class="home-decision-v520" data-home-decision-v520="true" data-engagement-router-v58="true" data-proof-router-v512="true" aria-labelledby="proof-router-v512-title">
+  <div class="container">
+    <div class="section-heading centered">
+      <p class="eyebrow dark">DESPUÉS DE IDENTIFICAR LA NECESIDAD</p>
+      <h2 id="proof-router-v512-title">Elija la modalidad por el tipo de incertidumbre y por el resultado que necesita.</h2>
+      <p>La situación empresarial define qué debe resolverse; la modalidad define cómo conviene contratar el trabajo. No necesita recorrer varios selectores para llegar a la misma decisión.</p>
+    </div>
+    <div class="home-decision-grid-v520">{''.join(cards)}</div>
+    <div class="proof-standard-v512" data-proof-standard-v512="true">
+      <div><h3>Qué debería poder verificar antes de contratar</h3><p>Objetivo, perímetro, entregables, cronograma, responsabilidades, supuestos, exclusiones y mecanismo de cierre. La propuesta debe permitir comparar alcance y no solo una cifra.</p></div>
+      <div class="proof-standard-grid-v512"><span>Perímetro y exclusiones explícitos</span><span>Entregables y formatos identificables</span><span>Método, responsables y dependencias</span><span>Criterios de aceptación y cierre</span></div>
+    </div>
+  </div>
+</section>
+{PROOF_END}'''
+
+
+def compact_recommendation_v520(contract: dict) -> str:
+    cards = "".join(recommendation_card(code, rule, idx) for idx, (code, rule) in enumerate(contract["modalities"].items(), start=1))
+    contract_json = json.dumps(contract, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+    return f'''{HOME_START}
+<section class="recommendation-v514 decision-action-v515 home-decision-compare-v520" data-recommendation-v514="true" data-decision-action-v515="true" aria-label="Comparación ampliada de modalidades">
+  <div class="container">
+    <details class="recommendation-compare-v515" data-recommendation-compare-v515="true">
+      <summary>¿Necesita comparar límites y alternativas? <span>Ver análisis ampliado de las cinco modalidades</span></summary>
+      <div class="recommendation-grid-v514">{cards}</div>
+    </details>
+    <p class="recommendation-note-v514"><strong>Regla de decisión:</strong> esta comparación no asigna puntajes. La modalidad permanece orientativa hasta validar hechos, alcance, disponibilidad y posibles conflictos.</p>
+  </div>
+</section>
+<script type="application/json" id="recommendation-contract-v514">{contract_json}</script>
+{HOME_END}'''
+
+
+def compress_home_v520(text: str, contract: dict) -> str:
+    if not current_version_at_least(5, 20):
+        return text
+    text = remove_marked_optional(text, DECISION_START, DECISION_END)
+    text = remove_marked_optional(text, PROOF_START, PROOF_END)
+    text = remove_marked_optional(text, HOME_START, HOME_END)
+    text = re.sub(r'\s*<section class="section choice-section" id="elegir">.*?</section>\s*', "\n", text, count=1, flags=re.S)
+    anchor = "<!-- GROWTH-V51-PROOF:START -->"
+    if anchor not in text:
+        raise RuntimeError("index.html: falta ancla posterior a las rutas por necesidad")
+    unified = home_decision_v520(contract) + "\n" + compact_recommendation_v520(contract) + "\n"
+    text = text.replace(anchor, unified + anchor, 1)
+    return text
+
+
 def patch_proof_cards(text: str, contract: dict) -> str:
     for code, rule in contract["modalities"].items():
         pattern = re.compile(r'(<a class="proof-model-card-v512"[^>]*data-proof-model-v512="' + re.escape(code) + r'"[^>]*>)(.*?)(</a>)', re.S)
@@ -143,6 +237,7 @@ def patch_home(contract: dict) -> None:
     if script_anchor not in text:
         raise RuntimeError("index.html: falta recommendation-v514.js")
     text = text.replace(script_anchor, script_anchor + "\n  " + SCRIPT, 1)
+    text = compress_home_v520(text, contract)
     HOME.write_text(text, encoding="utf-8")
 
 
@@ -162,9 +257,6 @@ def with_query_param(href: str, key: str, value: str) -> str:
 
 
 def patch_tag_route(tag: str, route: str) -> str:
-    # v5.10 intentionally owns the canonical CTA tag shape. v5.15 may update
-    # commercial_intent, but must remove any additive CTA attribute so the
-    # historical validator remains a real compatibility gate.
     tag = re.sub(r'\s+data-action-route-v515="[^"]*"', "", tag)
     href_match = re.search(r'href="([^"]+)"', tag)
     if not href_match:
@@ -228,7 +320,10 @@ def main() -> int:
     patch_home(contract)
     for path in DETAIL_TARGETS:
         patch_detail(path)
-    print("DECISION ACTION V5.15 OK: selector consolidado + comparación secundaria + ruta comercial controlada en 16 fichas.")
+    if current_version_at_least(5, 20):
+        print("DECISION ACTION V5.20 OK: rutas por necesidad + selector único de modalidad; duplicación histórica de portada eliminada.")
+    else:
+        print("DECISION ACTION V5.15 OK: selector consolidado + comparación secundaria + ruta comercial controlada en 16 fichas.")
     return 0
 
 
