@@ -7,48 +7,44 @@
 - Repositorio: `arendon7/MERDIANOLEGAL`.
 - Rama técnica/productiva: `main`.
 - Snapshot certificado: `stable`.
-- Versión declarada en este cierre: `5.13.0`.
-- Evidencia funcional v5.13 previa al cierre documental: run `31568876368`, SHA `e77a7e824117d3f8f3f67cc3fc71f11f3fc858c3`.
+- Versión declarada en este cierre: `5.14.0`.
+- Evidencia funcional v5.14 previa al cierre documental: run `31570619885`, SHA `42e482241a818e0c94137810e1224558a58f397d`.
 
 Los SHA actuales de `main` y `stable` deben consultarse dinámicamente. Las notas documentan hitos; refs, Pages y gates son la autoridad.
 
 ## Estado funcional
 
-**La implementación funcional v5.13 está certificada. El commit documental que declara 5.13.0 debe volver a atravesar la certificación pública completa antes de considerar cerrada la release definitiva.**
+**La implementación funcional v5.14 está certificada. El commit documental que declara 5.14.0 debe volver a atravesar la certificación pública completa antes de considerar cerrada la release definitiva.**
 
-## v5.13 — Continuidad del brief comercial
+## v5.14 — Recomendación explicable de modalidad
 
-La modalidad considerada y el estándar verificable de v5.12 acompañan el recorrido desde las 16 fichas profundas hasta el formulario y el handoff manual por WhatsApp. El brief visible reduce repetición y preserva el contexto comercial sin convertirlo en propuesta o aceptación automática.
+Cinco reglas determinísticas comparan diagnóstico, auditoría, producto cerrado, servicio especializado y acompañamiento recurrente. Cada regla expone `fit`, `boundary` y `alternative`; `scoring` permanece desactivado.
 
-Implementación: `commercial-brief-v513.css`, `commercial-brief-v513.js`, `scripts/apply_commercial_brief_v513.py`, `scripts/validate_commercial_brief_v513.py`.
+La explicación aparece en portada y, cuando existe una modalidad contextual, acompaña el brief y el handoff manual por WhatsApp. Si falta contexto, la web no inventa una recomendación.
 
-La capa no añade `localStorage`, `sessionStorage`, backend, XHR/fetch propio ni nuevos campos PII.
+Implementación: `recommendation-v514.json`, `recommendation-v514.css`, `recommendation-v514.js`, `scripts/apply_recommendation_v514.py`, `scripts/validate_recommendation_v514.py`.
 
-## Correcciones de composición certificadas
+La capa no añade cuestionario, `localStorage`, `sessionStorage`, backend, XHR/fetch ni PII adicional.
 
-1. Las fichas de servicio usan `data-page-type="Servicio profesional"`; applicator y validator v5.13 ahora respetan ese tipo canónico y las excepciones por catálogo.
-2. v5.12 valida sus cinco rutas por path + fragmento, permitiendo query params aditivos de capas posteriores sin perder identidad de ruta.
+## Evidencia funcional v5.14
 
-## Evidencia funcional v5.13
+Run `31570619885`:
 
-Run `31568876368`:
-
-- Browser E2E: 37 entradas, 35 aprobadas, 2 omitidas, 0 fallos, 0 retries;
-- axe: 7 superficies sin violaciones serias/críticas;
+- Browser E2E + axe: PASS sobre 37 entradas protegidas y 7 superficies axe;
 - Lighthouse: 6/6 dentro de presupuesto;
-- portada: performance 1.00, a11y 0.97, LCP 1319 ms, CLS 0, TBT 89 ms, 91,193 B;
-- solución IA: 1.00 / 1.00, LCP 903 ms, 23,254 B;
-- producto IA: 1.00 / 1.00, LCP 994 ms, 37,334 B;
-- sector tecnología: 1.00 / 1.00, LCP 997 ms, CLS 0, 24,286 B;
-- perspectiva IA: 0.98 / 1.00, LCP 904 ms, CLS 0.087, 25,908 B;
-- demo: 1.00 / 1.00, LCP 1033 ms, 21,932 B;
-- CI hasta `stable`: 177 s;
-- mejora frente a baseline v5.5 de 279 s: 36.6%;
+- portada: performance 0.99, a11y 0.97, LCP 1307 ms, CLS 0, TBT 106 ms, 95,461 B;
+- solución IA: 1.00 / 1.00, LCP 904 ms, 23,279 B;
+- producto IA: 1.00 / 1.00, LCP 907 ms, 37,657 B;
+- sector tecnología: 0.98 / 1.00, LCP 988 ms, CLS 0.087, 24,564 B;
+- perspectiva IA: 1.00 / 1.00, LCP 906 ms, CLS 0, 25,918 B;
+- demo: 1.00 / 1.00, LCP 903 ms, 22,048 B;
+- CI hasta `stable`: 264 s;
+- mejora frente a baseline v5.5 de 279 s: 5.4%;
 - cobertura reducida: no;
 - budgets relajados: no;
 - Release Governance: PASS;
 - Pages trigger builder→workflow_run→Pages: PASS;
-- Commercial Brief v5.13 validator: PASS.
+- validator v5.14: PASS.
 
 ## Contratos preservados
 
@@ -59,11 +55,12 @@ Run `31568876368`:
 - 6 superficies Lighthouse;
 - budgets v5.5;
 - workers Playwright CI = 1;
-- idempotencia y composición canónica v5.8→v5.13;
+- idempotencia y composición canónica v5.8→v5.14;
 - Actions fijadas a SHA y permisos controlados;
 - fuente jurídica única para alcance/entregables;
 - telemetría sin PII;
 - WhatsApp manual;
+- scoring opaco desactivado;
 - sin CRM/backend ni almacenamiento servidor del formulario;
 - sin firma, pagos, agenda o portal documental ficticios.
 
