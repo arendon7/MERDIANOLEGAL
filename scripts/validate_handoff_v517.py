@@ -59,6 +59,9 @@ def main() -> int:
         require(marker in home, f"portada: falta contrato {marker}")
     require(home.count('type="button" data-handoff-') == 3, "deben existir tres acciones manuales type=button")
 
+    status = '<p class="form-status full" role="status" aria-live="polite"></p>'
+    require(status + START in home, "panel v5.17 debe ocupar la posición canónica inmediatamente después de form-status")
+
     deep_pages = sorted((ROOT / "productos").glob("*.html")) + sorted((ROOT / "servicios").glob("*.html"))
     require(len(deep_pages) == 16, f"se esperaban 16 fichas profundas y hay {len(deep_pages)}")
     for path in deep_pages:
@@ -101,7 +104,16 @@ def main() -> int:
     require("La solicitud solo queda enviada cuando confirme el envío allí." in site, "se debe conservar aclaración de envío manual")
 
     applicator = (ROOT / "scripts/apply_handoff_v517.py").read_text(encoding="utf-8")
-    for marker in ("contact_pages()", "patch_home()", "patch_site_runtime()", "AUTO_CLIPBOARD", "DRAFT_EVENT", "targets != [HOME]"):
+    for marker in (
+        "contact_pages()",
+        "patch_home()",
+        "patch_site_runtime()",
+        "AUTO_CLIPBOARD",
+        "DRAFT_EVENT",
+        "targets != [HOME]",
+        "marked.sub(\"\", text)",
+        "text.replace(STATUS, STATUS + panel_markup(), 1)",
+    ):
         require(marker in applicator, f"applicator v5.17 no contiene {marker}")
 
     helpers = (ROOT / "tests/e2e/helpers.mjs").read_text(encoding="utf-8")
@@ -130,7 +142,16 @@ def main() -> int:
     ):
         require(marker in build, f"builder no gobierna {marker}")
 
-    print("HANDOFF V5.17 OK: 1 formulario canónico + 16 rutas profundas, borrador efímero, stale protection y cobertura E2E sin nueva entrada.")
+    pages = (ROOT / ".github/workflows/pages.yml").read_text(encoding="utf-8")
+    require("python3 scripts/apply_decision_action_v515.py\n          python3 scripts/apply_handoff_v517.py\n          git diff --exit-code" in pages,
+            "Pages debe terminar la composición idempotente en v5.17 antes del git diff")
+    require("- name: Validate manual handoff continuity v5.17\n        run: python3 scripts/validate_handoff_v517.py" in pages,
+            "Pages debe ejecutar validator v5.17 de forma explícita")
+    require("node --check handoff-continuity-v517.js" in pages, "Pages debe validar sintaxis del runtime v5.17")
+    require(pages.count("python3 scripts/validate_handoff_v517.py") >= 2,
+            "Pages debe validar v5.17 en quality y en release-health previo a stable")
+
+    print("HANDOFF V5.17 OK: 1 formulario canónico + 16 rutas profundas, composición idempotente, borrador efímero, stale protection y gate Pages completo.")
     return 0
 
 

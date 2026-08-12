@@ -59,6 +59,7 @@ jobs:
           python3 scripts/apply_commercial_brief_v513.py
           python3 scripts/apply_recommendation_v514.py
           python3 scripts/apply_decision_action_v515.py
+          python3 scripts/apply_handoff_v517.py
           git diff --exit-code -- index.html catalog-home-v32.js decision-flow.js site-v3.js page-context.js sitemap.xml robots.txt runtime-config.js site-status.json servicios productos firma.html perspectivas perspectivas.html sectores soluciones experiencia.html demo.html 404.html aviso-legal.html privacidad.html terminos.html manifest.webmanifest CNAME scripts/build_catalog_shells.py
       - name: Validate HTML and local resources
         run: python3 scripts/validate_site.py
@@ -110,6 +111,8 @@ jobs:
         run: python3 scripts/validate_recommendation_v514.py
       - name: Validate decision-to-action efficiency v5.15
         run: python3 scripts/validate_decision_action_v515.py
+      - name: Validate manual handoff continuity v5.17
+        run: python3 scripts/validate_handoff_v517.py
       - name: Validate guided decision flow
         run: python3 scripts/validate_decision_flow.py
       - name: Validate page context and structured data
@@ -140,6 +143,7 @@ jobs:
           node --check commercial-brief-v513.js
           node --check recommendation-v514.js
           node --check decision-action-v515.js
+          node --check handoff-continuity-v517.js
           node --check playwright.config.mjs
           node --check tests/e2e/helpers.mjs
           node --check tests/e2e/public-site.spec.mjs
@@ -352,6 +356,7 @@ jobs:
           python3 scripts/validate_commercial_brief_v513.py
           python3 scripts/validate_recommendation_v514.py
           python3 scripts/validate_decision_action_v515.py
+          python3 scripts/validate_handoff_v517.py
           cat ci-artifacts/v5.7/release-health.md >> "$GITHUB_STEP_SUMMARY"
       - name: Upload release governance health report
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
