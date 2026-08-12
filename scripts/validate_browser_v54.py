@@ -3,6 +3,8 @@
 from pathlib import Path
 import json
 import re
+import subprocess
+import sys
 
 R = Path(__file__).resolve().parents[1]
 V = json.loads((R / "version.json").read_text(encoding="utf-8"))
@@ -52,6 +54,30 @@ def main() -> int:
     require("pageerror" in helpers and "console.error" in helpers, "helpers debe capturar errores runtime")
     require("scrollWidth" in helpers and "clientWidth" in helpers, "helpers debe controlar overflow horizontal")
 
+    # v5.17 extiende la cobertura sin sumar una entrada E2E: el fixture observa el
+    # handoff que ya ocurre dentro del test de formulario y verifica integridad/stale.
+    for marker in (
+        "meridiano:handoff-draft-v517",
+        "__meridianoHandoffGuardV517",
+        "data-handoff-state', 'changed",
+        "data-handoff-reopen-v517",
+        "data-handoff-copy-v517",
+        "panelText).not.toContain",
+    ):
+        require(marker in helpers, f"helpers v5.17 no contiene {marker}")
+
+    handoff_runtime = (R / "handoff-continuity-v517.js").read_text(encoding="utf-8")
+    handoff_css = (R / "handoff-continuity-v517.css").read_text(encoding="utf-8")
+    handoff_apply = (R / "scripts/apply_handoff_v517.py").read_text(encoding="utf-8")
+    handoff_validate = (R / "scripts/validate_handoff_v517.py").read_text(encoding="utf-8")
+    for marker in ("manualSend: true", "automaticClipboard: false", "staleDraftProtection: true", "persistentStorage: false"):
+        require(marker in handoff_runtime, f"runtime v5.17 no contiene {marker}")
+    for forbidden in ("localStorage", "sessionStorage", "fetch(", "XMLHttpRequest", "sendBeacon"):
+        require(forbidden not in handoff_runtime, f"runtime v5.17 no debe contener {forbidden}")
+    require("min-height:44px" in handoff_css, "acciones v5.17 deben conservar target táctil >=44px")
+    require("patch_site_runtime()" in handoff_apply and "AUTO_CLIPBOARD" in handoff_apply, "applicator v5.17 debe gobernar el runtime histórico")
+    require("navigator.clipboard?.writeText(summary)" in handoff_validate, "validator v5.17 debe prohibir la copia automática histórica")
+
     authority_apply = (R / "scripts/apply_authority_v53.py").read_text(encoding="utf-8")
     for marker in ("finalize_browser_v54", "BROWSER-V54-DEMO", "measurement-v53\\.js", ".portal-header-actions .btn"):
         require(marker in authority_apply, f"aplicador final no contiene {marker}")
@@ -89,10 +115,27 @@ def main() -> int:
     require("playwright-report" in pages and "test-results" in pages, "deben conservarse artefactos de fallo")
 
     build = (R / ".github/workflows/build-canonical.yml").read_text(encoding="utf-8")
-    for marker in ("package.json", "playwright.config.mjs", "tests/e2e/**", "scripts/apply_authority_v53.py", "scripts/validate_browser_v54.py"):
+    for marker in (
+        "package.json",
+        "playwright.config.mjs",
+        "tests/e2e/**",
+        "scripts/apply_authority_v53.py",
+        "scripts/validate_browser_v54.py",
+        "handoff-continuity-v517.css",
+        "handoff-continuity-v517.js",
+        "scripts/apply_handoff_v517.py",
+        "scripts/validate_handoff_v517.py",
+        "Apply manual handoff continuity v5.17",
+    ):
         require(marker in build, f"build-canonical no vigila {marker}")
 
-    print("VALIDACIÓN BROWSER V5.4 OK: runtime ordenado, CTA demo móvil, Playwright multi-browser y gate previo a stable íntegros.")
+    # En PR se valida el contrato fuente. Una vez el builder materializa v5.17,
+    # este mismo gate de Pages detecta el bloque y ejecuta el validator completo.
+    if "HANDOFF-V517:START" in (R / "index.html").read_text(encoding="utf-8"):
+        completed = subprocess.run([sys.executable, str(R / "scripts/validate_handoff_v517.py")], cwd=R)
+        require(completed.returncode == 0, "validator materializado v5.17 falló")
+
+    print("VALIDACIÓN BROWSER V5.4/V5.17 OK: runtime, handoff manual, stale protection, Playwright multi-browser y gate previo a stable íntegros.")
     return 0
 
 
