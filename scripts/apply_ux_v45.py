@@ -2,10 +2,12 @@
 """Aplica la arquitectura UX/UI canónica v4.5 a la portada pública."""
 
 from pathlib import Path
+import json
 import re
 
 ROOT = Path(__file__).resolve().parents[1]
 INDEX = ROOT / "index.html"
+VERSION = ROOT / "version.json"
 CATALOG_HOME = ROOT / "catalog-home-v32.js"
 DECISION_FLOW = ROOT / "decision-flow.js"
 STYLE = '<link rel="stylesheet" href="ux-v45.css">'
@@ -46,8 +48,18 @@ def section(text: str, section_id: str) -> str:
     return match.group(0)
 
 
+def version_at_least(major: int, minor: int) -> bool:
+    payload = json.loads(VERSION.read_text(encoding="utf-8"))
+    parts = str(payload.get("version", "0.0.0")).split(".")
+    try:
+        return (int(parts[0]), int(parts[1])) >= (major, minor)
+    except (ValueError, IndexError):
+        return False
+
+
 def main() -> int:
     text = INDEX.read_text(encoding="utf-8")
+    include_legacy_choice = not version_at_least(5, 20)
 
     text = replace_tag_block(text, r'<nav id="main-nav" class="main-nav" aria-label="Navegación principal">[\s\S]*?</nav>', HEADER_NAV)
     text = replace_tag_block(text, r'<div class="header-actions">[\s\S]*?</div>', HEADER_ACTIONS)
@@ -78,23 +90,26 @@ def main() -> int:
     if main_end < 0:
         raise RuntimeError("No se encontró cierre de main")
 
-    blocks = {
-        key: section(text, key)
-        for key in (
-            "necesidades", "elegir", "servicios", "productos", "entregables", "experiencia",
-            "planes", "honorarios", "contratacion", "sectores", "perspectivas", "firma", "preguntas", "contacto"
-        )
-    }
+    block_keys = [
+        "necesidades", "servicios", "productos", "entregables", "experiencia",
+        "planes", "honorarios", "contratacion", "sectores", "perspectivas", "firma", "preguntas", "contacto",
+    ]
+    if include_legacy_choice:
+        block_keys.insert(1, "elegir")
+    blocks = {key: section(text, key) for key in block_keys}
+
     commercial = '\n'.join([
         '    <!-- COMMERCIAL-V43:START -->',
         blocks["planes"], '', blocks["honorarios"], '', blocks["contratacion"],
         '    <!-- COMMERCIAL-V43:END -->',
     ])
-    sequence = [
-        blocks["necesidades"], blocks["elegir"], blocks["servicios"], blocks["productos"],
-        blocks["entregables"], blocks["experiencia"], commercial, blocks["sectores"],
-        blocks["perspectivas"], blocks["firma"], blocks["preguntas"], blocks["contacto"],
-    ]
+    sequence = [blocks["necesidades"]]
+    if include_legacy_choice:
+        sequence.append(blocks["elegir"])
+    sequence.extend([
+        blocks["servicios"], blocks["productos"], blocks["entregables"], blocks["experiencia"],
+        commercial, blocks["sectores"], blocks["perspectivas"], blocks["firma"], blocks["preguntas"], blocks["contacto"],
+    ])
     text = text[:audience.end()] + '\n\n' + '\n\n'.join(sequence) + '\n' + text[main_end:]
 
     text = replace_tag_block(text, r'  <footer class="site-footer">[\s\S]*?</footer>', FOOTER)
