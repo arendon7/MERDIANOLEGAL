@@ -39,7 +39,7 @@ def modality_for(catalog_id: str, page_type: str) -> str:
         return SPECIAL_BY_CATALOG[catalog_id]
     if page_type == "Producto jurídico":
         return "product"
-    if page_type == "Servicio jurídico":
+    if page_type == "Servicio profesional":
         return "specialist"
     raise RuntimeError(f"No se pudo resolver modalidad para {catalog_id}/{page_type}")
 
