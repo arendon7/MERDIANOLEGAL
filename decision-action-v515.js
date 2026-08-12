@@ -21,6 +21,52 @@
     return RULES[fromForm] ? fromForm : (RULES[fromUrl] ? fromUrl : '');
   };
 
+  // MOBILE-UX-V516:START
+  // En móvil solo se repliega información secundaria ya presente. La calificación,
+  // el contexto y la ruta recomendada siguen visibles; sin JS, el HTML permanece
+  // íntegramente expandido como en v5.15.
+  const enhanceMobileDisclosureV516 = () => {
+    if (!form || !window.matchMedia('(max-width: 760px)').matches) return;
+
+    const makeDisclosure = (root, keepClass, key, title, copy) => {
+      if (!root || root.querySelector(':scope > details[data-mobile-disclosure-v516]')) return;
+      const keep = root.querySelector(`:scope > .${keepClass}`);
+      if (!keep) return;
+      const movable = [...root.children].filter((child) => child !== keep);
+      if (!movable.length) return;
+
+      const details = document.createElement('details');
+      details.className = 'commercial-disclosure-v516';
+      details.dataset.mobileDisclosureV516 = key;
+      const summary = document.createElement('summary');
+      const strong = document.createElement('strong');
+      const span = document.createElement('span');
+      strong.textContent = title;
+      span.textContent = copy;
+      summary.append(strong, span);
+      details.append(summary);
+      movable.forEach((child) => details.append(child));
+      root.append(details);
+    };
+
+    makeDisclosure(
+      form.querySelector('[data-close-path-v510="true"]'),
+      'close-head-v510',
+      'proposal-path',
+      'Ver ruta completa de solicitud a propuesta',
+      'Etapas, anatomía de propuesta, criterio de avance y límites del formulario.'
+    );
+    makeDisclosure(
+      form.querySelector('[data-engagement-v511="true"]'),
+      'engagement-head-v511',
+      'engagement-start',
+      'Ver condiciones de aceptación e inicio',
+      'Estados del encargo, verificaciones previas y actos que esta web no ejecuta.'
+    );
+  };
+  enhanceMobileDisclosureV516();
+  // MOBILE-UX-V516:END
+
   const homePanel = document.querySelector('[data-decision-action-live-v515]');
   const homeLabel = homePanel?.querySelector('[data-action-label-v515]');
   const homeFit = homePanel?.querySelector('[data-action-fit-v515]');
@@ -111,5 +157,6 @@
     automaticChange: false,
     scoring: false,
     privacy: Object.freeze({ networkTransport: false, persistentStorage: false, piiInTelemetry: false }),
+    mobileUxV516: Object.freeze({ progressiveDisclosure: true, maxWidthPx: 760, hiddenMaterialContent: false }),
   });
 })();
