@@ -5,17 +5,27 @@ from collections import Counter
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
+import json
 import sys
 
 ROOT=Path(__file__).resolve().parents[1]
+VERSION=ROOT/"version.json"
 HTML_FILES=sorted(ROOT.rglob("*.html"))
 CATALOG_PAGES={"servicios/diagnostico-juridico-empresarial.html":"service-diagnostic","servicios/direccion-juridica-externa.html":"service-direction","servicios/contratacion-estrategica.html":"service-contracts","servicios/sociedades-gobierno-inversion.html":"service-corporate","servicios/propiedad-intelectual.html":"service-ip","servicios/tecnologia-inteligencia-artificial.html":"service-ai","servicios/proyectos-regulados.html":"service-regulated","servicios/legal-operations.html":"service-ops","productos/diagnostico-juridico-empresarial.html":"product-diagnostic","productos/empresa-juridicamente-organizada.html":"product-organized","productos/activos-intangibles-protegidos.html":"product-assets","productos/empresa-lista-para-inversion.html":"product-investment","productos/programa-gobernanza-ia.html":"product-ai","productos/proyecto-regulado-estructurado.html":"product-regulated","productos/sistema-contractual-empresarial.html":"product-contract-system","productos/proteccion-datos-consumidor.html":"product-data-consumer"}
 PERSPECTIVE_PAGES={"perspectivas/gobierno-juridico-inteligencia-artificial.html","perspectivas/contratos-administrables.html","perspectivas/propiedad-intelectual-cadena-titularidad.html","perspectivas/socios-inversion-gobierno.html","perspectivas/proyectos-regulados-secuencia-viabilidad.html","perspectivas/legal-operations-modelo-operativo.html"}
 SECTOR_PAGES={"sectores/tecnologia-software-ia.html","sectores/servicios-publicos-aseo-economia-circular.html","sectores/agroindustria-fertilizantes-sostenibilidad.html","sectores/salud-negocios-regulados.html","sectores/comercio-distribucion.html","sectores/startups-inversion.html","sectores/proyectos-publicos-territoriales.html","sectores/operaciones-juridicas.html"}
 REQUIRED_FILES={"index.html","firma.html","perspectivas.html","demo.html","experiencia.html","404.html","styles.css","site-v3.css","clarity-v31.css","catalog-v32.css","enhancements.css","experiencia.css","firma.css","perspectivas.css","sectores.css","visual-v39.css","ux-v45.css","quality-v48.css","page-context.css","site-v3.js","catalog-v32.js","catalog-home-v32.js","demo.js","experiencia.js","visual-v39.js","manifest.webmanifest","version.json","robots.txt","sitemap.xml","assets/brand/favicon.svg","assets/brand/meridiano-monogram.svg","assets/brand/meridiano-logo-horizontal-dark.svg","assets/brand/meridiano-logo-horizontal-light.svg","assets/images/global/home-hero.webp","assets/route-meridiano-v3.svg",*CATALOG_PAGES.keys(),*PERSPECTIVE_PAGES,*SECTOR_PAGES}
-CANONICAL_INDEX_MARKERS={"Dirección jurídica para empresas que avanzan","assets/brand/meridiano-logo-horizontal-dark.svg","assets/brand/favicon.svg","assets/images/global/home-hero.webp","assets/route-meridiano-v3.svg","site-v3.css","clarity-v31.css","visual-v39.css","ux-v45.css","quality-v48.css","page-context.css","site-v3.js","CÓMO ELEGIR","PUNTO DE ENTRADA POR NECESIDAD","QUÉ RECIBE LA EMPRESA","PLANES RECURRENTES","CÓMO SE CONTRATA","Dirección jurídica externa","Tecnología e inteligencia artificial","Legal Operations","Servicios públicos, aseo y economía circular","Transformación de operaciones jurídicas","Meridiano Empresas","Auditoría Jurídica Empresarial Integral","Programa de Gobernanza Jurídica y Uso Responsable de IA"}
+CANONICAL_INDEX_MARKERS={"Dirección jurídica para empresas que avanzan","assets/brand/meridiano-logo-horizontal-dark.svg","assets/brand/favicon.svg","assets/images/global/home-hero.webp","assets/route-meridiano-v3.svg","site-v3.css","clarity-v31.css","visual-v39.css","ux-v45.css","quality-v48.css","page-context.css","site-v3.js","PUNTO DE ENTRADA POR NECESIDAD","QUÉ RECIBE LA EMPRESA","PLANES RECURRENTES","CÓMO SE CONTRATA","Dirección jurídica externa","Tecnología e inteligencia artificial","Legal Operations","Servicios públicos, aseo y economía circular","Transformación de operaciones jurídicas","Meridiano Empresas","Auditoría Jurídica Empresarial Integral","Programa de Gobernanza Jurídica y Uso Responsable de IA"}
 PERSPECTIVE_LIBRARY_MARKERS={"PERSPECTIVAS MERIDIANO","Usar inteligencia artificial no es solo contratar una herramienta","Un contrato debe poder administrarse después de la firma","El valor de un activo no prueba quién es su titular","El acuerdo entre socios debe funcionar también cuando hay desacuerdo","La viabilidad jurídica depende de una secuencia","La tecnología no corrige una operación jurídica indefinida"}
 IGNORED_SCHEMES={"http","https","mailto","tel","data","javascript"}
+
+
+def version_tuple():
+    try:
+        raw=str(json.loads(VERSION.read_text(encoding="utf-8")).get("version","0.0.0")).split(".")
+        return tuple(int(part) for part in raw[:3])
+    except (ValueError, TypeError, json.JSONDecodeError):
+        return (0,0,0)
 
 class SiteParser(HTMLParser):
     def __init__(self):
@@ -50,13 +60,21 @@ def local_target(source,reference):
 
 def validate():
     errors=[]
+    current_version=version_tuple()
+    compact_home_v520=current_version >= (5,20,0)
     missing=sorted(name for name in REQUIRED_FILES if not (ROOT/name).exists())
     if missing: errors.append(f"Faltan archivos requeridos: {', '.join(missing)}")
     index_path=ROOT/"index.html"
     if index_path.exists():
         index_text=index_path.read_text(encoding="utf-8")
-        missing_markers=sorted(marker for marker in CANONICAL_INDEX_MARKERS if marker not in index_text)
+        expected_markers=set(CANONICAL_INDEX_MARKERS)
+        if compact_home_v520:
+            expected_markers.update({'data-home-decision-v520="true"','DESPUÉS DE IDENTIFICAR LA NECESIDAD'})
+        else:
+            expected_markers.add("CÓMO ELEGIR")
+        missing_markers=sorted(marker for marker in expected_markers if marker not in index_text)
         if missing_markers: errors.append(f"index.html no corresponde a la portada canónica vigente; faltan: {', '.join(missing_markers)}")
+        if compact_home_v520 and ("CÓMO ELEGIR" in index_text or 'id="elegir"' in index_text): errors.append("index.html v5.20 conserva la sección histórica CÓMO ELEGIR")
         if 'assets/hero-meridiano-v3.svg' in index_text: errors.append("index.html conserva el hero legado en el primer render")
         if index_text.count('class="full-detail-link"') != 16: errors.append("index.html debe exponer 16 enlaces profundos de servicios y productos sin depender de JavaScript")
         if index_text.count('class="sector-deep-link"') != 8: errors.append("index.html debe enlazar los 8 sectores desde HTML estático")
