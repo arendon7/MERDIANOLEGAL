@@ -41,11 +41,13 @@ def main() -> int:
     require(targets == [HOME], f"debe existir un único formulario canónico en index.html; detectados {len(targets)}")
 
     home = HOME.read_text(encoding="utf-8")
-    require(home.count(START) == 1 and home.count(END) == 1, "bloque v5.17 de portada no es único")
+    require(home.count(START) == 1 and home.count(END) == 1, "bloque v5.17 de portada no es único o sus marcadores están desbalanceados")
+    require(home.count('data-handoff-v517="true"') == 1, "debe existir exactamente una sección semántica data-handoff-v517")
+    require(home.count('id="handoff-v517-title"') == 1, "handoff-v517-title debe ser un ID único")
+    require(home.count('aria-labelledby="handoff-v517-title"') == 1, "solo el panel canónico debe referenciar handoff-v517-title")
     require('href="handoff-continuity-v517.css"' in home, "portada no carga CSS v5.17")
     require('src="handoff-continuity-v517.js"' in home, "portada no carga runtime v5.17")
     for marker in (
-        'data-handoff-v517="true"',
         'data-handoff-state="idle"',
         'data-handoff-reference-v517',
         'data-handoff-reopen-v517',
@@ -108,11 +110,15 @@ def main() -> int:
         "contact_pages()",
         "patch_home()",
         "patch_site_runtime()",
+        "strip_handoff_panels(text)",
+        "PANEL_SECTION.sub(\"\", text)",
+        "text.replace(START, \"\").replace(END, \"\")",
         "AUTO_CLIPBOARD",
         "DRAFT_EVENT",
         "targets != [HOME]",
-        "marked.sub(\"\", text)",
         "text.replace(STATUS, STATUS + panel_markup(), 1)",
+        "text.count('data-handoff-v517=\"true\"') != 1",
+        "text.count('id=\"handoff-v517-title\"') != 1",
     ):
         require(marker in applicator, f"applicator v5.17 no contiene {marker}")
 
@@ -151,7 +157,7 @@ def main() -> int:
     require(pages.count("python3 scripts/validate_handoff_v517.py") >= 2,
             "Pages debe validar v5.17 en quality y en release-health previo a stable")
 
-    print("HANDOFF V5.17 OK: 1 formulario canónico + 16 rutas profundas, composición idempotente, borrador efímero, stale protection y gate Pages completo.")
+    print("HANDOFF V5.17 OK: 1 panel/ID canónico + 16 rutas profundas, composición idempotente, borrador efímero, stale protection y gate Pages completo.")
     return 0
 
 
