@@ -40,6 +40,12 @@ def main() -> int:
     version = json.loads((ROOT / "version.json").read_text(encoding="utf-8")).get("version", "")
     require(semver(version) >= (5, 17, 0), "release base debe ser >=5.17.0")
 
+    config = json.loads((ROOT / "site-config.json").read_text(encoding="utf-8"))
+    analytics = config.get("analytics") or {}
+    require(analytics.get("enabled") is False, "site-config debe mantener analytics.enabled=false")
+    require(analytics.get("provider") == "none", "site-config debe mantener analytics.provider=none")
+    require(not analytics.get("site_id"), "site-config no debe declarar site_id analítico sin proveedor real")
+
     contract = json.loads((ROOT / "handoff-observability-v518.json").read_text(encoding="utf-8"))
     require(contract.get("version") == "5.18.0", "contrato debe declarar 5.18.0")
     require(contract.get("scope") == "manual_handoff_observability", "scope canónico incorrecto")
@@ -125,6 +131,8 @@ def main() -> int:
         "handoff_draft_stale",
         "__meridianoClipboard",
         "telemetryBeforeChange",
+        "networkEnabled",
+        "provider: 'none'",
     ):
         require(marker in helpers, f"fixture E2E no cubre {marker}")
     for forbidden_event in FORBIDDEN_EVENTS:
@@ -151,7 +159,7 @@ def main() -> int:
     require("Validate handoff observability v5.18" in governance,
             "Governance debe ejecutar validator v5.18")
 
-    print("HANDOFF OBSERVABILITY V5.18 OK: 6 hechos observables, cero PII/storage/red nueva y cero inferencias de envío/conversión.")
+    print("HANDOFF OBSERVABILITY V5.18 OK: 6 hechos observables, analítica externa apagada, cero PII/storage/red nueva y cero inferencias de envío/conversión.")
     return 0
 
 
