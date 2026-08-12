@@ -91,10 +91,31 @@ def main() -> int:
         require((R / path).exists(), f"superficie Lighthouse inexistente: {path}")
 
     runner = (R / "scripts/run_quality_v55.mjs").read_text(encoding="utf-8")
-    for marker in ("largest-contentful-paint", "cumulative-layout-shift", "total-blocking-time", "total-byte-weight", "quality-artifacts"):
+    for marker in (
+        "largest-contentful-paint",
+        "cumulative-layout-shift",
+        "total-blocking-time",
+        "total-byte-weight",
+        "quality-artifacts",
+        "function compactDetail",
+        "function accessibilityDiagnostics",
+        "lhr.categories?.accessibility?.auditRefs",
+        "audit.score < 1",
+        "accessibilityAuditGaps",
+        "Diagnóstico de accesibilidad Lighthouse",
+        "Auditorías con score < 1",
+    ):
         require(marker in runner, f"runner Lighthouse no contiene {marker}")
     require("--only-categories=performance,accessibility" in runner, "Lighthouse debe limitarse a performance/accessibility")
     require("timeout: 120_000" in runner, "cada auditoría Lighthouse debe tener timeout")
+    require(".slice(0, 8)" in runner, "diagnóstico v5.16 debe acotar items de auditoría")
+    require("accessibilityAuditGaps," in runner, "summary.json debe persistir gaps de accesibilidad")
+    require("budgetsRelaxed: false" in runner, "runner debe conservar budgetsRelaxed=false")
+
+    ci_policy = json.loads((R / "ci-baseline-v56.json").read_text(encoding="utf-8")).get("policy", {})
+    require("accessibilityScore" in ci_policy.get("lighthouseNonRetryableMetrics", []), "accessibilityScore debe seguir siendo no reintentable")
+    require(ci_policy.get("lighthouseVerificationRunsOnFailure") == 2, "política de verificación Lighthouse no debe cambiar")
+    require(ci_policy.get("lighthouseMaxSamplesPerSurface") == 3, "máximo de muestras Lighthouse no debe cambiar")
 
     pages = (R / ".github/workflows/pages.yml").read_text(encoding="utf-8")
     for marker in (
@@ -124,7 +145,7 @@ def main() -> int:
     ):
         require(marker in build, f"build-canonical no contiene {marker}")
 
-    print("VALIDACIÓN QUALITY V5.5 OK: axe, Lighthouse, budgets, Node 22+, lockfile y gate previo a stable íntegros.")
+    print("VALIDACIÓN QUALITY V5.5/V5.16 OK: axe, Lighthouse, budgets, diagnóstico score<1, Node 22+, lockfile y gate previo a stable íntegros.")
     return 0
 
 
