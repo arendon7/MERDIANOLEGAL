@@ -17,6 +17,11 @@ PANEL_SECTION = re.compile(
     r'<section\b[^>]*data-handoff-v517="true"[^>]*>.*?</section>',
     re.S,
 )
+CONTACT_DIRECT = re.compile(
+    r'<div class="contact-v49-direct">.*?</div>',
+    re.S,
+)
+CANONICAL_CONTACT_CLOSE = "</form></div></div></section>"
 
 
 def public_html() -> list[Path]:
@@ -81,17 +86,42 @@ def strip_handoff_panels(text: str) -> str:
     return text
 
 
+def repair_contact_form_closure(text: str) -> str:
+    """Restaura el cierre histórico del único formulario si un output roto lo perdió."""
+    form_start = text.find('<form class="contact-form"')
+    if form_start < 0:
+        raise RuntimeError("index.html: falta contact-form")
+    main_end = text.find("</main>", form_start)
+    if main_end < 0:
+        raise RuntimeError("index.html: falta </main> después de contact-form")
+    form_end = text.find("</form>", form_start, main_end)
+    if form_end >= 0:
+        return text
+
+    direct = CONTACT_DIRECT.search(text, form_start, main_end)
+    if not direct:
+        raise RuntimeError("index.html: falta contact-v49-direct para restaurar cierre del formulario")
+    return text[:direct.end()] + CANONICAL_CONTACT_CLOSE + text[direct.end():]
+
+
 def patch_home() -> None:
     text = HOME.read_text(encoding="utf-8")
 
-    # Las capas previas pueden desplazar el bloque o dejar marcadores huérfanos.
-    # La identidad semántica data-handoff-v517 es la autoridad para limpiar todas
-    # las copias antes de insertar una única instancia canónica tras form-status.
+    # Las capas previas pueden desplazar el bloque, dejar marcadores huérfanos o
+    # perder el cierre del formulario en un output roto. Limpiamos por identidad
+    # semántica, restauramos solo si falta el cierre y luego insertamos una única
+    # instancia canónica de v5.17 inmediatamente después de form-status.
     text = strip_handoff_panels(text)
+    text = repair_contact_form_closure(text)
     if STATUS not in text:
         raise RuntimeError("index.html: falta status del formulario")
     text = text.replace(STATUS, STATUS + panel_markup(), 1)
 
+    form_start = text.find('<form class="contact-form"')
+    form_end = text.find("</form>", form_start)
+    main_end = text.find("</main>", form_start)
+    if not (0 <= form_start < form_end < main_end):
+        raise RuntimeError("index.html: el formulario canónico no cierra antes de </main>")
     if text.count('data-handoff-v517="true"') != 1:
         raise RuntimeError("index.html: v5.17 no dejó exactamente un panel canónico")
     if text.count('id="handoff-v517-title"') != 1:
@@ -125,7 +155,7 @@ def main() -> int:
         raise RuntimeError(f"v5.17 espera un único formulario canónico en index.html; detectados: {names}")
     patch_home()
     patch_site_runtime()
-    print("HANDOFF V5.17 OK: residuos eliminados y una única instancia canónica recompuesta; 16 fichas conservan sus rutas a index.html#contacto.")
+    print("HANDOFF V5.17 OK: cierre de formulario, residuos y panel único normalizados; 16 fichas conservan sus rutas a index.html#contacto.")
     return 0
 
 
