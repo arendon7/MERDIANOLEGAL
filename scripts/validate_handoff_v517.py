@@ -161,8 +161,19 @@ def main() -> int:
         require(marker in build, f"builder no gobierna {marker}")
 
     pages = (ROOT / ".github/workflows/pages.yml").read_text(encoding="utf-8")
-    require("python3 scripts/apply_decision_action_v515.py\n          python3 scripts/apply_handoff_v517.py\n          git diff --exit-code" in pages,
-            "Pages debe terminar la composición idempotente en v5.17 antes del git diff")
+    v515_apply = "python3 scripts/apply_decision_action_v515.py"
+    v517_apply = "python3 scripts/apply_handoff_v517.py"
+    diff_gate = "git diff --exit-code"
+    require(f"{v515_apply}\n          {v517_apply}" in pages,
+            "Pages debe preservar la composición v5.15→v5.17")
+    v517_pos = pages.find(v517_apply)
+    diff_pos = pages.find(diff_gate, v517_pos)
+    require(0 <= v517_pos < diff_pos, "Pages debe ejecutar v5.17 antes del gate de idempotencia")
+    v518_apply = "python3 scripts/apply_handoff_observability_v518.py"
+    if v518_apply in pages:
+        v518_pos = pages.find(v518_apply, v517_pos)
+        require(v517_pos < v518_pos < diff_pos,
+                "una capa posterior v5.18 debe respetar el orden v5.17→v5.18→git diff")
     require("- name: Validate manual handoff continuity v5.17\n        run: python3 scripts/validate_handoff_v517.py" in pages,
             "Pages debe ejecutar validator v5.17 de forma explícita")
     require("node --check handoff-continuity-v517.js" in pages, "Pages debe validar sintaxis del runtime v5.17")
@@ -177,7 +188,7 @@ def main() -> int:
     require(governance.count("python3 scripts/apply_handoff_v517.py") >= 2,
             "Governance debe normalizar v5.17 al inicio y reaplicarlo antes de su validator final")
 
-    print("HANDOFF V5.17 OK: cierre/formulario, panel/ID único, 16 rutas profundas, idempotencia, preflight Governance y stale protection.")
+    print("HANDOFF V5.17 OK: cierre/formulario, panel/ID único, 16 rutas profundas, orden extensible, preflight Governance y stale protection.")
     return 0
 
 
