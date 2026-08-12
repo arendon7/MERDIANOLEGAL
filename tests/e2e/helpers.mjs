@@ -89,6 +89,11 @@ export const test = base.extend({
           conversionKnown: false,
         }),
       }));
+      const telemetryContract = await page.evaluate(() => ({
+        networkEnabled: window.MeridianoTelemetry?.networkEnabled,
+        provider: window.MeridianoTelemetry?.provider,
+      }));
+      expect(telemetryContract).toEqual({ networkEnabled: false, provider: 'none' });
 
       await expect.poll(async () => (await telemetrySnapshot(page)).some((event) =>
         event.name === 'handoff_prepared' && event.detail?.stage === 'handoff' && event.detail?.target === 'whatsapp-draft'
