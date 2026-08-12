@@ -17,7 +17,7 @@ El ciclo de observabilidad verificable del handoff manual terminó sin abrir v5.
 - Merge documental: `b816d52979a5382c658c4589d91db853b799c932`.
 - Commit generado por builder para sincronizar la versión pública: `8dc462d072d4a419fc2329e60051b1cfb1044794`.
 - Run final de certificación: `31644281459`.
-- Estado final observado antes de este apunte: `main == stable == 8dc462d072d4a419fc2329e60051b1cfb1044794`.
+- Snapshot público certificado: `stable = 8dc462d072d4a419fc2329e60051b1cfb1044794`.
 - Idempotencia + validators históricos + v5.17 + v5.18: PASS.
 - Pages + smoke: PASS.
 - Browser E2E + axe: PASS.
@@ -26,11 +26,13 @@ El ciclo de observabilidad verificable del handoff manual terminó sin abrir v5.
 - Budgets relajados: no.
 - Cobertura reducida: no.
 
+Los commits documentales posteriores al SHA público certificado pueden avanzar `main` sin alterar el runtime o el contenido desplegado certificado en `stable`.
+
 ## Procedencia Graphify
 
-`knowledge/graphify-live/graphify-out/BUILD_META.json` conserva correctamente `source_commit = b816d52979a5382c658c4589d91db853b799c932`, versión `5.18.0`.
+La rama `knowledge/graphify-live` se regenera automáticamente después de cambios en `main`. Su `graphify-out/BUILD_META.json` debe conservar como `source_commit` el commit exacto desde el cual fue construido el snapshot vigente.
 
-El delta `b816d529… → 8dc462d…` corresponde exclusivamente a sincronización canónica generada por el builder, principalmente versionado visible `v5.17.0 → v5.18.0`. Por tanto, no se altera artificialmente `source_commit`: la equivalencia queda documentada aquí.
+No fijar aquí un SHA de Graphify que se vuelva obsoleto al regenerar la memoria. La regla de cierre es: comprobar que `source_commit` coincide con el `main` procesado por el último run exitoso de Graphify y que la versión reportada sigue siendo `5.18.0`.
 
 ## Contrato que permanece vigente
 

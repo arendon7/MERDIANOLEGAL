@@ -6,16 +6,16 @@
 
 - Repositorio: `arendon7/MERDIANOLEGAL`.
 - Rama técnica/productiva: `main`.
-- Snapshot certificado: `stable`.
+- Snapshot público certificado: `stable`.
 - Release vigente: `5.18.0`.
 - Merge fuente funcional: `3dd01285bcb28a568e2d5a65e2fa88ad284142cb`.
 - SHA funcional certificado: `a082b4d9139ae929367cac0085597365e75dbaaf`.
 - Merge de cierre documental: `b816d52979a5382c658c4589d91db853b799c932`.
 - SHA público final generado por builder: `8dc462d072d4a419fc2329e60051b1cfb1044794`.
-- Run final observado: `31644281459`.
-- Estado de refs observado al cierre: `main == stable == 8dc462d072d4a419fc2329e60051b1cfb1044794`.
+- Run final de certificación pública: `31644281459`.
+- Snapshot certificado: `stable = 8dc462d072d4a419fc2329e60051b1cfb1044794`.
 
-Refs, Pages, validators y tests son la autoridad para el estado productivo.
+Refs, Pages, validators y tests son la autoridad para el estado productivo. `main` puede avanzar posteriormente con documentación/memoria sin que ello implique una nueva release funcional ni una modificación del snapshot público certificado.
 
 ## Estado funcional
 
@@ -33,7 +33,7 @@ v5.17 sigue siendo la capa que gestiona el borrador manual/efímero, reabrir, co
 
 ## Evidencia final
 
-Run `31644281459`, SHA `8dc462d072d4a419fc2329e60051b1cfb1044794`:
+Run `31644281459`, SHA público certificado `8dc462d072d4a419fc2329e60051b1cfb1044794`:
 
 - builder/idempotencia + validators históricos + v5.17 + v5.18: PASS;
 - GitHub Pages + smoke: PASS;
@@ -68,13 +68,13 @@ Artefactos finales del run `31644281459`:
 - analítica externa apagada (`provider:none`);
 - WhatsApp manual;
 - sin CRM/backend, almacenamiento servidor, firma, pagos, agenda o portal documental ficticios;
-- `stable` solo después de gates verdes.
+- `stable` solo después de gates verdes para cambios funcionales/publicables.
 
 ## Graphify / procedencia
 
-`knowledge/graphify-live/graphify-out/BUILD_META.json` fue generado sobre `b816d52979a5382c658c4589d91db853b799c932`, versión `5.18.0`.
+La rama `knowledge/graphify-live` es memoria derivada y se regenera automáticamente desde `main`. La procedencia correcta se verifica leyendo `graphify-out/BUILD_META.json`: su `source_commit` debe coincidir con el commit procesado por el último run exitoso de Graphify y su versión debe permanecer en `5.18.0` mientras no exista una release posterior.
 
-El commit posterior `8dc462d072d4a419fc2329e60051b1cfb1044794` es salida canónica del builder para sincronizar el versionado visible. Esa diferencia no representa una divergencia funcional de la fuente analizada; por ello `source_commit` se conserva en `b816d529…` y la equivalencia queda documentada, en vez de reescribir artificialmente la procedencia.
+No fijar en esta nota un `source_commit` de Graphify que quede obsoleto por la propia regeneración del grafo.
 
 ## Estado del ciclo
 
