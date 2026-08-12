@@ -69,7 +69,7 @@ def main() -> int:
     form_end = home.find("</form>", form_start)
     main_end = home.find("</main>", form_start)
     require(0 <= form_start < form_end < main_end, "contact-form debe cerrar antes de </main>")
-    require(re.search(r'<div class="contact-v49-direct">.*?</div></form></div></div></section>', home, re.S) is not None,
+    require(re.search(r'<div class="contact-v49-direct">.*?</div>\s*</form>\s*</div>\s*</div>\s*</section>', home, re.S) is not None,
             "contact-v49-direct debe conservar el cierre canónico </form></div></div></section>")
 
     deep_pages = sorted((ROOT / "productos").glob("*.html")) + sorted((ROOT / "servicios").glob("*.html"))
