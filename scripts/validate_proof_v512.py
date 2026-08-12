@@ -2,8 +2,9 @@
 """Valida v5.12: selector de modalidad y prueba verificable con paridad de fuente."""
 from __future__ import annotations
 
-from html import escape
+from html import escape, unescape
 from pathlib import Path
+from urllib.parse import urlsplit
 import json
 import re
 
@@ -45,6 +46,14 @@ def source_pairs(values, limit: int = 3) -> list[tuple[str, str]]:
     return out
 
 
+def route_keys(block: str) -> set[tuple[str, str]]:
+    keys: set[tuple[str, str]] = set()
+    for raw_href in re.findall(r'href="([^"]+)"', block):
+        parts = urlsplit(unescape(raw_href))
+        keys.add((parts.path, parts.fragment))
+    return keys
+
+
 def validate_home() -> None:
     text = HOME.read_text(encoding="utf-8")
     require(text.count(HOME_START) == 1 and text.count(HOME_END) == 1, "portada debe tener un bloque gestionado")
@@ -54,14 +63,17 @@ def validate_home() -> None:
     require(block.count('data-proof-model-v512=') == 5, "deben existir cinco modalidades")
     for model in ("diagnostic", "audit", "product", "specialist", "recurring"):
         require(f'data-proof-model-v512="{model}"' in block, f"falta modalidad {model}")
-    for href in (
-        'href="servicios/diagnostico-juridico-empresarial.html"',
-        'href="productos/diagnostico-juridico-empresarial.html"',
-        'href="#productos"',
-        'href="#servicios"',
-        'href="servicios/direccion-juridica-externa.html"',
+
+    routes = route_keys(block)
+    for route in (
+        ("servicios/diagnostico-juridico-empresarial.html", ""),
+        ("productos/diagnostico-juridico-empresarial.html", ""),
+        ("", "productos"),
+        ("", "servicios"),
+        ("servicios/direccion-juridica-externa.html", ""),
     ):
-        require(href in block, f"falta ruta {href}")
+        require(route in routes, f"falta ruta canónica {route[0] or '#'+route[1]}")
+
     require('data-proof-standard-v512="true"' in block, "falta estándar de prueba")
     require(block.count('<div class="proof-standard-grid-v512"><span>') == 1, "falta grid del estándar")
     require(block.count('</span><span>') == 3, "estándar debe contener cuatro verificaciones")
@@ -108,7 +120,7 @@ def main() -> int:
     validate_home()
     for path in DETAIL_TARGETS:
         validate_detail(path, catalog)
-    print("PROOF V5.12 OK: 5 modalidades + 16 pruebas derivadas con método, entregables, formatos y aceptación.")
+    print("PROOF V5.12 OK: 5 modalidades + 16 pruebas derivadas con método, entregables, formatos y aceptación; parámetros aditivos posteriores permitidos sin perder rutas canónicas.")
     return 0
 
 
