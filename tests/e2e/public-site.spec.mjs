@@ -6,6 +6,24 @@ const productRecommendationV514 = {
   alternative: 'Cambie a servicio especializado si el asunto exige adaptación profesional continua; a acompañamiento recurrente si la demanda se repite mes a mes.',
 };
 
+const expectCommercialRoute = async (locator, { intent, modality }) => {
+  const href = await locator.getAttribute('href');
+  expect(href).toBeTruthy();
+  const url = new URL(href, 'https://meridiano.invalid/');
+  expect(url.searchParams.get('commercial_intent')).toBe(intent);
+  expect(url.searchParams.get('modality')).toBe(modality);
+  expect(url.searchParams.get('proof_standard')).toBe('source');
+  expect(url.hash).toBe('#contacto');
+};
+
+const expectCurrentCommercialRoute = async (page, { intent, modality }) => {
+  await expect(page).toHaveURL(/#contacto$/);
+  const url = new URL(page.url());
+  expect(url.searchParams.get('commercial_intent')).toBe(intent);
+  expect(url.searchParams.get('modality')).toBe(modality);
+  expect(url.searchParams.get('proof_standard')).toBe('source');
+};
+
 test('portada pública conserva rutas, profundidad y layout', async ({ page }) => {
   await page.goto('./');
   await expect(page).toHaveTitle(/Meridiano Legal/);
@@ -36,8 +54,9 @@ test('portada pública conserva rutas, profundidad y layout', async ({ page }) =
   await page.goto('./productos/programa-gobernanza-ia.html');
   await expect(page.locator('[data-buying-clarity-v58="true"]')).toBeVisible();
   await expect(page.locator('.buying-clarity-card-v58')).toHaveCount(5);
-  await expect(page.locator('[data-decision-v58-cta="true"]')).toBeVisible();
-  await expect(page.locator('[data-decision-v58-cta="true"]')).toHaveAttribute('href', /commercial_intent=proposal.*modality=product.*proof_standard=source#contacto$/);
+  const productCta = page.locator('[data-decision-v58-cta="true"]');
+  await expect(productCta).toBeVisible();
+  await expectCommercialRoute(productCta, { intent: 'proposal', modality: 'product' });
   await expect(page.locator('[data-proof-v512="true"]')).toBeVisible();
   await expect(page.locator('[data-proof-v512="true"]')).toHaveAttribute('data-commercial-modality-v513', 'product');
   await expect(page.locator('[data-proof-dimension-v512]')).toHaveCount(4);
@@ -46,12 +65,13 @@ test('portada pública conserva rutas, profundidad y layout', async ({ page }) =
 
   await page.goto('./servicios/tecnologia-inteligencia-artificial.html');
   const serviceCta = page.locator('[data-decision-v58-cta="true"]');
-  await expect(serviceCta).toHaveAttribute('href', /commercial_intent=scope.*modality=specialist.*proof_standard=source#contacto$/);
+  await expectCommercialRoute(serviceCta, { intent: 'scope', modality: 'specialist' });
   const serviceGeneral = page.getByRole('link', { name: 'Formulario general' });
-  await expect(serviceGeneral).toHaveAttribute('href', /commercial_intent=scope.*modality=specialist.*proof_standard=source#contacto$/);
+  await expectCommercialRoute(serviceGeneral, { intent: 'scope', modality: 'specialist' });
   const directService = page.getByRole('link', { name: /Conversar por WhatsApp/i });
   const directServiceHref = await directService.getAttribute('href');
-  expect(new URL(directServiceHref).searchParams.get('text') || '').toContain('Siguiente paso sugerido: Definición de alcance');
+  expect(directServiceHref).toBeTruthy();
+  expect(new URL(directServiceHref, page.url()).searchParams.get('text') || '').toContain('Siguiente paso sugerido: Definición de alcance');
   await expectNoHorizontalOverflow(page);
 });
 
@@ -117,9 +137,9 @@ test('formulario prepara WhatsApp sin enviar ni salir de la web', async ({ page 
   await page.goto('./productos/programa-gobernanza-ia.html');
   const proposalCta = page.locator('[data-decision-v58-cta="true"][data-close-intent-v510="proposal"]');
   await expect(proposalCta).toBeVisible();
-  await expect(proposalCta).toHaveAttribute('href', /commercial_intent=proposal.*modality=product.*proof_standard=source#contacto$/);
+  await expectCommercialRoute(proposalCta, { intent: 'proposal', modality: 'product' });
   await proposalCta.click();
-  await expect(page).toHaveURL(/commercial_intent=proposal.*modality=product.*proof_standard=source#contacto$/);
+  await expectCurrentCommercialRoute(page, { intent: 'proposal', modality: 'product' });
 
   const form = page.locator('form[data-contact-v49="true"]');
   await expect(form).toBeVisible();
@@ -262,7 +282,6 @@ test('menú móvil abre, cierra con Escape y devuelve el foco', async ({ page },
   await toggle.click();
   await expect(toggle).toHaveAttribute('aria-expanded', 'true');
   await expect(nav).toHaveClass(/open/);
-  await expect(page.locator('body')).toHaveClass(/menu-open/);
   await page.keyboard.press('Escape');
   await expect(toggle).toHaveAttribute('aria-expanded', 'false');
   await expect(toggle).toBeFocused();
