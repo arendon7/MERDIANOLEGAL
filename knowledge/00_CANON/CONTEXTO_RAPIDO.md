@@ -21,9 +21,10 @@ Sitio público y centro demostrativo de Meridiano Legal. Combina servicios jurí
 - v5.11 solicitud, propuesta, aceptación e inicio real;
 - v5.12 5 modalidades + prueba verificable;
 - v5.13 continuidad de modalidad/prueba hasta formulario y WhatsApp;
-- v5.14 recomendación explicable: encaje, límite y alternativa, con `scoring:false`.
+- v5.14 recomendación explicable: encaje, límite y alternativa, con `scoring:false`;
+- v5.15 consolidación recomendación→acción y ruta comercial controlada por el usuario.
 
-Principio comercial: el usuario puede empezar por su situación empresarial; el contexto debe sobrevivir hasta la conversación comercial y cualquier recomendación debe poder explicarse sin puntajes opacos.
+Principio comercial: el usuario puede empezar por su situación empresarial; el contexto debe sobrevivir hasta la conversación comercial y cualquier recomendación debe poder explicarse sin puntajes opacos ni cambios automáticos de etapa.
 
 ## Fuentes principales
 
@@ -33,34 +34,39 @@ Principio comercial: el usuario puede empezar por su situación empresarial; el 
 - `proof-v512.css` + applicator/validator v5.12 — modalidad y prueba derivada de fuente;
 - `commercial-brief-v513.*` + applicator/validator v5.13 — continuidad comercial;
 - `recommendation-v514.json`, `.css`, `.js` + applicator/validator v5.14 — recomendación explicable sin scoring;
+- `decision-action-v515.css`, `.js` + applicator/validator v5.15 — consolidación y rutas comerciales;
 - `scripts/validate_pages_trigger_v511.py` — topología builder→Pages;
 - `release-governance-v57.json`;
 - `tests/e2e/`.
 
 ## Secuencia de release
 
-fuentes → builder canónico → v5.8 → v5.9 → v5.10 → v5.11 → v5.12 → v5.13 → v5.14 → idempotencia/validadores → Pages → smoke → Browser/axe + Lighthouse → release-health → `stable`.
+fuentes → builder canónico → v5.8 → v5.9 → v5.10 → v5.11 → v5.12 → v5.13 → v5.14 → v5.15 → idempotencia/validadores → Pages → smoke → Browser/axe + Lighthouse → release-health → `stable`.
 
 ## Estado actual resumido
 
-- Versión productiva: v5.14.0.
-- SHA final: `9435f65ca129099a8a59f12ec5fd2f9e3aa58762`.
-- `main == stable` en ese SHA.
-- Run final: `31571937528`.
+- Release declarada: v5.15.0.
+- SHA funcional previo al cierre documental: `48a0692e8e4f999a85cfd8619fe2e293528945c2`.
+- Run funcional: `31609518536`.
+- Antes del cierre documental: `main == stable == 48a0692e8e4f999a85cfd8619fe2e293528945c2`.
 - Browser E2E + axe: 37 observados → 35 PASS / 2 SKIP / 0 FAIL / 0 RETRY; 7 superficies axe limpias.
-- Lighthouse: 6/6 dentro de budget; portada 1.00 performance / 0.97 a11y / LCP 1232 ms.
-- CI: 202 s hasta `stable`, 27.6% mejor que baseline v5.5 de 279 s.
+- Lighthouse: 6/6 dentro de budget; portada 1.00 performance / 0.97 a11y / LCP 1322 ms / CLS 0 / TBT 3 ms.
+- CI: 209 s hasta `stable`, 25.1% mejor que baseline v5.5 de 279 s.
 - cobertura reducida: no; budgets relajados: no.
-- Release Governance, trigger builder→Pages y validator v5.14: PASS.
-- Graphify: fuente `547b97e2…`, 513 nodos / 818 relaciones / 85 notas; el SHA final está un commit generado por delante con solo 28 outputs versionados, equivalencia estructural documentada.
-- v5.14 no añade cuestionario, storage, backend, fetch/XHR propio ni PII.
+- Release Governance, trigger builder→Pages y validator v5.15: PASS.
+- Graphify funcional: `source_commit = 48a0692e…`, 544 nodos / 877 relaciones / 88 notas.
+- v5.15 no añade cuestionario, scoring, storage, backend, fetch/XHR propio ni PII.
 - No hay aceptación contractual, pagos, agenda, expediente, carga documental ni inicio automático desde la web pública.
 
-## Tarea activa
+## Cierre en curso
 
-**v5.15 — Eficiencia recomendación→acción.**
+Este branch documental declara 5.15.0. El SHA final de release debe volver a atravesar builder, sincronización visible de versión, Pages, Browser/axe, Lighthouse y `stable` antes de sustituir el SHA funcional anterior como cierre definitivo.
 
-Reducir solapamiento entre selección, explicación y CTA; mejorar jerarquía y escaneabilidad; conservar el contexto hacia propuesta/WhatsApp; no añadir cuestionario, scoring, storage o backend.
+## Próximo ciclo
+
+**v5.16 — UX móvil y accesibilidad del recorrido comercial.**
+
+Reducir scroll y fricción en pantallas pequeñas, revisar el 0.97 restante de Lighthouse Accessibility de la portada y mejorar foco/escaneabilidad sin recortar contenido jurídico ni controles de decisión.
 
 ## Regla de continuidad
 

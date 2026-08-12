@@ -7,46 +7,56 @@
 - Repositorio: `arendon7/MERDIANOLEGAL`.
 - Rama técnica/productiva: `main`.
 - Snapshot certificado: `stable`.
-- Versión vigente: `5.14.0`.
-- SHA final certificado: `9435f65ca129099a8a59f12ec5fd2f9e3aa58762`.
-- Run público final: `31571937528`.
-- Estado de refs al cierre: `main == stable == 9435f65ca129099a8a59f12ec5fd2f9e3aa58762`.
+- Release declarada en este cierre: `5.15.0`.
+- SHA funcional certificado antes del cierre documental: `48a0692e8e4f999a85cfd8619fe2e293528945c2`.
+- Run público funcional: `31609518536`.
+- Estado de refs antes del cierre documental: `main == stable == 48a0692e8e4f999a85cfd8619fe2e293528945c2`.
 
-Refs, Pages y gates son la autoridad para el estado productivo. Las notas canónicas documentan el cierre y el siguiente ciclo.
+Refs, Pages y gates son la autoridad para el estado productivo. El SHA definitivo de 5.15.0 será el que contenga este cierre y vuelva a superar la certificación completa.
 
 ## Estado funcional
 
-**v5.14.0 está cerrada, desplegada y certificada.**
+**v5.15 está funcionalmente certificada y en cierre formal.**
 
-La recomendación explicable compara cinco modalidades sin scoring opaco y expone, cuando existe contexto suficiente, `fit`, `boundary` y `alternative`. La explicación acompaña el recorrido comercial hasta el brief y el handoff manual por WhatsApp; si falta contexto, la web no inventa una recomendación.
+La capa consolida la arquitectura de decisión ya existente en lugar de apilar otra superficie: el encaje de cada modalidad queda junto al CTA del selector v5.12; límites y alternativas v5.14 se conservan en comparación secundaria; el formulario muestra una ruta comercial controlada por el usuario y el handoff directo conserva el siguiente paso sugerido.
 
-Implementación principal: `recommendation-v514.json`, `recommendation-v514.css`, `recommendation-v514.js`, `scripts/apply_recommendation_v514.py`, `scripts/validate_recommendation_v514.py`.
+Implementación principal: `decision-action-v515.css`, `decision-action-v515.js`, `scripts/apply_decision_action_v515.py`, `scripts/validate_decision_action_v515.py`.
 
-La capa no añade cuestionario, `localStorage`, `sessionStorage`, backend, XHR/fetch propio ni PII adicional.
+Rutas canónicas: diagnóstico→`scope`; auditoría→`proposal`; producto→`proposal`; servicio especializado→`scope`; recurrente→`scope`; sin contexto→`orientation`. Un `commercial_intent` explícito siempre tiene prioridad y la web no cambia automáticamente la etapa declarada.
 
-## Evidencia final v5.14
+La capa no añade cuestionario, scoring, `localStorage`, `sessionStorage`, backend, XHR/fetch propio ni PII adicional.
 
-Run `31571937528`, SHA `9435f65ca129099a8a59f12ec5fd2f9e3aa58762`:
+## Evidencia funcional v5.15
 
-- builder/idempotencia + validadores históricos + composición v5.8→v5.14: PASS;
+Run `31609518536`, SHA `48a0692e8e4f999a85cfd8619fe2e293528945c2`:
+
+- builder/idempotencia + validadores históricos + composición v5.8→v5.15: PASS;
 - GitHub Pages + smoke: PASS;
 - Browser E2E + axe: 37 observados → 35 PASS / 2 SKIP / 0 FAIL / 0 RETRY;
 - 7 superficies axe: sin violaciones serias/críticas;
 - Lighthouse: 6/6 superficies dentro de presupuesto;
-- portada: performance 1.00, a11y 0.97, LCP 1232 ms, CLS 0, TBT 85 ms, 95,383 B;
-- solución IA: 1.00 / 1.00, LCP 903 ms, 23,484 B;
-- producto IA: 1.00 / 1.00, LCP 904 ms, 37,661 B;
-- sector tecnología: 1.00 / 1.00, LCP 914 ms, CLS 0, 24,338 B;
-- perspectiva IA: 0.98 / 1.00, LCP 903 ms, CLS 0.087, 25,860 B;
-- demo: 1.00 / 1.00, LCP 903 ms, 22,057 B;
-- CI hasta `stable`: 202 s;
+- portada: performance 1.00, a11y 0.97, LCP 1322 ms, CLS 0, TBT 3 ms, 99,735 B;
+- solución IA: 1.00 / 1.00, LCP 989 ms, 23,234 B;
+- producto IA: 1.00 / 1.00, LCP 999 ms, 37,677 B;
+- sector tecnología: 0.98 / 1.00, LCP 1006 ms, CLS 0.087, 24,289 B;
+- perspectiva IA: 1.00 / 1.00, LCP 1044 ms, 25,796 B;
+- demo: 1.00 / 1.00, LCP 906 ms, 21,994 B;
+- CI hasta `stable`: 209 s;
 - baseline v5.5: 279 s;
-- mejora frente al baseline: 27.6%;
+- mejora frente al baseline: 25.1%;
 - cobertura reducida: no;
 - budgets relajados: no;
 - Release Governance: PASS;
 - Pages trigger builder→workflow_run→Pages: PASS;
-- validator v5.14: PASS.
+- validator v5.15: PASS.
+
+## Gates que v5.15 preservó
+
+Durante la certificación, tres incompatibilidades fueron detectadas y corregidas sin relajar contratos:
+
+1. el CTA profundo debe conservar la forma canónica v5.10; v5.15 eliminó un atributo redundante y usa `commercial_intent`;
+2. el contrato JSON embebido v5.14 debe sobrevivir a la consolidación; v5.15 lo conserva y exige igualdad estructural con `recommendation-v514.json`;
+3. E2E debe validar semántica de query, no orden textual; ahora exige los valores exactos mediante `URLSearchParams` y `#contacto`.
 
 ## Contratos preservados
 
@@ -57,7 +67,7 @@ Run `31571937528`, SHA `9435f65ca129099a8a59f12ec5fd2f9e3aa58762`:
 - 6 superficies Lighthouse;
 - budgets v5.5;
 - workers Playwright CI = 1;
-- idempotencia y composición canónica v5.8→v5.14;
+- idempotencia y composición canónica v5.8→v5.15;
 - Actions fijadas a SHA y permisos controlados;
 - fuente jurídica única para alcance/entregables;
 - telemetría sin PII;
@@ -68,9 +78,9 @@ Run `31571937528`, SHA `9435f65ca129099a8a59f12ec5fd2f9e3aa58762`:
 
 ## Graphify / procedencia
 
-El snapshot vivo de Graphify fue construido sobre el commit fuente de cierre `547b97e22eb51c9664eb5b4a0884a90963be891f` y reporta 513 nodos, 818 relaciones y 85 notas wiki con Graphify 0.9.26.
+Para el cierre funcional, el snapshot vivo de Graphify apunta exactamente a `source_commit = 48a0692e8e4f999a85cfd8619fe2e293528945c2`, con Graphify 0.9.26, 544 nodos, 877 relaciones y 88 notas wiki.
 
-El SHA final `9435f65ca129099a8a59f12ec5fd2f9e3aa58762` está exactamente un commit generado por delante. La comparación `547b97e2… → 9435f65c…` contiene únicamente 28 outputs públicos/versionados, con cambios de una línea por archivo; no modifica fuentes jurídicas, scripts, tests ni relaciones estructurales. Se considera equivalencia estructural documentada, sin falsificar `BUILD_META.source_commit`.
+El campo declarativo `version` del snapshot sigue en 5.14.0 porque el cierre formal 5.15.0 aún no había actualizado `version.json` cuando se construyó ese snapshot. Después del merge documental y del posible commit generado de sincronización visible, la procedencia se verificará de nuevo sin falsificar `source_commit`.
 
 ## Integraciones externas
 
@@ -78,8 +88,8 @@ Activas: GitHub Pages, WhatsApp como handoff manual, contexto comercial client-s
 
 No declarar activas sin evidencia real: dominio personalizado/CNAME, Search Console, analítica externa, CRM/backend, almacenamiento servidor del formulario, email transaccional, firma electrónica, pagos, agenda o carga documental.
 
-## Ciclo activo
+## Próximo ciclo
 
-**v5.15 — Eficiencia recomendación→acción.**
+**v5.16 — UX móvil y accesibilidad del recorrido comercial.**
 
-Objetivo: reducir fricción y solapamiento entre selector, explicación y CTA, acercando la recomendación al siguiente paso correcto sin nuevo cuestionario, scoring, storage o backend y preservando todos los contratos de calidad anteriores.
+Objetivo: reducir scroll/fricción en móvil y revisar la brecha restante de Lighthouse Accessibility de la portada sin recortar profundidad jurídica, controles de decisión ni cobertura QA.
