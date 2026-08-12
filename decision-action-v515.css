@@ -36,6 +36,22 @@
 @media(max-width:900px){.decision-action-head-v515{grid-template-columns:1fr}.decision-action-live-v515{max-width:640px}}
 @media(max-width:760px){.recommendation-v514.decision-action-v515{padding:34px 0}.decision-route-panel-v515{grid-template-columns:1fr}.decision-route-panel-v515 button{width:100%}.recommendation-details-v515 .recommendation-brief-grid-v514{grid-template-columns:1fr}.recommendation-compare-v515 .recommendation-grid-v514{padding:11px}}
 
+/* COMMERCIAL-FOCUS-V519:START */
+.commercial-disclosure-v519{margin-top:14px;border:1px solid rgba(16,34,51,.12);border-radius:12px;background:#f7f4ec;overflow:clip}
+.commercial-disclosure-v519>summary{display:grid;gap:4px;align-content:center;min-height:48px;padding:12px 14px;cursor:pointer;color:#102233;list-style-position:inside}
+.commercial-disclosure-v519>summary strong{font-size:.78rem;line-height:1.32}
+.commercial-disclosure-v519>summary span{color:#586672;font-size:.7rem;line-height:1.45;font-weight:500}
+.commercial-disclosure-v519[open]>summary{border-bottom:1px solid rgba(16,34,51,.1);background:#fff}
+.commercial-disclosure-v519[data-default-state-v519="expanded-proposal"]{border-color:rgba(111,81,36,.22)}
+.commercial-disclosure-v519[data-default-state-v519="expanded-proposal"]>summary strong::after{content:" · solicitud de propuesta";color:#6f5124;font-weight:700}
+@media(min-width:761px){
+  .commercial-disclosure-v519{margin-top:16px}
+  .commercial-disclosure-v519>summary{grid-template-columns:minmax(260px,.8fr) minmax(0,1.2fr);gap:18px;align-items:center;padding:13px 16px}
+  .commercial-disclosure-v519>.close-steps-v510,.commercial-disclosure-v519>.proposal-anatomy-v510,.commercial-disclosure-v519>.close-gate-v510,.commercial-disclosure-v519>.close-legal-v510,.commercial-disclosure-v519>.engagement-states-v511,.commercial-disclosure-v519>.engagement-ready-v511,.commercial-disclosure-v519>.engagement-noauto-v511,.commercial-disclosure-v519>.engagement-legal-v511{margin-left:14px;margin-right:14px}
+  .commercial-disclosure-v519>:last-child{margin-bottom:14px}
+}
+/* COMMERCIAL-FOCUS-V519:END */
+
 /* MOBILE-UX-V516:START */
 .perspectives-grid button[data-service]{display:inline-flex;align-items:center;min-height:44px;padding-top:12px;padding-bottom:12px}
 @media(max-width:760px){
