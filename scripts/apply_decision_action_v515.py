@@ -77,7 +77,7 @@ def recommendation_home(contract: dict) -> str:
   <div class="container">
     <div class="decision-action-head-v515">
       <div class="decision-action-copy-v515"><p class="eyebrow dark">DE RECOMENDACIÓN A ACCIÓN</p><h2 id="recommendation-v514-title">El selector ya explica cuándo encaja cada modalidad; aquí solo necesita confirmar el siguiente paso o contrastar sus límites.</h2><p>Meridiano no asigna puntajes ni decide por usted. La recomendación sigue siendo explicable y puede cambiar cuando cambian hechos, perímetro, dependencias o recurrencia.</p></div>
-      <aside class="decision-action-live-v515" data-decision-action-live-v515="true"><span>ACCIÓN CONTEXTUAL</span><strong data-action-label-v515>Elija una modalidad arriba</strong><p data-action-fit-v515>Cada opción reúne encaje y siguiente acción. Use la comparación ampliada solo si necesita contrastar límites y alternativas.</p><a data-action-cta-v515 href="#proof-router-v512-title">Ir al selector →</a></aside>
+      <aside class="decision-action-live-v515" data-decision-action-live-v515="true"><span>ACCIÓN CONTEXTUAL</span><strong data-action-label-v515>Elija una modalidad arriba</strong><p data-action-fit-v515>Cada opción ya reúne encaje y siguiente acción. Use la comparación ampliada solo si necesita contrastar límites y alternativas.</p><a data-action-cta-v515 href="#proof-router-v512-title">Ir al selector →</a></aside>
     </div>
     <details class="recommendation-compare-v515" data-recommendation-compare-v515="true">
       <summary>Comparar límites y alternativas de las cinco modalidades <span>· análisis ampliado</span></summary>
@@ -160,8 +160,10 @@ def with_query_param(href: str, key: str, value: str) -> str:
 
 
 def patch_tag_route(tag: str, route: str) -> str:
+    # v5.10 intentionally owns the canonical CTA tag shape. v5.15 may update
+    # commercial_intent, but must remove any additive CTA attribute so the
+    # historical validator remains a real compatibility gate.
     tag = re.sub(r'\s+data-action-route-v515="[^"]*"', "", tag)
-    tag = tag[:-1] + f' data-action-route-v515="{route}">'
     href_match = re.search(r'href="([^"]+)"', tag)
     if not href_match:
         raise RuntimeError("CTA sin href")

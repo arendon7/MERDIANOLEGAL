@@ -95,6 +95,7 @@ def modality(text: str) -> str:
 
 def validate_details() -> None:
     seen = {code: 0 for code in CODES}
+    canonical_cta = re.compile(r'<a class="buying-clarity-cta-v58" data-decision-v58-cta="true" data-close-intent-v510="([^"]+)" href="([^"]+)">([^<]+)</a>')
     for path in DETAIL_TARGETS:
         text = path.read_text(encoding="utf-8")
         code = modality(text)
@@ -102,12 +103,12 @@ def validate_details() -> None:
         seen[code] += 1
         route = ROUTE_BY_MODALITY[code]
 
-        cta = re.search(r'<a class="buying-clarity-cta-v58"[^>]*data-decision-v58-cta="true"[^>]*>', text)
-        require(bool(cta), f"{path.name}: falta CTA principal")
-        require(f'data-action-route-v515="{route}"' in cta.group(0), f"{path.name}: CTA no declara ruta {route}")
-        href = re.search(r'href="([^"]+)"', cta.group(0))
-        require(bool(href) and href_params(href.group(1)).get("commercial_intent") == [route], f"{path.name}: CTA principal pierde ruta {route}")
-        params = href_params(href.group(1))
+        cta = canonical_cta.search(text)
+        require(bool(cta), f"{path.name}: CTA principal debe preservar forma canónica v5.10")
+        require('data-action-route-v515=' not in cta.group(0), f"{path.name}: v5.15 no debe alterar atributos del CTA v5.10")
+        require(cta.group(1) == route, f"{path.name}: intención canónica esperada {route}")
+        params = href_params(cta.group(2))
+        require(params.get("commercial_intent") == [route], f"{path.name}: CTA principal pierde ruta {route}")
         require(params.get("modality") == [code] and params.get("proof_standard") == ["source"], f"{path.name}: CTA pierde modalidad/prueba")
 
         general = re.search(r'<a class="btn btn-outline-light" href="([^"]+)">Formulario general</a>', text)
@@ -141,6 +142,7 @@ def validate_e2e(data: dict) -> None:
     text = (ROOT / "tests/e2e/public-site.spec.mjs").read_text(encoding="utf-8")
     for marker in ("data-decision-action-v515", "data-recommendation-compare-v515", "data-decision-route-v515", "data-route-panel-v515"):
         require(marker in text, f"E2E no verifica {marker}")
+    require("data-action-route-v515" not in text, "E2E no debe depender de atributo que rompa CTA canónico v5.10")
     require(data["modalities"]["product"]["fit"] in text, "E2E debe conservar encaje del producto")
     require("Siguiente paso sugerido: Definición de alcance" in text, "E2E debe verificar handoff de alcance en servicio")
 
@@ -153,7 +155,7 @@ def main() -> int:
     validate_details()
     validate_workflows()
     validate_e2e(data)
-    print("DECISION ACTION V5.15 OK: 5 modalidades consolidadas + rutas proposal/scope/orientation controladas + 16 handoffs coherentes, sin scoring/storage/red.")
+    print("DECISION ACTION V5.15 OK: 5 modalidades consolidadas + rutas proposal/scope/orientation controladas + 16 handoffs coherentes, preservando CTA v5.10.")
     return 0
 
 
