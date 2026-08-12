@@ -30,3 +30,14 @@
 .proof-detail-note-v512{margin:14px 0 0;color:#5c6974;font-size:.72rem;line-height:1.5}
 @media(max-width:1080px){.proof-model-grid-v512{grid-template-columns:repeat(3,minmax(0,1fr))}.proof-detail-grid-v512{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:760px){.proof-router-v512{padding:54px 0}.proof-model-grid-v512,.proof-standard-v512,.proof-standard-grid-v512,.proof-detail-head-v512,.proof-detail-grid-v512{grid-template-columns:1fr}.proof-model-card-v512{min-height:auto}.proof-detail-head-v512 a{width:max-content;max-width:100%;white-space:normal}.proof-detail-v512{padding:42px 0}}
+
+/* DEEP-MOBILE-A11Y-V516:START */
+@media(max-width:1050px){
+  .detail-menu{display:flex;min-width:44px;min-height:44px;padding:7px;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}
+  .detail-nav.open a{display:flex;min-height:44px;padding:10px 0;align-items:center}
+}
+@media(max-width:700px){
+  .detail-mobile-cta-v46>a:first-child{background:#d9bc8b!important;color:#091725!important}
+  .detail-mobile-cta-v46>a:last-child{background:transparent!important;color:#fff!important}
+}
+/* DEEP-MOBILE-A11Y-V516:END */
