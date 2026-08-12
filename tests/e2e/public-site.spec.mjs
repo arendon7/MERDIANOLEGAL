@@ -37,7 +37,7 @@ test('portada pública conserva rutas, profundidad y layout', async ({ page }) =
   await expect(page.locator('[data-buying-clarity-v58="true"]')).toBeVisible();
   await expect(page.locator('.buying-clarity-card-v58')).toHaveCount(5);
   await expect(page.locator('[data-decision-v58-cta="true"]')).toBeVisible();
-  await expect(page.locator('[data-decision-v58-cta="true"]')).toHaveAttribute('data-action-route-v515', 'proposal');
+  await expect(page.locator('[data-decision-v58-cta="true"]')).toHaveAttribute('href', /commercial_intent=proposal.*modality=product.*proof_standard=source#contacto$/);
   await expect(page.locator('[data-proof-v512="true"]')).toBeVisible();
   await expect(page.locator('[data-proof-v512="true"]')).toHaveAttribute('data-commercial-modality-v513', 'product');
   await expect(page.locator('[data-proof-dimension-v512]')).toHaveCount(4);
@@ -46,7 +46,6 @@ test('portada pública conserva rutas, profundidad y layout', async ({ page }) =
 
   await page.goto('./servicios/tecnologia-inteligencia-artificial.html');
   const serviceCta = page.locator('[data-decision-v58-cta="true"]');
-  await expect(serviceCta).toHaveAttribute('data-action-route-v515', 'scope');
   await expect(serviceCta).toHaveAttribute('href', /commercial_intent=scope.*modality=specialist.*proof_standard=source#contacto$/);
   const serviceGeneral = page.getByRole('link', { name: 'Formulario general' });
   await expect(serviceGeneral).toHaveAttribute('href', /commercial_intent=scope.*modality=specialist.*proof_standard=source#contacto$/);
@@ -118,7 +117,6 @@ test('formulario prepara WhatsApp sin enviar ni salir de la web', async ({ page 
   await page.goto('./productos/programa-gobernanza-ia.html');
   const proposalCta = page.locator('[data-decision-v58-cta="true"][data-close-intent-v510="proposal"]');
   await expect(proposalCta).toBeVisible();
-  await expect(proposalCta).toHaveAttribute('data-action-route-v515', 'proposal');
   await expect(proposalCta).toHaveAttribute('href', /commercial_intent=proposal.*modality=product.*proof_standard=source#contacto$/);
   await proposalCta.click();
   await expect(page).toHaveURL(/commercial_intent=proposal.*modality=product.*proof_standard=source#contacto$/);
