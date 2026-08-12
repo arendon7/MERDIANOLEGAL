@@ -66,3 +66,23 @@
   [data-mobile-scrollable-v516="true"]:focus-visible{outline:3px solid rgba(168,132,84,.6);outline-offset:3px}
 }
 /* MOBILE-UX-V516:END */
+
+/* HOME-DECISION-V520:START */
+.home-decision-v520{padding:44px 0 22px;background:#fff}
+.home-decision-v520 .section-heading{max-width:860px;margin-bottom:22px}
+.home-decision-v520 .section-heading h2{margin-bottom:10px}
+.home-decision-grid-v520{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.home-decision-entry-v520{display:contents}
+.home-decision-v520 .proof-model-card-v512{display:flex;flex-direction:column;min-height:100%;padding:18px;border:1px solid rgba(16,34,51,.11);border-radius:13px;background:#f8f6f0;text-decoration:none}
+.home-decision-v520 .proof-model-card-v512>span{color:#6f5124;font-size:.62rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase}
+.home-decision-v520 .proof-model-card-v512 h3{margin:8px 0 7px;color:#102233;font-family:var(--font-serif,Georgia,serif);font-size:1rem;line-height:1.25}
+.home-decision-v520 .proof-model-card-v512>p{margin:0;color:#53606b;font-size:.76rem;line-height:1.48}
+.home-decision-v520 .proof-model-card-v512 .proof-fit-v515{margin-top:auto;padding-top:12px}
+.home-decision-v520 .proof-model-card-v512>b{display:block;margin-top:11px;color:#102233;font-size:.72rem;line-height:1.35}
+.home-decision-v520 .proof-standard-v512{margin-top:16px}
+.recommendation-v514.decision-action-v515.home-decision-compare-v520{padding:0 0 42px;background:#fff}
+.home-decision-compare-v520 .recommendation-compare-v515{margin-top:0}
+.home-decision-compare-v520 .recommendation-note-v514{margin:12px 0 0;padding:12px 14px;border-left:3px solid #b38a45;background:#f8f6f0;color:#52606b;font-size:.74rem;line-height:1.5}
+@media(max-width:1120px){.home-decision-grid-v520{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:760px){.home-decision-v520{padding:34px 0 18px}.home-decision-grid-v520{grid-template-columns:1fr}.home-decision-v520 .proof-model-card-v512{min-height:auto}.recommendation-v514.decision-action-v515.home-decision-compare-v520{padding-bottom:34px}}
+/* HOME-DECISION-V520:END */

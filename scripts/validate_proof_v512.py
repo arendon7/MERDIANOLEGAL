@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Valida v5.12: selector de modalidad y prueba verificable con paridad de fuente."""
+"""Valida v5.12 y su composición unificada de portada desde v5.20."""
 from __future__ import annotations
 
 from html import escape, unescape
@@ -10,6 +10,7 @@ import re
 
 ROOT = Path(__file__).resolve().parents[1]
 HOME = ROOT / "index.html"
+VERSION = ROOT / "version.json"
 DETAIL_TARGETS = sorted((ROOT / "servicios").glob("*.html")) + sorted((ROOT / "productos").glob("*.html"))
 HOME_START = "<!-- PROOF-V512-HOME:START -->"
 HOME_END = "<!-- PROOF-V512-HOME:END -->"
@@ -20,6 +21,15 @@ DETAIL_END = "<!-- PROOF-V512-DETAIL:END -->"
 def require(condition: bool, message: str) -> None:
     if not condition:
         raise SystemExit(f"PROOF V5.12 FAIL: {message}")
+
+
+def version_at_least(major: int, minor: int) -> bool:
+    payload = json.loads(VERSION.read_text(encoding="utf-8"))
+    raw = str(payload.get("version", "0.0.0")).split(".")
+    try:
+        return (int(raw[0]), int(raw[1])) >= (major, minor)
+    except (ValueError, IndexError):
+        return False
 
 
 def load_catalog() -> dict[str, dict]:
@@ -58,8 +68,18 @@ def validate_home() -> None:
     text = HOME.read_text(encoding="utf-8")
     require(text.count(HOME_START) == 1 and text.count(HOME_END) == 1, "portada debe tener un bloque gestionado")
     require('<link rel="stylesheet" href="proof-v512.css">' in text, "falta CSS v5.12 en portada")
-    require(text.index("<!-- DECISION-V58-HOME:END -->") < text.index(HOME_START), "v5.12 debe seguir a v5.8")
     block = text[text.index(HOME_START):text.index(HOME_END)]
+
+    unified_v520 = version_at_least(5, 20) and 'data-home-decision-v520="true"' in block
+    if unified_v520:
+        require('data-engagement-router-v58="true"' in block, "v5.20 final debe conservar continuidad semántica con v5.8")
+        require("<!-- DECISION-V58-HOME:START -->" not in text and "<!-- DECISION-V58-HOME:END -->" not in text, "v5.20 final no debe reintroducir selector v5.8 separado")
+    else:
+        # Release Governance llega aquí inmediatamente después de aplicar v5.12,
+        # antes de que v5.15 materialice la compresión final de v5.20.
+        require("<!-- DECISION-V58-HOME:END -->" in text, "composición intermedia v5.12 debe conservar v5.8")
+        require(text.index("<!-- DECISION-V58-HOME:END -->") < text.index(HOME_START), "v5.12 debe seguir a v5.8")
+
     require(block.count('data-proof-model-v512=') == 5, "deben existir cinco modalidades")
     for model in ("diagnostic", "audit", "product", "specialist", "recurring"):
         require(f'data-proof-model-v512="{model}"' in block, f"falta modalidad {model}")
@@ -120,7 +140,7 @@ def main() -> int:
     validate_home()
     for path in DETAIL_TARGETS:
         validate_detail(path, catalog)
-    print("PROOF V5.12 OK: 5 modalidades + 16 pruebas derivadas con método, entregables, formatos y aceptación; parámetros aditivos posteriores permitidos sin perder rutas canónicas.")
+    print("PROOF V5.12 OK: cinco modalidades y 16 pruebas derivadas preservadas en composición intermedia/final.")
     return 0
 
 
