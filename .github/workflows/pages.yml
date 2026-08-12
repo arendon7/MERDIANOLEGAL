@@ -55,6 +55,7 @@ jobs:
           python3 scripts/apply_commercial_v59.py
           python3 scripts/apply_conversion_v510.py
           python3 scripts/apply_engagement_v511.py
+          python3 scripts/apply_proof_v512.py
           git diff --exit-code -- index.html catalog-home-v32.js decision-flow.js site-v3.js page-context.js sitemap.xml robots.txt runtime-config.js site-status.json servicios productos firma.html perspectivas perspectivas.html sectores soluciones experiencia.html demo.html 404.html aviso-legal.html privacidad.html terminos.html manifest.webmanifest CNAME scripts/build_catalog_shells.py
       - name: Validate HTML and local resources
         run: python3 scripts/validate_site.py
@@ -98,6 +99,8 @@ jobs:
         run: python3 scripts/validate_conversion_v510.py
       - name: Validate engagement readiness v5.11
         run: python3 scripts/validate_engagement_v511.py
+      - name: Validate verifiable proof v5.12
+        run: python3 scripts/validate_proof_v512.py
       - name: Validate guided decision flow
         run: python3 scripts/validate_decision_flow.py
       - name: Validate page context and structured data
