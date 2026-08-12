@@ -7,88 +7,55 @@
 - Repositorio: `arendon7/MERDIANOLEGAL`.
 - Rama técnica/productiva: `main`.
 - Snapshot certificado: `stable`.
-- Release declarada en este cierre: `5.17.0`.
-- SHA funcional certificado antes del cierre documental: `56f99a5398b1e0505da5acd601bac3aec8588c1d`.
-- Run funcional final: `31628244159`.
-- Estado de refs antes del cierre documental: `main == stable == 56f99a5398b1e0505da5acd601bac3aec8588c1d`.
+- Release en cierre formal: `5.18.0`.
+- Merge fuente funcional: `3dd01285bcb28a568e2d5a65e2fa88ad284142cb`.
+- SHA funcional certificado antes del cierre documental: `a082b4d9139ae929367cac0085597365e75dbaaf`.
+- Run funcional final: `31631855996`.
+- Estado de refs antes del cierre documental: `main == stable == a082b4d9139ae929367cac0085597365e75dbaaf`.
 
-Refs, Pages y gates son la autoridad para el estado productivo. El SHA definitivo de 5.17.0 será el que contenga este cierre formal, sincronice la versión visible y vuelva a superar la certificación completa.
+Refs, Pages, validators y tests son la autoridad para el estado productivo.
 
 ## Estado funcional
 
-**v5.17 está funcionalmente certificada y en cierre formal.**
+**v5.18 está implementada, desplegada y funcionalmente certificada; este cambio formaliza el versionado y corrige la memoria canónica que todavía la describía como no iniciada.**
 
-El ciclo mejora la continuidad entre la preparación de la solicitud y el handoff manual a WhatsApp, sin introducir backend, CRM, persistencia del formulario ni automatización ficticia del envío.
+### Observabilidad v5.18
 
-### Arquitectura comercial v5.17
+El contrato `handoff-observability-v518.json` define exactamente seis hechos observables: `handoff_prepared`, `handoff_reopen_requested`, `handoff_copy_succeeded`, `handoff_copy_failed`, `handoff_edit_requested` y `handoff_draft_stale`.
 
-- existe un único formulario físico canónico en `index.html`;
-- las 8 fichas de productos y 8 fichas de servicios no duplican el formulario;
-- esas 16 fichas preservan modalidad, estándar verificable e intención mediante rutas contextuales hacia `index.html#contacto`;
-- después de preparar una solicitud aparece un panel con referencia y acciones manuales para reabrir WhatsApp, copiar el resumen o editar;
-- la copia automática silenciosa al portapapeles fue eliminada;
-- el borrador vive únicamente en memoria de la página;
-- si el usuario cambia el formulario, el borrador queda `changed/stale` y copiar/reabrir se deshabilitan hasta volver a prepararlo;
-- el panel no replica nombre, empresa, email ni mensaje completo en el DOM;
-- la web declara expresamente que no conoce entrega, lectura, aceptación, apertura de expediente ni inicio del encargo.
+El runtime usa únicamente `stage` y `target` sobre la cola local existente. Permanecen en `false`: PII permitida, transporte nuevo, storage persistente, identificador cross-session y contenido del formulario.
 
-### Hardening de composición
+No son hechos conocidos por la web y están expresamente prohibidos como eventos: envío, entrega, lectura, aceptación de propuesta, inicio del encargo y conversión completada.
 
-- `scripts/apply_handoff_v517.py` es la última capa canónica del builder;
-- limpia paneles residuales por identidad `data-handoff-v517`, no solo por comentarios;
-- elimina marcadores START/END huérfanos;
-- repara el cierre histórico `</form></div></div></section>` únicamente cuando el único formulario perdió su cierre antes de `</main>`;
-- aborta si no queda exactamente un panel, un `handoff-v517-title` y marcadores balanceados;
-- Pages termina su prueba de idempotencia reaplicando v5.17;
-- Pages ejecuta el validator v5.17 y valida sintaxis de su runtime;
-- Release Governance normaliza outputs materializados v5.17 antes de correr la secuencia histórica v5.8→v5.15, sin modificar ni debilitar esos validators.
+v5.17 sigue siendo la capa que gestiona el borrador manual/efímero, reabrir, copiar, editar y stale protection. v5.18 solo observa acciones verificables de esa superficie.
 
-## Gates que detectaron problemas reales
+## Evidencia funcional final v5.18
 
-### Candidato `bed3baf0…`
+Run `31631855996`, SHA `a082b4d9139ae929367cac0085597365e75dbaaf`:
 
-Pages run `31622876902` falló en idempotencia. La segunda composición todavía terminaba en v5.15, permitiendo que una capa previa restaurara la copia automática y desplazara el tail de contacto. Se corrigió el wiring de Pages y se blindó desde el validator v5.17.
-
-### Candidato `b9387731…`
-
-Pages run `31623621877` pasó idempotencia, pero `validate_site.py` detectó `handoff-v517-title` duplicado. La inspección encontró un segundo panel residual y la pérdida del cierre del formulario. Se corrigió en el applicator, no en el gate.
-
-### PR #65
-
-El PR reparador añadió limpieza semántica, restauración condicionada del cierre, preflight de Governance y contratos estructurales. El run Governance demostró que, tras normalizar el output, v5.8→v5.15 vuelven a pasar intactos, incluido v5.10, y que el validator final v5.17 también pasa.
-
-Ningún problema se resolvió reduciendo cobertura, severity, budgets o conteo de tests.
-
-## Evidencia funcional final v5.17
-
-Run `31628244159`, SHA `56f99a5398b1e0505da5acd601bac3aec8588c1d`:
-
-- builder/idempotencia + validadores históricos + v5.17: PASS;
+- builder/idempotencia + validators históricos + v5.17 + v5.18: PASS;
 - GitHub Pages + smoke: PASS;
 - Browser E2E + axe: 37 observados → 35 PASS / 2 SKIP / 0 FAIL / 0 RETRY;
-- tiempo de pared reporter: 71 s;
-- 7 superficies axe: sin violaciones serias/críticas;
+- reporter Browser: 82 s;
+- 7 superficies axe sin violaciones serias/críticas;
 - Lighthouse: 6/6 PASS;
 - accesibilidad Lighthouse: 1.00 en las seis superficies;
-- `accessibilityAuditGaps`: vacío en las seis superficies;
-- portada: performance 1.00, a11y 1.00, LCP 1276 ms, CLS 0, TBT 1 ms, 104,394 B;
-- solución IA: 1.00 / 1.00, LCP 904 ms;
-- producto IA: 1.00 / 1.00, LCP 919 ms, CLS 0, TBT 0 ms;
-- sector tecnología: 0.98 / 1.00, LCP 947 ms, CLS 0.087;
-- perspectiva IA: 0.98 / 1.00, LCP 906 ms, CLS 0.087;
-- demo: 1.00 / 1.00, LCP 948 ms;
-- CI hasta `stable`: 181 s;
+- performance: portada 1.00, solución IA 1.00, producto IA 1.00, sector tecnología 0.98, perspectiva IA 0.98, demo 1.00;
+- `accessibilityAuditGaps`: vacío;
+- CI hasta `stable`: 200 s;
 - baseline v5.5: 279 s;
-- mejora frente al baseline: 35.1%;
+- mejora: 28.3%;
 - cobertura reducida: no;
 - budgets relajados: no.
 
-Artefactos de referencia:
-- Lighthouse `9154061576`, digest `sha256:7e128bbc31eaa9512ea1cfc5e37ee056bf4de182d423eaa9b9ea3dfe90e402d2`;
-- CI `9154078333`, digest `sha256:779c4ff6c048a8a905a3f770c826143ecac167bc2834b0d7349a18cf67cdee6d`.
+Artefactos:
+- Lighthouse `9155454712`, `sha256:9d82ef0cfd5ec470ce66111d95fbf99518e9e6e1f8f233e78fa07598849ae659`;
+- CI `9155489175`, `sha256:169f15d32fb09f9be53c0bb40c39167b16e099d63f0f5ac2757e0df514ed727e`;
+- release-health `9155489589`, `sha256:eefe9976b09ea64aac499c00f8e8b00db1668cf2ce597256c24c250c2f50d205`.
 
 ## Contratos vigentes
 
+- static-first;
 - 46 páginas HTML;
 - 16 fichas profundas;
 - 1 formulario físico canónico;
@@ -96,22 +63,16 @@ Artefactos de referencia:
 - 7 superficies axe;
 - 6 superficies Lighthouse;
 - budgets v5.5 sin relajación;
-- workers Playwright CI = 1;
-- fuente jurídica única para alcance/entregables;
 - telemetría sin PII;
+- analítica externa apagada (`provider:none`);
 - WhatsApp manual;
-- scoring opaco desactivado;
-- sin CRM/backend ni almacenamiento servidor del formulario;
-- sin firma, pagos, agenda o portal documental ficticios.
+- sin CRM/backend, almacenamiento servidor, firma, pagos, agenda o portal documental ficticios;
+- `stable` solo después de gates verdes.
 
 ## Graphify / procedencia
 
-Graphify debe conservar el `source_commit` que realmente haya extraído. El cierre formal 5.17.0 debe producir/alinear un snapshot desde el commit real correspondiente. Si posteriormente el builder genera un commit exclusivo de sincronización visible, la relación entre ambos debe documentarse mediante comparación de commits; no se debe reescribir `source_commit` manualmente.
+Graphify debe conservar el `source_commit` realmente extraído. Si el builder genera un commit posterior exclusivamente de sincronización visible de 5.18.0, la equivalencia se documenta por comparación y no mediante alteración artificial de `source_commit`.
 
 ## Gate de cierre formal
 
-La release 5.17.0 queda definitivamente cerrada cuando el SHA que incluye este versionado vuelva a pasar builder, idempotencia, Pages, smoke, Browser/axe, Lighthouse y release-health, `main == stable` en ese SHA, y la procedencia Graphify quede alineada sin falsificación.
-
-## Próximo ciclo candidato
-
-**v5.18 no está iniciado.** El alcance se define únicamente después del cierre formal. Puede evaluarse continuidad/medición comercial posterior al handoff si existe evidencia suficiente, siempre sin convertir la web en CRM/backend ni añadir automatismos ficticios.
+El SHA que contiene este versionado debe volver a pasar builder, idempotencia, Pages, smoke, Browser/axe, Lighthouse, release-health y promoción de `stable`, terminando en `main == stable`. No se inicia v5.19 dentro de esta tarea.
