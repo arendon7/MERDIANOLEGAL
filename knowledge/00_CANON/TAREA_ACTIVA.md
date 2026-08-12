@@ -4,83 +4,80 @@ Actualizado: 2026-08-11.
 
 ## Ciclo en cierre
 
-**v5.8 — Arquitectura de decisión y claridad de compra.**
+**v5.9 — Calificación comercial y preparación de propuesta.**
 
-La implementación funcional está certificada. Este cierre declara `5.8.0` y solo constituye la release definitiva cuando atraviesa nuevamente la certificación pública completa y termina con `main == stable`.
+La implementación funcional está certificada. Este cierre declara `5.9.0` y solo constituye la release definitiva cuando el commit documental vuelve a atravesar la certificación pública completa y termina con `main == stable`.
 
 ## Implementado
 
-1. selector de cuatro formas de contratación en portada;
-2. capa ejecutiva en las 16 fichas con `ENCAJA SI`, `QUÉ COMPRA`, `QUÉ RECIBE`, `QUÉ APORTA` y `QUÉ NO ASUMIR`;
-3. generación determinista desde `situations`, `perimeter`, `deliverables`, `requirements`, `limits`, duración, modalidad y audiencia de las fuentes jurídicas existentes;
-4. CTA contextual para solicitar propuesta con el alcance identificado;
-5. `decision-v58.css` como capa visual específica;
-6. `scripts/apply_decision_v58.py` como generador canónico;
-7. `scripts/validate_decision_v58.py` como contrato fuente→resumen y runtime-safe;
-8. integración v5.8 dentro del gate de catálogo estático;
-9. integración de la generación v5.8 al final de la cadena canónica para preservar idempotencia;
-10. cobertura Browser añadida dentro de la entrada existente, sin incrementar ni reducir las 37 entradas protegidas;
-11. parser histórico v4.5 robustecido frente a indentación variable;
-12. bloque v5.8 movido fuera de `#detail-page` para sobrevivir al render de `catalog-page.js`;
-13. validator reforzado para impedir futuras regresiones de ubicación runtime;
-14. `RELEASE-v5.8.md`, README y memoria canónica alineados con la release.
+1. calificación comercial dentro del formulario público;
+2. momento de decisión y horizonte como campos requeridos;
+3. rango de inversión jurídica como dato opcional;
+4. resumen visible que combina contexto, necesidad, momento, horizonte e inversión;
+5. siguiente paso sugerido sin scoring de valor: orientación, llamada de alcance o propuesta estructurada;
+6. handoff a WhatsApp con el brief comercial preparado, sin envío automático;
+7. privacidad por diseño y prohibición de PII/texto libre en telemetría;
+8. `commercial-intake-v59.css` y `commercial-intake-v59.js`;
+9. `scripts/apply_commercial_intake_v59.py` y `scripts/validate_commercial_intake_v59.py`;
+10. cobertura v5.9 incorporada dentro de las 37 entradas Browser protegidas;
+11. generador v4.9 robustecido para permitir atributos posteriores del formulario;
+12. Governance ampliado para vigilar el generador v4.9 y probar `v4.9 → v5.9`;
+13. builder corregido para terminar siempre en `v5.8 → v5.9`;
+14. `RELEASE-v5.9.md`, README, versionado y memoria canónica alineados.
 
 ## Evidencia funcional previa al cierre documental
 
-Run `31541197197`, SHA `681c252f09a50447af0557a2039b34b8a79faed9`:
+Run `31547313170`, SHA `a64d2d957e3ca6c96fec855be85019680ebe6a03`:
 
-- construcción e idempotencia: success;
-- validadores históricos v4.4→v5.7 + contrato v5.8: success;
+- idempotencia y validadores: success;
 - Pages + smoke: success;
 - Browser E2E: 35 passed / 2 skipped / 0 failed / 0 retries;
 - axe: 7 superficies sin violaciones serias/críticas;
-- Lighthouse: 6/6 superficies dentro de presupuesto;
-- CI: 232 s hasta gate de `stable`, 16.8% mejor que baseline v5.5;
+- Lighthouse: 6/6 dentro de presupuesto;
+- CI: 196 s hasta `stable`, 29.7% mejor que baseline v5.5;
 - cobertura reducida: no;
 - budgets relajados: no;
-- `stable` promovido correctamente.
+- antes de este cierre: `main == stable == a64d2d957e3ca6c96fec855be85019680ebe6a03`.
 
 ## Regresiones detectadas durante el ciclo
 
-Los controles bloquearon dos problemas antes de certificación:
+1. v4.9 rechazaba el nuevo atributo v5.9 en el formulario por una coincidencia demasiado estricta;
+2. el builder volvía a ejecutar v5.8 después de v5.9 y alteraba el orden final de CSS.
 
-1. una dependencia histórica de indentación exacta rompía la segunda pasada idempotente;
-2. el runtime de productos eliminaba la primera ubicación del bloque v5.8 al reemplazar `#detail-page`.
-
-Ambos se corrigieron en generadores/contratos. No se modificó la suite para ocultarlos y `stable` no avanzó con gates rojos.
+Ambos problemas fueron bloqueados antes de `stable`, corregidos en la composición canónica y convertidos en contratos verificables. No se debilitó la suite.
 
 ## Contratos preservados
 
 - 37 entradas E2E;
-- Chromium desktop/mobile;
-- WebKit desktop;
+- Chromium desktop/mobile y WebKit desktop;
 - 7 superficies axe;
 - 6 superficies Lighthouse;
 - budgets v5.5;
 - workers Playwright CI = 1;
 - gate dual Browser + Lighthouse;
 - idempotencia;
-- Actions inventariadas y fijadas a SHA;
-- permisos controlados;
+- SHA pinning y permisos de Actions;
 - no upgrades major automáticos;
-- full public certification antes de `stable`;
 - fuente jurídica única para alcance y entregables;
-- persistencia v5.8 con y sin JavaScript.
+- v5.8 persiste tras render runtime;
+- v5.9 queda después de v5.8;
+- telemetría sin PII;
+- sin CRM/backend ni almacenamiento servidor inventados.
 
 ## Condición de cierre
 
-La v5.8 queda cerrada cuando el commit que contiene esta declaración cumple simultáneamente:
+v5.9 queda cerrada cuando el commit que contiene esta declaración cumple simultáneamente:
 
 1. builder/idempotencia verdes;
-2. validadores históricos + contrato v5.8 verdes;
+2. validadores históricos + v5.8 + v5.9 verdes;
 3. Pages + smoke verdes;
 4. Browser E2E/axe verde;
 5. Lighthouse verde;
 6. release-health verde;
 7. `main == stable`;
-8. `version.json` y etiqueta pública declaran 5.8.0;
-9. Graphify queda alineado con el estado final o se documenta de forma verificable cualquier diferencia puramente generada.
+8. `version.json` y etiqueta pública declaran 5.9.0;
+9. Graphify queda alineado con el estado final o cualquier desfase puramente generado queda documentado y verificable.
 
 ## Próximo ciclo después del cierre
 
-Priorizar mejora comercial medible sobre nueva infraestructura: hacer más fuerte el paso desde claridad de alcance hacia **calificación del lead, propuesta y cierre**, preservando privacidad y sin declarar CRM, analítica externa o automatizaciones que todavía no estén realmente configuradas.
+Priorizar **conversión comercial medible y preparación del cierre** sin inventar infraestructura: mejorar CTA/propuesta, señales de confianza, rutas de contacto y observabilidad first-party compatible con privacidad. Un CRM o almacenamiento de leads debe entrar solo cuando exista una integración real y gobernada.
