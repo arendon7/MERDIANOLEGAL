@@ -9,6 +9,17 @@ export const test = base.extend({
     const failures = [];
     await page.addInitScript(() => {
       window.__meridianoHandoffGuardV517 = { references: [] };
+      window.__meridianoClipboard = [];
+      try {
+        Object.defineProperty(navigator, 'clipboard', {
+          configurable: true,
+          value: {
+            writeText: async (value) => {
+              window.__meridianoClipboard.push(String(value));
+            },
+          },
+        });
+      } catch { /* el test de handoff verificará la rama disponible */ }
       window.addEventListener('meridiano:handoff-draft-v517', (event) => {
         const reference = String(event.detail?.reference || '').trim();
         if (reference) window.__meridianoHandoffGuardV517.references.push(reference);
@@ -59,14 +70,61 @@ export const test = base.extend({
       expect(handoff.copyDisabled).toBe(false);
       for (const value of handoff.values) expect(handoff.panelText).not.toContain(value);
 
+      const observability = await page.evaluate(() => window.MeridianoHandoffObservabilityV518);
+      expect(observability).toEqual(expect.objectContaining({
+        version: '5.18.0',
+        privacy: expect.objectContaining({
+          piiAllowed: false,
+          networkTransportIntroduced: false,
+          persistentStorage: false,
+          crossSessionIdentifier: false,
+          formContentAllowed: false,
+        }),
+        semanticLimits: expect.objectContaining({
+          sentKnown: false,
+          deliveredKnown: false,
+          readKnown: false,
+          acceptedKnown: false,
+          engagementStartedKnown: false,
+          conversionKnown: false,
+        }),
+      }));
+
+      await expect.poll(async () => (await telemetrySnapshot(page)).some((event) =>
+        event.name === 'handoff_prepared' && event.detail?.stage === 'handoff' && event.detail?.target === 'whatsapp-draft'
+      )).toBe(true);
+
+      const panel = page.locator('#contact-form [data-handoff-v517="true"]');
+      await panel.locator('[data-handoff-reopen-v517]').click();
+      await expect.poll(async () => (await telemetrySnapshot(page)).some((event) =>
+        event.name === 'handoff_reopen_requested' && event.detail?.target === 'whatsapp'
+      )).toBe(true);
+
+      await panel.locator('[data-handoff-copy-v517]').click();
+      await expect.poll(async () => (await telemetrySnapshot(page)).some((event) =>
+        event.name === 'handoff_copy_succeeded' && event.detail?.target === 'clipboard'
+      )).toBe(true);
+      const copied = await page.evaluate(() => window.__meridianoClipboard || []);
+      expect(copied).toHaveLength(1);
+
+      await panel.locator('[data-handoff-edit-v517]').click();
+      await expect.poll(async () => (await telemetrySnapshot(page)).some((event) =>
+        event.name === 'handoff_edit_requested' && event.detail?.target === 'contact-form'
+      )).toBe(true);
+
+      const telemetryBeforeChange = JSON.stringify(await telemetrySnapshot(page));
+      for (const value of handoff.values) expect(telemetryBeforeChange).not.toContain(value);
+
       const message = page.locator('#contact-form textarea[name="message"]');
       if (await message.count()) {
         const original = await message.inputValue();
         await message.fill(`${original} Cambio posterior a la preparación.`);
-        const panel = page.locator('#contact-form [data-handoff-v517="true"]');
         await expect(panel).toHaveAttribute('data-handoff-state', 'changed');
         await expect(panel.locator('[data-handoff-reopen-v517]')).toBeDisabled();
         await expect(panel.locator('[data-handoff-copy-v517]')).toBeDisabled();
+        await expect.poll(async () => (await telemetrySnapshot(page)).some((event) =>
+          event.name === 'handoff_draft_stale' && event.detail?.stage === 'handoff' && event.detail?.target === 'draft'
+        )).toBe(true);
       }
     }
 
