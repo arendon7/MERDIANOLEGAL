@@ -169,6 +169,12 @@
       `Presupuesto orientativo: ${cleanContactValue(data.get('budget'), 160) || 'Por definir'}`,
       `Siguiente paso sugerido: ${cleanContactValue(form.dataset.proposalNextStep, 120) || 'Orientación inicial'}`,
     ];
+    // COMMERCIAL-BRIEF-V513:START
+    const commercialModalityV513 = cleanContactValue(form.dataset.commercialModalityV513 || '', 160);
+    const proofExpectationV513 = cleanContactValue(form.dataset.proofExpectationV513 || '', 180);
+    if (commercialModalityV513) lines.push(`Modalidad considerada: ${commercialModalityV513}`);
+    if (proofExpectationV513) lines.push(`Estándar verificable: ${proofExpectationV513}`);
+    // COMMERCIAL-BRIEF-V513:END
     if (context) lines.push(`Contexto comercial: ${context}`);
     lines.push(`Origen: ${source}`, '', 'Contexto general:', cleanContactValue(data.get('message'), 2000), '', 'Confirmo que no estoy enviando información confidencial.');
     const summary = lines.join('\n');
