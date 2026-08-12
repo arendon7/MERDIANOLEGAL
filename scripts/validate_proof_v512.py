@@ -102,6 +102,7 @@ def main() -> int:
     require(len(DETAIL_TARGETS) == 16, "deben existir 16 fichas profundas")
     css = (ROOT / "proof-v512.css").read_text(encoding="utf-8")
     require(".proof-router-v512" in css and ".proof-detail-v512" in css, "CSS v5.12 incompleto")
+    require(".proof-standard-v512 h3{margin:0 0 7px;color:#fff;" in css, "el título del panel oscuro debe fijar contraste WCAG explícito")
     require("@media(max-width:760px)" in css, "CSS v5.12 sin responsive móvil")
     catalog = load_catalog()
     validate_home()
