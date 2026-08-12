@@ -43,6 +43,7 @@ on:
       - conversion-close-v510.json
       - conversion-close-v510.css
       - conversion-close-v510.js
+      - engagement-v511.css
       - assets/**
       - scripts/build_catalog_shells.py
       - scripts/render_catalog_static.mjs
@@ -70,6 +71,8 @@ on:
       - scripts/validate_commercial_v59.py
       - scripts/apply_conversion_v510.py
       - scripts/validate_conversion_v510.py
+      - scripts/apply_engagement_v511.py
+      - scripts/validate_engagement_v511.py
       - scripts/validate_browser_v54.py
       - scripts/run_quality_v55.mjs
       - scripts/validate_quality_v55.py
@@ -147,6 +150,8 @@ jobs:
         run: python3 scripts/apply_commercial_v59.py
       - name: Apply conversion-to-close architecture v5.10
         run: python3 scripts/apply_conversion_v510.py
+      - name: Apply engagement readiness v5.11
+        run: python3 scripts/apply_engagement_v511.py
       - name: Commit canonical outputs
         run: |
           if git diff --quiet; then
