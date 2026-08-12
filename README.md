@@ -1,6 +1,6 @@
-# Meridiano Legal · Web canónica v5.15.0
+# Meridiano Legal · Web canónica v5.16.0
 
-Sitio público, responsive, static-first y autocontenido de Meridiano Legal, publicado mediante GitHub Pages. v5.15 consolida **recomendación → siguiente acción**: el encaje queda junto al CTA, límites y alternativas pasan a comparación secundaria y la ruta comercial permanece explícita y controlada por el usuario.
+Sitio público, responsive, static-first y autocontenido de Meridiano Legal, publicado mediante GitHub Pages. v5.16 mejora **UX móvil y accesibilidad verificable** sin recortar profundidad jurídica: corrige targets táctiles y contrastes reales, reduce scroll mediante revelado progresivo nativo y amplía la observabilidad Lighthouse para que los gaps de accesibilidad queden auditables.
 
 ## Estado actual
 
@@ -10,7 +10,7 @@ URL pública: `https://arendon7.github.io/MERDIANOLEGAL/`
 
 `stable` solo se mueve cuando builder, idempotencia, Pages, smoke, Browser E2E, axe, Lighthouse y release-health están verdes.
 
-## Capas comerciales vigentes
+## Capas comerciales y de calidad vigentes
 
 - **v5.8:** claridad de compra;
 - **v5.9:** calificación comercial y privacidad;
@@ -19,49 +19,49 @@ URL pública: `https://arendon7.github.io/MERDIANOLEGAL/`
 - **v5.12:** 5 modalidades y prueba verificable derivada de fuente;
 - **v5.13:** continuidad de modalidad/prueba hasta formulario y WhatsApp;
 - **v5.14:** recomendación explicable con encaje, límite y alternativa;
-- **v5.15:** consolidación recomendación→acción, comparación secundaria y rutas proposal/scope/orientation controladas por el usuario.
+- **v5.15:** consolidación recomendación→acción y rutas proposal/scope/orientation controladas por el usuario;
+- **v5.16:** UX móvil, targets táctiles, progressive disclosure, foco/scroll accesible y diagnóstico Lighthouse de auditorías con score < 1.
 
-Secuencia canónica: `v5.8 → v5.9 → v5.10 → v5.11 → v5.12 → v5.13 → v5.14 → v5.15`.
+La composición fuente continúa `v5.8 → v5.9 → v5.10 → v5.11 → v5.12 → v5.13 → v5.14 → v5.15`; v5.16 es hardening final de runtime/CSS/QA y no añade un applicator de contenido nuevo.
 
-## v5.15 · Recomendación → acción
+## v5.16 · UX móvil y accesibilidad verificable
 
-La capa reutiliza `recommendation-v514.json` como fuente de las cinco modalidades y mantiene `scoring: false`. El encaje se muestra directamente en el selector v5.12; límites y alternativas se conservan en un detalle ampliado colapsado. El formulario muestra una ruta comercial sugerida, pero nunca modifica automáticamente la etapa del usuario.
+v5.16 parte de evidencia, no de supuestos. `scripts/run_quality_v55.mjs` conserva en sus resúmenes las auditorías Lighthouse de accesibilidad con score menor a 1. Ese diagnóstico identificó `target-size` en tres CTA de Perspectivas y posteriormente una deuda móvil de contraste/targets en la ficha Programa de Gobernanza IA.
 
-Rutas canónicas:
+Implementado:
 
-- diagnóstico → definición de alcance;
-- auditoría → propuesta;
-- producto cerrado → propuesta;
-- servicio especializado → definición de alcance;
-- acompañamiento recurrente → definición de alcance;
-- sin contexto suficiente → orientación inicial.
+- tres CTA “Explorar la práctica” con target táctil mínimo de 44 px;
+- en móvil, detalle secundario de v5.10 y v5.11 dentro de `<details>` nativos; calificación, contexto, recomendación y ruta permanecen visibles;
+- sin JavaScript, el contenido comercial sigue expandido como antes;
+- tres regiones horizontalmente desplazables reciben foco, `role=region`, nombre accesible y foco visible en móvil;
+- contraste móvil corregido en el primer paso comercial;
+- menú profundo, sus cinco enlaces y CTA fijo de fichas profundas con targets/contraste accesibles;
+- portada y ficha profunda auditadas por axe en viewport 390×844 dentro de las mismas 37 entradas protegidas;
+- ningún cambio de budgets, workers, topología CI, scoring, storage, red propia o PII.
 
-Implementación: `decision-action-v515.css`, `decision-action-v515.js`, `scripts/apply_decision_action_v515.py` y `scripts/validate_decision_action_v515.py`.
+## Evidencia funcional v5.16
 
-No se añadió cuestionario, scoring, storage, backend, transporte de red propio ni PII adicional.
+Run `31618614227`, SHA funcional certificado `2cd5fb0d2b428187c08cf21e562427f9bc44508c`:
 
-## Evidencia funcional v5.15 previa al cierre documental
-
-Run `31609518536`, SHA `48a0692e8e4f999a85cfd8619fe2e293528945c2`:
-
-- `main == stable` antes del cierre documental;
-- Browser E2E + axe: 37 observados → 35 PASS / 2 SKIP / 0 FAIL / 0 RETRY; 7 superficies axe limpias;
-- Lighthouse: 6/6 dentro de presupuesto;
-- CI: 209 s hasta `stable`, 25.1% mejor que baseline v5.5 de 279 s;
+- `main == stable` en el cierre funcional;
+- Browser E2E + axe: 37 observados → 35 PASS / 2 SKIP / 0 FAIL / 0 RETRY;
+- 7 superficies axe sin violaciones serias/críticas, incluida la ficha profunda en móvil;
+- Lighthouse: 6/6 PASS y **accesibilidad 1.00 en las seis superficies**;
+- `accessibilityAuditGaps`: vacío en las seis superficies;
+- CI hasta `stable`: 187 s, 33.0% mejor que baseline v5.5 de 279 s;
 - cobertura reducida: no;
-- budgets relajados: no;
-- Release Governance + Pages trigger + validator v5.15: PASS.
+- budgets relajados: no.
 
 ### Lighthouse
 
-| Superficie | Performance | Accesibilidad | LCP | CLS | TBT | Transferencia |
-|---|---:|---:|---:|---:|---:|---:|
-| Portada | 1.00 | 0.97 | 1322 ms | 0 | 3 ms | 99,735 B |
-| Solución IA | 1.00 | 1.00 | 989 ms | 0 | 0 ms | 23,234 B |
-| Producto IA | 1.00 | 1.00 | 999 ms | 0 | 0 ms | 37,677 B |
-| Sector tecnología | 0.98 | 1.00 | 1006 ms | 0.087 | 0 ms | 24,289 B |
-| Perspectiva IA | 1.00 | 1.00 | 1044 ms | 0 | 0 ms | 25,796 B |
-| Demo | 1.00 | 1.00 | 906 ms | 0 | 0 ms | 21,994 B |
+| Superficie | Performance | Accesibilidad | LCP | CLS | TBT |
+|---|---:|---:|---:|---:|---:|
+| Portada | 1.00 | 1.00 | 1255 ms | 0 | 7 ms |
+| Solución IA | 1.00 | 1.00 | 902 ms | 0 | 0 ms |
+| Producto IA | 1.00 | 1.00 | 905 ms | 0 | 0 ms |
+| Sector tecnología | 0.98 | 1.00 | 905 ms | 0.087 | 0 ms |
+| Perspectiva IA | 1.00 | 1.00 | 902 ms | 0 | 0 ms |
+| Demo | 1.00 | 1.00 | 905 ms | 0 | 0 ms |
 
 ## Integraciones externas: estado verdadero
 
@@ -71,8 +71,8 @@ No declarar activas sin configuración real: dominio personalizado/CNAME, Search
 
 ## Documentación
 
-- `RELEASE-v5.15.md`: eficiencia recomendación→acción y evidencia de release;
-- `RELEASE-v5.14.md`: recomendación explicable;
+- `RELEASE-v5.16.md`: UX móvil, accesibilidad y evidencia de release;
+- `RELEASE-v5.15.md`: eficiencia recomendación→acción;
 - `knowledge/HOME.md`: entrada a memoria operativa.
 
 ## Principios vigentes
@@ -82,5 +82,9 @@ No declarar activas sin configuración real: dominio personalizado/CNAME, Search
 - No inventar integraciones, clientes, testimonios ni resultados.
 - No transmitir PII en telemetría.
 - No usar scoring opaco para decidir la modalidad.
-- Una ruta sugerida no puede cambiar automáticamente la decisión declarada por el usuario.
+- Compactar móvil no significa ocultar contenido jurídico material.
 - Graphify orienta; `main`, Pages, validadores y tests deciden.
+
+## Transición al siguiente ciclo
+
+v5.17 solo puede iniciar cuando el SHA que contiene este cierre formal 5.16.0 haya atravesado nuevamente builder, sincronización visible, Pages, Browser/axe, Lighthouse y termine en `main == stable`.
