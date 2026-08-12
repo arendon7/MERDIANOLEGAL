@@ -50,6 +50,13 @@ def validate_home(data: dict) -> None:
     require(text.count('data-decision-action-v515="true"') == 1, "debe existir una única superficie v5.15 en home")
     require(text.count('data-decision-action-source-v515=') == 5, "las cinco tarjetas v5.12 deben ser fuentes de acción")
     require(text.count('class="proof-fit-v515"') == 5, "cada modalidad debe mostrar encaje junto al CTA")
+    embedded = re.search(r'<script type="application/json" id="recommendation-contract-v514">(.*?)</script>', text, re.S)
+    require(bool(embedded), "v5.15 debe preservar el contrato JSON embebido v5.14")
+    try:
+        embedded_data = json.loads(embedded.group(1))
+    except json.JSONDecodeError as exc:
+        raise SystemExit(f"DECISION ACTION V5.15 FAIL: contrato embebido v5.14 inválido: {exc}") from exc
+    require(embedded_data == data, "contrato JSON embebido debe ser idéntico a recommendation-v514.json")
     for code, rule in data["modalities"].items():
         proof = re.search(r'<a class="proof-model-card-v512"[^>]*data-proof-model-v512="' + re.escape(code) + r'"[^>]*>.*?</a>', text, re.S)
         require(bool(proof), f"falta selector v5.12 {code}")
@@ -155,7 +162,7 @@ def main() -> int:
     validate_details()
     validate_workflows()
     validate_e2e(data)
-    print("DECISION ACTION V5.15 OK: 5 modalidades consolidadas + rutas proposal/scope/orientation controladas + 16 handoffs coherentes, preservando CTA v5.10.")
+    print("DECISION ACTION V5.15 OK: 5 modalidades consolidadas + rutas proposal/scope/orientation controladas + 16 handoffs coherentes, preservando CTA v5.10 y contrato embebido v5.14.")
     return 0
 
 
