@@ -76,17 +76,31 @@ test('formulario prepara WhatsApp sin enviar ni salir de la web', async ({ page 
       return { closed: false };
     };
   });
-  await page.goto('./?context=Programa%20de%20Gobernanza%20de%20IA&need=Programa%20de%20Gobernanza%20de%20IA#contacto');
+
+  await page.goto('./productos/programa-gobernanza-ia.html');
+  const proposalCta = page.locator('[data-decision-v58-cta="true"][data-close-intent-v510="proposal"]');
+  await expect(proposalCta).toBeVisible();
+  await expect(proposalCta).toHaveAttribute('href', /commercial_intent=proposal#contacto$/);
+  await proposalCta.click();
+  await expect(page).toHaveURL(/commercial_intent=proposal#contacto$/);
+
   const form = page.locator('form[data-contact-v49="true"]');
   await expect(form).toBeVisible();
   await expect(form).toHaveAttribute('data-commercial-intake-v59', 'true');
+  await expect(form).toHaveAttribute('data-commercial-close-v510', 'true');
   await expect(form.locator('[data-qualification-v59="true"]')).toBeVisible();
+  await expect(form.locator('[data-close-path-v510="true"]')).toBeVisible();
   await expect(form.locator('[name="need"]')).toHaveValue('Gobernanza de IA');
+  await expect(form.locator('[name="decision_stage"]')).toHaveValue('Quiero recibir una propuesta');
+  await expect(form).toHaveAttribute('data-close-route-v510', 'proposal');
+  await expect(form.locator('[data-close-route-v510]')).toContainText('Ruta de propuesta');
+  await expect.poll(async () => (await telemetrySnapshot(page)).some((event) =>
+    event.name === 'close_intent_applied' && event.detail?.target === 'contact-form'
+  )).toBe(true);
 
   await form.locator('[name="name"]').fill('Prueba E2E');
   await form.locator('[name="company"]').fill('Empresa de prueba');
   await form.locator('[name="email"]').fill('e2e@example.com');
-  await form.locator('[name="decision_stage"]').selectOption({ label: 'Quiero recibir una propuesta' });
   await form.locator('[name="urgency"]').selectOption({ label: 'En 2 a 4 semanas' });
   await form.locator('[name="budget"]').selectOption({ label: '$8 a $20 millones COP' });
   await form.locator('[name="message"]').fill('Necesitamos revisar el gobierno de un caso de uso de IA.');
@@ -94,11 +108,11 @@ test('formulario prepara WhatsApp sin enviar ni salir de la web', async ({ page 
 
   await expect(form).toHaveAttribute('data-proposal-readiness', 'proposal_ready');
   await expect(form.locator('[data-qualification-next-step-v59]').first()).toContainText('Propuesta estructurada');
-  await expect(form.locator('[data-qualification-context-v59]')).toContainText('Programa de Gobernanza de IA');
+  await expect(form.locator('[data-qualification-context-v59]')).toContainText('Producto jurídico');
   await expectNoHorizontalOverflow(page);
 
   await page.waitForTimeout(900);
-  await form.getByRole('button', { name: /Abrir solicitud en WhatsApp/i }).click();
+  await form.getByRole('button', { name: /Preparar solicitud de propuesta en WhatsApp/i }).click();
   const status = form.locator('.form-status');
   await expect(status).toContainText(/ML-\d{8}-[A-Z0-9]{5}/);
   await expect(form).toHaveAttribute('data-last-lead-reference', /ML-\d{8}-[A-Z0-9]{5}/);
@@ -117,6 +131,10 @@ test('formulario prepara WhatsApp sin enviar ni salir de la web', async ({ page 
   expect(events).toContainEqual(expect.objectContaining({
     name: 'lead_prepared',
     detail: expect.objectContaining({ target: 'whatsapp' }),
+  }));
+  expect(events).toContainEqual(expect.objectContaining({
+    name: 'close_handoff_prepared',
+    detail: expect.objectContaining({ stage: 'proposal', target: 'whatsapp' }),
   }));
   const telemetryText = JSON.stringify(events);
   expect(telemetryText).not.toContain('Prueba E2E');
@@ -150,7 +168,7 @@ test('honeypot bloquea preparación automatizada', async ({ page }) => {
     await need.fill('Otra necesidad');
   }
   await page.waitForTimeout(900);
-  await form.getByRole('button', { name: /Abrir solicitud en WhatsApp/i }).click();
+  await form.locator('button[type="submit"]').click();
   await expect(form.locator('.form-status')).toContainText('No fue posible preparar la solicitud');
   expect(await page.evaluate(() => window.__meridianoOpenedUrls || [])).toHaveLength(0);
 });
