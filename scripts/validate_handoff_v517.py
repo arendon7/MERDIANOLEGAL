@@ -157,7 +157,15 @@ def main() -> int:
     require(pages.count("python3 scripts/validate_handoff_v517.py") >= 2,
             "Pages debe validar v5.17 en quality y en release-health previo a stable")
 
-    print("HANDOFF V5.17 OK: 1 panel/ID canónico + 16 rutas profundas, composición idempotente, borrador efímero, stale protection y gate Pages completo.")
+    governance = (ROOT / ".github/workflows/release-governance.yml").read_text(encoding="utf-8")
+    require("- name: Normalize materialized handoff v5.17 before historical validators\n        run: python3 scripts/apply_handoff_v517.py" in governance,
+            "Governance debe normalizar el output materializado v5.17 antes de validators históricos")
+    require(governance.find("Normalize materialized handoff v5.17 before historical validators") < governance.find("Validate buying decision contract v5.8"),
+            "preflight v5.17 debe ejecutarse antes de la secuencia histórica v5.8→v5.15")
+    require(governance.count("python3 scripts/apply_handoff_v517.py") >= 2,
+            "Governance debe normalizar v5.17 al inicio y reaplicarlo antes de su validator final")
+
+    print("HANDOFF V5.17 OK: 1 panel/ID canónico + 16 rutas profundas, composición idempotente, preflight Governance, borrador efímero y stale protection.")
     return 0
 
 
