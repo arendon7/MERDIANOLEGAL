@@ -43,16 +43,24 @@ fuentes → builder canónico → v5.8 → v5.9 → v5.10 → v5.11 → v5.12 �
 
 ## Estado actual resumido
 
-- Versión declarada en este cierre: v5.14.0.
-- Funcionalidad v5.14 certificada en run `31570619885`, SHA `42e482241a818e0c94137810e1224558a58f397d`.
-- Antes del cierre documental: `main == stable` en ese SHA.
-- Browser E2E + axe: PASS sobre 37 entradas protegidas y 7 superficies axe.
-- Lighthouse: 6/6 dentro de budget.
-- CI: 264 s hasta `stable`, 5.4% mejor que baseline v5.5 de 279 s.
+- Versión productiva: v5.14.0.
+- SHA final: `9435f65ca129099a8a59f12ec5fd2f9e3aa58762`.
+- `main == stable` en ese SHA.
+- Run final: `31571937528`.
+- Browser E2E + axe: 37 observados → 35 PASS / 2 SKIP / 0 FAIL / 0 RETRY; 7 superficies axe limpias.
+- Lighthouse: 6/6 dentro de budget; portada 1.00 performance / 0.97 a11y / LCP 1232 ms.
+- CI: 202 s hasta `stable`, 27.6% mejor que baseline v5.5 de 279 s.
 - cobertura reducida: no; budgets relajados: no.
 - Release Governance, trigger builder→Pages y validator v5.14: PASS.
-- v5.14 no añade cuestionario, storage, backend, fetch/XHR ni PII.
+- Graphify: fuente `547b97e2…`, 513 nodos / 818 relaciones / 85 notas; el SHA final está un commit generado por delante con solo 28 outputs versionados, equivalencia estructural documentada.
+- v5.14 no añade cuestionario, storage, backend, fetch/XHR propio ni PII.
 - No hay aceptación contractual, pagos, agenda, expediente, carga documental ni inicio automático desde la web pública.
+
+## Tarea activa
+
+**v5.15 — Eficiencia recomendación→acción.**
+
+Reducir solapamiento entre selección, explicación y CTA; mejorar jerarquía y escaneabilidad; conservar el contexto hacia propuesta/WhatsApp; no añadir cuestionario, scoring, storage o backend.
 
 ## Regla de continuidad
 
