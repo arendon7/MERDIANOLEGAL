@@ -60,7 +60,17 @@ def main() -> int:
     require("testIgnore: a11ySpec" in config and "testMatch: a11ySpec" in config, "la suite axe debe ejecutarse una sola vez")
 
     axe = (R / "tests/e2e/accessibility.spec.mjs").read_text(encoding="utf-8")
-    for marker in ("AxeBuilder", "wcag21aa", "serious", "critical", "#ticket-modal", "cliente@empresa-demo.com"):
+    for marker in (
+        "AxeBuilder",
+        "wcag21aa",
+        "serious",
+        "critical",
+        "#ticket-modal",
+        "cliente@empresa-demo.com",
+        "getBoundingClientRect",
+        "toBeGreaterThanOrEqual(44)",
+        "data-mobile-disclosure-v516",
+    ):
         require(marker in axe, f"suite axe no contiene {marker}")
     require(axe.count("['") >= 6, "suite axe debe cubrir superficies públicas representativas")
 
@@ -112,6 +122,30 @@ def main() -> int:
     require("accessibilityAuditGaps," in runner, "summary.json debe persistir gaps de accesibilidad")
     require("budgetsRelaxed: false" in runner, "runner debe conservar budgetsRelaxed=false")
 
+    decision_js = (R / "decision-action-v515.js").read_text(encoding="utf-8")
+    for marker in (
+        "MOBILE-UX-V516:START",
+        "enhanceMobileDisclosureV516",
+        "window.matchMedia('(max-width: 760px)').matches",
+        "data-mobile-disclosure-v516",
+        "close-head-v510",
+        "engagement-head-v511",
+        "hiddenMaterialContent: false",
+    ):
+        require(marker in decision_js, f"runtime móvil v5.16 no contiene {marker}")
+    for forbidden in ("localStorage", "sessionStorage", "fetch(", "XMLHttpRequest"):
+        require(forbidden not in decision_js, f"runtime v5.16 no debe añadir {forbidden}")
+
+    decision_css = (R / "decision-action-v515.css").read_text(encoding="utf-8")
+    for marker in (
+        "MOBILE-UX-V516:START",
+        ".perspectives-grid button[data-service]",
+        "min-height:44px",
+        ".commercial-disclosure-v516>summary",
+        "@media(max-width:760px)",
+    ):
+        require(marker in decision_css, f"CSS móvil v5.16 no contiene {marker}")
+
     ci_policy = json.loads((R / "ci-baseline-v56.json").read_text(encoding="utf-8")).get("policy", {})
     require("accessibilityScore" in ci_policy.get("lighthouseNonRetryableMetrics", []), "accessibilityScore debe seguir siendo no reintentable")
     require(ci_policy.get("lighthouseVerificationRunsOnFailure") == 2, "política de verificación Lighthouse no debe cambiar")
@@ -140,12 +174,14 @@ def main() -> int:
         "tests/e2e/**",
         "scripts/run_quality_v55.mjs",
         "scripts/validate_quality_v55.py",
+        "decision-action-v515.css",
+        "decision-action-v515.js",
         "npm install --package-lock-only --ignore-scripts --no-audit --no-fund",
         "package-lock.json",
     ):
         require(marker in build, f"build-canonical no contiene {marker}")
 
-    print("VALIDACIÓN QUALITY V5.5/V5.16 OK: axe, Lighthouse, budgets, diagnóstico score<1, Node 22+, lockfile y gate previo a stable íntegros.")
+    print("VALIDACIÓN QUALITY V5.5/V5.16 OK: axe, Lighthouse, target-size 44px, disclosure móvil sin pérdida material, diagnóstico score<1, budgets y gates íntegros.")
     return 0
 
 
