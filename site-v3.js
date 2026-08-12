@@ -188,7 +188,7 @@
     const summary = lines.join('\n');
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(summary)}`;
     setStatus('Abriendo WhatsApp. La solicitud solo queda enviada cuando confirme el envío allí.');
-    try { await navigator.clipboard?.writeText(summary); } catch { /* copia opcional */ }
+    window.dispatchEvent(new CustomEvent('meridiano:handoff-draft-v517', { detail: { reference, summary, url } }));
     window.dispatchEvent(new CustomEvent('meridiano:lead-prepared', { detail: { reference, need: cleanContactValue(data.get('need'), 160), context, readiness: cleanContactValue(form.dataset.proposalReadiness, 32) } }));
     const opened = window.open(url, '_blank', 'noopener,noreferrer');
     if (!opened) {
