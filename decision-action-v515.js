@@ -88,8 +88,11 @@
       'Estados del encargo, verificaciones previas y actos que esta web no ejecuta.'
     );
   };
+  // Alias contractual: v5.16 sigue teniendo un punto de entrada identificable para
+  // su validator histórico; v5.19 amplía su alcance sin eliminar la capacidad.
+  const enhanceMobileDisclosureV516 = enhanceCommercialDisclosureV519;
   enhanceMobileScrollableRegionsV516();
-  enhanceCommercialDisclosureV519();
+  enhanceMobileDisclosureV516();
   // COMMERCIAL-FOCUS-V519:END
   // MOBILE-UX-V516:END
 
