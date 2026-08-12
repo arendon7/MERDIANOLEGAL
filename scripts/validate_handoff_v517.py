@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from pathlib import Path
 import json
-import re
 
 ROOT = Path(__file__).resolve().parents[1]
 START = "<!-- HANDOFF-V517:START -->"
@@ -24,11 +23,12 @@ def public_html() -> list[Path]:
 
 
 def contact_pages() -> list[Path]:
-    return [
-        path for path in public_html()
-        if 'id="contact-form"' in path.read_text(encoding="utf-8")
-        and 'data-contact-v49="true"' in path.read_text(encoding="utf-8")
-    ]
+    result = []
+    for path in public_html():
+        text = path.read_text(encoding="utf-8")
+        if 'id="contact-form"' in text and 'data-contact-v49="true"' in text:
+            result.append(path)
+    return result
 
 
 def prefix_for(path: Path) -> str:
@@ -103,7 +103,33 @@ def main() -> int:
     for marker in ("contact_pages()", "patch_site_runtime()", "AUTO_CLIPBOARD", "DRAFT_EVENT", "len(targets) < 17"):
         require(marker in applicator, f"applicator v5.17 no contiene {marker}")
 
-    print(f"HANDOFF V5.17 OK: {len(targets)} formularios con continuidad manual, borrador efímero, protección stale y sin copia automática/persistencia.")
+    helpers = (ROOT / "tests/e2e/helpers.mjs").read_text(encoding="utf-8")
+    for marker in (
+        "__meridianoHandoffGuardV517",
+        "meridiano:handoff-draft-v517",
+        "handoff.references).toHaveLength(1)",
+        "handoff.panelText).not.toContain(value)",
+        "data-handoff-state', 'changed",
+        "data-handoff-reopen-v517",
+        "data-handoff-copy-v517",
+    ):
+        require(marker in helpers, f"cobertura E2E v5.17 no contiene {marker}")
+
+    public_spec = (ROOT / "tests/e2e/public-site.spec.mjs").read_text(encoding="utf-8")
+    require("formulario prepara WhatsApp sin enviar ni salir de la web" in public_spec, "debe conservarse el test histórico de handoff")
+    require("window.__meridianoOpenedUrls" in public_spec, "test histórico debe seguir verificando la apertura de WhatsApp")
+
+    build = (ROOT / ".github/workflows/build-canonical.yml").read_text(encoding="utf-8")
+    for marker in (
+        "handoff-continuity-v517.css",
+        "handoff-continuity-v517.js",
+        "scripts/apply_handoff_v517.py",
+        "scripts/validate_handoff_v517.py",
+        "Apply manual handoff continuity v5.17",
+    ):
+        require(marker in build, f"builder no gobierna {marker}")
+
+    print(f"HANDOFF V5.17 OK: {len(targets)} formularios con continuidad manual, borrador efímero, protección stale y cobertura E2E sin nueva entrada.")
     return 0
 
 
