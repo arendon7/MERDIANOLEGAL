@@ -18,6 +18,7 @@ on:
       - conversion-close-v510.json
       - conversion-close-v510.css
       - conversion-close-v510.js
+      - engagement-v511.css
       - catalog-products-v41/**
       - catalog-services-v42/**
       - tests/e2e/**
@@ -28,6 +29,8 @@ on:
       - scripts/validate_commercial_v59.py
       - scripts/apply_conversion_v510.py
       - scripts/validate_conversion_v510.py
+      - scripts/apply_engagement_v511.py
+      - scripts/validate_engagement_v511.py
       - scripts/validate_operations_v49.py
       - scripts/validate_static_catalog.py
       - scripts/validate_quality_v55.py
@@ -78,6 +81,10 @@ jobs:
         run: |
           python3 scripts/apply_conversion_v510.py
           python3 scripts/validate_conversion_v510.py
+      - name: Validate engagement readiness v5.11
+        run: |
+          python3 scripts/apply_engagement_v511.py
+          python3 scripts/validate_engagement_v511.py
       - name: Publish release-health report
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7

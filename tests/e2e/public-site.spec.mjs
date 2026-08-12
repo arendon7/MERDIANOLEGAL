@@ -90,6 +90,11 @@ test('formulario prepara WhatsApp sin enviar ni salir de la web', async ({ page 
   await expect(form).toHaveAttribute('data-commercial-close-v510', 'true');
   await expect(form.locator('[data-qualification-v59="true"]')).toBeVisible();
   await expect(form.locator('[data-close-path-v510="true"]')).toBeVisible();
+  await expect(form.locator('[data-engagement-v511="true"]')).toBeVisible();
+  await expect(form.locator('[data-engagement-state-v511]')).toHaveCount(4);
+  await expect(form.locator('[data-engagement-state-v511="accepted"]')).toContainText('Propuesta aceptada');
+  await expect(form.locator('[data-engagement-state-v511="started"]')).toContainText('Encargo iniciado');
+  await expect(form.locator('[data-engagement-automatic-v511]')).toHaveAttribute('data-engagement-automatic-v511', 'false');
   await expect(form.locator('[name="need"]')).toHaveValue('Gobernanza de IA');
   await expect(form.locator('[name="decision_stage"]')).toHaveValue('Quiero recibir una propuesta');
   await expect(form).toHaveAttribute('data-close-route-v510', 'proposal');
