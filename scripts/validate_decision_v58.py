@@ -59,54 +59,61 @@ def route_keys(block: str) -> set[tuple[str, str]]:
     return keys
 
 
-def validate_home() -> None:
-    text = HOME.read_text(encoding='utf-8')
+def validate_unified_home_v520(text: str) -> None:
+    if text.count('<!-- DECISION-V58-HOME:START -->') or text.count('<!-- DECISION-V58-HOME:END -->'):
+        fail('v5.20 final no debe conservar un bloque de decisión v5.8 separado en portada')
+    if text.count('data-home-decision-v520="true"') != 1:
+        fail('v5.20 final debe contener una única superficie unificada de decisión')
+    if text.count('data-engagement-router-v58="true"') != 1:
+        fail('v5.20 final debe preservar el selector estable de entrada v5.8 en la superficie unificada')
+    if text.count('class="home-decision-entry-v520 engagement-router-card-v58"') != 4:
+        fail('v5.20 final debe preservar exactamente cuatro entradas semánticas heredadas de v5.8')
+    block_match = re.search(r'<section class="home-decision-v520".*?</section>', text, re.S)
+    if not block_match:
+        fail('no se pudo aislar la superficie v5.20')
+    routes = route_keys(block_match.group(0))
+    expected_routes = {
+        ('servicios/diagnostico-juridico-empresarial.html', ''),
+        ('', 'productos'),
+        ('servicios/direccion-juridica-externa.html', ''),
+        ('', 'servicios'),
+    }
+    missing = expected_routes - routes
+    if missing:
+        fail(f'faltan rutas de contratación heredadas: {sorted(missing)}')
+
+
+def validate_historical_home_v58(text: str) -> None:
     expected_links = [
         'servicios/diagnostico-juridico-empresarial.html',
         '#productos',
         'servicios/direccion-juridica-externa.html',
         '#servicios',
     ]
-
-    if version_at_least(5, 20):
-        if text.count('<!-- DECISION-V58-HOME:START -->') or text.count('<!-- DECISION-V58-HOME:END -->'):
-            fail('v5.20 no debe conservar un bloque de decisión v5.8 separado en portada')
-        if text.count('data-home-decision-v520="true"') != 1:
-            fail('v5.20 debe contener una única superficie unificada de decisión')
-        if text.count('data-engagement-router-v58="true"') != 1:
-            fail('v5.20 debe preservar el selector estable de entrada v5.8 en la superficie unificada')
-        if text.count('class="home-decision-entry-v520 engagement-router-card-v58"') != 4:
-            fail('v5.20 debe preservar exactamente cuatro entradas semánticas heredadas de v5.8 sin duplicar secciones')
-        if '<link rel="stylesheet" href="decision-v58.css">' not in text:
-            fail('falta decision-v58.css en portada')
-        block_match = re.search(r'<section class="home-decision-v520".*?</section>', text, re.S)
-        if not block_match:
-            fail('no se pudo aislar la superficie v5.20')
-        routes = route_keys(block_match.group(0))
-        expected_routes = {
-            ('servicios/diagnostico-juridico-empresarial.html', ''),
-            ('', 'productos'),
-            ('servicios/direccion-juridica-externa.html', ''),
-            ('', 'servicios'),
-        }
-        missing = expected_routes - routes
-        if missing:
-            fail(f'faltan rutas de contratación heredadas: {sorted(missing)}')
-        if 'Objetivo, perímetro, entregables, cronograma, responsabilidades, supuestos, exclusiones y mecanismo de cierre.' not in text:
-            fail('v5.20 debe preservar el contrato mínimo de propuesta seria')
-        return
-
     if text.count('<!-- DECISION-V58-HOME:START -->') != 1 or text.count('<!-- DECISION-V58-HOME:END -->') != 1:
         fail('index.html no contiene exactamente un bloque administrado de portada')
     if text.count('class="engagement-router-card-v58"') != 4:
         fail('la portada debe contener exactamente 4 modalidades de contratación v5.8')
     if 'data-engagement-router-v58="true"' not in text:
         fail('falta selector estable data-engagement-router-v58')
-    if '<link rel="stylesheet" href="decision-v58.css">' not in text:
-        fail('falta decision-v58.css en portada')
     for href in expected_links:
         if f'href="{href}"' not in text:
             fail(f'falta ruta de contratación {href}')
+
+
+def validate_home() -> None:
+    text = HOME.read_text(encoding='utf-8')
+    if '<link rel="stylesheet" href="decision-v58.css">' not in text:
+        fail('falta decision-v58.css en portada')
+
+    # Release Governance valida v5.8 inmediatamente después de aplicar su capa,
+    # antes de que v5.15/v5.20 compacte la portada. Pages valida la salida final.
+    # Ambos estados deben conservar el contrato semántico real de v5.8.
+    if version_at_least(5, 20) and 'data-home-decision-v520="true"' in text:
+        validate_unified_home_v520(text)
+    else:
+        validate_historical_home_v58(text)
+
     if 'Objetivo, perímetro, entregables, cronograma, responsabilidades, supuestos, exclusiones y mecanismo de cierre.' not in text:
         fail('falta contrato mínimo de propuesta seria')
 
@@ -169,7 +176,7 @@ def main() -> int:
     validate_home()
     for path in TARGETS:
         validate_detail(path, catalog)
-    print('DECISION V5.8 OK: fichas preservadas y continuidad semántica de compra verificada en portada actual.')
+    print('DECISION V5.8 OK: fichas preservadas y continuidad semántica de compra verificada en composición intermedia/final.')
     return 0
 
 
