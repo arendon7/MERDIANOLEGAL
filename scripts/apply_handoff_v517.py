@@ -6,6 +6,7 @@ from pathlib import Path
 import re
 
 ROOT = Path(__file__).resolve().parents[1]
+HOME = ROOT / "index.html"
 SITE_JS = ROOT / "site-v3.js"
 START = "<!-- HANDOFF-V517:START -->"
 END = "<!-- HANDOFF-V517:END -->"
@@ -27,10 +28,6 @@ def contact_pages() -> list[Path]:
         if 'id="contact-form"' in text and 'data-contact-v49="true"' in text:
             result.append(path)
     return result
-
-
-def prefix_for(path: Path) -> str:
-    return "" if path.parent == ROOT else "../"
 
 
 def panel_markup() -> str:
@@ -59,7 +56,7 @@ def panel_markup() -> str:
 def ensure_head_item(text: str, item: str) -> str:
     text = re.sub(r'(?m)^[ \t]*' + re.escape(item) + r'[ \t]*(?:\r?\n)?', "", text)
     if "</head>" not in text:
-        raise RuntimeError("página sin </head>")
+        raise RuntimeError("portada sin </head>")
     return text.replace("</head>", f"  {item}\n</head>", 1)
 
 
@@ -68,17 +65,12 @@ def ensure_script(text: str, item: str, anchor: str) -> str:
     if anchor in text:
         return text.replace(anchor, anchor + "\n  " + item, 1)
     if "</body>" not in text:
-        raise RuntimeError("página sin </body>")
+        raise RuntimeError("portada sin </body>")
     return text.replace("</body>", f"  {item}\n</body>", 1)
 
 
-def patch_page(path: Path) -> None:
-    text = path.read_text(encoding="utf-8")
-    prefix = prefix_for(path)
-    style = f'<link rel="stylesheet" href="{prefix}handoff-continuity-v517.css">'
-    script = f'<script src="{prefix}handoff-continuity-v517.js"></script>'
-    script_anchor = f'<script src="{prefix}decision-action-v515.js"></script>'
-
+def patch_home() -> None:
+    text = HOME.read_text(encoding="utf-8")
     block = panel_markup()
     marked = re.compile(re.escape(START) + r".*?" + re.escape(END), re.S)
     if marked.search(text):
@@ -86,12 +78,16 @@ def patch_page(path: Path) -> None:
     else:
         status = '<p class="form-status full" role="status" aria-live="polite"></p>'
         if status not in text:
-            raise RuntimeError(f"{path.relative_to(ROOT)}: falta status del formulario")
+            raise RuntimeError("index.html: falta status del formulario")
         text = text.replace(status, status + block, 1)
 
-    text = ensure_head_item(text, style)
-    text = ensure_script(text, script, script_anchor)
-    path.write_text(text, encoding="utf-8")
+    text = ensure_head_item(text, '<link rel="stylesheet" href="handoff-continuity-v517.css">')
+    text = ensure_script(
+        text,
+        '<script src="handoff-continuity-v517.js"></script>',
+        '<script src="decision-action-v515.js"></script>',
+    )
+    HOME.write_text(text, encoding="utf-8")
 
 
 def patch_site_runtime() -> None:
@@ -106,12 +102,12 @@ def patch_site_runtime() -> None:
 
 def main() -> int:
     targets = contact_pages()
-    if len(targets) < 17:
-        raise RuntimeError(f"Se esperaban al menos 17 superficies con contact-form y se encontraron {len(targets)}")
-    for path in targets:
-        patch_page(path)
+    if targets != [HOME]:
+        names = ", ".join(str(path.relative_to(ROOT)) for path in targets) or "ninguno"
+        raise RuntimeError(f"v5.17 espera un único formulario canónico en index.html; detectados: {names}")
+    patch_home()
     patch_site_runtime()
-    print(f"HANDOFF V5.17 OK: continuidad manual aplicada a {len(targets)} formularios públicos; copia automática eliminada.")
+    print("HANDOFF V5.17 OK: continuidad manual aplicada al formulario canónico; 16 fichas profundas conservan sus rutas hacia index.html#contacto.")
     return 0
 
 
