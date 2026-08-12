@@ -49,10 +49,11 @@ La web sigue siendo estática:
 
 La capa se implementa mediante:
 
+- `commercial-intake-v59.json`;
 - `commercial-intake-v59.css`;
 - `commercial-intake-v59.js`;
-- `scripts/apply_commercial_intake_v59.py`;
-- `scripts/validate_commercial_intake_v59.py`.
+- `scripts/apply_commercial_v59.py`;
+- `scripts/validate_commercial_v59.py`.
 
 ## v5.8 · Claridad de compra preservada
 
