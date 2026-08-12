@@ -72,6 +72,7 @@ def recommendation_card(code: str, rule: dict, idx: int) -> str:
 
 def recommendation_home(contract: dict) -> str:
     cards = "".join(recommendation_card(code, rule, idx) for idx, (code, rule) in enumerate(contract["modalities"].items(), start=1))
+    contract_json = json.dumps(contract, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
     return f'''{HOME_START}
 <section class="recommendation-v514 decision-action-v515" data-recommendation-v514="true" data-decision-action-v515="true" aria-labelledby="recommendation-v514-title">
   <div class="container">
@@ -86,6 +87,7 @@ def recommendation_home(contract: dict) -> str:
     <p class="recommendation-note-v514"><strong>Regla de decisión:</strong> esta comparación no asigna puntajes. La modalidad es orientativa hasta validar hechos, alcance, disponibilidad y posibles conflictos; si esas condiciones cambian, también puede cambiar la ruta adecuada.</p>
   </div>
 </section>
+<script type="application/json" id="recommendation-contract-v514">{contract_json}</script>
 {HOME_END}'''
 
 
