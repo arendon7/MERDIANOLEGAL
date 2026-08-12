@@ -47,6 +47,9 @@ on:
       - proof-v512.css
       - commercial-brief-v513.css
       - commercial-brief-v513.js
+      - recommendation-v514.json
+      - recommendation-v514.css
+      - recommendation-v514.js
       - assets/**
       - scripts/build_catalog_shells.py
       - scripts/render_catalog_static.mjs
@@ -80,6 +83,8 @@ on:
       - scripts/validate_proof_v512.py
       - scripts/apply_commercial_brief_v513.py
       - scripts/validate_commercial_brief_v513.py
+      - scripts/apply_recommendation_v514.py
+      - scripts/validate_recommendation_v514.py
       - scripts/validate_browser_v54.py
       - scripts/run_quality_v55.mjs
       - scripts/validate_quality_v55.py
@@ -163,6 +168,8 @@ jobs:
         run: python3 scripts/apply_proof_v512.py
       - name: Apply commercial brief continuity v5.13
         run: python3 scripts/apply_commercial_brief_v513.py
+      - name: Apply explainable modality recommendation v5.14
+        run: python3 scripts/apply_recommendation_v514.py
       - name: Commit canonical outputs
         run: |
           if git diff --quiet; then
