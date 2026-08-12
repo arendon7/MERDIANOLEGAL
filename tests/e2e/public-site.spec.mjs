@@ -9,12 +9,18 @@ test('portada pública conserva rutas, profundidad y layout', async ({ page }) =
   await expect(page.getByRole('link', { name: /Centro demo/i }).first()).toBeVisible();
   await expect(page.locator('[data-engagement-router-v58="true"]')).toBeVisible();
   await expect(page.locator('.engagement-router-card-v58')).toHaveCount(4);
+  await expect(page.locator('[data-proof-router-v512="true"]')).toBeVisible();
+  await expect(page.locator('[data-proof-model-v512]')).toHaveCount(5);
+  await expect(page.locator('[data-proof-standard-v512="true"]')).toBeVisible();
   await expectNoHorizontalOverflow(page);
 
   await page.goto('./productos/programa-gobernanza-ia.html');
   await expect(page.locator('[data-buying-clarity-v58="true"]')).toBeVisible();
   await expect(page.locator('.buying-clarity-card-v58')).toHaveCount(5);
   await expect(page.locator('[data-decision-v58-cta="true"]')).toBeVisible();
+  await expect(page.locator('[data-proof-v512="true"]')).toBeVisible();
+  await expect(page.locator('[data-proof-dimension-v512]')).toHaveCount(4);
+  await expect(page.locator('[data-proof-dimension-v512="acceptance"]')).toContainText('Cómo se verifica el cierre');
   await expectNoHorizontalOverflow(page);
 });
 
