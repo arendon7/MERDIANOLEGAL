@@ -2,60 +2,53 @@
 
 Actualizado: 2026-08-12.
 
-## Release activa
+## Estado
 
-**v5.19.0 — foco comercial adaptativo.**
+**v5.19.0 — foco comercial adaptativo — funcionalmente certificada; cierre documental en curso.**
 
-La auditoría posterior al cierre de v5.18 detectó que la oferta profunda y el contrato jurídico están bien estructurados, pero el tramo final de contacto acumula demasiada información visible antes del handoff. El problema no requiere otra capa de calificación: requiere reducir carga cognitiva sin perder trazabilidad, límites ni control del usuario.
+No hay desarrollo funcional pendiente dentro de v5.19. El runtime público ya superó builder, idempotencia, validadores, Pages, smoke, Browser E2E, axe, Lighthouse y release-health y fue promovido a `stable`.
 
-## Objetivo
+## Evidencia funcional
 
-Aplicar progressive disclosure también en escritorio sobre los bloques secundarios de v5.10 y v5.11, usando únicamente la intención comercial explícita ya existente:
-
-- `orientation` y `scope`: detalle secundario inicialmente replegado;
-- `proposal` explícito en escritorio: detalle inicialmente expandido;
-- móvil: conservar el comportamiento v5.16 ya certificado;
-- el encabezado, la ruta recomendada, el formulario y el material jurídico permanecen disponibles;
-- abrir/cerrar información no cambia etapa, modalidad, recomendación ni contenido del handoff.
+- PR funcional: #71.
+- Merge fuente: `fcf8d868e5b95ab201c8ebb612ffba166f4746f5`.
+- SHA público materializado: `9a91e8d19697142c0d2d0990c1e606f6ff9660ef`.
+- Run final: `31649425600`.
+- Snapshot certificado al cierre funcional: `main == stable == 9a91e8d19697142c0d2d0990c1e606f6ff9660ef`.
+- Browser E2E + axe: 37 → 35 PASS / 2 SKIP / 0 FAIL / 0 RETRY.
+- Lighthouse: 6/6 PASS; accesibilidad 1.00; performance 0.98–1.00.
+- LCP máximo: 1368 ms; CLS máximo: 0.087; TBT máximo: 56 ms.
+- CI hasta `stable`: 215 s, 22.9% mejor que baseline 279 s.
+- cobertura reducida: no.
+- budgets relajados: no.
 
 ## Contrato v5.19
 
-- no scoring;
-- no inferencia de intención distinta del parámetro explícito existente;
-- no cambio automático de `decision_stage`;
-- no PII adicional;
-- no `localStorage`/`sessionStorage` nuevo;
-- no fetch/XHR/sendBeacon nuevo;
-- no backend/CRM;
-- no reducción de los 37 E2E, 7 superficies axe o 6 superficies Lighthouse;
-- no relajación de budgets v5.5;
-- no supresión de información material: se reordena mediante `<details>` nativo y accesible.
+- `orientation` y `scope`: detalle secundario replegado inicialmente;
+- `proposal` explícito en escritorio: detalle inicialmente expandido;
+- móvil conserva v5.16;
+- sin scoring o inferencia adicional;
+- sin cambio automático de etapa;
+- sin PII, persistencia, transporte, backend o CRM nuevos;
+- contenido material siempre disponible mediante `<details>`.
 
-## Implementación fuente
+## Condición de finalización
 
-- `decision-action-v515.js`: extensión `COMMERCIAL-FOCUS-V519` sobre el disclosure existente;
-- `decision-action-v515.css`: estilos adaptativos escritorio/móvil;
-- `scripts/validate_decision_action_v515.py`: hardening contractual v5.19 sin romper v5.15;
-- `version.json`: `5.19.0`.
+1. integrar `RELEASE-v5.19.md`;
+2. alinear README y memoria canónica;
+3. comprobar que el delta de cierre sea exclusivamente documental;
+4. mergear el cierre documental;
+5. verificar el run Graphify posterior y su frescura/versionado;
+6. dejar explícito que no existe una v5.20 abierta.
 
-## Criterio de cierre
-
-1. validator v5.15/v5.19: PASS;
-2. builder canónico e idempotencia: PASS;
-3. validators históricos: PASS;
-4. Pages + smoke: PASS;
-5. Browser E2E + axe: sin regresiones;
-6. Lighthouse 6/6 dentro de budgets;
-7. release-health: PASS;
-8. promoción de `stable` al SHA público final;
-9. Graphify fresco respecto del `main` procesado;
-10. documentar evidencia final y cerrar la tarea.
+No es necesario volver a modificar el snapshot público certificado salvo que un cambio funcional/publicable posterior lo requiera.
 
 ## No objetivos
 
-- no nuevas preguntas de formulario;
-- no automatización de WhatsApp;
+- no nuevas features;
+- no nuevas preguntas;
+- no backend/CRM;
+- no automatización externa de WhatsApp;
 - no nueva analítica externa;
-- no backend, CRM, firma, pagos, agenda o carga documental;
-- no rediseño general de la oferta;
-- no v5.20 dentro de este ciclo.
+- no modificar el contrato certificado v5.19;
+- no abrir v5.20 dentro de este cierre.
