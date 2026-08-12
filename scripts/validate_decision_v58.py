@@ -3,8 +3,9 @@
 
 from __future__ import annotations
 
-from html import escape
+from html import escape, unescape
 from pathlib import Path
+from urllib.parse import urlsplit
 import json
 import re
 
@@ -50,6 +51,14 @@ def first_title(values) -> str:
     return str(item)
 
 
+def route_keys(block: str) -> set[tuple[str, str]]:
+    keys: set[tuple[str, str]] = set()
+    for raw_href in re.findall(r'href="([^"]+)"', block):
+        parts = urlsplit(unescape(raw_href))
+        keys.add((parts.path, parts.fragment))
+    return keys
+
+
 def validate_home() -> None:
     text = HOME.read_text(encoding='utf-8')
     expected_links = [
@@ -70,9 +79,19 @@ def validate_home() -> None:
             fail('v5.20 debe preservar exactamente cuatro entradas semánticas heredadas de v5.8 sin duplicar secciones')
         if '<link rel="stylesheet" href="decision-v58.css">' not in text:
             fail('falta decision-v58.css en portada')
-        for href in expected_links:
-            if f'href="{href}"' not in text:
-                fail(f'falta ruta de contratación heredada {href}')
+        block_match = re.search(r'<section class="home-decision-v520".*?</section>', text, re.S)
+        if not block_match:
+            fail('no se pudo aislar la superficie v5.20')
+        routes = route_keys(block_match.group(0))
+        expected_routes = {
+            ('servicios/diagnostico-juridico-empresarial.html', ''),
+            ('', 'productos'),
+            ('servicios/direccion-juridica-externa.html', ''),
+            ('', 'servicios'),
+        }
+        missing = expected_routes - routes
+        if missing:
+            fail(f'faltan rutas de contratación heredadas: {sorted(missing)}')
         if 'Objetivo, perímetro, entregables, cronograma, responsabilidades, supuestos, exclusiones y mecanismo de cierre.' not in text:
             fail('v5.20 debe preservar el contrato mínimo de propuesta seria')
         return
