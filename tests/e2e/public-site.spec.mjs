@@ -18,22 +18,41 @@ test('portada pública conserva rutas, profundidad y layout', async ({ page }) =
   await expect(page.locator('[data-proof-router-v512="true"]')).toBeVisible();
   await expect(page.locator('[data-proof-model-v512]')).toHaveCount(5);
   await expect(page.locator('[data-commercial-modality-v513]')).toHaveCount(5);
+  await expect(page.locator('[data-decision-action-source-v515]')).toHaveCount(5);
+  await expect(page.locator('[data-proof-model-v512="product"] .proof-fit-v515')).toContainText(productRecommendationV514.fit);
   await expect(page.locator('[data-proof-standard-v512="true"]')).toBeVisible();
   await expect(page.locator('[data-recommendation-v514="true"]')).toBeVisible();
+  await expect(page.locator('[data-decision-action-v515="true"]')).toBeVisible();
+  const comparison = page.locator('[data-recommendation-compare-v515="true"]');
+  await expect(comparison).not.toHaveAttribute('open', '');
   await expect(page.locator('[data-recommendation-model-v514]')).toHaveCount(5);
   await expect(page.locator('[data-recommendation-model-v514="product"]')).toContainText(productRecommendationV514.fit);
   await expect(page.locator('[data-recommendation-model-v514="product"]')).toContainText(productRecommendationV514.boundary);
   await expect(page.locator('[data-recommendation-model-v514="product"]')).toContainText(productRecommendationV514.alternative);
+  await comparison.locator('summary').click();
+  await expect(comparison).toHaveAttribute('open', '');
   await expectNoHorizontalOverflow(page);
 
   await page.goto('./productos/programa-gobernanza-ia.html');
   await expect(page.locator('[data-buying-clarity-v58="true"]')).toBeVisible();
   await expect(page.locator('.buying-clarity-card-v58')).toHaveCount(5);
   await expect(page.locator('[data-decision-v58-cta="true"]')).toBeVisible();
+  await expect(page.locator('[data-decision-v58-cta="true"]')).toHaveAttribute('data-action-route-v515', 'proposal');
   await expect(page.locator('[data-proof-v512="true"]')).toBeVisible();
   await expect(page.locator('[data-proof-v512="true"]')).toHaveAttribute('data-commercial-modality-v513', 'product');
   await expect(page.locator('[data-proof-dimension-v512]')).toHaveCount(4);
   await expect(page.locator('[data-proof-dimension-v512="acceptance"]')).toContainText('Cómo se verifica el cierre');
+  await expectNoHorizontalOverflow(page);
+
+  await page.goto('./servicios/tecnologia-inteligencia-artificial.html');
+  const serviceCta = page.locator('[data-decision-v58-cta="true"]');
+  await expect(serviceCta).toHaveAttribute('data-action-route-v515', 'scope');
+  await expect(serviceCta).toHaveAttribute('href', /commercial_intent=scope.*modality=specialist.*proof_standard=source#contacto$/);
+  const serviceGeneral = page.getByRole('link', { name: 'Formulario general' });
+  await expect(serviceGeneral).toHaveAttribute('href', /commercial_intent=scope.*modality=specialist.*proof_standard=source#contacto$/);
+  const directService = page.getByRole('link', { name: /Conversar por WhatsApp/i });
+  const directServiceHref = await directService.getAttribute('href');
+  expect(new URL(directServiceHref).searchParams.get('text') || '').toContain('Siguiente paso sugerido: Definición de alcance');
   await expectNoHorizontalOverflow(page);
 });
 
@@ -99,6 +118,7 @@ test('formulario prepara WhatsApp sin enviar ni salir de la web', async ({ page 
   await page.goto('./productos/programa-gobernanza-ia.html');
   const proposalCta = page.locator('[data-decision-v58-cta="true"][data-close-intent-v510="proposal"]');
   await expect(proposalCta).toBeVisible();
+  await expect(proposalCta).toHaveAttribute('data-action-route-v515', 'proposal');
   await expect(proposalCta).toHaveAttribute('href', /commercial_intent=proposal.*modality=product.*proof_standard=source#contacto$/);
   await proposalCta.click();
   await expect(page).toHaveURL(/commercial_intent=proposal.*modality=product.*proof_standard=source#contacto$/);
@@ -115,6 +135,11 @@ test('formulario prepara WhatsApp sin enviar ni salir de la web', async ({ page 
   await expect(form).toHaveAttribute('data-commercial-modality-v513', 'Producto de alcance cerrado');
   await expect(form).toHaveAttribute('data-proof-expectation-v513', 'Método + entregables + formatos + aceptación/cierre');
   await expect(form.locator('[data-recommendation-brief-v514="true"]')).toBeVisible();
+  await expect(form.locator('[data-decision-route-v515="true"]')).toBeVisible();
+  await expect(form.locator('[data-route-panel-v515="true"]')).toHaveAttribute('data-route', 'proposal');
+  await expect(form.locator('[data-route-panel-v515="true"]')).toHaveAttribute('data-route-source', 'explicit');
+  await expect(form.locator('[data-route-label-v515]')).toContainText('Propuesta verificable');
+  await expect(form.locator('[data-apply-route-v515]')).toBeDisabled();
   await expect(form.locator('[data-recommendation-fit-v514]')).toContainText(productRecommendationV514.fit);
   await expect(form.locator('[data-recommendation-boundary-v514]')).toContainText(productRecommendationV514.boundary);
   await expect(form.locator('[data-recommendation-alternative-v514]')).toContainText(productRecommendationV514.alternative);
@@ -122,9 +147,17 @@ test('formulario prepara WhatsApp sin enviar ni salir de la web', async ({ page 
   await expect(form).toHaveAttribute('data-recommendation-fit-v514', productRecommendationV514.fit);
   await expect(form).toHaveAttribute('data-recommendation-boundary-v514', productRecommendationV514.boundary);
   await expect(form).toHaveAttribute('data-recommendation-alternative-v514', productRecommendationV514.alternative);
+  await expect(form).toHaveAttribute('data-suggested-route-v515', 'proposal');
   const recommendationContract = await page.evaluate(() => window.MeridianoRecommendationV514);
   expect(recommendationContract).toEqual(expect.objectContaining({
     version: '5.14.0',
+    scoring: false,
+    privacy: expect.objectContaining({ networkTransport: false, persistentStorage: false, piiInTelemetry: false }),
+  }));
+  const decisionActionContract = await page.evaluate(() => window.MeridianoDecisionActionV515);
+  expect(decisionActionContract).toEqual(expect.objectContaining({
+    version: '5.15.0',
+    automaticChange: false,
     scoring: false,
     privacy: expect.objectContaining({ networkTransport: false, persistentStorage: false, piiInTelemetry: false }),
   }));
