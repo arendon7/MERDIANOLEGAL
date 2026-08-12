@@ -22,6 +22,9 @@ on:
       - proof-v512.css
       - commercial-brief-v513.css
       - commercial-brief-v513.js
+      - recommendation-v514.json
+      - recommendation-v514.css
+      - recommendation-v514.js
       - site-v3.js
       - catalog-products-v41/**
       - catalog-services-v42/**
@@ -39,6 +42,8 @@ on:
       - scripts/validate_proof_v512.py
       - scripts/apply_commercial_brief_v513.py
       - scripts/validate_commercial_brief_v513.py
+      - scripts/apply_recommendation_v514.py
+      - scripts/validate_recommendation_v514.py
       - scripts/validate_operations_v49.py
       - scripts/validate_static_catalog.py
       - scripts/validate_quality_v55.py
@@ -101,6 +106,10 @@ jobs:
         run: |
           python3 scripts/apply_commercial_brief_v513.py
           python3 scripts/validate_commercial_brief_v513.py
+      - name: Validate explainable recommendation v5.14
+        run: |
+          python3 scripts/apply_recommendation_v514.py
+          python3 scripts/validate_recommendation_v514.py
       - name: Publish release-health report
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
