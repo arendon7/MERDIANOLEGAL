@@ -34,7 +34,11 @@ def require(condition: bool, message: str) -> None:
 def modality_for(catalog_id: str, page_type: str) -> str:
     if catalog_id in SPECIAL_BY_CATALOG:
         return SPECIAL_BY_CATALOG[catalog_id]
-    return "product" if page_type == "Producto jurídico" else "specialist"
+    if page_type == "Producto jurídico":
+        return "product"
+    if page_type == "Servicio profesional":
+        return "specialist"
+    raise SystemExit(f"COMMERCIAL BRIEF V5.13 FAIL: tipo de página no reconocido {catalog_id}/{page_type}")
 
 
 def href_params(href: str) -> dict[str, list[str]]:
@@ -111,11 +115,11 @@ def validate_workflow_contracts() -> None:
     pages = (ROOT / ".github/workflows/pages.yml").read_text(encoding="utf-8")
     governance = (ROOT / ".github/workflows/release-governance.yml").read_text(encoding="utf-8")
     for name, text in (("builder", build), ("Pages", pages), ("Governance", governance)):
-        require("scripts/apply_commercial_brief_v513.py" in text or name == "Pages", f"{name}: falta applicator v5.13")
+        require("scripts/apply_commercial_brief_v513.py" in text, f"{name}: falta applicator v5.13")
     require("python3 scripts/apply_proof_v512.py" in build and "python3 scripts/apply_commercial_brief_v513.py" in build, "builder sin composición v5.12→v5.13")
     require(build.index("python3 scripts/apply_proof_v512.py") < build.index("python3 scripts/apply_commercial_brief_v513.py"), "builder debe terminar v5.12→v5.13")
-    require("python3 scripts/apply_commercial_brief_v513.py" in pages and "python3 scripts/validate_commercial_brief_v513.py" in pages, "Pages no valida v5.13")
-    require("python3 scripts/apply_commercial_brief_v513.py" in governance and "python3 scripts/validate_commercial_brief_v513.py" in governance, "Governance no compone v5.13")
+    require("python3 scripts/validate_commercial_brief_v513.py" in pages, "Pages no valida v5.13")
+    require("python3 scripts/validate_commercial_brief_v513.py" in governance, "Governance no valida v5.13")
 
 
 def main() -> int:
