@@ -41,11 +41,13 @@ def main() -> int:
     require(targets == [HOME], f"debe existir un único formulario canónico en index.html; detectados {len(targets)}")
 
     home = HOME.read_text(encoding="utf-8")
-    require(home.count(START) == 1 and home.count(END) == 1, "bloque v5.17 de portada no es único")
+    require(home.count(START) == 1 and home.count(END) == 1, "bloque v5.17 de portada no es único o sus marcadores están desbalanceados")
+    require(home.count('data-handoff-v517="true"') == 1, "debe existir exactamente una sección semántica data-handoff-v517")
+    require(home.count('id="handoff-v517-title"') == 1, "handoff-v517-title debe ser un ID único")
+    require(home.count('aria-labelledby="handoff-v517-title"') == 1, "solo el panel canónico debe referenciar handoff-v517-title")
     require('href="handoff-continuity-v517.css"' in home, "portada no carga CSS v5.17")
     require('src="handoff-continuity-v517.js"' in home, "portada no carga runtime v5.17")
     for marker in (
-        'data-handoff-v517="true"',
         'data-handoff-state="idle"',
         'data-handoff-reference-v517',
         'data-handoff-reopen-v517',
@@ -61,6 +63,14 @@ def main() -> int:
 
     status = '<p class="form-status full" role="status" aria-live="polite"></p>'
     require(status + START in home, "panel v5.17 debe ocupar la posición canónica inmediatamente después de form-status")
+
+    require(home.count('<form class="contact-form"') == 1, "debe existir exactamente un contact-form")
+    form_start = home.find('<form class="contact-form"')
+    form_end = home.find("</form>", form_start)
+    main_end = home.find("</main>", form_start)
+    require(0 <= form_start < form_end < main_end, "contact-form debe cerrar antes de </main>")
+    require(re.search(r'<div class="contact-v49-direct">.*?</div>\s*</form>\s*</div>\s*</div>\s*</section>', home, re.S) is not None,
+            "contact-v49-direct debe conservar el cierre canónico </form></div></div></section>")
 
     deep_pages = sorted((ROOT / "productos").glob("*.html")) + sorted((ROOT / "servicios").glob("*.html"))
     require(len(deep_pages) == 16, f"se esperaban 16 fichas profundas y hay {len(deep_pages)}")
@@ -108,11 +118,19 @@ def main() -> int:
         "contact_pages()",
         "patch_home()",
         "patch_site_runtime()",
+        "strip_handoff_panels(text)",
+        "repair_contact_form_closure(text)",
+        "PANEL_SECTION.sub(\"\", text)",
+        "CONTACT_DIRECT.search(text, form_start, main_end)",
+        "CANONICAL_CONTACT_CLOSE",
+        "text.replace(START, \"\").replace(END, \"\")",
         "AUTO_CLIPBOARD",
         "DRAFT_EVENT",
         "targets != [HOME]",
-        "marked.sub(\"\", text)",
         "text.replace(STATUS, STATUS + panel_markup(), 1)",
+        "text.count('data-handoff-v517=\"true\"') != 1",
+        "text.count('id=\"handoff-v517-title\"') != 1",
+        "0 <= form_start < form_end < main_end",
     ):
         require(marker in applicator, f"applicator v5.17 no contiene {marker}")
 
@@ -151,7 +169,15 @@ def main() -> int:
     require(pages.count("python3 scripts/validate_handoff_v517.py") >= 2,
             "Pages debe validar v5.17 en quality y en release-health previo a stable")
 
-    print("HANDOFF V5.17 OK: 1 formulario canónico + 16 rutas profundas, composición idempotente, borrador efímero, stale protection y gate Pages completo.")
+    governance = (ROOT / ".github/workflows/release-governance.yml").read_text(encoding="utf-8")
+    require("- name: Normalize materialized handoff v5.17 before historical validators\n        run: python3 scripts/apply_handoff_v517.py" in governance,
+            "Governance debe normalizar el output materializado v5.17 antes de validators históricos")
+    require(governance.find("Normalize materialized handoff v5.17 before historical validators") < governance.find("Validate buying decision contract v5.8"),
+            "preflight v5.17 debe ejecutarse antes de la secuencia histórica v5.8→v5.15")
+    require(governance.count("python3 scripts/apply_handoff_v517.py") >= 2,
+            "Governance debe normalizar v5.17 al inicio y reaplicarlo antes de su validator final")
+
+    print("HANDOFF V5.17 OK: cierre/formulario, panel/ID único, 16 rutas profundas, idempotencia, preflight Governance y stale protection.")
     return 0
 
 
