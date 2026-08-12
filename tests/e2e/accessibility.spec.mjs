@@ -31,7 +31,30 @@ async function audit(page) {
 
 for (const [label, path] of publicSurfaces) {
   test(`axe WCAG 2.1 AA sin violaciones serias/críticas · ${label}`, async ({ page }) => {
+    if (path === './') await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(path);
+
+    if (path === './') {
+      const practiceTargets = page.locator('.perspectives-grid button[data-service]');
+      await expect(practiceTargets).toHaveCount(3);
+      const targetHeights = await practiceTargets.evaluateAll((nodes) => nodes.map((node) => node.getBoundingClientRect().height));
+      expect(Math.min(...targetHeights)).toBeGreaterThanOrEqual(44);
+
+      const disclosures = page.locator('details[data-mobile-disclosure-v516]');
+      await expect(disclosures).toHaveCount(2);
+      for (let index = 0; index < 2; index += 1) {
+        const disclosure = disclosures.nth(index);
+        await expect(disclosure).not.toHaveAttribute('open', '');
+        const summary = disclosure.locator('summary');
+        const box = await summary.boundingBox();
+        expect(box?.height || 0).toBeGreaterThanOrEqual(44);
+        await summary.click();
+        await expect(disclosure).toHaveAttribute('open', '');
+      }
+      await expect(page.locator('[data-engagement-state-v511]')).toHaveCount(4);
+      await expect(page.locator('[data-engagement-automatic-v511="false"]')).toHaveCount(1);
+    }
+
     await audit(page);
   });
 }
