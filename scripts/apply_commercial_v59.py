@@ -85,14 +85,21 @@ def patch_index() -> None:
     text = remove_block(text)
     text = re.sub(r'\sdata-commercial-intake-v59="true"', '', text)
 
-    form_marker = '<form class="contact-form" id="contact-form" data-contact-v49="true">'
-    if form_marker not in text:
+    # v5.9 es una capa intermedia. Debe reconocer el formulario aunque capas
+    # posteriores (v5.10+) añadan atributos data-* propios. Normaliza solo sus
+    # marcadores y conserva extensiones ajenas para mantener composición e
+    # idempotencia en segundas pasadas del builder.
+    form_match = re.search(r'<form class="contact-form" id="contact-form"(?P<attrs>[^>]*)>', text)
+    if not form_match:
         raise RuntimeError("index.html: falta formulario operativo v4.9")
-    text = text.replace(
-        form_marker,
-        '<form class="contact-form" id="contact-form" data-contact-v49="true" data-commercial-intake-v59="true">',
-        1,
+    attrs = form_match.group("attrs")
+    attrs = re.sub(r'\s+data-contact-v49="true"', '', attrs)
+    attrs = re.sub(r'\s+data-commercial-intake-v59="true"', '', attrs)
+    marker = (
+        '<form class="contact-form" id="contact-form" '
+        'data-contact-v49="true" data-commercial-intake-v59="true"' + attrs + '>'
     )
+    text = text[:form_match.start()] + marker + text[form_match.end():]
 
     need_pattern = re.compile(r'(<label>Necesidad<select name="need" required>[\s\S]*?</select></label>)')
     text, count = need_pattern.subn(lambda match: match.group(1) + "\n" + qualification_block(), text, count=1)
