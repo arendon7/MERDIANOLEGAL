@@ -12,6 +12,7 @@ START = "<!-- HANDOFF-V517:START -->"
 END = "<!-- HANDOFF-V517:END -->"
 AUTO_CLIPBOARD = "try { await navigator.clipboard?.writeText(summary); } catch { /* copia opcional */ }"
 DRAFT_EVENT = "window.dispatchEvent(new CustomEvent('meridiano:handoff-draft-v517', { detail: { reference, summary, url } }));"
+STATUS = '<p class="form-status full" role="status" aria-live="polite"></p>'
 
 
 def public_html() -> list[Path]:
@@ -71,15 +72,15 @@ def ensure_script(text: str, item: str, anchor: str) -> str:
 
 def patch_home() -> None:
     text = HOME.read_text(encoding="utf-8")
-    block = panel_markup()
     marked = re.compile(re.escape(START) + r".*?" + re.escape(END), re.S)
-    if marked.search(text):
-        text = marked.sub(block, text, count=1)
-    else:
-        status = '<p class="form-status full" role="status" aria-live="polite"></p>'
-        if status not in text:
-            raise RuntimeError("index.html: falta status del formulario")
-        text = text.replace(status, status + block, 1)
+
+    # La capa anterior puede reinsertar el enlace directo justo después del status.
+    # Para que v5.17 sea idempotente, siempre retiramos su bloque completo y lo
+    # recolocamos en la posición canónica inmediatamente después del status.
+    text = marked.sub("", text)
+    if STATUS not in text:
+        raise RuntimeError("index.html: falta status del formulario")
+    text = text.replace(STATUS, STATUS + panel_markup(), 1)
 
     text = ensure_head_item(text, '<link rel="stylesheet" href="handoff-continuity-v517.css">')
     text = ensure_script(
@@ -107,7 +108,7 @@ def main() -> int:
         raise RuntimeError(f"v5.17 espera un único formulario canónico en index.html; detectados: {names}")
     patch_home()
     patch_site_runtime()
-    print("HANDOFF V5.17 OK: continuidad manual aplicada al formulario canónico; 16 fichas profundas conservan sus rutas hacia index.html#contacto.")
+    print("HANDOFF V5.17 OK: formulario canónico y runtime normalizados de forma idempotente; 16 fichas conservan sus rutas a index.html#contacto.")
     return 0
 
 
