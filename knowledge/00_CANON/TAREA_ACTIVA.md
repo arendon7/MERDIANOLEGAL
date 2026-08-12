@@ -4,17 +4,18 @@ Actualizado: 2026-08-12.
 
 ## Estado
 
-**v5.19.0 — foco comercial adaptativo — funcionalmente certificada; cierre documental en curso.**
+**No hay una release funcional abierta. v5.19.0 quedó cerrada y certificada.**
 
-No hay desarrollo funcional pendiente dentro de v5.19. El runtime público ya superó builder, idempotencia, validadores, Pages, smoke, Browser E2E, axe, Lighthouse y release-health y fue promovido a `stable`.
+El ciclo de foco comercial adaptativo terminó sin abrir v5.20 ni introducir integraciones, automatismos o deuda funcional nueva.
 
-## Evidencia funcional
+## Cierre v5.19.0
 
 - PR funcional: #71.
 - Merge fuente: `fcf8d868e5b95ab201c8ebb612ffba166f4746f5`.
-- SHA público materializado: `9a91e8d19697142c0d2d0990c1e606f6ff9660ef`.
-- Run final: `31649425600`.
-- Snapshot certificado al cierre funcional: `main == stable == 9a91e8d19697142c0d2d0990c1e606f6ff9660ef`.
+- SHA público materializado y certificado: `9a91e8d19697142c0d2d0990c1e606f6ff9660ef`.
+- Run final de certificación: `31649425600`.
+- PR de cierre documental: #72.
+- Merge documental: `44feaf5e0bda3a2741dafca1c4ed91d9adec1b1d`.
 - Browser E2E + axe: 37 → 35 PASS / 2 SKIP / 0 FAIL / 0 RETRY.
 - Lighthouse: 6/6 PASS; accesibilidad 1.00; performance 0.98–1.00.
 - LCP máximo: 1368 ms; CLS máximo: 0.087; TBT máximo: 56 ms.
@@ -22,7 +23,9 @@ No hay desarrollo funcional pendiente dentro de v5.19. El runtime público ya su
 - cobertura reducida: no.
 - budgets relajados: no.
 
-## Contrato v5.19
+`stable` conserva el snapshot público funcional certificado. Los commits documentales posteriores pueden avanzar `main` sin implicar una nueva release funcional.
+
+## Contrato que permanece vigente
 
 - `orientation` y `scope`: detalle secundario replegado inicialmente;
 - `proposal` explícito en escritorio: detalle inicialmente expandido;
@@ -32,23 +35,10 @@ No hay desarrollo funcional pendiente dentro de v5.19. El runtime público ya su
 - sin PII, persistencia, transporte, backend o CRM nuevos;
 - contenido material siempre disponible mediante `<details>`.
 
-## Condición de finalización
+## Graphify
 
-1. integrar `RELEASE-v5.19.md`;
-2. alinear README y memoria canónica;
-3. comprobar que el delta de cierre sea exclusivamente documental;
-4. mergear el cierre documental;
-5. verificar el run Graphify posterior y su frescura/versionado;
-6. dejar explícito que no existe una v5.20 abierta.
+La rama `knowledge/graphify-live` se regenera desde `main`. La verificación correcta no consiste en fijar aquí un SHA autocambiante: el último snapshot exitoso debe reportar versión `5.19.0` y un `source_commit` igual al commit de `main` que ese run procesó.
 
-No es necesario volver a modificar el snapshot público certificado salvo que un cambio funcional/publicable posterior lo requiera.
+## Próximo ciclo
 
-## No objetivos
-
-- no nuevas features;
-- no nuevas preguntas;
-- no backend/CRM;
-- no automatización externa de WhatsApp;
-- no nueva analítica externa;
-- no modificar el contrato certificado v5.19;
-- no abrir v5.20 dentro de este cierre.
+No iniciar v5.20 por arrastre. El siguiente frente debe abrirse como una tarea nueva, con objetivo, contrato, no-objetivos y criterio de cierre propios.
