@@ -1,0 +1,12 @@
+.commercial-brief-v513{padding:18px;border:1px solid rgba(16,34,51,.13);border-radius:14px;background:#f7f4ec;color:#102233}
+.commercial-brief-head-v513{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:start;margin-bottom:14px}
+.commercial-brief-head-v513 span{display:block;margin-bottom:5px;color:#6f5124;font-size:.67rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase}
+.commercial-brief-head-v513 h3{margin:0 0 6px;color:#102233;font-family:var(--font-serif,Georgia,serif);font-size:1.08rem;line-height:1.25}
+.commercial-brief-head-v513 p{margin:0;color:#53606b;font-size:.78rem;line-height:1.5}
+.commercial-brief-badge-v513{padding:7px 10px;border:1px solid rgba(16,34,51,.14);border-radius:999px;background:#fff;color:#102233;font-size:.68rem;font-weight:800;white-space:nowrap}
+.commercial-brief-grid-v513{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0}
+.commercial-brief-grid-v513 div{padding:11px 12px;border:1px solid rgba(16,34,51,.1);border-radius:11px;background:#fff}
+.commercial-brief-grid-v513 dt{margin:0 0 4px;color:#6f5124;font-size:.65rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase}
+.commercial-brief-grid-v513 dd{margin:0;color:#102233;font-size:.78rem;font-weight:700;line-height:1.4}
+.commercial-brief-note-v513{margin:10px 0 0;color:#5c6974;font-size:.7rem;line-height:1.45}
+@media(max-width:760px){.commercial-brief-head-v513,.commercial-brief-grid-v513{grid-template-columns:1fr}.commercial-brief-badge-v513{width:max-content;max-width:100%;white-space:normal}}

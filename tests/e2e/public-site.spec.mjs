@@ -11,6 +11,7 @@ test('portada pública conserva rutas, profundidad y layout', async ({ page }) =
   await expect(page.locator('.engagement-router-card-v58')).toHaveCount(4);
   await expect(page.locator('[data-proof-router-v512="true"]')).toBeVisible();
   await expect(page.locator('[data-proof-model-v512]')).toHaveCount(5);
+  await expect(page.locator('[data-commercial-modality-v513]')).toHaveCount(5);
   await expect(page.locator('[data-proof-standard-v512="true"]')).toBeVisible();
   await expectNoHorizontalOverflow(page);
 
@@ -19,6 +20,7 @@ test('portada pública conserva rutas, profundidad y layout', async ({ page }) =
   await expect(page.locator('.buying-clarity-card-v58')).toHaveCount(5);
   await expect(page.locator('[data-decision-v58-cta="true"]')).toBeVisible();
   await expect(page.locator('[data-proof-v512="true"]')).toBeVisible();
+  await expect(page.locator('[data-proof-v512="true"]')).toHaveAttribute('data-commercial-modality-v513', 'product');
   await expect(page.locator('[data-proof-dimension-v512]')).toHaveCount(4);
   await expect(page.locator('[data-proof-dimension-v512="acceptance"]')).toContainText('Cómo se verifica el cierre');
   await expectNoHorizontalOverflow(page);
@@ -86,15 +88,21 @@ test('formulario prepara WhatsApp sin enviar ni salir de la web', async ({ page 
   await page.goto('./productos/programa-gobernanza-ia.html');
   const proposalCta = page.locator('[data-decision-v58-cta="true"][data-close-intent-v510="proposal"]');
   await expect(proposalCta).toBeVisible();
-  await expect(proposalCta).toHaveAttribute('href', /commercial_intent=proposal#contacto$/);
+  await expect(proposalCta).toHaveAttribute('href', /commercial_intent=proposal.*modality=product.*proof_standard=source#contacto$/);
   await proposalCta.click();
-  await expect(page).toHaveURL(/commercial_intent=proposal#contacto$/);
+  await expect(page).toHaveURL(/commercial_intent=proposal.*modality=product.*proof_standard=source#contacto$/);
 
   const form = page.locator('form[data-contact-v49="true"]');
   await expect(form).toBeVisible();
   await expect(form).toHaveAttribute('data-commercial-intake-v59', 'true');
   await expect(form).toHaveAttribute('data-commercial-close-v510', 'true');
   await expect(form.locator('[data-qualification-v59="true"]')).toBeVisible();
+  await expect(form.locator('[data-commercial-brief-v513="true"]')).toBeVisible();
+  await expect(form.locator('[data-brief-modality-v513]')).toContainText('Producto de alcance cerrado');
+  await expect(form.locator('[data-brief-proof-v513]')).toContainText('Método + entregables + formatos + aceptación/cierre');
+  await expect(form).toHaveAttribute('data-commercial-modality-code-v513', 'product');
+  await expect(form).toHaveAttribute('data-commercial-modality-v513', 'Producto de alcance cerrado');
+  await expect(form).toHaveAttribute('data-proof-expectation-v513', 'Método + entregables + formatos + aceptación/cierre');
   await expect(form.locator('[data-close-path-v510="true"]')).toBeVisible();
   await expect(form.locator('[data-engagement-v511="true"]')).toBeVisible();
   await expect(form.locator('[data-engagement-state-v511]')).toHaveCount(4);
@@ -136,6 +144,8 @@ test('formulario prepara WhatsApp sin enviar ni salir de la web', async ({ page 
   expect(whatsappText).toContain('Horizonte comercial: En 2 a 4 semanas');
   expect(whatsappText).toContain('Presupuesto orientativo: $8 a $20 millones COP');
   expect(whatsappText).toContain('Siguiente paso sugerido: Propuesta estructurada');
+  expect(whatsappText).toContain('Modalidad considerada: Producto de alcance cerrado');
+  expect(whatsappText).toContain('Estándar verificable: Método + entregables + formatos + aceptación/cierre');
   expect(page.url()).toMatch(/#contacto$/);
 
   const events = await telemetrySnapshot(page);
