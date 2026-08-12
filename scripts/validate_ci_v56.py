@@ -148,8 +148,13 @@ def main() -> int:
     require("ci-certification-summary-v56" in snapshot, "snapshot debe publicar artefacto de certificación")
     require("Move stable to deployed commit" in snapshot, "snapshot debe conservar promoción de stable")
 
+    trigger_text = pages.split("concurrency:\n", 1)[0]
+    require("workflow_run:" in trigger_text, "Pages debe conservar trigger workflow_run")
+    require('workflows: ["Build canonical public site"]' in trigger_text, "Pages debe esperar al builder canónico")
+    require("types: [completed]" in trigger_text, "Pages debe esperar finalización del builder")
+    require(not re.search(r"(?m)^\s{2}push:\s*$", trigger_text), "Pages no debe competir con el builder mediante push directo")
     require("github.event.workflow_run.head_commit.message" in pages, "workflow_run debe filtrar commits canónicos generados")
-    require(pages.count("build: sincroniza sitio público canónico") >= 2, "deben filtrarse commits generados en push y workflow_run")
+    require(pages.count("build: sincroniza sitio público canónico") >= 1, "workflow_run debe filtrar commits canónicos generados")
     require("~/.cache/ms-playwright" not in pages and "actions/cache@" not in pages, "v5.6 no debe cachear binarios Playwright")
     uploads = action_count(pages, "actions/upload-artifact", 7)
     require(uploads >= 4, f"v5.6+ debe conservar al menos cuatro cargas directas upload-artifact v7; observadas: {uploads}")
@@ -162,10 +167,11 @@ def main() -> int:
         "tests/e2e/**",
         "scripts/summarize_ci_v56.py",
         "scripts/validate_ci_v56.py",
+        "scripts/validate_pages_trigger_v511.py",
     ):
         require(marker in build, f"builder no vigila {marker}")
 
-    print("VALIDACIÓN CI V5.6 OK: gates paralelos, Chromium pinneado, mediana de tres, caché npm, upload-artifact v7+, observabilidad y stable dual preservados.")
+    print("VALIDACIÓN CI V5.6 OK: gates paralelos, release serializada detrás del builder, Chromium pinneado, mediana de tres, caché npm, upload-artifact v7+, observabilidad y stable dual preservados.")
     return 0
 
 

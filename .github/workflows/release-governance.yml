@@ -33,6 +33,7 @@ on:
       - scripts/validate_quality_v55.py
       - scripts/validate_ci_v56.py
       - scripts/validate_release_governance_v57.py
+      - scripts/validate_pages_trigger_v511.py
   schedule:
     - cron: "41 14 * * 1"
 
@@ -62,6 +63,7 @@ jobs:
           python3 scripts/validate_quality_v55.py
           python3 scripts/validate_ci_v56.py
           python3 scripts/validate_release_governance_v57.py --report-dir governance-artifacts/v5.7
+          python3 scripts/validate_pages_trigger_v511.py
       - name: Validate buying decision contract v5.8
         run: |
           python3 scripts/apply_decision_v58.py
