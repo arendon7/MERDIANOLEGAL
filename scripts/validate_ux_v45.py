@@ -19,8 +19,10 @@ for relative in ("ux-v45.css", "scripts/apply_ux_v45.py", "scripts/validate_ux_v
 
 version = json.loads((ROOT / "version.json").read_text(encoding="utf-8")).get("version", "")
 match = re.fullmatch(r"(\d+)\.(\d+)\.(\d+)", str(version))
-if not match or tuple(map(int, match.groups())) < (4, 5, 0):
+version_tuple = tuple(map(int, match.groups())) if match else (0, 0, 0)
+if not match or version_tuple < (4, 5, 0):
     errors.append(f"version.json debe ser 4.5.0 o superior y registra {version!r}")
+compact_home_v520 = version_tuple >= (5, 20, 0)
 
 text = INDEX.read_text(encoding="utf-8")
 required = [
@@ -31,16 +33,24 @@ required = [
     'class="mobile-nav-actions"',
     'class="mobile-conversion-v45"',
     '8 servicios', '8 productos', '5 planes', '8 sectores', 'Centro demo',
-    'id="necesidades"', 'id="elegir"', 'id="servicios"', 'id="productos"',
+    'id="necesidades"', 'id="servicios"', 'id="productos"',
     'id="entregables"', 'id="experiencia"', 'class="platform-mockup-v45"',
     'Interfaz ilustrativa y datos ficticios', 'id="planes"', 'id="honorarios"',
     'id="contratacion"', 'class="contracting-route-v45"', 'assets/route-meridiano-v3.svg',
     'id="sectores"', 'id="perspectivas"', 'id="firma"', 'id="preguntas"', 'id="contacto"',
     'Planes y honorarios', 'demo.html#documentos', 'Área de clientes',
 ]
+if not compact_home_v520:
+    required.append('id="elegir"')
+else:
+    required.extend(['data-home-decision-v520="true"', 'data-proof-router-v512="true"'])
+
 for marker in required:
     if marker not in text:
         errors.append(f"index.html: falta {marker!r}")
+
+if compact_home_v520 and 'id="elegir"' in text:
+    errors.append("v5.20 no debe materializar la sección histórica #elegir")
 
 for removed in ('id="modalidades"', 'id="documentos"', 'id="ruta"', 'class="section strategic-band"', 'class="section fit-section"'):
     if removed in text:
@@ -55,15 +65,24 @@ if text.count('class="mobile-conversion-v45"') != 1:
 if 'href="#ruta"' in text or 'href="#documentos"' in text:
     errors.append("La navegación pública conserva anclas eliminadas de la portada")
 
-order = [
-    'id="necesidades"', 'id="elegir"', 'id="servicios"', 'id="productos"',
-    'id="entregables"', 'id="experiencia"', 'id="planes"', 'id="honorarios"',
-    'id="contratacion"', 'id="sectores"', 'id="perspectivas"', 'id="firma"',
-    'id="preguntas"', 'id="contacto"',
-]
+order = ['id="necesidades"']
+if not compact_home_v520:
+    order.append('id="elegir"')
+order.extend([
+    'id="servicios"', 'id="productos"', 'id="entregables"', 'id="experiencia"',
+    'id="planes"', 'id="honorarios"', 'id="contratacion"', 'id="sectores"',
+    'id="perspectivas"', 'id="firma"', 'id="preguntas"', 'id="contacto"',
+])
 positions = [text.find(marker) for marker in order]
 if any(position < 0 for position in positions) or positions != sorted(positions):
-    errors.append("El orden narrativo v4.5 de la portada no es canónico")
+    errors.append("El orden narrativo v4.5/v5.20 de la portada no es canónico")
+
+if compact_home_v520:
+    need_position = text.find('id="necesidades"')
+    compact_position = text.find('data-home-decision-v520="true"')
+    services_position = text.find('id="servicios"')
+    if not (need_position >= 0 and need_position < compact_position < services_position):
+        errors.append("v5.20 debe ubicar la decisión unificada después de necesidades y antes de servicios")
 
 nav_match = re.search(r'<nav id="main-nav" class="main-nav"[^>]*>([\s\S]*?)</nav>', text)
 if not nav_match:
@@ -96,4 +115,4 @@ if errors:
         print(f"- {error}")
     sys.exit(1)
 
-print("VALIDACIÓN UX/UI V4.5 OK: narrativa, densidad, navegación, mockup, accesibilidad y móvil íntegros.")
+print("VALIDACIÓN UX/UI V4.5 OK: narrativa, densidad, navegación, mockup, accesibilidad y móvil íntegros; v5.20 compatible.")
