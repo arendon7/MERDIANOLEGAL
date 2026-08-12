@@ -309,5 +309,5 @@
   }
 
   const versionLabel = [...document.querySelectorAll('.footer-bottom span')].find((item) => item.textContent.includes('Web demostrativa'));
-  if (versionLabel) versionLabel.textContent = 'Web demostrativa v5.9.0';
+  if (versionLabel) versionLabel.textContent = 'Web demostrativa v5.10.0';
 })();
