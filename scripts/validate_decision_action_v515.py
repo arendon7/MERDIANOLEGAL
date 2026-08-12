@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Valida v5.15: selector consolidado, comparación secundaria y ruta comercial controlada."""
+"""Valida v5.15 y hardening v5.19: decisión controlada + foco comercial adaptativo."""
 from __future__ import annotations
 
 from html import unescape
@@ -25,7 +25,7 @@ ROUTE_LABEL = {"proposal": "Propuesta verificable", "scope": "Definición de alc
 
 def require(condition: bool, message: str) -> None:
     if not condition:
-        raise SystemExit(f"DECISION ACTION V5.15 FAIL: {message}")
+        raise SystemExit(f"DECISION ACTION V5.15/V5.19 FAIL: {message}")
 
 
 def contract() -> dict:
@@ -55,7 +55,7 @@ def validate_home(data: dict) -> None:
     try:
         embedded_data = json.loads(embedded.group(1))
     except json.JSONDecodeError as exc:
-        raise SystemExit(f"DECISION ACTION V5.15 FAIL: contrato embebido v5.14 inválido: {exc}") from exc
+        raise SystemExit(f"DECISION ACTION V5.15/V5.19 FAIL: contrato embebido v5.14 inválido: {exc}") from exc
     require(embedded_data == data, "contrato JSON embebido debe ser idéntico a recommendation-v514.json")
     for code, rule in data["modalities"].items():
         proof = re.search(r'<a class="proof-model-card-v512"[^>]*data-proof-model-v512="' + re.escape(code) + r'"[^>]*>.*?</a>', text, re.S)
@@ -73,6 +73,17 @@ def validate_home(data: dict) -> None:
     css = (ROOT / "decision-action-v515.css").read_text(encoding="utf-8")
     require(".recommendation-compare-v515 .recommendation-fit-source-v515{display:none}" in css, "encaje duplicado debe ocultarse en comparación ampliada")
 
+    # v5.19: el foco comercial usa el mismo runtime/CSS ya gobernado, sin crear una
+    # capa paralela ni eliminar material jurídico del HTML fuente.
+    require("/* COMMERCIAL-FOCUS-V519:START */" in css and "/* COMMERCIAL-FOCUS-V519:END */" in css, "falta bloque CSS canónico v5.19")
+    for selector in (
+        ".commercial-disclosure-v519{",
+        ".commercial-disclosure-v519>summary{",
+        '.commercial-disclosure-v519[data-default-state-v519="expanded-proposal"]',
+        "@media(min-width:761px)",
+    ):
+        require(selector in css, f"CSS v5.19 carece de {selector}")
+
     form = re.search(r'<!-- RECOMMENDATION-V514-FORM:START -->(.*?)<!-- RECOMMENDATION-V514-FORM:END -->', text, re.S)
     require(bool(form), "falta brief v5.14/v5.15 en formulario")
     block = form.group(1)
@@ -81,17 +92,37 @@ def validate_home(data: dict) -> None:
     require('data-recommendation-fit-v514' in block and 'data-recommendation-boundary-v514' in block and 'data-recommendation-alternative-v514' in block, "v5.15 debe conservar outputs explicables v5.14")
     require('<details class="recommendation-details-v515"' in block, "límite/alternativa deben quedar bajo detalle secundario")
 
+    # Los encabezados de v5.10/v5.11 deben seguir materializados en HTML; v5.19
+    # solo mueve detalle secundario en runtime mediante <details> nativo.
+    require(text.count('data-close-path-v510="true"') == 1, "v5.19 debe preservar ruta de cierre v5.10")
+    require(text.count('data-engagement-v511="true"') == 1, "v5.19 debe preservar engagement v5.11")
+    require("Propuesta preparada, propuesta aceptada y encargo iniciado son estados distintos." in text, "v5.19 no puede suprimir encabezado material v5.11")
+
 
 def validate_runtime() -> None:
     js = (ROOT / "decision-action-v515.js").read_text(encoding="utf-8")
-    require("localStorage" not in js and "sessionStorage" not in js, "v5.15 no debe persistir decisión")
-    require("fetch(" not in js and "XMLHttpRequest" not in js, "v5.15 no debe introducir transporte de red")
+    require("localStorage" not in js and "sessionStorage" not in js, "v5.15/v5.19 no debe persistir decisión")
+    require("fetch(" not in js and "XMLHttpRequest" not in js, "v5.15/v5.19 no debe introducir transporte de red")
     require("automaticChange: false" in js, "v5.15 debe declarar ausencia de cambio automático")
     require("scoring: false" in js, "v5.15 debe mantener scoring desactivado")
     for code, route in ROUTE_BY_MODALITY.items():
         require(f"{code}: '{route}'" in js, f"runtime carece de ruta {code}→{route}")
     require("preferred.explicit" in js and "routeButton.disabled = true" in js, "una intención explícita debe prevalecer y bloquear reaplicación")
     require("decisionStage.dispatchEvent(new Event('change'" in js, "aplicación manual debe reutilizar el flujo existente")
+
+    # v5.19: progressive disclosure adaptativo basado únicamente en intención
+    # explícita existente. No hay scoring, inferencia de perfil ni cambio de etapa.
+    require("// COMMERCIAL-FOCUS-V519:START" in js and "// COMMERCIAL-FOCUS-V519:END" in js, "runtime carece de marcadores v5.19")
+    require("const enhanceCommercialDisclosureV519 = () =>" in js, "falta compositor de disclosure v5.19")
+    require("const isMobile = window.matchMedia('(max-width: 760px)').matches" in js, "v5.19 debe preservar comportamiento móvil v5.16")
+    require("explicitIntent === 'proposal' && !isMobile" in js, "solo proposal explícito puede iniciar expandido en escritorio")
+    require("details.dataset.commercialDisclosureV519 = key" in js, "v5.19 debe marcar disclosure auditable")
+    require("details.dataset.defaultStateV519 = expandForExplicitProposal ? 'expanded-proposal' : 'collapsed-secondary'" in js, "v5.19 debe exponer estado inicial verificable")
+    require("details.open = expandForExplicitProposal" in js, "v5.19 debe controlar únicamente expansión inicial")
+    require("commercialFocusV519: Object.freeze" in js, "runtime debe publicar contrato v5.19")
+    require("defaultExpandedIntent: 'proposal'" in js, "contrato v5.19 debe declarar intención expandida")
+    require("explicitIntentOnly: true" in js and "automaticDecisionChange: false" in js, "v5.19 debe declarar que no infiere ni altera decisiones")
+    require("hiddenMaterialContent: false" in js, "v5.19 debe declarar preservación de contenido material")
 
 
 def modality(text: str) -> str:
@@ -152,6 +183,10 @@ def validate_e2e(data: dict) -> None:
     require("data-action-route-v515" not in text, "E2E no debe depender de atributo que rompa CTA canónico v5.10")
     require(data["modalities"]["product"]["fit"] in text, "E2E debe conservar encaje del producto")
     require("Siguiente paso sugerido: Definición de alcance" in text, "E2E debe verificar handoff de alcance en servicio")
+    # El E2E de propuesta explícita ya exige que los estados v5.11 sigan visibles;
+    # esto blinda que v5.19 expanda proposal en escritorio y no rompa el cierre.
+    require('data-engagement-state-v511="accepted"' in text and "Propuesta aceptada" in text, "E2E debe preservar visibilidad de aceptación en ruta proposal")
+    require('data-engagement-state-v511="started"' in text and "Encargo iniciado" in text, "E2E debe preservar visibilidad de inicio en ruta proposal")
 
 
 def main() -> int:
@@ -162,7 +197,7 @@ def main() -> int:
     validate_details()
     validate_workflows()
     validate_e2e(data)
-    print("DECISION ACTION V5.15 OK: 5 modalidades consolidadas + rutas proposal/scope/orientation controladas + 16 handoffs coherentes, preservando CTA v5.10 y contrato embebido v5.14.")
+    print("DECISION ACTION V5.15/V5.19 OK: 5 modalidades + rutas controladas + disclosure adaptativo por intención explícita, sin scoring, PII, persistencia ni transporte nuevo.")
     return 0
 
 
