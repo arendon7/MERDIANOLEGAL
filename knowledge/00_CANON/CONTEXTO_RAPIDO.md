@@ -41,9 +41,10 @@ Principio comercial: el usuario puede empezar por su situación empresarial y no
 - `authority-v53.json` — autoridad, interlinking y semántica editorial.
 - `measurement-contract-v53.json` — eventos sin PII.
 - `decision-v58.css` + `scripts/apply_decision_v58.py` — claridad de compra.
-- `commercial-intake-v59.css` / `commercial-intake-v59.js` — calificación y handoff comercial.
-- `scripts/apply_commercial_intake_v59.py` — materialización canónica v5.9.
-- `scripts/validate_commercial_intake_v59.py` — contrato v5.9 y privacidad.
+- `commercial-intake-v59.json` — contrato de calificación comercial y privacidad.
+- `commercial-intake-v59.css` / `commercial-intake-v59.js` — presentación y runtime de handoff comercial.
+- `scripts/apply_commercial_v59.py` — materialización canónica v5.9.
+- `scripts/validate_commercial_v59.py` — contrato v5.9 y privacidad.
 - `release-governance-v57.json` — policy de Actions, runtimes, dependencias, permisos e invariantes.
 - `tests/e2e/` — contrato funcional de navegador.
 
