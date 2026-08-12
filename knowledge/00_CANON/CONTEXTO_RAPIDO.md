@@ -17,7 +17,8 @@ Sitio público y centro demostrativo de Meridiano Legal. Combina servicios jurí
 - Firma/método y Centro Demo;
 - 4 formas de contratación en portada;
 - 5 bloques ejecutivos de compra en cada una de las 16 fichas profundas;
-- calificación comercial v5.9 en el formulario público, con resumen y siguiente paso antes del handoff a WhatsApp.
+- calificación comercial v5.9 en el formulario, con resumen previo a WhatsApp;
+- v5.10 transmite intención contextual desde las 16 fichas y muestra la ruta `calificación → alcance/propuesta → aceptación → inicio`.
 
 Principio comercial: el usuario puede empezar por su situación empresarial y no necesita conocer el nombre técnico del servicio correcto.
 
@@ -41,33 +42,30 @@ Principio comercial: el usuario puede empezar por su situación empresarial y no
 - `authority-v53.json` — autoridad, interlinking y semántica editorial.
 - `measurement-contract-v53.json` — eventos sin PII.
 - `decision-v58.css` + `scripts/apply_decision_v58.py` — claridad de compra.
-- `commercial-intake-v59.json` — contrato de calificación comercial y privacidad.
-- `commercial-intake-v59.css` / `commercial-intake-v59.js` — presentación y runtime de handoff comercial.
-- `scripts/apply_commercial_v59.py` — materialización canónica v5.9.
-- `scripts/validate_commercial_v59.py` — contrato v5.9 y privacidad.
+- `commercial-intake-v59.json`, CSS/JS y applicator/validator — calificación y privacidad.
+- `conversion-close-v510.css` + `scripts/apply_conversion_v510.py` + `scripts/validate_conversion_v510.py` — intención, propuesta y cierre.
 - `release-governance-v57.json` — policy de Actions, runtimes, dependencias, permisos e invariantes.
 - `tests/e2e/` — contrato funcional de navegador.
 
 ## Secuencia de release
 
-fuentes → generadores históricos → v5.8 → v5.9 → validadores → idempotencia → Pages → smoke → Browser/axe + Lighthouse → release-health → `stable`.
+fuentes → generadores históricos → v5.8 → v5.9 → v5.10 → validadores → idempotencia → Pages → smoke → Browser/axe + Lighthouse → release-health → `stable`.
 
-El builder debe terminar en `v5.8 → v5.9`. El generador v4.9 debe tolerar extensiones posteriores del formulario.
+Los generadores históricos deben preservar atributos de capas posteriores. El builder debe terminar sin drift en la segunda pasada.
 
 ## Estado actual resumido
 
-- Versión declarada en cierre: v5.9.0.
-- Fundación funcional v5.9 certificada en run `31547313170`, SHA `a64d2d957e3ca6c96fec855be85019680ebe6a03`.
+- Versión declarada en cierre: v5.10.0.
+- Fundación funcional v5.10 certificada en run `31558953560`, SHA `f8b47f2ec2885cc39ff64a2448792f352619f9c3`.
 - Antes del cierre documental: `main == stable` en ese SHA.
 - Browser E2E: 35 passed / 2 skipped / 0 failed / 0 retries sobre 37 entradas.
 - axe: 7 superficies sin violaciones serias/críticas.
 - Lighthouse: 6/6 dentro de budget.
-- CI: 196 s hasta `stable`, 29.7% mejor que baseline v5.5 de 279 s.
-- v5.9 añade momento de decisión, horizonte e inversión opcional; genera un resumen y sugiere orientación, llamada de alcance o propuesta estructurada.
-- No existe scoring de valor del lead ni exclusión automática.
+- CI: 173 s hasta `stable`, 38.0% mejor que baseline v5.5 de 279 s.
+- v5.10 añade intención contextual, ruta de propuesta/cierre y anatomía de propuesta sin scoring ni promesa de contratación.
 - La web sigue sin almacenar el formulario en servidor y sin CRM/backend.
 - La telemetría no debe contener nombre, correo, empresa ni texto libre del caso.
-- El cierre documental 5.9.0 solo es definitivo después de repetir la certificación pública y terminar nuevamente con `main == stable`.
+- La release 5.9 ya no está pendiente: v5.10 se apoya sobre ella como capa certificada.
 
 ## Graphify
 
