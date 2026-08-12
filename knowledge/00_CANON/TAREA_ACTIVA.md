@@ -2,72 +2,54 @@
 
 Actualizado: 2026-08-12.
 
-## Release activa
+## Estado
 
-**v5.20.0 — compresión de decisión en portada.**
+**v5.20.0 — compresión de decisión en portada — funcionalmente certificada; cierre documental en curso.**
 
-La auditoría posterior a v5.19 confirmó que las 16 fichas profundas ya tienen suficiente detalle jurídico y comercial. El principal problema actual está en la portada: antes de llegar a la oferta, el prospecto encuentra varios mecanismos que vuelven a preguntarle cómo elegir o contratar.
+No hay desarrollo funcional pendiente dentro de v5.20. El runtime público ya superó builder, idempotencia, validadores, Pages, smoke, Browser E2E, axe, Lighthouse y release-health y fue promovido a `stable`.
 
-## Objetivo
+## Evidencia funcional
 
-Reducir la arquitectura pública de decisión a dos capas claras:
-
-1. **Situación empresarial:** conservar las seis rutas por necesidad de v5.1 como primer punto de entrada.
-2. **Modalidad de contratación:** ofrecer después un único selector compacto con las cinco modalidades canónicas de v5.12/v5.14.
-
-La comparación de límites y alternativas permanece disponible como información secundaria desplegable. Las 16 fichas profundas conservan íntegramente alcance, perímetro, entregables, formatos, responsabilidades, aceptación, límites y CTA.
-
-## Qué se elimina de la portada
-
-- el bloque separado de “Forma de contratar” v5.8;
-- la repetición independiente de recomendación v5.14;
-- la sección histórica “Cómo elegir”;
-- cualquier duplicación que obligue a elegir varias veces entre producto, servicio, diagnóstico o capacidad recurrente.
-
-No se oculta esa redundancia con CSS: la salida HTML final deja de materializar los bloques duplicados.
+- PR funcional: #74.
+- Hotfixes de compatibilidad: #75 y #76.
+- SHA funcional final: `85bdcfc9b52172e085dfa9b1df8e8d081b136233`.
+- Run final: `31651473515`.
+- Snapshot certificado: `main == stable == 85bdcfc9b52172e085dfa9b1df8e8d081b136233` al cierre funcional.
+- Browser E2E + axe: 37 → 35 PASS / 2 SKIP / 0 FAIL / 0 RETRY.
+- Lighthouse: 6/6 PASS; accesibilidad 1.00; performance 0.98–1.00.
+- Portada: performance 1.00, accesibilidad 1.00, LCP 1421 ms, CLS 0, TBT 83 ms.
+- CI hasta `stable`: 191 s, 31.5% mejor que baseline 279 s.
+- cobertura reducida: no.
+- budgets relajados: no.
 
 ## Contrato v5.20
 
-- las seis rutas por necesidad permanecen intactas;
-- existen exactamente cinco modalidades de contratación en una sola superficie;
-- el estándar verificable de propuesta v5.12 permanece visible;
-- límites y alternativas v5.14 permanecen disponibles mediante `<details>`;
-- v5.8, v5.12, v5.14 y v5.15 conservan continuidad contractual mediante validadores version-aware;
-- las 16 fichas profundas no reducen contenido ni controles;
-- no scoring;
-- no inferencia automática de intención;
-- no cambio automático de `decision_stage`;
-- no PII, storage persistente, transporte de red, backend o CRM nuevos;
-- v5.16, v5.17, v5.18 y v5.19 permanecen intactas en formulario/handoff;
-- no reducción de 37 E2E, 7 superficies axe o 6 superficies Lighthouse;
-- no relajación de budgets v5.5.
+- seis rutas por situación empresarial como primer paso;
+- una sola superficie con cinco modalidades como segundo paso;
+- estándar verificable v5.12 visible;
+- límites y alternativas v5.14 disponibles mediante `<details>`;
+- sin bloque separado v5.8 ni `#elegir` en la salida final;
+- 16 fichas profundas intactas;
+- sin scoring, inferencia adicional, cambio automático de etapa, PII, persistencia, transporte, backend o CRM nuevos.
 
-## Implementación
+## Cierre pendiente
 
-- `version.json`: `5.20.0`;
-- `scripts/apply_decision_action_v515.py`: composición version-aware y eliminación real de redundancia en home;
-- `decision-action-v515.css`: layout compacto v5.20 dentro de la capa ya gobernada;
-- `scripts/validate_decision_v58.py`: continuidad v5.8 sin exigir el bloque visual histórico;
-- `scripts/validate_proof_v512.py`: prueba/modalidad v5.12 dentro de la superficie unificada.
+1. integrar `RELEASE-v5.20.md`;
+2. alinear README y memoria canónica;
+3. confirmar que el diff es exclusivamente documental;
+4. mergear el cierre documental;
+5. verificar Graphify posterior y su frescura/versionado;
+6. marcar el ciclo como formalmente cerrado y dejar explícito que no existe v5.21 abierta.
 
-## Criterio de cierre
-
-1. Release Governance: PASS sin relajar gates;
-2. builder canónico e idempotencia: PASS;
-3. todos los validadores históricos: PASS;
-4. Pages + smoke público: PASS;
-5. Browser E2E + axe: sin regresiones ni reducción de cobertura;
-6. Lighthouse: 6/6 dentro de budgets vigentes;
-7. release-health: PASS;
-8. promoción de `stable` al SHA funcional certificado;
-9. Graphify fresco y versionado en `5.20.0`;
-10. documentación final de release y cierre de la tarea.
+No es necesario modificar de nuevo el snapshot público `stable` salvo que exista un cambio funcional/publicable posterior.
 
 ## No objetivos
 
+- no nuevas features;
 - no ampliar catálogo;
-- no reescribir las 16 fichas jurídicas;
-- no añadir nuevas preguntas al formulario;
-- no activar CRM/backend, firma, pagos, agenda o carga documental;
-- no automatizar WhatsApp;
-- no abrir v5.21 dentro de este ciclo.
+- no reescribir fichas profundas;
+- no backend/CRM;
+- no automatización externa de WhatsApp;
+- no nueva analítica externa;
+- no modificar el contrato certificado v5.20;
+- no abrir v5.21 dentro de este cierre.
