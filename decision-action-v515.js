@@ -66,6 +66,7 @@
     if (!form || !routePanel || !routeLabel || !routeCopy || !routeSource || !routeButton) return;
     const preferred = preferredRoute();
     const route = ROUTES[preferred.code];
+    const alreadyApplied = decisionStage?.value === route.stage;
     routePanel.dataset.route = preferred.code;
     routePanel.dataset.routeSource = preferred.explicit ? 'explicit' : 'suggested';
     form.dataset.suggestedRouteV515 = preferred.code;
@@ -74,6 +75,9 @@
     routeCopy.textContent = route.copy;
     if (preferred.explicit) {
       routeButton.textContent = 'Ruta ya definida';
+      routeButton.disabled = true;
+    } else if (alreadyApplied) {
+      routeButton.textContent = 'Ruta aplicada';
       routeButton.disabled = true;
     } else {
       routeButton.textContent = `Usar ${route.label.toLowerCase()}`;
