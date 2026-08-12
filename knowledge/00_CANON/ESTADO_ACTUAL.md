@@ -7,46 +7,48 @@
 - Repositorio: `arendon7/MERDIANOLEGAL`.
 - Rama técnica/productiva: `main`.
 - Snapshot certificado: `stable`.
-- Versión declarada en este cierre: `5.12.0`.
-- Evidencia funcional v5.12 previa al cierre documental: run `31562692907`, SHA `f8c4d1abc38929040f1ce67b04a2c2c4193c3690`.
+- Versión declarada en este cierre: `5.13.0`.
+- Evidencia funcional v5.13 previa al cierre documental: run `31568876368`, SHA `e77a7e824117d3f8f3f67cc3fc71f11f3fc858c3`.
 
 Los SHA actuales de `main` y `stable` deben consultarse dinámicamente. Las notas documentan hitos; refs, Pages y gates son la autoridad.
 
 ## Estado funcional
 
-**La implementación funcional v5.12 está certificada. El commit documental que declara 5.12.0 debe volver a atravesar la certificación pública completa antes de considerar cerrada la release definitiva.**
+**La implementación funcional v5.13 está certificada. El commit documental que declara 5.13.0 debe volver a atravesar la certificación pública completa antes de considerar cerrada la release definitiva.**
 
-## v5.12 — Modalidad y prueba verificable
+## v5.13 — Continuidad del brief comercial
 
-La portada ofrece cinco criterios de modalidad: diagnóstico, auditoría, producto cerrado, servicio especializado y acompañamiento recurrente.
+La modalidad considerada y el estándar verificable de v5.12 acompañan el recorrido desde las 16 fichas profundas hasta el formulario y el handoff manual por WhatsApp. El brief visible reduce repetición y preserva el contexto comercial sin convertirlo en propuesta o aceptación automática.
 
-Las 16 fichas profundas incorporan una prueba de trabajo derivada de la fuente jurídica, con método, entregables, formatos y criterios de aceptación/cierre. No se declaran clientes, testimonios, casos de éxito, métricas ni resultados no demostrables.
+Implementación: `commercial-brief-v513.css`, `commercial-brief-v513.js`, `scripts/apply_commercial_brief_v513.py`, `scripts/validate_commercial_brief_v513.py`.
 
-Implementación: `proof-v512.css`, `scripts/apply_proof_v512.py`, `scripts/validate_proof_v512.py`.
+La capa no añade `localStorage`, `sessionStorage`, backend, XHR/fetch propio ni nuevos campos PII.
 
-## Accesibilidad
+## Correcciones de composición certificadas
 
-El primer candidato v5.12 fue bloqueado por axe por contraste insuficiente en el título del panel oscuro de portada. PR #45 corrigió el color y añadió un guardrail estático. El candidato corregido `f8c4d1abc38929040f1ce67b04a2c2c4193c3690` pasó posteriormente axe y todos los demás gates.
+1. Las fichas de servicio usan `data-page-type="Servicio profesional"`; applicator y validator v5.13 ahora respetan ese tipo canónico y las excepciones por catálogo.
+2. v5.12 valida sus cinco rutas por path + fragmento, permitiendo query params aditivos de capas posteriores sin perder identidad de ruta.
 
-## Evidencia funcional v5.12
+## Evidencia funcional v5.13
 
-Run `31562692907`:
+Run `31568876368`:
 
 - Browser E2E: 37 entradas, 35 aprobadas, 2 omitidas, 0 fallos, 0 retries;
 - axe: 7 superficies sin violaciones serias/críticas;
 - Lighthouse: 6/6 dentro de presupuesto;
-- portada: performance 1.00, a11y 0.97, LCP 1263 ms, CLS 0, TBT 2 ms, 88,599 B;
-- solución IA: 1.00 / 1.00, LCP 908 ms, 23,343 B;
-- producto IA: 1.00 / 1.00, LCP 908 ms, 37,309 B;
-- sector tecnología: 0.98 / 1.00, LCP 960 ms, CLS 0.087, 24,400 B;
-- perspectiva IA: 0.98 / 1.00, LCP 906 ms, CLS 0.087, 26,003 B;
-- demo: 1.00 / 1.00, LCP 978 ms, 22,076 B;
-- CI hasta `stable`: 187 s;
-- mejora frente a baseline v5.5 de 279 s: 33.0%;
+- portada: performance 1.00, a11y 0.97, LCP 1319 ms, CLS 0, TBT 89 ms, 91,193 B;
+- solución IA: 1.00 / 1.00, LCP 903 ms, 23,254 B;
+- producto IA: 1.00 / 1.00, LCP 994 ms, 37,334 B;
+- sector tecnología: 1.00 / 1.00, LCP 997 ms, CLS 0, 24,286 B;
+- perspectiva IA: 0.98 / 1.00, LCP 904 ms, CLS 0.087, 25,908 B;
+- demo: 1.00 / 1.00, LCP 1033 ms, 21,932 B;
+- CI hasta `stable`: 177 s;
+- mejora frente a baseline v5.5 de 279 s: 36.6%;
 - cobertura reducida: no;
 - budgets relajados: no;
 - Release Governance: PASS;
-- Pages trigger builder→workflow_run→Pages: PASS.
+- Pages trigger builder→workflow_run→Pages: PASS;
+- Commercial Brief v5.13 validator: PASS.
 
 ## Contratos preservados
 
@@ -57,21 +59,20 @@ Run `31562692907`:
 - 6 superficies Lighthouse;
 - budgets v5.5;
 - workers Playwright CI = 1;
-- gate dual Browser + Lighthouse;
-- idempotencia;
+- idempotencia y composición canónica v5.8→v5.13;
 - Actions fijadas a SHA y permisos controlados;
 - fuente jurídica única para alcance/entregables;
-- secuencia v5.8 → v5.9 → v5.10 → v5.11 → v5.12;
 - telemetría sin PII;
+- WhatsApp manual;
 - sin CRM/backend ni almacenamiento servidor del formulario;
 - sin firma, pagos, agenda o portal documental ficticios.
 
 ## Integraciones externas
 
-Activas: GitHub Pages, WhatsApp como handoff manual, contexto comercial local/de sesión, telemetría first-party/local sin PII, sitemap/robots/canonical/Open Graph, demo estático/noindex y pipeline de certificación.
+Activas: GitHub Pages, WhatsApp como handoff manual, contexto comercial client-side, telemetría first-party/local sin PII, sitemap/robots/canonical/Open Graph, demo estático/noindex y pipeline de certificación.
 
 No declarar activas sin evidencia real: dominio personalizado/CNAME, Search Console, analítica externa, CRM/backend, almacenamiento servidor del formulario, email transaccional, firma electrónica, pagos, agenda o carga documental.
 
 ## Memoria de ingeniería
 
-Graphify + Obsidian siguen operativos. Antes del cierre documental Graphify estaba alineado con `f8c4d1ab…` (463 nodos / 725 edges / 79 notas). Al retomar: confirmar `main`/`stable`, leer las tres notas canónicas y comparar `BUILD_META.source_commit` con `main`.
+Graphify + Obsidian siguen operativos. Tras el cierre documental debe compararse `BUILD_META.source_commit` con el SHA final y documentarse cualquier delta puramente generado/versionado.
