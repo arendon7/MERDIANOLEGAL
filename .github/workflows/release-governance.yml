@@ -29,6 +29,8 @@ on:
       - decision-action-v515.js
       - handoff-continuity-v517.css
       - handoff-continuity-v517.js
+      - handoff-observability-v518.json
+      - handoff-observability-v518.js
       - site-v3.js
       - catalog-products-v41/**
       - catalog-services-v42/**
@@ -52,6 +54,8 @@ on:
       - scripts/validate_decision_action_v515.py
       - scripts/apply_handoff_v517.py
       - scripts/validate_handoff_v517.py
+      - scripts/apply_handoff_observability_v518.py
+      - scripts/validate_handoff_observability_v518.py
       - scripts/validate_operations_v49.py
       - scripts/validate_static_catalog.py
       - scripts/validate_quality_v55.py
@@ -128,6 +132,10 @@ jobs:
         run: |
           python3 scripts/apply_handoff_v517.py
           python3 scripts/validate_handoff_v517.py
+      - name: Validate handoff observability v5.18
+        run: |
+          python3 scripts/apply_handoff_observability_v518.py
+          python3 scripts/validate_handoff_observability_v518.py
       - name: Publish release-health report
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7

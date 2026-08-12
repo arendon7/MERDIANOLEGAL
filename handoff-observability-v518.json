@@ -1,0 +1,28 @@
+{
+  "version": "5.18.0",
+  "scope": "manual_handoff_observability",
+  "privacy": {
+    "pii_allowed": false,
+    "network_transport_introduced": false,
+    "persistent_storage": false,
+    "cross_session_identifier": false,
+    "form_content_allowed": false,
+    "notes": "Solo se miden acciones que ocurren dentro de la página. No se registra nombre, correo, empresa, teléfono, mensaje, necesidad libre, URL de WhatsApp ni contenido del resumen. La web no puede inferir envío, entrega, lectura, aceptación, contratación ni conversión."
+  },
+  "events": [
+    {"name":"handoff_prepared","signal":"prepared","stage":"handoff","target":"whatsapp-draft","meaning":"La página preparó un borrador válido y mostró el panel de continuidad."},
+    {"name":"handoff_reopen_requested","signal":"reopen_requested","stage":"handoff","target":"whatsapp","meaning":"El usuario pidió volver a abrir el último borrador todavía vigente."},
+    {"name":"handoff_copy_succeeded","signal":"copy_succeeded","stage":"handoff","target":"clipboard","meaning":"El navegador confirmó que la copia explícita al portapapeles terminó correctamente."},
+    {"name":"handoff_copy_failed","signal":"copy_failed","stage":"handoff","target":"clipboard","meaning":"El navegador rechazó o no pudo completar la copia explícita al portapapeles."},
+    {"name":"handoff_edit_requested","signal":"edit_requested","stage":"handoff","target":"contact-form","meaning":"El usuario pidió volver al formulario para editar la solicitud."},
+    {"name":"handoff_draft_stale","signal":"draft_stale","stage":"handoff","target":"draft","meaning":"El formulario cambió después de preparar el borrador y la página lo invalidó para reutilización."}
+  ],
+  "forbidden_events": [
+    "handoff_sent",
+    "handoff_delivered",
+    "handoff_read",
+    "proposal_accepted",
+    "engagement_started",
+    "conversion_completed"
+  ]
+}
