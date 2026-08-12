@@ -1,8 +1,8 @@
 {
   "name": "Meridiano Legal Web",
-  "version": "5.17.0",
+  "version": "5.18.0",
   "release_date": "2026-08-12",
-  "channel": "github-pages-public-manual-handoff-continuity-ready",
-  "commit_scope": "manual-whatsapp-handoff-ephemeral-draft-stale-protection",
+  "channel": "github-pages-public-handoff-observability-ready",
+  "commit_scope": "privacy-safe-manual-handoff-observability",
   "source_baseline": "main"
 }
