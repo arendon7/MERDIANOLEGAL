@@ -15,8 +15,9 @@ v5.9 fortalece el paso entre la claridad de compra introducida en v5.8 y una con
 - incorporación del contexto v5.8 y de la calificación al mensaje preparado para WhatsApp;
 - privacidad por diseño: las respuestas solo se incorporan cuando el usuario decide abrir WhatsApp;
 - telemetría protegida contra nombre, correo, empresa y texto libre del caso;
-- `commercial-intake-v59.js` y `commercial-intake-v59.css` como capa específica;
-- `scripts/apply_commercial_intake_v59.py` y `scripts/validate_commercial_intake_v59.py` integrados a la cadena canónica;
+- `commercial-intake-v59.json` como contrato de fuente de la capa;
+- `commercial-intake-v59.js` y `commercial-intake-v59.css` como runtime/presentación;
+- `scripts/apply_commercial_v59.py` y `scripts/validate_commercial_v59.py` integrados a la cadena canónica;
 - cobertura v5.9 añadida dentro de las 37 entradas Playwright existentes.
 
 ## Compatibilidad canónica corregida
