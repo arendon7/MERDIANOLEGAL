@@ -1,8 +1,8 @@
 {
   "name": "Meridiano Legal Web",
-  "version": "5.10.0",
+  "version": "5.11.0",
   "release_date": "2026-08-11",
-  "channel": "github-pages-public-conversion-close-ready",
-  "commit_scope": "conversion-proposal-close-runtime-safe",
+  "channel": "github-pages-public-engagement-readiness-ready",
+  "commit_scope": "engagement-readiness-canonical-release-serialized",
   "source_baseline": "main"
 }
