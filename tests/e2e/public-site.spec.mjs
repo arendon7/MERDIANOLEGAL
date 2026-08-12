@@ -1,5 +1,11 @@
 import { test, expect, expectNoHorizontalOverflow, telemetrySnapshot, preventNavigationFor } from './helpers.mjs';
 
+const productRecommendationV514 = {
+  fit: 'Encaja cuando el problema permite fijar desde el inicio cantidades, entregables, cronograma, supuestos y aceptación.',
+  boundary: 'Pierde eficiencia cuando hechos, negociación, regulación o terceros obligan a redefinir continuamente el alcance.',
+  alternative: 'Cambie a servicio especializado si el asunto exige adaptación profesional continua; a acompañamiento recurrente si la demanda se repite mes a mes.',
+};
+
 test('portada pública conserva rutas, profundidad y layout', async ({ page }) => {
   await page.goto('./');
   await expect(page).toHaveTitle(/Meridiano Legal/);
@@ -13,6 +19,11 @@ test('portada pública conserva rutas, profundidad y layout', async ({ page }) =
   await expect(page.locator('[data-proof-model-v512]')).toHaveCount(5);
   await expect(page.locator('[data-commercial-modality-v513]')).toHaveCount(5);
   await expect(page.locator('[data-proof-standard-v512="true"]')).toBeVisible();
+  await expect(page.locator('[data-recommendation-v514="true"]')).toBeVisible();
+  await expect(page.locator('[data-recommendation-model-v514]')).toHaveCount(5);
+  await expect(page.locator('[data-recommendation-model-v514="product"]')).toContainText(productRecommendationV514.fit);
+  await expect(page.locator('[data-recommendation-model-v514="product"]')).toContainText(productRecommendationV514.boundary);
+  await expect(page.locator('[data-recommendation-model-v514="product"]')).toContainText(productRecommendationV514.alternative);
   await expectNoHorizontalOverflow(page);
 
   await page.goto('./productos/programa-gobernanza-ia.html');
@@ -103,6 +114,20 @@ test('formulario prepara WhatsApp sin enviar ni salir de la web', async ({ page 
   await expect(form).toHaveAttribute('data-commercial-modality-code-v513', 'product');
   await expect(form).toHaveAttribute('data-commercial-modality-v513', 'Producto de alcance cerrado');
   await expect(form).toHaveAttribute('data-proof-expectation-v513', 'Método + entregables + formatos + aceptación/cierre');
+  await expect(form.locator('[data-recommendation-brief-v514="true"]')).toBeVisible();
+  await expect(form.locator('[data-recommendation-fit-v514]')).toContainText(productRecommendationV514.fit);
+  await expect(form.locator('[data-recommendation-boundary-v514]')).toContainText(productRecommendationV514.boundary);
+  await expect(form.locator('[data-recommendation-alternative-v514]')).toContainText(productRecommendationV514.alternative);
+  await expect(form).toHaveAttribute('data-recommendation-code-v514', 'product');
+  await expect(form).toHaveAttribute('data-recommendation-fit-v514', productRecommendationV514.fit);
+  await expect(form).toHaveAttribute('data-recommendation-boundary-v514', productRecommendationV514.boundary);
+  await expect(form).toHaveAttribute('data-recommendation-alternative-v514', productRecommendationV514.alternative);
+  const recommendationContract = await page.evaluate(() => window.MeridianoRecommendationV514);
+  expect(recommendationContract).toEqual(expect.objectContaining({
+    version: '5.14.0',
+    scoring: false,
+    privacy: expect.objectContaining({ networkTransport: false, persistentStorage: false, piiInTelemetry: false }),
+  }));
   await expect(form.locator('[data-close-path-v510="true"]')).toBeVisible();
   await expect(form.locator('[data-engagement-v511="true"]')).toBeVisible();
   await expect(form.locator('[data-engagement-state-v511]')).toHaveCount(4);
@@ -146,6 +171,9 @@ test('formulario prepara WhatsApp sin enviar ni salir de la web', async ({ page 
   expect(whatsappText).toContain('Siguiente paso sugerido: Propuesta estructurada');
   expect(whatsappText).toContain('Modalidad considerada: Producto de alcance cerrado');
   expect(whatsappText).toContain('Estándar verificable: Método + entregables + formatos + aceptación/cierre');
+  expect(whatsappText).toContain(`Por qué encaja la modalidad: ${productRecommendationV514.fit}`);
+  expect(whatsappText).toContain(`Límite de la modalidad: ${productRecommendationV514.boundary}`);
+  expect(whatsappText).toContain(`Alternativa si cambia el alcance: ${productRecommendationV514.alternative}`);
   expect(page.url()).toMatch(/#contacto$/);
 
   const events = await telemetrySnapshot(page);
