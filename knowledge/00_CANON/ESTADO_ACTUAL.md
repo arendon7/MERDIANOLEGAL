@@ -7,37 +7,42 @@
 - Repositorio: `arendon7/MERDIANOLEGAL`.
 - Rama técnica/productiva: `main`.
 - Snapshot público certificado: `stable`.
-- Release vigente: `5.19.0`.
-- PR funcional: `#71`.
-- Merge fuente funcional: `fcf8d868e5b95ab201c8ebb612ffba166f4746f5`.
-- SHA público generado por builder y certificado: `9a91e8d19697142c0d2d0990c1e606f6ff9660ef`.
-- Run final de certificación pública: `31649425600`.
-- PR de cierre documental: `#72`.
-- Merge de cierre documental: `44feaf5e0bda3a2741dafca1c4ed91d9adec1b1d`.
+- Release vigente: `5.20.0`.
+- PR funcional: `#74`.
+- Merge funcional inicial: `745723c0de896e9d0a7f613dd1b83e5efcaa4878`.
+- Hotfix idempotencia: PR `#75`, merge `5ba9053c0e995c77bff555cbd9c37c2909814d81`.
+- Hotfix contrato global: PR `#76`.
+- SHA funcional final certificado: `85bdcfc9b52172e085dfa9b1df8e8d081b136233`.
+- Run final de certificación pública: `31651473515`.
+- Snapshot certificado al cierre funcional: `stable = 85bdcfc9b52172e085dfa9b1df8e8d081b136233`.
 
-Refs, Pages, validators y tests son la autoridad para el estado productivo. `stable` conserva el snapshot público funcional certificado; `main` puede avanzar con documentación/memoria sin que ello implique una nueva release funcional.
+Refs, Pages, validators y tests son la autoridad para el estado productivo. `stable` conserva el snapshot público funcional certificado; `main` puede avanzar posteriormente con documentación/memoria sin que ello implique una nueva release funcional.
 
 ## Estado funcional
 
-**v5.19.0 está implementada, desplegada, certificada y formalmente cerrada. No hay una v5.20 abierta.**
+**v5.20.0 está implementada, desplegada y funcionalmente certificada. El único trabajo pendiente en este ciclo es formalizar el cierre documental y verificar Graphify posterior al merge.**
 
-### Foco comercial adaptativo v5.19
+### Compresión de decisión v5.20
 
-La capa extiende el progressive disclosure sobre los bloques secundarios de v5.10 y v5.11 usando exclusivamente `commercial_intent` explícito ya existente:
+La portada ya no superpone varios mecanismos que piden resolver repetidamente cómo contratar.
 
-- `orientation` y `scope`: detalle secundario inicialmente replegado;
-- `proposal` explícito en escritorio: detalle inicialmente expandido;
-- móvil conserva el comportamiento v5.16;
-- el contenido material permanece disponible mediante `<details>` nativo;
-- abrir/cerrar detalle no altera `decision_stage`, modalidad, recomendación ni handoff.
+La arquitectura final contiene dos pasos:
 
-No hay scoring, inferencia adicional, PII nueva, storage persistente nuevo, transporte de red nuevo, backend ni CRM.
+1. seis rutas por situación empresarial;
+2. una única superficie con cinco modalidades de contratación.
 
-## Evidencia funcional final v5.19
+El estándar verificable de propuesta v5.12 permanece visible. Los límites y alternativas v5.14 siguen disponibles mediante `<details>`. Las 16 fichas profundas conservan perímetro, entregables, formatos, responsabilidades, aceptación, límites y CTA.
 
-Run `31649425600`, SHA público certificado `9a91e8d19697142c0d2d0990c1e606f6ff9660ef`:
+Desde v5.20 la salida final no materializa el bloque separado de “Forma de contratar” v5.8 ni la sección histórica `#elegir`. Los contratos históricos permanecen protegidos mediante selectores semánticos y validadores version-aware.
 
-- builder/idempotencia + validators históricos + hardening v5.19: PASS;
+No hay scoring, inferencia adicional, cambio automático de etapa, PII nueva, storage persistente nuevo, transporte de red nuevo, backend ni CRM.
+
+## Evidencia funcional final v5.20
+
+Run `31651473515`, SHA certificado `85bdcfc9b52172e085dfa9b1df8e8d081b136233`:
+
+- builder e idempotencia: PASS;
+- validadores históricos y contratos v5.8→v5.19: PASS;
 - GitHub Pages + smoke: PASS;
 - Browser E2E + axe: 37 observados → 35 PASS / 2 SKIP / 0 FAIL / 0 RETRY;
 - reporter Browser: 85 s;
@@ -45,27 +50,32 @@ Run `31649425600`, SHA público certificado `9a91e8d19697142c0d2d0990c1e606f6ff9
 - Lighthouse: 6/6 PASS;
 - accesibilidad Lighthouse: 1.00 en las seis superficies;
 - performance Lighthouse: 0.98–1.00;
-- LCP máximo observado: 1368 ms;
-- CLS máximo observado: 0.087;
-- TBT máximo observado: 56 ms;
-- `accessibilityAuditGaps`: vacío;
-- CI hasta `stable`: 215 s;
+- portada: performance 1.00, accesibilidad 1.00, LCP 1421 ms, CLS 0, TBT 83 ms;
+- máximo global: LCP 1421 ms, CLS 0.087, TBT 83 ms;
+- CI hasta `stable`: 191 s;
 - baseline v5.5: 279 s;
-- mejora: 22.9%;
+- mejora: 31.5%;
 - cobertura reducida: no;
 - budgets relajados: no;
 - release-health: PASS;
 - promoción de `stable`: PASS.
 
-Artefactos finales del run `31649425600`:
+Artefactos finales del run `31651473515`:
 
-- Lighthouse `9162048825`, `sha256:82bec745b16796e574f516b22de27d023c258a5ab1b827075eeb80a3da35670e`;
-- CI `9162074790`, `sha256:4ed4f8c2d330354fababe3389e3542974f0427a55230df6f0e9bd8b57128a7bb`;
-- release-health `9162075114`, `sha256:681f567ade20a27df2df8ad1645cda53d68260d127e5d43a90700c85bdc1c0d1`.
+- Lighthouse `9162821238`, `sha256:681cd883c725e44c26b65c2f9b0c6a276c8668096266618dfe36c75567a3b3c0`;
+- CI `9162836693`, `sha256:1862dea240db5ea3c491afc0d8505d51d5bed74dff6cf081a255a8ab1f6564af`;
+- release-health `9162837264`, `sha256:00c1e747dc887dc37d4daae63fd4fdd5a279d2e813745312802277931b60c323`;
+- Pages `9162779134`, `sha256:31cea6e7fd74a2bdb73543660c6a49ec6d9838341f6fb98bfd604f8abc5d852a`.
 
-## Incidencia de compatibilidad resuelta
+## Incidencias de compatibilidad resueltas
 
-El primer Release Governance bloqueó la candidata porque el validator histórico v5.5 esperaba el símbolo contractual `enhanceMobileDisclosureV516`. El gate no se relajó: v5.19 preservó ese punto de entrada mediante un alias real hacia la implementación ampliada. El segundo Release Governance pasó completo.
+### v4.5 / idempotencia
+
+La primera segunda-pasada del builder falló porque `apply_ux_v45.py` aún exigía `#elegir`. PR #75 hizo generador y validator version-aware. No se omitió el gate: idempotencia se reejecutó y pasó.
+
+### validate_site / marcador histórico
+
+Después, el validador global todavía exigía literalmente “CÓMO ELEGIR”. PR #76 mantuvo ese requisito hasta v5.19 y desde v5.20 exige la nueva superficie, además de fallar si reaparece la sección histórica. El gate volvió a ejecutarse y pasó.
 
 ## Contratos vigentes
 
@@ -85,10 +95,10 @@ El primer Release Governance bloqueó la candidata porque el validator históric
 
 ## Graphify / procedencia
 
-La rama `knowledge/graphify-live` es memoria derivada y se regenera desde `main`. Tras el cierre documental principal, Graphify validó correctamente versión `5.19.0` y frescura respecto del `main` procesado.
+Antes del cierre documental, `knowledge/graphify-live` reportó `version = 5.20.0` y `source_commit = 85bdcfc9b52172e085dfa9b1df8e8d081b136233`, con 588 nodos, 948 relaciones y 94 notas wiki.
 
-No fijar como regla permanente un `source_commit` que quede obsoleto por la propia regeneración del grafo. La comprobación correcta es leer `graphify-out/BUILD_META.json` y contrastarlo con el último run exitoso que produjo ese snapshot.
+La comprobación final debe leer `graphify-out/BUILD_META.json` después del merge documental y verificar que su `source_commit` corresponda al último `main` procesado. No fijar como regla permanente un SHA de Graphify que quede obsoleto por su propia regeneración.
 
 ## Estado del ciclo
 
-El gate de cierre formal de v5.19 está satisfecho. Cualquier trabajo posterior debe abrir una tarea/release nueva y no modificar retrospectivamente el contrato certificado de v5.19.
+v5.20 está funcionalmente certificada. Tras integrar `RELEASE-v5.20.md`, README y esta memoria, y verificar Graphify fresco, el ciclo queda formalmente cerrado. No se abre v5.21 dentro de este cierre.

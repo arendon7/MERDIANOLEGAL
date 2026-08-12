@@ -1,4 +1,4 @@
-# Meridiano Legal · Web canónica v5.19.0
+# Meridiano Legal · Web canónica v5.20.0
 
 Sitio público, responsive, static-first y autocontenido de Meridiano Legal, publicado mediante GitHub Pages.
 
@@ -19,37 +19,42 @@ La publicación conserva 46 páginas HTML, 16 fichas profundas y un único formu
 - **v5.14:** recomendación explicable sin scoring;
 - **v5.15:** recomendación→acción;
 - **v5.16:** UX móvil y accesibilidad;
-- **v5.17:** continuidad manual del handoff, borrador efímero y stale protection;
-- **v5.18:** observabilidad verificable de seis hechos locales del handoff, sin PII ni inferencias falsas;
-- **v5.19:** foco comercial adaptativo mediante progressive disclosure basado solo en intención explícita.
+- **v5.17:** continuidad manual del handoff y stale protection;
+- **v5.18:** observabilidad verificable del handoff sin PII;
+- **v5.19:** progressive disclosure por intención explícita;
+- **v5.20:** compresión de la decisión comercial en portada.
 
-La composición canónica termina en `v5.8 → v5.9 → v5.10 → v5.11 → v5.12 → v5.13 → v5.14 → v5.15 → v5.17 → v5.18`; v5.16 y v5.19 actúan como hardening transversal de UX/decisión sobre esa composición.
+v5.20 no elimina contratos anteriores: consolida su presentación pública. Las seis rutas por situación empresarial continúan como primer punto de entrada y después aparece una única superficie con cinco modalidades de contratación. Las 16 fichas profundas y el formulario/handoff permanecen íntegros.
 
-## v5.19 · Foco comercial adaptativo
+## v5.20 · Compresión de decisión
 
-El tramo final conserva el formulario, la recomendación y todas las salvaguardas jurídicas, pero reduce información secundaria visible cuando el usuario todavía está explorando o definiendo alcance.
+La portada deja de pedir al prospecto que decida varias veces entre producto, servicio, diagnóstico o capacidad recurrente.
 
-- `orientation` y `scope`: detalle secundario inicialmente replegado;
-- `proposal` explícito en escritorio: detalle inicialmente expandido;
-- móvil conserva el progressive disclosure v5.16;
-- abrir/cerrar detalle no modifica etapa, modalidad, recomendación ni handoff.
+La arquitectura final es:
 
-No hay scoring, inferencia de intención, PII nueva, persistencia nueva, transporte de red nuevo, backend ni CRM. El contenido material permanece disponible mediante `<details>` nativo y accesible.
+1. **Situación empresarial:** seis rutas por necesidad.
+2. **Modalidad:** diagnóstico, auditoría, producto cerrado, servicio especialista o capacidad recurrente.
 
-## Evidencia funcional v5.19
+El estándar verificable de propuesta permanece visible y la comparación de límites/alternativas sigue disponible mediante `<details>`.
 
-PR #71 → merge fuente `fcf8d868e5b95ab201c8ebb612ffba166f4746f5` → candidato público `9a91e8d19697142c0d2d0990c1e606f6ff9660ef`.
+La salida final ya no materializa el bloque separado de “Forma de contratar” v5.8 ni la sección histórica `#elegir`. Esta redundancia se elimina del HTML; no se oculta con CSS.
 
-Run `31649425600`:
+## Evidencia funcional v5.20
 
-- `main == stable == 9a91e8d19697142c0d2d0990c1e606f6ff9660ef` al cierre funcional;
+PR funcional #74 y hotfixes de compatibilidad #75/#76 → SHA certificado `85bdcfc9b52172e085dfa9b1df8e8d081b136233`.
+
+Run `31651473515`:
+
+- `main == stable == 85bdcfc9b52172e085dfa9b1df8e8d081b136233` al cierre funcional;
+- builder + idempotencia + validadores históricos: PASS;
+- Pages + smoke: PASS;
 - Browser E2E + axe: 37 → 35 PASS / 2 SKIP / 0 FAIL / 0 RETRY;
 - 7 superficies axe limpias;
-- Lighthouse 6/6 PASS y accesibilidad 1.00 en las seis superficies;
+- Lighthouse 6/6 PASS;
+- accesibilidad Lighthouse 1.00 en las seis superficies;
 - performance 0.98–1.00;
-- LCP máximo 1368 ms, CLS máximo 0.087, TBT máximo 56 ms;
-- `accessibilityAuditGaps` vacío;
-- CI hasta `stable`: 215 s, 22.9% mejor que baseline v5.5 de 279 s;
+- portada: performance 1.00, accesibilidad 1.00, LCP 1421 ms, CLS 0, TBT 83 ms;
+- CI hasta `stable`: 191 s, 31.5% mejor que baseline v5.5 de 279 s;
 - cobertura reducida: no;
 - budgets relajados: no.
 
@@ -61,9 +66,9 @@ No declarar activas sin configuración real: analítica externa, CRM/backend, al
 
 ## Documentación
 
-- `RELEASE-v5.19.md`: foco comercial adaptativo, límites y evidencia de v5.19;
+- `RELEASE-v5.20.md`: compresión de decisión, compatibilidad y evidencia final;
+- `RELEASE-v5.19.md`: foco comercial adaptativo;
 - `RELEASE-v5.18.md`: observabilidad verificable del handoff;
-- `RELEASE-v5.17.md`: continuidad manual y hardening del handoff;
 - `knowledge/HOME.md`: entrada a memoria operativa.
 
 ## Principios
