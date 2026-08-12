@@ -175,6 +175,14 @@
     if (commercialModalityV513) lines.push(`Modalidad considerada: ${commercialModalityV513}`);
     if (proofExpectationV513) lines.push(`Estándar verificable: ${proofExpectationV513}`);
     // COMMERCIAL-BRIEF-V513:END
+    // RECOMMENDATION-V514:START
+    const recommendationFitV514 = cleanContactValue(form.dataset.recommendationFitV514 || '', 420);
+    const recommendationBoundaryV514 = cleanContactValue(form.dataset.recommendationBoundaryV514 || '', 420);
+    const recommendationAlternativeV514 = cleanContactValue(form.dataset.recommendationAlternativeV514 || '', 420);
+    if (recommendationFitV514) lines.push(`Por qué encaja la modalidad: ${recommendationFitV514}`);
+    if (recommendationBoundaryV514) lines.push(`Límite de la modalidad: ${recommendationBoundaryV514}`);
+    if (recommendationAlternativeV514) lines.push(`Alternativa si cambia el alcance: ${recommendationAlternativeV514}`);
+    // RECOMMENDATION-V514:END
     if (context) lines.push(`Contexto comercial: ${context}`);
     lines.push(`Origen: ${source}`, '', 'Contexto general:', cleanContactValue(data.get('message'), 2000), '', 'Confirmo que no estoy enviando información confidencial.');
     const summary = lines.join('\n');
