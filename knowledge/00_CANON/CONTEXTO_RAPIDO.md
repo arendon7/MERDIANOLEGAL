@@ -17,8 +17,9 @@ Sitio público y centro demostrativo de Meridiano Legal. Combina servicios jurí
 - Firma/método y Centro Demo;
 - 4 formas de contratación en portada;
 - 5 bloques ejecutivos de compra en cada una de las 16 fichas profundas;
-- calificación comercial v5.9 en el formulario, con resumen previo a WhatsApp;
-- v5.10 transmite intención contextual desde las 16 fichas y muestra la ruta `calificación → alcance/propuesta → aceptación → inicio`.
+- v5.9 califica momento, horizonte e inversión sin persistencia servidor;
+- v5.10 transmite intención contextual y explica propuesta/cierre;
+- v5.11 diferencia solicitud preparada, propuesta emitida, propuesta aceptada y encargo iniciado.
 
 Principio comercial: el usuario puede empezar por su situación empresarial y no necesita conocer el nombre técnico del servicio correcto.
 
@@ -41,35 +42,37 @@ Principio comercial: el usuario puede empezar por su situación empresarial y no
 - `cro-solutions-v52.json` — CRO, objeciones, FAQ e intención de búsqueda.
 - `authority-v53.json` — autoridad, interlinking y semántica editorial.
 - `measurement-contract-v53.json` — eventos sin PII.
-- `decision-v58.css` + `scripts/apply_decision_v58.py` — claridad de compra.
-- `commercial-intake-v59.json`, CSS/JS y applicator/validator — calificación y privacidad.
-- `conversion-close-v510.css` + `scripts/apply_conversion_v510.py` + `scripts/validate_conversion_v510.py` — intención, propuesta y cierre.
-- `release-governance-v57.json` — policy de Actions, runtimes, dependencias, permisos e invariantes.
+- `decision-v58.css` + applicator/validator — claridad de compra.
+- `commercial-intake-v59.*` + applicator/validator — calificación y privacidad.
+- `conversion-close-v510.*` + applicator/validator — intención, propuesta y cierre.
+- `engagement-v511.css` + `scripts/apply_engagement_v511.py` + `scripts/validate_engagement_v511.py` — aceptación e inicio real del encargo.
+- `scripts/validate_pages_trigger_v511.py` — topología builder→Pages sin carrera directa por push.
+- `release-governance-v57.json` — Actions, runtimes, dependencias, permisos e invariantes.
 - `tests/e2e/` — contrato funcional de navegador.
 
 ## Secuencia de release
 
-fuentes → generadores históricos → v5.8 → v5.9 → v5.10 → validadores → idempotencia → Pages → smoke → Browser/axe + Lighthouse → release-health → `stable`.
+fuentes → builder canónico → v5.8 → v5.9 → v5.10 → v5.11 → idempotencia/validadores → Pages → smoke → Browser/axe + Lighthouse → release-health → `stable`.
 
-Los generadores históricos deben preservar atributos de capas posteriores. El builder debe terminar sin drift en la segunda pasada.
+Pages se dispara por `workflow_run` exitoso del builder, no directamente por `push`. Los generadores históricos deben preservar atributos/capas posteriores y la segunda pasada debe quedar sin drift.
 
 ## Estado actual resumido
 
-- Versión declarada en cierre: v5.10.0.
-- Fundación funcional v5.10 certificada en run `31558953560`, SHA `f8b47f2ec2885cc39ff64a2448792f352619f9c3`.
+- Versión declarada en este cierre: v5.11.0.
+- Funcionalidad v5.11 certificada en run `31560805174`, SHA `cf4341eb9ec051a3e583b4675263b228ee5f0839`.
 - Antes del cierre documental: `main == stable` en ese SHA.
 - Browser E2E: 35 passed / 2 skipped / 0 failed / 0 retries sobre 37 entradas.
 - axe: 7 superficies sin violaciones serias/críticas.
 - Lighthouse: 6/6 dentro de budget.
-- CI: 173 s hasta `stable`, 38.0% mejor que baseline v5.5 de 279 s.
-- v5.10 añade intención contextual, ruta de propuesta/cierre y anatomía de propuesta sin scoring ni promesa de contratación.
-- La web sigue sin almacenar el formulario en servidor y sin CRM/backend.
+- CI: 193 s hasta `stable`, 30.8% mejor que baseline v5.5 de 279 s.
+- `PAGES TRIGGER V5.11 OK`: Pages espera al builder canónico, sin carrera directa por push.
+- La web no almacena el formulario en servidor y no existe CRM/backend activo.
+- No hay aceptación contractual, pagos, agenda, expediente, carga documental ni inicio automático desde la web pública.
 - La telemetría no debe contener nombre, correo, empresa ni texto libre del caso.
-- La release 5.9 ya no está pendiente: v5.10 se apoya sobre ella como capa certificada.
 
 ## Graphify
 
-Graphify reduce el espacio de búsqueda, no decide la verdad. La rama `knowledge/graphify-live` contiene `BUILD_META.json`, snapshot, reporte y wiki. Confirmar siempre su `source_commit` contra `main` y luego verificar en fuente/tests.
+Graphify reduce el espacio de búsqueda, no decide la verdad. Confirmar siempre `BUILD_META.source_commit` contra `main` y luego verificar en fuente/tests. Un desfase puramente generado debe quedar documentado con equivalencia verificable.
 
 ## Regla de continuidad
 
