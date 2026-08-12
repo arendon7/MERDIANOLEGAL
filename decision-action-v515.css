@@ -45,6 +45,8 @@
   .commercial-disclosure-v516>summary span{color:#586672;font-size:.68rem;line-height:1.4}
   .commercial-disclosure-v516[open]>summary{border-bottom:1px solid rgba(16,34,51,.1);background:#fff}
   .commercial-disclosure-v516>.close-steps-v510,.commercial-disclosure-v516>.proposal-anatomy-v510,.commercial-disclosure-v516>.close-gate-v510,.commercial-disclosure-v516>.close-legal-v510,.commercial-disclosure-v516>.engagement-states-v511,.commercial-disclosure-v516>.engagement-ready-v511,.commercial-disclosure-v516>.engagement-noauto-v511,.commercial-disclosure-v516>.engagement-legal-v511{margin-left:10px;margin-right:10px}
+  .commercial-disclosure-v516 .close-step-v510 span{color:#53606b}
   .commercial-disclosure-v516>:last-child{margin-bottom:10px}
+  [data-mobile-scrollable-v516="true"]:focus-visible{outline:3px solid rgba(168,132,84,.6);outline-offset:3px}
 }
 /* MOBILE-UX-V516:END */
