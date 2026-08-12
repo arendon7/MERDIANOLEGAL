@@ -14,13 +14,15 @@
 - Hotfix contrato global: PR `#76`.
 - SHA funcional final certificado: `85bdcfc9b52172e085dfa9b1df8e8d081b136233`.
 - Run final de certificación pública: `31651473515`.
-- Snapshot certificado al cierre funcional: `stable = 85bdcfc9b52172e085dfa9b1df8e8d081b136233`.
+- Snapshot público certificado: `stable = 85bdcfc9b52172e085dfa9b1df8e8d081b136233`.
+- PR de cierre documental: `#77`.
+- Merge de cierre documental: `62f2f9b5069682ed1fbd8b72865bec267f6c6ac3`.
 
-Refs, Pages, validators y tests son la autoridad para el estado productivo. `stable` conserva el snapshot público funcional certificado; `main` puede avanzar posteriormente con documentación/memoria sin que ello implique una nueva release funcional.
+Refs, Pages, validators y tests son la autoridad para el estado productivo. `stable` conserva el snapshot funcional certificado; `main` puede avanzar con documentación/memoria sin que ello implique una nueva release funcional.
 
 ## Estado funcional
 
-**v5.20.0 está implementada, desplegada y funcionalmente certificada. El único trabajo pendiente en este ciclo es formalizar el cierre documental y verificar Graphify posterior al merge.**
+**v5.20.0 está implementada, desplegada, certificada y formalmente cerrada. No existe una v5.21 abierta.**
 
 ### Compresión de decisión v5.20
 
@@ -71,7 +73,7 @@ Artefactos finales del run `31651473515`:
 
 ### v4.5 / idempotencia
 
-La primera segunda-pasada del builder falló porque `apply_ux_v45.py` aún exigía `#elegir`. PR #75 hizo generador y validator version-aware. No se omitió el gate: idempotencia se reejecutó y pasó.
+La segunda pasada inicial del builder falló porque `apply_ux_v45.py` aún exigía `#elegir`. PR #75 hizo generador y validator version-aware. No se omitió el gate: idempotencia se reejecutó y pasó.
 
 ### validate_site / marcador histórico
 
@@ -95,10 +97,10 @@ Después, el validador global todavía exigía literalmente “CÓMO ELEGIR”. 
 
 ## Graphify / procedencia
 
-Antes del cierre documental, `knowledge/graphify-live` reportó `version = 5.20.0` y `source_commit = 85bdcfc9b52172e085dfa9b1df8e8d081b136233`, con 588 nodos, 948 relaciones y 94 notas wiki.
+Tras el PR documental #77, Graphify validó `version = 5.20.0` y `source_commit = 62f2f9b5069682ed1fbd8b72865bec267f6c6ac3`, con 588 nodos, 948 relaciones y 94 notas wiki.
 
-La comprobación final debe leer `graphify-out/BUILD_META.json` después del merge documental y verificar que su `source_commit` corresponda al último `main` procesado. No fijar como regla permanente un SHA de Graphify que quede obsoleto por su propia regeneración.
+La rama `knowledge/graphify-live` es memoria derivada. La comprobación correcta de frescura es leer `graphify-out/BUILD_META.json` y contrastar su `source_commit` con el último run exitoso que produjo ese snapshot; no fijar un SHA derivado como regla permanente.
 
 ## Estado del ciclo
 
-v5.20 está funcionalmente certificada. Tras integrar `RELEASE-v5.20.md`, README y esta memoria, y verificar Graphify fresco, el ciclo queda formalmente cerrado. No se abre v5.21 dentro de este cierre.
+El gate de cierre formal de v5.20 está satisfecho. Cualquier trabajo funcional posterior debe abrir una tarea/release nueva y no modificar retrospectivamente el contrato certificado de v5.20. **No existe una v5.21 activa.**
