@@ -40,6 +40,15 @@ for (const [label, path] of publicSurfaces) {
       const targetHeights = await practiceTargets.evaluateAll((nodes) => nodes.map((node) => node.getBoundingClientRect().height));
       expect(Math.min(...targetHeights)).toBeGreaterThanOrEqual(44);
 
+      const scrollRegions = page.locator('[data-mobile-scrollable-v516="true"]');
+      await expect(scrollRegions).toHaveCount(3);
+      for (let index = 0; index < 3; index += 1) {
+        const region = scrollRegions.nth(index);
+        await expect(region).toHaveAttribute('tabindex', '0');
+        await expect(region).toHaveAttribute('role', 'region');
+        await expect(region).toHaveAttribute('aria-label', /.+/);
+      }
+
       const disclosures = page.locator('details[data-mobile-disclosure-v516]');
       await expect(disclosures).toHaveCount(2);
       for (let index = 0; index < 2; index += 1) {

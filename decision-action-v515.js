@@ -22,6 +22,23 @@
   };
 
   // MOBILE-UX-V516:START
+  const enhanceMobileScrollableRegionsV516 = () => {
+    if (!window.matchMedia('(max-width: 760px)').matches) return;
+    const regions = [
+      ['.principles-grid', 'Principios de trabajo'],
+      ['.mockup-nav-v45', 'Navegación del ejemplo de experiencia'],
+      ['.contracting-route-v45', 'Ruta visual de contratación'],
+    ];
+    regions.forEach(([selector, label]) => {
+      const node = document.querySelector(selector);
+      if (!node) return;
+      node.setAttribute('tabindex', '0');
+      node.setAttribute('role', 'region');
+      node.setAttribute('aria-label', label);
+      node.dataset.mobileScrollableV516 = 'true';
+    });
+  };
+
   // En móvil solo se repliega información secundaria ya presente. La calificación,
   // el contexto y la ruta recomendada siguen visibles; sin JS, el HTML permanece
   // íntegramente expandido como en v5.15.
@@ -64,6 +81,7 @@
       'Estados del encargo, verificaciones previas y actos que esta web no ejecuta.'
     );
   };
+  enhanceMobileScrollableRegionsV516();
   enhanceMobileDisclosureV516();
   // MOBILE-UX-V516:END
 
@@ -157,6 +175,6 @@
     automaticChange: false,
     scoring: false,
     privacy: Object.freeze({ networkTransport: false, persistentStorage: false, piiInTelemetry: false }),
-    mobileUxV516: Object.freeze({ progressiveDisclosure: true, maxWidthPx: 760, hiddenMaterialContent: false }),
+    mobileUxV516: Object.freeze({ progressiveDisclosure: true, keyboardScrollableRegions: true, maxWidthPx: 760, hiddenMaterialContent: false }),
   });
 })();
