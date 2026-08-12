@@ -64,6 +64,14 @@ def main() -> int:
     status = '<p class="form-status full" role="status" aria-live="polite"></p>'
     require(status + START in home, "panel v5.17 debe ocupar la posición canónica inmediatamente después de form-status")
 
+    require(home.count('<form class="contact-form"') == 1, "debe existir exactamente un contact-form")
+    form_start = home.find('<form class="contact-form"')
+    form_end = home.find("</form>", form_start)
+    main_end = home.find("</main>", form_start)
+    require(0 <= form_start < form_end < main_end, "contact-form debe cerrar antes de </main>")
+    require(re.search(r'<div class="contact-v49-direct">.*?</div></form></div></div></section>', home, re.S) is not None,
+            "contact-v49-direct debe conservar el cierre canónico </form></div></div></section>")
+
     deep_pages = sorted((ROOT / "productos").glob("*.html")) + sorted((ROOT / "servicios").glob("*.html"))
     require(len(deep_pages) == 16, f"se esperaban 16 fichas profundas y hay {len(deep_pages)}")
     for path in deep_pages:
@@ -111,7 +119,10 @@ def main() -> int:
         "patch_home()",
         "patch_site_runtime()",
         "strip_handoff_panels(text)",
+        "repair_contact_form_closure(text)",
         "PANEL_SECTION.sub(\"\", text)",
+        "CONTACT_DIRECT.search(text, form_start, main_end)",
+        "CANONICAL_CONTACT_CLOSE",
         "text.replace(START, \"\").replace(END, \"\")",
         "AUTO_CLIPBOARD",
         "DRAFT_EVENT",
@@ -119,6 +130,7 @@ def main() -> int:
         "text.replace(STATUS, STATUS + panel_markup(), 1)",
         "text.count('data-handoff-v517=\"true\"') != 1",
         "text.count('id=\"handoff-v517-title\"') != 1",
+        "0 <= form_start < form_end < main_end",
     ):
         require(marker in applicator, f"applicator v5.17 no contiene {marker}")
 
@@ -165,7 +177,7 @@ def main() -> int:
     require(governance.count("python3 scripts/apply_handoff_v517.py") >= 2,
             "Governance debe normalizar v5.17 al inicio y reaplicarlo antes de su validator final")
 
-    print("HANDOFF V5.17 OK: 1 panel/ID canónico + 16 rutas profundas, composición idempotente, preflight Governance, borrador efímero y stale protection.")
+    print("HANDOFF V5.17 OK: cierre/formulario, panel/ID único, 16 rutas profundas, idempotencia, preflight Governance y stale protection.")
     return 0
 
 
