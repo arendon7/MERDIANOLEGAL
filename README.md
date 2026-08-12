@@ -1,6 +1,6 @@
-# Meridiano Legal · Web canónica v5.14.0
+# Meridiano Legal · Web canónica v5.15.0
 
-Sitio público, responsive, static-first y autocontenido de Meridiano Legal, publicado mediante GitHub Pages. v5.14 añade **recomendación explicable de modalidad**: por qué encaja, límite y alternativa, sin puntajes opacos, backend ni persistencia adicional.
+Sitio público, responsive, static-first y autocontenido de Meridiano Legal, publicado mediante GitHub Pages. v5.15 consolida **recomendación → siguiente acción**: el encaje queda junto al CTA, límites y alternativas pasan a comparación secundaria y la ruta comercial permanece explícita y controlada por el usuario.
 
 ## Estado actual
 
@@ -18,40 +18,50 @@ URL pública: `https://arendon7.github.io/MERDIANOLEGAL/`
 - **v5.11:** solicitud, propuesta, aceptación e inicio + Pages serializado detrás del builder;
 - **v5.12:** 5 modalidades y prueba verificable derivada de fuente;
 - **v5.13:** continuidad de modalidad/prueba hasta formulario y WhatsApp;
-- **v5.14:** recomendación explicable con encaje, límite y alternativa.
+- **v5.14:** recomendación explicable con encaje, límite y alternativa;
+- **v5.15:** consolidación recomendación→acción, comparación secundaria y rutas proposal/scope/orientation controladas por el usuario.
 
-Secuencia canónica: `v5.8 → v5.9 → v5.10 → v5.11 → v5.12 → v5.13 → v5.14`.
+Secuencia canónica: `v5.8 → v5.9 → v5.10 → v5.11 → v5.12 → v5.13 → v5.14 → v5.15`.
 
-## v5.14 · Recomendación explicable
+## v5.15 · Recomendación → acción
 
-`recommendation-v514.json` define cinco reglas determinísticas con `scoring: false`. La portada permite comparar las modalidades y, cuando existe contexto suficiente, el formulario y WhatsApp reutilizan la explicación. Si no existe contexto, la web no presume una recomendación.
+La capa reutiliza `recommendation-v514.json` como fuente de las cinco modalidades y mantiene `scoring: false`. El encaje se muestra directamente en el selector v5.12; límites y alternativas se conservan en un detalle ampliado colapsado. El formulario muestra una ruta comercial sugerida, pero nunca modifica automáticamente la etapa del usuario.
 
-Implementación: `recommendation-v514.json`, `recommendation-v514.css`, `recommendation-v514.js`, `scripts/apply_recommendation_v514.py` y `scripts/validate_recommendation_v514.py`.
+Rutas canónicas:
 
-No se añadió cuestionario, storage, backend, transporte de red propio de la capa ni PII adicional.
+- diagnóstico → definición de alcance;
+- auditoría → propuesta;
+- producto cerrado → propuesta;
+- servicio especializado → definición de alcance;
+- acompañamiento recurrente → definición de alcance;
+- sin contexto suficiente → orientación inicial.
 
-## Evidencia funcional v5.14 previa al cierre documental
+Implementación: `decision-action-v515.css`, `decision-action-v515.js`, `scripts/apply_decision_action_v515.py` y `scripts/validate_decision_action_v515.py`.
 
-Run `31570619885`, SHA `42e482241a818e0c94137810e1224558a58f397d`:
+No se añadió cuestionario, scoring, storage, backend, transporte de red propio ni PII adicional.
+
+## Evidencia funcional v5.15 previa al cierre documental
+
+Run `31609518536`, SHA `48a0692e8e4f999a85cfd8619fe2e293528945c2`:
 
 - `main == stable` antes del cierre documental;
-- Browser E2E + axe: PASS sobre 37 entradas protegidas y 7 superficies axe;
+- Browser E2E + axe: 37 observados → 35 PASS / 2 SKIP / 0 FAIL / 0 RETRY; 7 superficies axe limpias;
 - Lighthouse: 6/6 dentro de presupuesto;
-- CI: 264 s hasta `stable`, 5.4% mejor que baseline v5.5 de 279 s;
+- CI: 209 s hasta `stable`, 25.1% mejor que baseline v5.5 de 279 s;
 - cobertura reducida: no;
 - budgets relajados: no;
-- Release Governance + Pages trigger + validator v5.14: PASS.
+- Release Governance + Pages trigger + validator v5.15: PASS.
 
 ### Lighthouse
 
 | Superficie | Performance | Accesibilidad | LCP | CLS | TBT | Transferencia |
 |---|---:|---:|---:|---:|---:|---:|
-| Portada | 0.99 | 0.97 | 1307 ms | 0 | 106 ms | 95,461 B |
-| Solución IA | 1.00 | 1.00 | 904 ms | 0 | 0 ms | 23,279 B |
-| Producto IA | 1.00 | 1.00 | 907 ms | 0 | 0 ms | 37,657 B |
-| Sector tecnología | 0.98 | 1.00 | 988 ms | 0.087 | 0 ms | 24,564 B |
-| Perspectiva IA | 1.00 | 1.00 | 906 ms | 0 | 0 ms | 25,918 B |
-| Demo | 1.00 | 1.00 | 903 ms | 0 | 0 ms | 22,048 B |
+| Portada | 1.00 | 0.97 | 1322 ms | 0 | 3 ms | 99,735 B |
+| Solución IA | 1.00 | 1.00 | 989 ms | 0 | 0 ms | 23,234 B |
+| Producto IA | 1.00 | 1.00 | 999 ms | 0 | 0 ms | 37,677 B |
+| Sector tecnología | 0.98 | 1.00 | 1006 ms | 0.087 | 0 ms | 24,289 B |
+| Perspectiva IA | 1.00 | 1.00 | 1044 ms | 0 | 0 ms | 25,796 B |
+| Demo | 1.00 | 1.00 | 906 ms | 0 | 0 ms | 21,994 B |
 
 ## Integraciones externas: estado verdadero
 
@@ -61,8 +71,8 @@ No declarar activas sin configuración real: dominio personalizado/CNAME, Search
 
 ## Documentación
 
-- `RELEASE-v5.14.md`: recomendación explicable y evidencia de release;
-- `RELEASE-v5.13.md`: continuidad comercial;
+- `RELEASE-v5.15.md`: eficiencia recomendación→acción y evidencia de release;
+- `RELEASE-v5.14.md`: recomendación explicable;
 - `knowledge/HOME.md`: entrada a memoria operativa.
 
 ## Principios vigentes
@@ -72,4 +82,5 @@ No declarar activas sin configuración real: dominio personalizado/CNAME, Search
 - No inventar integraciones, clientes, testimonios ni resultados.
 - No transmitir PII en telemetría.
 - No usar scoring opaco para decidir la modalidad.
+- Una ruta sugerida no puede cambiar automáticamente la decisión declarada por el usuario.
 - Graphify orienta; `main`, Pages, validadores y tests deciden.
