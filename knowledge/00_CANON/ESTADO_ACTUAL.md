@@ -10,15 +10,16 @@
 - Release vigente: `5.19.0`.
 - PR funcional: `#71`.
 - Merge fuente funcional: `fcf8d868e5b95ab201c8ebb612ffba166f4746f5`.
-- SHA público final generado por builder: `9a91e8d19697142c0d2d0990c1e606f6ff9660ef`.
+- SHA público generado por builder y certificado: `9a91e8d19697142c0d2d0990c1e606f6ff9660ef`.
 - Run final de certificación pública: `31649425600`.
-- Snapshot certificado al cierre funcional: `stable = 9a91e8d19697142c0d2d0990c1e606f6ff9660ef`.
+- PR de cierre documental: `#72`.
+- Merge de cierre documental: `44feaf5e0bda3a2741dafca1c4ed91d9adec1b1d`.
 
-Refs, Pages, validators y tests son la autoridad para el estado productivo. `main` puede avanzar posteriormente con documentación/memoria sin que ello implique una nueva release funcional ni una modificación del snapshot público certificado.
+Refs, Pages, validators y tests son la autoridad para el estado productivo. `stable` conserva el snapshot público funcional certificado; `main` puede avanzar con documentación/memoria sin que ello implique una nueva release funcional.
 
 ## Estado funcional
 
-**v5.19.0 está implementada, desplegada y funcionalmente certificada. Este ciclo solo tiene pendiente su cierre documental.**
+**v5.19.0 está implementada, desplegada, certificada y formalmente cerrada. No hay una v5.20 abierta.**
 
 ### Foco comercial adaptativo v5.19
 
@@ -84,10 +85,10 @@ El primer Release Governance bloqueó la candidata porque el validator históric
 
 ## Graphify / procedencia
 
-La rama `knowledge/graphify-live` es memoria derivada. El snapshot observado antes del cierre documental reporta `version = 5.19.0` y `source_commit = fcf8d868e5b95ab201c8ebb612ffba166f4746f5`, que corresponde al merge fuente funcional. El commit `9a91e8d…` posterior es la materialización canónica generada por el builder y no una divergencia funcional.
+La rama `knowledge/graphify-live` es memoria derivada y se regenera desde `main`. Tras el cierre documental principal, Graphify validó correctamente versión `5.19.0` y frescura respecto del `main` procesado.
 
-No fijar como regla permanente un `source_commit` que quede obsoleto por la regeneración de Graphify. La comprobación correcta es leer `graphify-out/BUILD_META.json` y contrastarlo con el último run exitoso que produjo ese snapshot.
+No fijar como regla permanente un `source_commit` que quede obsoleto por la propia regeneración del grafo. La comprobación correcta es leer `graphify-out/BUILD_META.json` y contrastarlo con el último run exitoso que produjo ese snapshot.
 
 ## Estado del ciclo
 
-v5.19 está funcionalmente certificada. Tras integrar este cierre documental y verificar Graphify, la tarea queda cerrada. No se abre v5.20 dentro de este ciclo.
+El gate de cierre formal de v5.19 está satisfecho. Cualquier trabajo posterior debe abrir una tarea/release nueva y no modificar retrospectivamente el contrato certificado de v5.19.
