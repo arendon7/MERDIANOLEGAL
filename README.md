@@ -1,6 +1,6 @@
-# Meridiano Legal · Web canónica v5.11.0
+# Meridiano Legal · Web canónica v5.12.0
 
-Sitio público, responsive, static-first y autocontenido de Meridiano Legal, publicado mediante GitHub Pages. v5.11 conserva la arquitectura jurídica/comercial y los gates Browser E2E + axe + Lighthouse, y añade **preparación jurídica del encargo** junto con una **release serializada detrás del builder canónico**.
+Sitio público, responsive, static-first y autocontenido de Meridiano Legal, publicado mediante GitHub Pages. v5.12 añade **prueba comercial verificable derivada de la fuente jurídica** y una guía de **5 modalidades de contratación**, preservando los gates Browser E2E + axe + Lighthouse y la release serializada detrás del builder.
 
 ## Estado actual
 
@@ -16,101 +16,68 @@ La publicación conserva 46 páginas HTML:
 
 URL pública: `https://arendon7.github.io/MERDIANOLEGAL/`
 
-`main` es la candidata vigente; `stable` solo se mueve cuando construcción, idempotencia, Pages, smoke, Browser E2E, axe, Lighthouse y release-health están verdes.
+`main` es la candidata vigente; `stable` solo se mueve cuando builder, idempotencia, Pages, smoke, Browser E2E, axe, Lighthouse y release-health están verdes.
 
-## v5.11 · Contratación e inicio
+## v5.12 · Prueba verificable
 
-El recorrido público diferencia cuatro estados:
+La portada distingue 5 modalidades: diagnóstico, auditoría, producto cerrado, servicio especializado y acompañamiento recurrente.
 
-1. Solicitud preparada.
-2. Propuesta emitida.
-3. Propuesta aceptada.
-4. Encargo iniciado.
+Las 16 fichas profundas muestran un bloque derivado de la fuente canónica con cuatro dimensiones verificables:
 
-Antes del inicio operativo se explican verificaciones de partes/conflictos cuando correspondan, alcance y exclusiones, condiciones económicas, fecha/condición de inicio, interlocutores y canal adecuado para información confidencial.
+- método;
+- entregables;
+- formatos;
+- aceptación/cierre.
 
-La web deja claro que **no acepta contratos, no cobra pagos, no reserva agenda, no crea expedientes, no habilita carga documental y no inicia el encargo automáticamente**.
+No se usan clientes, testimonios, casos de éxito, resultados ni métricas inventadas.
 
-Implementación:
-
-- `engagement-v511.css`;
-- `scripts/apply_engagement_v511.py`;
-- `scripts/validate_engagement_v511.py`.
-
-## v5.11 · CI sin carrera builder/Pages
-
-`Site Quality and Deploy` ya no tiene trigger directo por `push`. La secuencia protegida es:
-
-```text
-push de fuente
-  ↓
-Build canonical public site
-  ↓ workflow_run exitoso
-Site Quality and Deploy
-  ↓
-deploy + smoke
-  ├──→ Browser E2E + axe ──┐
-  └──→ Lighthouse ─────────┴──→ release-health → stable
-```
-
-`scripts/validate_pages_trigger_v511.py` impide reintroducir el `push` directo de Pages.
+Implementación: `proof-v512.css`, `scripts/apply_proof_v512.py` y `scripts/validate_proof_v512.py`.
 
 ## Capas comerciales preservadas
 
-- **v5.8:** claridad de compra en portada y 16 fichas profundas;
-- **v5.9:** calificación comercial y resumen previo a WhatsApp, sin persistencia servidor;
-- **v5.10:** intención contextual, anatomía de propuesta y ruta de cierre;
-- **v5.11:** separación entre solicitud, propuesta, aceptación e inicio efectivo.
+- **v5.8:** claridad de compra;
+- **v5.9:** calificación comercial y privacidad;
+- **v5.10:** intención contextual, propuesta y cierre;
+- **v5.11:** solicitud, propuesta, aceptación e inicio + Pages serializado detrás del builder;
+- **v5.12:** modalidad y prueba verificable.
 
-Secuencia canónica: `v5.8 → v5.9 → v5.10 → v5.11`.
+Secuencia canónica: `v5.8 → v5.9 → v5.10 → v5.11 → v5.12`.
 
-## Cobertura protegida
+## Evidencia funcional v5.12 previa al cierre documental
 
-- 37 entradas Playwright;
-- Chromium desktop/mobile;
-- WebKit desktop;
-- 7 superficies axe;
-- 6 superficies Lighthouse;
-- workers Playwright CI = 1;
-- budgets: performance >= 0.70, accesibilidad >= 0.90, LCP <= 4000 ms, CLS <= 0.15, TBT <= 350 ms, transferencia <= 1.5 MB.
-
-## Evidencia funcional v5.11 previa al cierre documental
-
-Run `31560805174`, SHA `cf4341eb9ec051a3e583b4675263b228ee5f0839`:
+Run `31562692907`, SHA `f8c4d1abc38929040f1ce67b04a2c2c4193c3690`:
 
 - `main == stable` antes del cierre documental;
 - Browser: 37 observados, 35 passed, 2 skipped, 0 failed, 0 retries;
 - axe: 7/7 sin violaciones serias/críticas;
 - Lighthouse: 6/6 dentro de presupuesto;
-- CI: 193 s hasta `stable`;
-- baseline v5.5: 279 s;
-- mejora: 30.8%;
+- CI: 187 s hasta `stable`, 33.0% mejor que baseline v5.5 de 279 s;
 - cobertura reducida: no;
 - budgets relajados: no;
-- release trigger v5.11: PASS, sin carrera directa por push.
+- Release Governance: PASS;
+- Pages trigger: PASS, sin carrera directa por push.
 
 ### Lighthouse
 
 | Superficie | Performance | Accesibilidad | LCP | CLS | TBT | Transferencia |
 |---|---:|---:|---:|---:|---:|---:|
-| Portada | 1.00 | 0.97 | 1247 ms | 0 | 74 ms | 86,682 B |
-| Solución IA | 1.00 | 1.00 | 904 ms | 0 | 0 ms | 23,310 B |
-| Producto IA | 1.00 | 1.00 | 907 ms | 0 | 0 ms | 35,468 B |
-| Sector tecnología | 0.98 | 1.00 | 922 ms | 0.087 | 0 ms | 24,507 B |
-| Perspectiva IA | 0.98 | 1.00 | 902 ms | 0.087 | 0 ms | 25,914 B |
-| Demo | 1.00 | 1.00 | 906 ms | 0 | 0 ms | 22,058 B |
+| Portada | 1.00 | 0.97 | 1263 ms | 0 | 2 ms | 88,599 B |
+| Solución IA | 1.00 | 1.00 | 908 ms | 0 | 0 ms | 23,343 B |
+| Producto IA | 1.00 | 1.00 | 908 ms | 0 | 0 ms | 37,309 B |
+| Sector tecnología | 0.98 | 1.00 | 960 ms | 0.087 | 0 ms | 24,400 B |
+| Perspectiva IA | 0.98 | 1.00 | 906 ms | 0.087 | 0 ms | 26,003 B |
+| Demo | 1.00 | 1.00 | 978 ms | 0 | 0 ms | 22,076 B |
 
 ## Integraciones externas: estado verdadero
 
-Activas: GitHub Pages, WhatsApp como handoff, contexto comercial local/de sesión, telemetría first-party/local sin PII, sitemap/robots/canonical/Open Graph, demo estático/noindex y pipeline de certificación.
+Activas: GitHub Pages, WhatsApp como handoff manual, contexto comercial local/de sesión, telemetría first-party/local sin PII, sitemap/robots/canonical/Open Graph, demo estático/noindex y pipeline de certificación.
 
-No activas sin configuración real: dominio personalizado/CNAME, Search Console, analítica externa, CRM/backend, almacenamiento servidor del formulario, email transaccional, firma electrónica, pagos, agenda o carga documental.
+No declarar activas sin configuración real: dominio personalizado/CNAME, Search Console, analítica externa, CRM/backend, almacenamiento servidor del formulario, email transaccional, firma electrónica, pagos, agenda o carga documental.
 
 ## Documentación
 
-- `RELEASE-v5.11.md`: contratación/inicio, topología CI y evidencia.
-- `RELEASE-v5.10.md`: intención comercial y propuesta/cierre.
-- `RELEASE-v5.9.md`: calificación comercial y privacidad.
+- `RELEASE-v5.12.md`: prueba verificable, modalidad y evidencia de release;
+- `RELEASE-v5.11.md`: contratación/inicio y topología CI;
 - `knowledge/HOME.md`: entrada a memoria operativa.
 
 ## Principios vigentes
