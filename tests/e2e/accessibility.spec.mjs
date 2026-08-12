@@ -3,11 +3,12 @@ import { test, expect } from './helpers.mjs';
 
 const wcagTags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
 const blockingImpacts = new Set(['serious', 'critical']);
+const deepMobilePath = './productos/programa-gobernanza-ia.html';
 
 const publicSurfaces = [
   ['portada', './'],
   ['solución IA', './soluciones/gobernar-inteligencia-artificial-empresa.html'],
-  ['ficha profunda', './productos/programa-gobernanza-ia.html'],
+  ['ficha profunda', deepMobilePath],
   ['sector tecnología', './sectores/tecnologia-software-ia.html'],
   ['perspectiva IA', './perspectivas/gobierno-juridico-inteligencia-artificial.html'],
   ['Centro Demo', './demo.html'],
@@ -31,7 +32,7 @@ async function audit(page) {
 
 for (const [label, path] of publicSurfaces) {
   test(`axe WCAG 2.1 AA sin violaciones serias/críticas · ${label}`, async ({ page }) => {
-    if (path === './') await page.setViewportSize({ width: 390, height: 844 });
+    if (path === './' || path === deepMobilePath) await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(path);
 
     if (path === './') {
@@ -62,6 +63,27 @@ for (const [label, path] of publicSurfaces) {
       }
       await expect(page.locator('[data-engagement-state-v511]')).toHaveCount(4);
       await expect(page.locator('[data-engagement-automatic-v511="false"]')).toHaveCount(1);
+    }
+
+    if (path === deepMobilePath) {
+      const menu = page.locator('.detail-menu');
+      await expect(menu).toBeVisible();
+      const menuBox = await menu.boundingBox();
+      expect(menuBox?.width || 0).toBeGreaterThanOrEqual(44);
+      expect(menuBox?.height || 0).toBeGreaterThanOrEqual(44);
+
+      const mobilePrimary = page.locator('.detail-mobile-cta-v46 > a:first-child');
+      await expect(mobilePrimary).toBeVisible();
+      const primaryBox = await mobilePrimary.boundingBox();
+      expect(primaryBox?.height || 0).toBeGreaterThanOrEqual(44);
+
+      await menu.click();
+      const nav = page.locator('#detail-nav');
+      await expect(nav).toHaveClass(/open/);
+      const navLinks = nav.locator(':scope > a');
+      await expect(navLinks).toHaveCount(5);
+      const navHeights = await navLinks.evaluateAll((nodes) => nodes.map((node) => node.getBoundingClientRect().height));
+      expect(Math.min(...navHeights)).toBeGreaterThanOrEqual(44);
     }
 
     await audit(page);
