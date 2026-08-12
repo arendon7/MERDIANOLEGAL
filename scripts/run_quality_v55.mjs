@@ -68,6 +68,44 @@ function layoutDiagnostics(lhr) {
     }));
 }
 
+function compactDetail(value, depth = 0) {
+  if (value === null || value === undefined) return value;
+  if (typeof value === 'string') return value.replace(/\s+/g, ' ').trim().slice(0, 360);
+  if (typeof value === 'number' || typeof value === 'boolean') return value;
+  if (depth >= 3) return '[truncated]';
+  if (Array.isArray(value)) return value.slice(0, 8).map((item) => compactDetail(item, depth + 1));
+  if (typeof value !== 'object') return String(value).slice(0, 160);
+
+  const preferredKeys = [
+    'selector', 'snippet', 'nodeLabel', 'explanation', 'label', 'text', 'path',
+    'tapTargetScore', 'overlappingTargetScore', 'overlapScoreRatio', 'size',
+    'source', 'target', 'subItems', 'node',
+  ];
+  const result = {};
+  for (const key of preferredKeys) {
+    if (Object.prototype.hasOwnProperty.call(value, key)) result[key] = compactDetail(value[key], depth + 1);
+  }
+  if (Object.keys(result).length) return result;
+  for (const [key, item] of Object.entries(value).slice(0, 8)) result[key] = compactDetail(item, depth + 1);
+  return result;
+}
+
+function accessibilityDiagnostics(lhr) {
+  const refs = lhr.categories?.accessibility?.auditRefs || [];
+  return refs
+    .map((ref) => ({ ref, audit: lhr.audits?.[ref.id] }))
+    .filter(({ audit }) => Number.isFinite(audit?.score) && audit.score < 1)
+    .map(({ ref, audit }) => ({
+      id: ref.id,
+      title: audit.title || ref.id,
+      score: audit.score,
+      weight: ref.weight ?? null,
+      group: ref.group ?? null,
+      displayValue: audit.displayValue || null,
+      items: (audit.details?.items || []).slice(0, 8).map((item) => compactDetail(item)),
+    }));
+}
+
 function checksFor(values) {
   const b = config.budgets;
   return [
@@ -145,6 +183,7 @@ function runAudit(surface, url, attempt) {
 const failures = [];
 const summary = [];
 const diagnostics = {};
+const accessibilityAuditGaps = {};
 const sampleLedger = {};
 
 for (const surface of config.surfaces) {
@@ -157,6 +196,7 @@ for (const surface of config.surfaces) {
     continue;
   }
   samples.push(first);
+  accessibilityAuditGaps[surface.id] = accessibilityDiagnostics(first.lhr);
 
   const initialFailures = failedChecks(first.values);
   const hasNonRetryableFailure = initialFailures.some((check) => nonRetryableMetrics.has(check.name));
@@ -226,11 +266,34 @@ const summaryPayload = {
   samples: sampleLedger,
   failures,
   diagnostics,
+  accessibilityAuditGaps,
 };
 writeFileSync(join(outputDir, 'summary.json'), `${JSON.stringify(summaryPayload, null, 2)}\n`);
 console.table(printable.map(({ attempt, ...item }) => item));
 
 const verifiedSurfaces = printable.filter((item) => item.verificationTriggered).map((item) => item.id);
+const gapEntries = Object.entries(accessibilityAuditGaps).filter(([, audits]) => audits.length);
+const accessibilityMarkdown = gapEntries.length
+  ? [
+      '',
+      '#### Diagnóstico de accesibilidad Lighthouse',
+      '',
+      'Auditorías con score < 1 (diagnóstico; no cambia presupuestos ni política de retry):',
+      ...gapEntries.flatMap(([surface, audits]) => [
+        `- **${surface}**: ${audits.map((audit) => `${audit.id}=${round(audit.score)}`).join(', ')}`,
+        ...audits.slice(0, 6).map((audit) => {
+          const selector = audit.items?.map((item) => item?.node?.selector || item?.selector).find(Boolean);
+          return `  - ${audit.title}${selector ? ` · \`${String(selector).slice(0, 140)}\`` : ''}`;
+        }),
+      ]),
+    ]
+  : [
+      '',
+      '#### Diagnóstico de accesibilidad Lighthouse',
+      '',
+      'Todas las auditorías puntuables de accesibilidad obtuvieron score 1.',
+    ];
+
 const markdown = [
   '### Lighthouse · performance + accesibilidad',
   '',
@@ -245,6 +308,7 @@ const markdown = [
   '',
   `Presupuestos: performance >= ${config.budgets.performanceScoreMin}; a11y >= ${config.budgets.accessibilityScoreMin}; LCP <= ${config.budgets.largestContentfulPaintMsMax} ms; CLS <= ${config.budgets.cumulativeLayoutShiftMax}; TBT <= ${config.budgets.totalBlockingTimeMsMax} ms; transferencia <= ${config.budgets.totalByteWeightMax} B.`,
   '**Los presupuestos no se modifican ni se relajan durante la verificación.**',
+  ...accessibilityMarkdown,
   '',
   ...(failures.length ? ['Fallos:', ...failures.map((failure) => `- ${failure}`), ''] : []),
 ].join('\n');
