@@ -39,11 +39,15 @@
     });
   };
 
-  // En móvil solo se repliega información secundaria ya presente. La calificación,
-  // el contexto y la ruta recomendada siguen visibles; sin JS, el HTML permanece
-  // íntegramente expandido como en v5.15.
-  const enhanceMobileDisclosureV516 = () => {
-    if (!form || !window.matchMedia('(max-width: 760px)').matches) return;
+  // COMMERCIAL-FOCUS-V519:START
+  // La información jurídica material permanece en el DOM. En móvil se conserva el
+  // disclosure v5.16. En escritorio, orientation/scope parten replegados y una
+  // intención explícita proposal conserva el detalle expandido. La web no infiere
+  // intención ni cambia etapas: solo utiliza el parámetro explícito ya existente.
+  const enhanceCommercialDisclosureV519 = () => {
+    if (!form) return;
+    const isMobile = window.matchMedia('(max-width: 760px)').matches;
+    const expandForExplicitProposal = explicitIntent === 'proposal' && !isMobile;
 
     const makeDisclosure = (root, keepClass, key, title, copy) => {
       if (!root || root.querySelector(':scope > details[data-mobile-disclosure-v516]')) return;
@@ -53,8 +57,11 @@
       if (!movable.length) return;
 
       const details = document.createElement('details');
-      details.className = 'commercial-disclosure-v516';
+      details.className = 'commercial-disclosure-v516 commercial-disclosure-v519';
       details.dataset.mobileDisclosureV516 = key;
+      details.dataset.commercialDisclosureV519 = key;
+      details.dataset.defaultStateV519 = expandForExplicitProposal ? 'expanded-proposal' : 'collapsed-secondary';
+      details.open = expandForExplicitProposal;
       const summary = document.createElement('summary');
       const strong = document.createElement('strong');
       const span = document.createElement('span');
@@ -82,7 +89,8 @@
     );
   };
   enhanceMobileScrollableRegionsV516();
-  enhanceMobileDisclosureV516();
+  enhanceCommercialDisclosureV519();
+  // COMMERCIAL-FOCUS-V519:END
   // MOBILE-UX-V516:END
 
   const homePanel = document.querySelector('[data-decision-action-live-v515]');
@@ -176,5 +184,6 @@
     scoring: false,
     privacy: Object.freeze({ networkTransport: false, persistentStorage: false, piiInTelemetry: false }),
     mobileUxV516: Object.freeze({ progressiveDisclosure: true, keyboardScrollableRegions: true, maxWidthPx: 760, hiddenMaterialContent: false }),
+    commercialFocusV519: Object.freeze({ progressiveDisclosure: true, defaultCollapsed: true, defaultExpandedIntent: 'proposal', explicitIntentOnly: true, automaticDecisionChange: false, hiddenMaterialContent: false }),
   });
 })();
