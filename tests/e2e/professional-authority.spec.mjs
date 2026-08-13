@@ -23,7 +23,7 @@ test('firma distingue trayectoria del director de la experiencia demostrativa', 
   await expect(trajectory).toContainText('Compañía de Empaques');
   await expect(trajectory).toContainText(/no constituye una lista de clientes/i);
   if (testInfo.project.name.includes('mobile')) {
-    const toggle = page.locator('.menu-toggle');
+    const toggle = page.getByRole('button', { name: 'Abrir menú', exact: true });
     await expect(toggle).toBeVisible();
     await toggle.click();
     await expect(toggle).toHaveAttribute('aria-expanded', 'true');
