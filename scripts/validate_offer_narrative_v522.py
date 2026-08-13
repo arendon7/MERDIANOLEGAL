@@ -32,6 +32,12 @@ FORBIDDEN_CLAIMS = (
     "portal productivo meridiano empresas",
     "ley general de ia vigente en colombia",
 )
+UNSAFE_PLATFORM_PHRASES = (
+    "Meridiano Empresas o SharePoint/OneDrive",
+    "Meridiano Empresas o Microsoft 365",
+    "Meridiano Empresas o tablero acordado",
+    "Meridiano Empresas o entorno disponible",
+)
 
 
 def fail(message: str) -> None:
@@ -155,8 +161,14 @@ def validate_materialized_pages(pages: dict[str, Path]) -> None:
             fail(f"{path.relative_to(R)}: la capa debe tener 3 bloques editoriales")
         if body.count('offer-legal-lens-grid-v522') != 1:
             fail(f"{path.relative_to(R)}: lente jurídica duplicada o ausente")
+        for phrase in UNSAFE_PLATFORM_PHRASES:
+            if phrase in body:
+                fail(f"{path.relative_to(R)}: referencia de plataforma ambigua: {phrase}")
         if "Meridiano Empresas" in body:
-            fail(f"{path.relative_to(R)}: referencia de plataforma ambigua dentro del catálogo")
+            safe_conditional = "Meridiano Empresas cuando esté habilitado productivamente" in body
+            safe_demo = "Demostración" in body and "../demo.html" in body
+            if not (safe_conditional or safe_demo):
+                fail(f"{path.relative_to(R)}: mención de Meridiano Empresas sin condición productiva ni contexto demo")
 
 
 def validate_home() -> None:
@@ -187,7 +199,7 @@ def main() -> int:
     validate_source_contract(payload, pages)
     validate_materialized_pages(pages)
     validate_home()
-    print("OFFER NARRATIVE V5.22 OK: 16/16 ofertas, 5 pares diferenciados, lente jurídica x3, capability truth y arquitectura v5.20 preservadas.")
+    print("OFFER NARRATIVE V5.22 OK: 16/16 ofertas, 5 pares diferenciados, lente jurídica x3, capability truth source-driven y arquitectura v5.20 preservadas.")
     return 0
 
 
