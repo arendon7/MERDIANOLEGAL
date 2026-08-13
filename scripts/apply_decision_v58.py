@@ -12,6 +12,7 @@ import re
 ROOT = Path(__file__).resolve().parents[1]
 DETAIL_TARGETS = sorted((ROOT / 'servicios').glob('*.html')) + sorted((ROOT / 'productos').glob('*.html'))
 HOME = ROOT / 'index.html'
+VERSION = ROOT / 'version.json'
 
 HOME_START = '<!-- DECISION-V58-HOME:START -->'
 HOME_END = '<!-- DECISION-V58-HOME:END -->'
@@ -35,6 +36,15 @@ def ensure_style(text: str, style: str) -> str:
     if '</head>' not in text:
         raise RuntimeError('Documento sin cierre </head>')
     return text.replace('</head>', f'  {style}\n</head>', 1)
+
+
+def version_at_least(major: int, minor: int) -> bool:
+    payload = json.loads(VERSION.read_text(encoding='utf-8'))
+    raw = str(payload.get('version', '0.0.0')).split('.')
+    try:
+        return (int(raw[0]), int(raw[1])) >= (major, minor)
+    except (ValueError, IndexError):
+        return False
 
 
 def load_catalog() -> dict[str, dict]:
@@ -122,8 +132,6 @@ def patch_detail(path: Path, catalog: dict[str, dict]) -> None:
         raise RuntimeError(f'{path.name}: ID {catalog_id} no existe en las fuentes')
 
     text = remove_managed_block(text, DETAIL_START, DETAIL_END)
-    # El runtime de productos reemplaza #detail-page.innerHTML. v5.8 debe ser un
-    # hermano anterior del contenedor mutable para sobrevivir con y sin JavaScript.
     anchor = re.compile(r'<main id="contenido">\s*<div id="detail-page" data-static-catalog="true">')
     replacement = (
         '<main id="contenido">\n'
@@ -161,6 +169,10 @@ def home_block() -> str:
 def patch_home() -> None:
     text = HOME.read_text(encoding='utf-8')
     text = remove_managed_block(text, HOME_START, HOME_END)
+    if version_at_least(5, 20) and 'data-home-decision-v520="true"' in text:
+        text = ensure_style(text, HOME_STYLE)
+        HOME.write_text(text, encoding='utf-8')
+        return
     anchor = '<section class="section needs-section" id="necesidades">'
     if anchor not in text:
         raise RuntimeError('index.html: falta ancla de necesidades')
