@@ -69,7 +69,7 @@ def qualification_without_summary(v59: str) -> str:
 
 def synthesis_markup() -> str:
     return f'''{SYN_START}
-<section class="contact-synthesis-v523 full" data-contact-synthesis-v523="true" aria-labelledby="contact-synthesis-v523-title">
+<div class="contact-synthesis-v523 full" data-contact-synthesis-v523="true" role="region" aria-labelledby="contact-synthesis-v523-title">
   <div class="contact-synthesis-head-v523">
     <div><span>SÍNTESIS PARA AVANZAR</span><h3 id="contact-synthesis-v523-title">Una sola lectura de su necesidad, la modalidad y el siguiente paso.</h3></div>
     <p>La web organiza el contexto que usted ya indicó. No asigna puntajes, no decide por usted y no convierte esta solicitud en asesoría, propuesta o encargo.</p>
@@ -112,7 +112,7 @@ def synthesis_markup() -> str:
     <p class="recommendation-brief-state-v514" data-recommendation-state-v514>Sin modalidad preseleccionada. La web no asigna puntajes ni presume una recomendación.</p>
   </div>
 {V514_END}
-</section>
+</div>
 {SYN_END}'''
 
 
@@ -139,10 +139,6 @@ def normalize_form_marker(text: str) -> str:
 
 def patch_home() -> None:
     text = HOME.read_text(encoding="utf-8")
-
-    # En segunda pasada los aplicadores históricos pueden haber vaciado o dejado
-    # incompletos los wrappers v5.23. Se eliminan primero y se reconstruye siempre
-    # desde los bloques históricos recién materializados.
     text = remove_managed(text, SYN_START, SYN_END)
     text = remove_managed(text, PROCESS_START, PROCESS_END)
 
