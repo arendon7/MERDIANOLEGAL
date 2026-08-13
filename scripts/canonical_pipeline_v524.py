@@ -79,8 +79,15 @@ def extract_commands(text: str, start: str, end: str, label: str) -> list[str]:
     b = text.find(end, a + len(start)) if a >= 0 else -1
     if a < 0 or b < 0:
         raise SystemExit(f"CANONICAL PIPELINE V5.24 FAIL: no se reconoce bloque {label}")
-    block = text[a:b]
-    return [" ".join(match.groups()) for match in re.finditer(r"(?m)^\s*(python3|node)\s+(scripts/[^\s]+)\s*$", block)]
+    commands: list[str] = []
+    for line in text[a:b].splitlines():
+        candidate = line.strip()
+        if candidate.startswith("run: "):
+            candidate = candidate[len("run: ") :].strip()
+        match = re.fullmatch(r"(python3|node)\s+(scripts/[^\s]+)", candidate)
+        if match:
+            commands.append(" ".join(match.groups()))
+    return commands
 
 
 def validate_workflow_contracts() -> None:
