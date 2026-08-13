@@ -12,7 +12,6 @@ FIRM = ROOT / "firma.html"
 SOURCE = ROOT / "professional-authority-v525.json"
 CONFIG = ROOT / "site-config.json"
 CSS_HOME = '<link rel="stylesheet" href="professional-authority-v525.css">'
-CSS_FIRM = '<link rel="stylesheet" href="professional-authority-v525.css">'
 HOME_START = '<!-- PROFESSIONAL-AUTHORITY-V525-HOME:START -->'
 HOME_END = '<!-- PROFESSIONAL-AUTHORITY-V525-HOME:END -->'
 FIRM_START = '<!-- PROFESSIONAL-AUTHORITY-V525-FIRM:START -->'
@@ -20,7 +19,14 @@ FIRM_END = '<!-- PROFESSIONAL-AUTHORITY-V525-FIRM:END -->'
 
 
 def strip_block(text: str, start: str, end: str) -> str:
-    return re.sub(re.escape(start) + r'.*?' + re.escape(end) + r'\s*', '', text, flags=re.S)
+    """Retira solo el bloque propio y, como máximo, su salto de línea final."""
+    return re.sub(
+        re.escape(start) + r'.*?' + re.escape(end) + r'(?:\r?\n)?',
+        '',
+        text,
+        count=1,
+        flags=re.S,
+    )
 
 
 def ensure_css(text: str) -> str:
@@ -133,12 +139,13 @@ def main() -> int:
 
     firm = strip_block(FIRM.read_text(encoding='utf-8'), FIRM_START, FIRM_END)
     firm = ensure_css(firm)
+    firm = re.sub(r'<a href="#trayectoria">Trayectoria</a>', '', firm)
     firm = firm.replace('<a href="#enfoque">Enfoque</a>', '<a href="#enfoque">Enfoque</a><a href="#trayectoria">Trayectoria</a>', 1)
     firm = firm.replace('href="experiencia.html">Ver experiencia demostrativa</a>', 'href="#trayectoria">Ver trayectoria profesional</a>', 1)
-    firm_anchor = '    <section class="section" id="enfoque">'
-    if firm_anchor not in firm:
-        raise RuntimeError('firma.html: no se encontró sección de enfoque')
-    firm = firm.replace(firm_anchor, firm_block(data) + '\n' + firm_anchor, 1)
+    anchor_match = re.search(r'(?m)^[ \t]*<section class="section" id="enfoque">', firm)
+    if not anchor_match:
+        raise RuntimeError('firma.html: no se encontró section#enfoque')
+    firm = firm[:anchor_match.start()] + firm_block(data) + '\n' + anchor_match.group(0) + firm[anchor_match.end():]
     firm = update_person_schema(firm, data, base_url)
     FIRM.write_text(firm, encoding='utf-8')
 
