@@ -5,7 +5,10 @@ test('v5.23 concentra el contacto abierto en una síntesis y un proceso colapsad
 
   const form = page.locator('form[data-contact-compression-v523="true"]');
   await expect(form).toBeVisible();
-  await expect(form.locator('[data-contact-synthesis-v523="true"]')).toHaveCount(1);
+  const synthesis = form.locator('[data-contact-synthesis-v523="true"]');
+  await expect(synthesis).toHaveCount(1);
+  await expect(synthesis).toHaveAttribute('role', 'region');
+  expect(await synthesis.evaluate((node) => node.tagName)).toBe('DIV');
   await expect(form.locator('[data-qualification-summary-v59="true"]')).toHaveCount(1);
   await expect(form.locator('[data-commercial-brief-v513="true"]')).toHaveCount(1);
   await expect(form.locator('[data-recommendation-brief-v514="true"]')).toHaveCount(1);
@@ -39,6 +42,8 @@ test('v5.23 abre el único proceso cuando la intención explícita es propuesta'
   const process = form.locator('details[data-contact-process-v523="true"]');
 
   await expect(synthesis).toHaveCount(1);
+  await expect(synthesis).toHaveAttribute('role', 'region');
+  expect(await synthesis.evaluate((node) => node.tagName)).toBe('DIV');
   await expect(synthesis.locator('[data-brief-modality-v513]')).toContainText('Producto de alcance cerrado');
   await expect(synthesis.locator('[data-recommendation-fit-v514]')).not.toBeEmpty();
   await expect(synthesis.locator('[data-route-label-v515]')).toContainText('Propuesta verificable');
