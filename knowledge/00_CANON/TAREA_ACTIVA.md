@@ -2,97 +2,81 @@
 
 Actualizado: 2026-08-13.
 
-## Estado
+## Release candidata
 
-**No hay una release funcional activa.**
+**v5.23.0 — compresión del contacto comercial.**
 
-v5.22.0 — arquitectura editorial de oferta y narrativa jurídica senior — está implementada, desplegada, certificada y formalmente cerrada.
+Rama: `feature/v523-contact-compression`.
 
-### SHAs de cierre
+`stable` permanece en el snapshot público certificado v5.22: `dcb5bc9643eff595c0f8614c7cf6acbadc3bb719`.
 
-- SHA funcional de las mejoras: `5c3f3194b45afb9ac21a8def27afdc3d2157b3e2`.
-- Run funcional: `31671834728`.
-- Snapshot público final `ready`: `dcb5bc9643eff595c0f8614c7cf6acbadc3bb719`.
-- Run final de recertificación: `31673266141`.
-- Canal: `github-pages-public-offer-narrative-ready`.
+## Problema observable
 
-El snapshot `ready` volvió a pasar builder/idempotencia, validadores, Pages, smoke, Browser E2E/axe, Lighthouse y release-health antes de mover `stable`.
+La auditoría posterior a v5.22 confirma que la profundidad de oferta y la veracidad de capacidades ya están resueltas. El principal cuello de botella visible está en el tramo final de conversión de la portada.
 
-Después del snapshot `ready`, los únicos cambios admisibles dentro de este cierre son documentales o de memoria. Esos commits pueden hacer avanzar `main` sin mover `stable` siempre que no cambien runtime ni salida pública.
+Antes del formulario, la página ya explica la secuencia necesidad → calificación → propuesta → aceptación/inicio. Dentro del mismo formulario vuelven a aparecer superficies separadas para:
 
-## Qué quedó resuelto en v5.22
+1. calificación comercial y resumen;
+2. brief de modalidad/prueba;
+3. recomendación y siguiente paso;
+4. ruta de solicitud a propuesta;
+5. condiciones de aceptación e inicio;
+6. handoff manual a WhatsApp.
 
-1. Las 16 ofertas tienen contrato editorial único y source-driven.
-2. Productos y servicios se distinguen por lógica de contratación y no solo por nombre.
-3. Cinco pares solapados tienen alternativa recíproca y diferencia verificable.
-4. Cada ficha explica decisión empresarial, modalidad, capacidad instalada y lente jurídica.
-5. La portada conserva una sola superficie de decisión v5.20.
-6. El seniority se demuestra con criterio, método, fuentes, responsables, límites y cierre; no con claims no verificables.
-7. Capability truth vive en los JSON fuente v4.1/v4.2.
-8. `Meridiano Empresas` solo puede aparecer con condición productiva real o como demostración explícita.
-9. El runtime preserva el HTML prerenderizado static-first y no rehidrata destructivamente `#detail-page`.
-10. El contraste AA de las fichas profundas quedó corregido sin relajar axe ni budgets.
+v5.19 repliega la ruta completa y las condiciones de inicio para ciertas intenciones, pero la calificación, el resumen, el brief y la recomendación siguen compitiendo visualmente con los campos que el usuario debe completar.
 
-## Evidencia de cierre
+La lógica subyacente no necesita ampliarse: los scripts v5.9, v5.10, v5.13, v5.14 y v5.15 ya calculan necesidad, momento, horizonte, modalidad, encaje, ruta y CTA sin scoring, persistencia ni transporte adicional.
 
-Certificación funcional:
+## Objetivo
 
-- 49 E2E observados → 47 PASS / 2 SKIP / 0 FAIL / 0 RETRY.
-- 7 superficies axe WCAG 2.1 AA limpias de violaciones serias/críticas.
-- Lighthouse 6/6 PASS.
-- Accesibilidad Lighthouse 1.00 en las seis superficies.
-- CI hasta `stable`: 206 s frente a baseline 279 s; mejora 26.2%.
+Reducir la carga cognitiva del contacto sin perder información jurídica material, continuidad comercial ni capacidad de auditoría.
 
-Recertificación `ready`:
+La experiencia visible debe quedar en una secuencia corta:
 
-- run `31673266141`;
-- SHA `dcb5bc9643eff595c0f8614c7cf6acbadc3bb719`;
-- todos los gates: PASS;
-- CI hasta `stable`: 204 s;
-- mejora frente a baseline: 26.9%;
-- cobertura reducida: no;
-- budgets relajados: no.
+1. datos de contacto y necesidad;
+2. tres datos de contexto comercial: momento, horizonte y presupuesto opcional;
+3. una única síntesis dinámica con necesidad, modalidad cuando exista, siguiente paso y estándar verificable;
+4. un único disclosure opcional con límites, ruta a propuesta y condiciones de aceptación/inicio;
+5. contexto general, privacidad y CTA a WhatsApp;
+6. handoff manual posterior, solo cuando el usuario lo prepara.
 
-## Archivos canónicos de referencia
+## Contrato v5.23
 
-- `RELEASE-v5.22.md` — evidencia y decisiones completas de la release.
-- `offer-narrative-v522.json` — contrato editorial de las 16 ofertas.
-- `offer-v522.css` — capa visual trust-first.
-- `scripts/apply_offer_narrative_v522.py` — materialización final.
-- `scripts/validate_offer_narrative_v522.py` — contrato anti-drift.
-- `catalog-products-v41/` y `catalog-services-v42/` — fuente jurídica/comercial.
-- `tests/e2e/offer-narrative.spec.mjs` — cobertura Browser específica.
-- `knowledge/00_CANON/ESTADO_ACTUAL.md` — estado canónico.
-- `knowledge/00_CANON/CONTEXTO_RAPIDO.md` — orientación rápida.
+- Una sola superficie visible de síntesis comercial dentro del formulario.
+- Una sola superficie opcional para proceso, límites y condiciones de inicio.
+- No duplicar visualmente el proceso que ya aparece en `#contratacion`.
+- Mantener los mismos campos físicos del formulario; no añadir PII ni preguntas nuevas.
+- Mantener `decision_stage`, `urgency`, `budget`, `need`, modalidad, proof standard, recommendation y close route como estado verificable.
+- Reutilizar los `data-*` históricos cuando sea posible para conservar comportamiento y trazabilidad.
+- No ocultar contenido material mediante CSS: la compresión debe expresarse en HTML semántico y progressive disclosure accesible.
+- La intención explícita `proposal` puede abrir más detalle, pero no debe desplegar múltiples paneles redundantes.
+- En móvil y escritorio debe existir la misma jerarquía conceptual.
 
-## Invariantes que siguen vigentes
+## No objetivos
 
-- 46 páginas HTML;
-- 16 fichas profundas;
-- 1 formulario físico canónico;
-- static-first;
-- 49 E2E observados como piso certificado;
-- 7 superficies axe;
-- 6 superficies Lighthouse;
-- budgets v5.5 sin relajación;
-- sin scoring o inferencia automática nueva;
-- sin PII, storage persistente o transporte nuevo;
-- WhatsApp manual;
-- portal real deshabilitado;
-- no CRM/backend, autenticación real, firma, pagos, agenda o carga documental ficticios;
-- no testimonios, clientes, premios, cifras de experiencia o resultados no verificables;
-- no mutar contratos fuente silenciosamente después del render.
+- no cambiar productos, servicios, planes, precios u honorarios;
+- no construir CRM, backend, agenda, firma, pagos o portal real;
+- no introducir scoring, inferencia automática ni IA de recomendación;
+- no almacenar PII ni respuestas del formulario;
+- no automatizar el envío de WhatsApp;
+- no modificar retrospectivamente v5.22;
+- no reducir cobertura ni relajar budgets;
+- no hacer una refactorización general de los 72 scripts Python o 25 fuentes JS dentro de este ciclo.
 
-## Siguiente ciclo
+## Criterios de cierre
 
-**No abrir v5.23 por inercia.**
-
-Antes de cualquier release funcional posterior:
-
-1. releer `ESTADO_ACTUAL.md`, `TAREA_ACTIVA.md`, `version.json`, `site-config.json` y Graphify fresco;
-2. auditar la experiencia pública ya certificada;
-3. identificar un problema observable y medible;
-4. definir objetivo, contrato, no-objetivos y criterios de cierre;
-5. abrir rama funcional únicamente cuando exista evidencia suficiente.
-
-Hasta entonces, el estado correcto es: **v5.22 cerrada; sin release funcional activa.**
+1. el formulario conserva una única instancia física;
+2. los campos actuales siguen funcionando y la privacidad no se degrada;
+3. calificación + brief + recomendación se presentan como una sola síntesis visible;
+4. ruta a propuesta + aceptación/inicio se presentan dentro de un único disclosure opcional;
+5. el CTA continúa adaptándose a la ruta existente sin automatizar la decisión;
+6. el handoff v5.17 y observabilidad v5.18 permanecen intactos;
+7. contratos v5.8→v5.22: PASS;
+8. validator nuevo v5.23: PASS;
+9. builder + segunda pasada/idempotencia: PASS;
+10. Pages + smoke: PASS;
+11. Browser E2E + axe: al menos 49 pruebas observadas, sin reducir cobertura y con las 7 superficies axe;
+12. Lighthouse: 6/6 dentro de budgets vigentes;
+13. release-health: PASS;
+14. `stable` solo se mueve después de todos los gates verdes;
+15. Graphify fresco antes del cierre documental.
