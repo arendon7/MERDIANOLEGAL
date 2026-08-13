@@ -57,9 +57,35 @@ def version_at_least(major: int, minor: int) -> bool:
         return False
 
 
+def normalize_contact_synthesis_v523(text: str) -> str:
+    """Convierte el wrapper v5.23 materializado antiguo antes de la extracción v4.5."""
+    if not version_at_least(5, 23):
+        return text
+    pattern = re.compile(
+        r'(?P<start><!-- CONTACT-SYNTHESIS-V523:START -->)(?P<body>[\s\S]*?)(?P<end><!-- CONTACT-SYNTHESIS-V523:END -->)'
+    )
+    match = pattern.search(text)
+    if not match:
+        return text
+    body = match.group("body")
+    old_section = re.search(r'<section\b(?=[^>]*data-contact-synthesis-v523="true")[^>]*>', body)
+    if not old_section:
+        return text
+    opening = old_section.group(0).replace('<section', '<div', 1)
+    if ' role="region"' not in opening:
+        opening = opening[:-1] + ' role="region">'
+    body = body[:old_section.start()] + opening + body[old_section.end():]
+    close_pos = body.rfind('</section>')
+    if close_pos < 0:
+        raise RuntimeError("v5.23: wrapper legado de síntesis no tiene cierre </section>")
+    body = body[:close_pos] + '</div>' + body[close_pos + len('</section>'):]
+    return text[:match.start()] + match.group("start") + body + match.group("end") + text[match.end():]
+
+
 def main() -> int:
     text = INDEX.read_text(encoding="utf-8")
     include_legacy_choice = not version_at_least(5, 20)
+    text = normalize_contact_synthesis_v523(text)
 
     text = replace_tag_block(text, r'<nav id="main-nav" class="main-nav" aria-label="Navegación principal">[\s\S]*?</nav>', HEADER_NAV)
     text = replace_tag_block(text, r'<div class="header-actions">[\s\S]*?</div>', HEADER_ACTIONS)
