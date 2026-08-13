@@ -12,7 +12,7 @@ test('portada muestra prueba profesional concreta sin presentarla como clientes'
   await expectNoHorizontalOverflow(page);
 });
 
-test('firma distingue trayectoria del director de la experiencia demostrativa', async ({ page }) => {
+test('firma distingue trayectoria del director de la experiencia demostrativa', async ({ page }, testInfo) => {
   await page.goto('./firma.html');
   const trajectory = page.locator('[data-professional-authority-v525="firm"]');
   await expect(trajectory).toHaveCount(1);
@@ -22,6 +22,12 @@ test('firma distingue trayectoria del director de la experiencia demostrativa', 
   await expect(trajectory).toContainText('Incubik');
   await expect(trajectory).toContainText('Compañía de Empaques');
   await expect(trajectory).toContainText(/no constituye una lista de clientes/i);
+  if (testInfo.project.name.includes('mobile')) {
+    const toggle = page.locator('.menu-toggle');
+    await expect(toggle).toBeVisible();
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+  }
   await expect(page.getByRole('link', { name: 'Trayectoria', exact: true })).toHaveAttribute('href', '#trayectoria');
   await expect(page.getByRole('link', { name: 'Ver trayectoria profesional', exact: true })).toHaveAttribute('href', '#trayectoria');
   await expect(page.getByRole('link', { name: 'Ver experiencia demostrativa', exact: true })).toHaveCount(0);
