@@ -8,11 +8,13 @@ URL pública: `https://arendon7.github.io/MERDIANOLEGAL/`
 
 La publicación conserva 46 páginas HTML, 16 fichas profundas y un único formulario físico canónico. `stable` solo se mueve cuando builder, idempotencia, Pages, smoke, Browser E2E, axe, Lighthouse y release-health están verdes.
 
-Release funcional certificada: **v5.22.0**.
+Release funcional certificada y cerrada: **v5.22.0**.
 
-SHA funcional certificado: `5c3f3194b45afb9ac21a8def27afdc3d2157b3e2`.
+- SHA funcional de las mejoras: `5c3f3194b45afb9ac21a8def27afdc3d2157b3e2` — run `31671834728`.
+- Snapshot público final `ready`: `dcb5bc9643eff595c0f8614c7cf6acbadc3bb719` — run `31673266141`.
+- Canal: `github-pages-public-offer-narrative-ready`.
 
-Run público final: `31671834728`.
+El primer SHA identifica el cierre funcional de narrativa/productos/servicios. El segundo incorpora el cierre documental/metadata `ready` y volvió a superar todos los gates antes de mover `stable`.
 
 ## Capas vigentes
 
@@ -58,7 +60,7 @@ No se añadieron autenticación, cuentas reales, backend, CRM, almacenamiento se
 
 ## Evidencia funcional v5.22
 
-Run final `31671834728`, SHA `5c3f3194b45afb9ac21a8def27afdc3d2157b3e2`:
+Run `31671834728`, SHA funcional `5c3f3194b45afb9ac21a8def27afdc3d2157b3e2`:
 
 - builder + segunda pasada/idempotencia: PASS;
 - validadores históricos + v5.22: PASS;
@@ -73,15 +75,29 @@ Run final `31671834728`, SHA `5c3f3194b45afb9ac21a8def27afdc3d2157b3e2`:
 - baseline v5.5: 279 s;
 - mejora frente al baseline: 26.2%;
 - cobertura reducida: no;
-- budgets relajados: no;
-- release-health: PASS.
+- budgets relajados: no.
 
-Artefactos del run:
+## Recertificación pública `ready`
 
-- Lighthouse `9170023458`;
-- CI `9170051799`;
-- release-health `9170052414`;
-- Pages `9169986924`.
+Run `31673266141`, SHA `dcb5bc9643eff595c0f8614c7cf6acbadc3bb719`:
+
+- idempotencia + validadores: PASS;
+- Pages + smoke: PASS;
+- Browser E2E/axe: PASS;
+- Lighthouse: PASS;
+- release-health: PASS;
+- `stable`: promovida;
+- tiempo hasta gate: 204 s;
+- mejora frente al baseline: 26.9%;
+- cobertura reducida: no;
+- budgets relajados: no.
+
+Artefactos `ready`:
+
+- Lighthouse `9170555585`;
+- CI `9170580133`;
+- release-health `9170580558`;
+- Pages `9170509163`.
 
 ## Arquitectura v5.22
 
@@ -106,7 +122,7 @@ No declarar activas sin configuración real: autenticación/cuentas reales, anal
 
 ## Documentación
 
-- `RELEASE-v5.22.md`: narrativa, catálogo, incidencias y evidencia final;
+- `RELEASE-v5.22.md`: narrativa, catálogo, incidencias y evidencia funcional;
 - `RELEASE-v5.21.md`: frontera demo/capacidad;
 - `RELEASE-v5.20.md`: compresión de decisión;
 - `RELEASE-v5.19.md`: foco comercial adaptativo;
