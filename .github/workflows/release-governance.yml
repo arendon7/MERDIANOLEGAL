@@ -33,6 +33,7 @@ on:
       - handoff-continuity-v517.js
       - handoff-observability-v518.json
       - handoff-observability-v518.js
+      - demo.js
       - site-v3.js
       - catalog-products-v41/**
       - catalog-services-v42/**
