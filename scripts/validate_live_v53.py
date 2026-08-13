@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Smoke post-deploy v5.3: conserva v5.2 y verifica autoridad/medición live."""
+"""Smoke post-deploy v5.3: conserva v5.2, autoridad/medición y extensiones posteriores."""
 from __future__ import annotations
 
 from pathlib import Path
 import json
+import re
 import sys
 
 from validate_live_v52 import BASE, get, main as validate_v52
@@ -13,6 +14,12 @@ AUTH = json.loads((R / "authority-v53.json").read_text(encoding="utf-8"))
 V51 = json.loads((R / "growth-solutions-v51.json").read_text(encoding="utf-8"))
 SOLUTIONS = {item["slug"]: item for item in V51["solutions"]}
 CONFIG_BASE = json.loads((R / "site-config.json").read_text(encoding="utf-8"))["base_url"]
+VERSION = json.loads((R / "version.json").read_text(encoding="utf-8")).get("version", "0.0.0")
+
+
+def semver(value: str) -> tuple[int, int, int]:
+    match = re.fullmatch(r"(\d+)\.(\d+)\.(\d+)", str(value))
+    return tuple(map(int, match.groups())) if match else (0, 0, 0)
 
 
 def main() -> int:
@@ -115,7 +122,15 @@ def main() -> int:
             print(f"- {error}")
         return 1
 
-    print(f"SMOKE PÚBLICO V5.3 OK: {BASE} sirve autoridad bidireccional, schema de descubrimiento y medición CRO sin PII.")
+    if semver(VERSION) >= (5, 22, 0):
+        from validate_live_v522 import wait_for_coherent_generation
+        if wait_for_coherent_generation() != 0:
+            return 1
+
+    print(
+        f"SMOKE PÚBLICO V5.3 OK: {BASE} sirve autoridad bidireccional, schema de descubrimiento, "
+        "medición CRO sin PII y coherencia de generación cuando la release lo exige."
+    )
     return 0
 
 
