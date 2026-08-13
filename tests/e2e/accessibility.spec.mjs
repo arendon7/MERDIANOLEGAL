@@ -1,9 +1,13 @@
+import { readFileSync } from 'node:fs';
 import AxeBuilder from '@axe-core/playwright';
 import { test, expect } from './helpers.mjs';
 
 const wcagTags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
 const blockingImpacts = new Set(['serious', 'critical']);
 const deepMobilePath = './productos/programa-gobernanza-ia.html';
+const releaseVersion = JSON.parse(readFileSync(new URL('../../version.json', import.meta.url), 'utf8')).version || '0.0.0';
+const releaseParts = String(releaseVersion).split('.').map((part) => Number.parseInt(part, 10) || 0);
+const unifiedContactDisclosureV523 = releaseParts[0] > 5 || (releaseParts[0] === 5 && releaseParts[1] >= 23);
 
 const publicSurfaces = [
   ['portada', './'],
@@ -51,15 +55,33 @@ for (const [label, path] of publicSurfaces) {
       }
 
       const disclosures = page.locator('details[data-mobile-disclosure-v516]');
-      await expect(disclosures).toHaveCount(2);
-      for (let index = 0; index < 2; index += 1) {
-        const disclosure = disclosures.nth(index);
+      if (unifiedContactDisclosureV523) {
+        await expect(disclosures).toHaveCount(1);
+        const disclosure = disclosures.first();
+        await expect(disclosure).toHaveAttribute('data-contact-process-v523', 'true');
         await expect(disclosure).not.toHaveAttribute('open', '');
-        const summary = disclosure.locator('summary');
+        await expect(disclosure.locator('[data-close-path-v510="true"]')).toHaveCount(1);
+        await expect(disclosure.locator('[data-engagement-v511="true"]')).toHaveCount(1);
+        await expect(disclosure.locator('[data-engagement-state-v511]')).toHaveCount(4);
+        await expect(disclosure.locator('[data-engagement-automatic-v511="false"]')).toHaveCount(1);
+        const summary = disclosure.locator(':scope > summary');
         const box = await summary.boundingBox();
         expect(box?.height || 0).toBeGreaterThanOrEqual(44);
         await summary.click();
         await expect(disclosure).toHaveAttribute('open', '');
+        await expect(disclosure.locator('[data-close-path-v510="true"]')).toBeVisible();
+        await expect(disclosure.locator('[data-engagement-v511="true"]')).toBeVisible();
+      } else {
+        await expect(disclosures).toHaveCount(2);
+        for (let index = 0; index < 2; index += 1) {
+          const disclosure = disclosures.nth(index);
+          await expect(disclosure).not.toHaveAttribute('open', '');
+          const summary = disclosure.locator('summary');
+          const box = await summary.boundingBox();
+          expect(box?.height || 0).toBeGreaterThanOrEqual(44);
+          await summary.click();
+          await expect(disclosure).toHaveAttribute('open', '');
+        }
       }
       await expect(page.locator('[data-engagement-state-v511]')).toHaveCount(4);
       await expect(page.locator('[data-engagement-automatic-v511="false"]')).toHaveCount(1);
