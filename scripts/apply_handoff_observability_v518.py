@@ -31,6 +31,11 @@ def main() -> int:
     print("HANDOFF OBSERVABILITY V5.18 OK: runtime local insertado después de telemetry-v50.js.")
 
     version = json.loads((ROOT / "version.json").read_text(encoding="utf-8")).get("version", "0.0.0")
+    if semver(version) >= (5, 24, 0):
+        from canonical_pipeline_v524 import validate_manifest as validate_canonical_pipeline_v524
+        validate_canonical_pipeline_v524()
+        print("CANONICAL PIPELINE V5.24 CONTRACT OK: builder y segunda pasada conservan el mismo orden.")
+
     if semver(version) >= (5, 21, 0):
         from apply_capability_truth_v521 import main as apply_capability_truth_v521
         result = apply_capability_truth_v521()
