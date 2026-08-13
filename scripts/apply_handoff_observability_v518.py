@@ -47,7 +47,13 @@ def main() -> int:
             result = apply_contact_compression_v523()
             if result:
                 return result
-            return normalize_contact_compression_v523()
+            result = normalize_contact_compression_v523()
+            if result:
+                return result
+            if semver(version) >= (5, 25, 0):
+                from apply_professional_authority_v525 import main as apply_professional_authority_v525
+                return apply_professional_authority_v525()
+            return 0
         return 0
     return 0
 
