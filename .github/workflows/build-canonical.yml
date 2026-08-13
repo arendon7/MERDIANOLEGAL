@@ -31,6 +31,7 @@ on:
       - detail-v46.js
       - editorial-v47.css
       - editorial-v47.js
+      - demo.js
       - quality-v48.css
       - operations-v49.css
       - telemetry-v50.js
@@ -198,7 +199,7 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A -- package-lock.json assets index.html firma.html perspectivas.html experiencia.html demo.html 404.html aviso-legal.html privacidad.html terminos.html catalog-home-v32.js decision-flow.js site-v3.js page-context.js sitemap.xml robots.txt runtime-config.js site-status.json manifest.webmanifest servicios productos perspectivas sectores soluciones scripts/build_catalog_shells.py
+          git add -A -- package-lock.json assets index.html firma.html perspectivas.html experiencia.html demo.html demo.js 404.html aviso-legal.html privacidad.html terminos.html catalog-home-v32.js decision-flow.js site-v3.js page-context.js sitemap.xml robots.txt runtime-config.js site-status.json manifest.webmanifest servicios productos perspectivas sectores soluciones scripts/build_catalog_shells.py
           if [ -e CNAME ] || git ls-files --error-unmatch CNAME >/dev/null 2>&1; then
             git add -A -- CNAME
           fi
