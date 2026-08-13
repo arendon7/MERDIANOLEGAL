@@ -15,6 +15,7 @@ CONFIG = load_site_config()
 VERSION = json.loads((R / "version.json").read_text(encoding="utf-8")).get("version", "0.0.0")
 errors: list[str] = []
 DEMO_LINK = re.compile(r'<a\b[^>]*\bhref=["\'](?:\.\./)?demo\.html(?:#[^"\']*)?["\'][^>]*>([\s\S]*?)</a>', re.I)
+ROBOTS_META = re.compile(r'<meta\s+name=["\']robots["\']\s+content=["\']([^"\']*)["\']\s*/?>', re.I)
 
 
 def semver(value: str) -> tuple[int, int, int]:
@@ -68,8 +69,13 @@ if status.get("client_portal_url") != (portal["url"] or None):
     errors.append("site-status.json: client_portal_url no coincide con site-config.json")
 
 demo = (R / "demo.html").read_text(encoding="utf-8")
+robots = ROBOTS_META.findall(demo)
+if len(robots) != 1:
+    errors.append(f"demo.html debe contener exactamente un meta robots y contiene {len(robots)}")
+elif robots[0].replace(" ", "").lower() != "noindex,nofollow":
+    errors.append(f"demo.html: meta robots debe ser noindex,nofollow y registra {robots[0]!r}")
+
 for marker in (
-    'content="noindex,nofollow"',
     'data-capability-v521="demo-only"',
     "DEMO FICTICIA",
     "Portal demostrativo",
@@ -77,6 +83,12 @@ for marker in (
 ):
     if marker not in demo:
         errors.append(f"demo.html: falta frontera demostrativa {marker!r}")
+
+demo_js = (R / "demo.js").read_text(encoding="utf-8")
+if re.search(r"createElement\(['\"]meta['\"]\)", demo_js) and re.search(r"\.name\s*=\s*['\"]robots['\"]", demo_js):
+    errors.append("demo.js no puede inyectar dinámicamente un segundo meta robots")
+if "robotsMeta" in demo_js:
+    errors.append("demo.js conserva la inyección heredada robotsMeta")
 
 public_demo_links = 0
 portal_links = 0
@@ -118,6 +130,6 @@ if errors:
     raise SystemExit(1)
 
 print(
-    f"CAPABILITY TRUTH V5.21 OK: portal real {expected_state}, demo noindex explícita, "
+    f"CAPABILITY TRUTH V5.21 OK: portal real {expected_state}, demo con un único noindex,nofollow, "
     f"{public_demo_links} accesos públicos etiquetados sin promesas de capacidad ficticia."
 )
