@@ -155,10 +155,7 @@ jobs:
       - name: Validate offer narrative v5.22
         run: python3 scripts/validate_offer_narrative_v522.py
       - name: Validate contact compression v5.23
-        run: |
-          python3 scripts/apply_contact_compression_v523.py
-          python3 scripts/normalize_contact_compression_v523.py
-          python3 scripts/validate_contact_compression_v523.py
+        run: python3 scripts/validate_contact_compression_v523.py
       - name: Publish release-health report
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
