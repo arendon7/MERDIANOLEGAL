@@ -17,6 +17,21 @@ def semver(value):
     return tuple(int(x) for x in value.split(".")[:3])
 
 
+def ensure_maxlength_v523(text, field, limit):
+    """Desde v5.23 conserva el campo por name y normaliza maxlength sin depender del orden de atributos."""
+    tag_name = "textarea" if field == "message" else "input"
+    pattern = re.compile(rf'<{tag_name}\b(?P<attrs>[^>]*\bname="{re.escape(field)}"[^>]*)>', re.I)
+    matches = list(pattern.finditer(text))
+    if len(matches) != 1:
+        raise RuntimeError(f"No se encontró una única instancia del campo {field}")
+    match = matches[0]
+    attrs = match.group("attrs")
+    attrs = re.sub(r'\s+maxlength="\d+"', "", attrs)
+    attrs = attrs.rstrip() + f' maxlength="{limit}"'
+    replacement = f'<{tag_name}{attrs}>'
+    return text[:match.start()] + replacement + text[match.end():]
+
+
 def patch_index():
     t = I.read_text(encoding="utf-8")
     tag = '<link rel="stylesheet" href="operations-v49.css">'
@@ -41,17 +56,24 @@ def patch_index():
     block = CONTACT_A + '<label class="contact-hp-v49" aria-hidden="true">Sitio web<input type="text" name="website" tabindex="-1" autocomplete="off"></label>' + CONTACT_B
     t = t[:form_match.start()] + marker49 + block + t[form_match.end():]
 
-    replacements = {
-        '<input type="text" name="name" autocomplete="name" required>': '<input type="text" name="name" autocomplete="name" maxlength="120" required>',
-        '<input type="text" name="company" autocomplete="organization">': '<input type="text" name="company" autocomplete="organization" maxlength="160">',
-        '<input type="email" name="email" autocomplete="email" required>': '<input type="email" name="email" autocomplete="email" maxlength="180" required>',
-        '<textarea name="message" rows="6" required placeholder="Describa la decisión, el plazo y el resultado esperado. No incluya datos sensibles ni documentos confidenciales."></textarea>': '<textarea name="message" rows="6" maxlength="2000" required placeholder="Describa la decisión, el plazo y el resultado esperado. No incluya datos sensibles ni documentos confidenciales."></textarea>',
-    }
-    for old, new in replacements.items():
-        if new not in t:
-            if old not in t:
-                raise RuntimeError("No se encontró un campo esperado del formulario")
-            t = t.replace(old, new, 1)
+    if semver(VER) >= (5, 23, 0):
+        # v5.23 compacta el contacto y varias capas históricas vuelven a serializar
+        # temporalmente los campos en segunda pasada. Se identifica cada control por
+        # su name —el contrato estable— y no por una cadena HTML completa.
+        for field, limit in (("name", 120), ("company", 160), ("email", 180), ("message", 2000)):
+            t = ensure_maxlength_v523(t, field, limit)
+    else:
+        replacements = {
+            '<input type="text" name="name" autocomplete="name" required>': '<input type="text" name="name" autocomplete="name" maxlength="120" required>',
+            '<input type="text" name="company" autocomplete="organization">': '<input type="text" name="company" autocomplete="organization" maxlength="160">',
+            '<input type="email" name="email" autocomplete="email" required>': '<input type="email" name="email" autocomplete="email" maxlength="180" required>',
+            '<textarea name="message" rows="6" required placeholder="Describa la decisión, el plazo y el resultado esperado. No incluya datos sensibles ni documentos confidenciales."></textarea>': '<textarea name="message" rows="6" maxlength="2000" required placeholder="Describa la decisión, el plazo y el resultado esperado. No incluya datos sensibles ni documentos confidenciales."></textarea>',
+        }
+        for old, new in replacements.items():
+            if new not in t:
+                if old not in t:
+                    raise RuntimeError("No se encontró un campo esperado del formulario")
+                t = t.replace(old, new, 1)
 
     t = re.sub(
         r'<div class="trust-note full"><span>✓</span><p><strong>.*?</strong>.*?</p></div>',
