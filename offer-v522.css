@@ -27,6 +27,8 @@
 .offer-positioning-v522 a:focus-visible,.offer-legal-lens-v522 summary:focus-visible{outline:3px solid rgba(179,138,69,.55);outline-offset:4px;border-radius:5px}
 .home-narrative-v522{border-top:1px solid rgba(16,34,51,.08)}
 .home-narrative-v522 strong{color:#102233}
+/* STATIC-FIRST-A11Y-V522: el texto descriptivo sobre marfil supera WCAG AA (>=4.5:1). */
+.detail-section.ivory .detail-heading>p:not(.eyebrow){color:#53606b}
 @media(max-width:900px){.offer-positioning-grid-v522,.offer-legal-lens-grid-v522{grid-template-columns:1fr}.offer-legal-lens-grid-v522 article+article{border-left:0;border-top:1px solid rgba(16,34,51,.1)}}
 @media(max-width:760px){.offer-positioning-v522{padding:30px 0 34px}.offer-alternative-v522{grid-template-columns:1fr;gap:10px}.offer-alternative-v522 a{white-space:normal}.offer-positioning-card-v522{padding:16px}}
 /* OFFER-NARRATIVE-V522:END */
