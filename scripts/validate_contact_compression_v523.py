@@ -10,6 +10,7 @@ R = Path(__file__).resolve().parents[1]
 HOME = R / "index.html"
 VERSION = R / "version.json"
 RUNTIME = R / "decision-action-v515.js"
+STYLE = R / "contact-v523.css"
 TEST = R / "tests/e2e/contact-compression.spec.mjs"
 
 
@@ -41,6 +42,7 @@ def validate_home() -> None:
     require(text.count('data-recommendation-brief-v514="true"') == 1, "recomendación v5.14 debe existir una sola vez")
     require(text.count('data-close-path-v510="true"') == 1, "ruta v5.10 debe existir una sola vez")
     require(text.count('data-engagement-v511="true"') == 1, "engagement v5.11 debe existir una sola vez")
+    require(text.count('<link rel="stylesheet" href="contact-v523.css">') == 1, "debe cargarse una sola hoja v5.23")
 
     for field in ("name", "company", "email", "need", "decision_stage", "urgency", "budget", "message", "privacy"):
         require(text.count(f'name="{field}"') == 1, f"campo {field} debe conservar una sola instancia")
@@ -101,7 +103,6 @@ def validate_home() -> None:
     ]
     require(order == sorted(order), "jerarquía del formulario no coincide con el contrato v5.23")
 
-    require("contact-v523.css" not in text, "v5.23 no debe cargar una hoja visual paralela")
     require("style=\"display:none" not in synthesis and " hidden" not in synthesis, "síntesis no debe ocultar material")
 
 
@@ -135,8 +136,18 @@ def validate_visual_reuse() -> None:
         "commercial-brief-head-v513 contact-brief-head-v523",
         "qualification-summary-grid-v59 contact-brief-grid-v523",
         "contact-recommendation-v523",
+        "contact-v523.css",
     ):
         require(marker in normalizer, f"normalizador visual carece de {marker}")
+    require(STYLE.exists(), "falta contact-v523.css")
+    css = STYLE.read_text(encoding="utf-8")
+    for selector in (
+        ".contact-synthesis-v523 #contact-synthesis-v523-title",
+        ".contact-synthesis-v523 #commercial-brief-v513-title",
+        ".contact-synthesis-v523 .commercial-brief-note-v513",
+        ".contact-synthesis-v523 .recommendation-brief-state-v514",
+    ):
+        require(selector in css, f"contraste v5.23 no cubre {selector}")
 
 
 def validate_chain() -> None:
@@ -170,7 +181,7 @@ def main() -> int:
     validate_visual_reuse()
     validate_chain()
     validate_e2e()
-    print("CONTACT COMPRESSION V5.23 OK: una síntesis, un disclosure, mismos campos/estados y cero red, storage o scoring nuevo.")
+    print("CONTACT COMPRESSION V5.23 OK: una síntesis, un disclosure, contraste AA explícito, mismos campos/estados y cero red, storage o scoring nuevo.")
     return 0
 
 
