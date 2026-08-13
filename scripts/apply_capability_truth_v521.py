@@ -15,6 +15,14 @@ R = Path(__file__).resolve().parents[1]
 CONFIG = load_site_config()
 VERSION = json.loads((R / "version.json").read_text(encoding="utf-8")).get("version", "0.0.0")
 DEMO_HREF = re.compile(r'(<a\b[^>]*\bhref=["\'](?:\.\./)?demo\.html(?:#[^"\']*)?["\'][^>]*>)([\s\S]*?)(</a>)', re.I)
+ROBOTS_META = re.compile(r'\s*<meta\s+name=["\']robots["\']\s+content=["\'][^"\']*["\']\s*/?>\s*', re.I)
+LEGACY_ROBOTS_JS = re.compile(
+    r"\A\s*const robotsMeta = document\.createElement\(['\"]meta['\"]\);\s*\n"
+    r"robotsMeta\.name = ['\"]robots['\"];\s*\n"
+    r"robotsMeta\.content = ['\"]noindex,nofollow['\"];\s*\n"
+    r"document\.head\.appendChild\(robotsMeta\);\s*\n+",
+    re.M,
+)
 
 
 def semver(value: str) -> tuple[int, int, int]:
@@ -87,11 +95,28 @@ def normalize_public_demo_links() -> int:
 def patch_demo_contract() -> None:
     path = R / "demo.html"
     text = path.read_text(encoding="utf-8")
+    text = ROBOTS_META.sub("\n", text)
+    canonical_robots = '  <meta name="robots" content="noindex,nofollow">\n'
+    viewport = re.search(r'(<meta\s+name=["\']viewport["\'][^>]*>\s*)', text, re.I)
+    if viewport:
+        text = text[: viewport.end()] + canonical_robots + text[viewport.end() :]
+    elif "</head>" in text:
+        text = text.replace("</head>", canonical_robots + "</head>", 1)
+    else:
+        raise RuntimeError("demo.html: falta </head> para normalizar robots")
+
     text = re.sub(r'\sdata-capability-v521="[^"]*"', "", text)
     marker = '<body class="demo-page"'
     if marker not in text:
         raise RuntimeError("demo.html: falta body.demo-page")
     text = text.replace(marker, '<body class="demo-page" data-capability-v521="demo-only"', 1)
+    path.write_text(text, encoding="utf-8")
+
+
+def patch_demo_runtime() -> None:
+    path = R / "demo.js"
+    text = path.read_text(encoding="utf-8")
+    text = LEGACY_ROBOTS_JS.sub("", text, count=1)
     path.write_text(text, encoding="utf-8")
 
 
@@ -142,6 +167,7 @@ def main() -> int:
         raise SystemExit("v5.21 requiere version.json >= 5.21.0")
     changed = normalize_public_demo_links()
     patch_demo_contract()
+    patch_demo_runtime()
     patch_runtime_config()
     patch_status()
     validate_materialized_contract()
