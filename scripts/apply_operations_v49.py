@@ -23,7 +23,14 @@ def ensure_maxlength_v523(text, field, limit):
     pattern = re.compile(rf'<{tag_name}\b(?P<attrs>[^>]*\bname="{re.escape(field)}"[^>]*)>', re.I)
     matches = list(pattern.finditer(text))
     if len(matches) != 1:
-        raise RuntimeError(f"No se encontró una única instancia del campo {field}")
+        form_match = re.search(r'<form class="contact-form" id="contact-form"[^>]*>[\s\S]*?</form>', text, re.I)
+        form_html = form_match.group(0) if form_match else ""
+        form_matches = list(pattern.finditer(form_html)) if form_html else []
+        all_tags = re.findall(rf'<{tag_name}\b[^>]*>', text, re.I)
+        raise RuntimeError(
+            f"Campo {field}: coincidencias globales={len(matches)}, dentro de #contact-form={len(form_matches)}, "
+            f"formularios canónicos={1 if form_match else 0}, etiquetas <{tag_name}> totales={len(all_tags)}"
+        )
     match = matches[0]
     attrs = match.group("attrs")
     attrs = re.sub(r'\s+maxlength="\d+"', "", attrs)
@@ -57,9 +64,6 @@ def patch_index():
     t = t[:form_match.start()] + marker49 + block + t[form_match.end():]
 
     if semver(VER) >= (5, 23, 0):
-        # v5.23 compacta el contacto y varias capas históricas vuelven a serializar
-        # temporalmente los campos en segunda pasada. Se identifica cada control por
-        # su name —el contrato estable— y no por una cadena HTML completa.
         for field, limit in (("name", 120), ("company", 160), ("email", 180), ("message", 2000)):
             t = ensure_maxlength_v523(t, field, limit)
     else:
