@@ -59,6 +59,7 @@ on:
       - handoff-observability-v518.js
       - offer-narrative-v522.json
       - offer-v522.css
+      - contact-v523.css
       - assets/**
       - scripts/build_catalog_shells.py
       - scripts/render_catalog_static.mjs
