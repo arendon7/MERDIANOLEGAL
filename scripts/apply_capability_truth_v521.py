@@ -6,6 +6,8 @@ from html import unescape
 from pathlib import Path
 import json
 import re
+import subprocess
+import sys
 
 from site_config import load_site_config
 
@@ -121,6 +123,20 @@ def patch_status() -> None:
     path.write_text(json.dumps(status, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
+def validate_materialized_contract() -> None:
+    result = subprocess.run(
+        [sys.executable, str(R / "scripts/validate_capability_truth_v521.py")],
+        cwd=R,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        detail = (result.stderr or result.stdout).strip()
+        raise RuntimeError(f"v5.21 no supera validator de capacidad: {detail}")
+    if result.stdout.strip():
+        print(result.stdout.strip())
+
+
 def main() -> int:
     if semver(VERSION) < (5, 21, 0):
         raise SystemExit("v5.21 requiere version.json >= 5.21.0")
@@ -128,6 +144,7 @@ def main() -> int:
     patch_demo_contract()
     patch_runtime_config()
     patch_status()
+    validate_materialized_contract()
     portal = CONFIG["capabilities"]["client_portal"]
     state = "habilitado" if portal["enabled"] else "deshabilitado"
     print(
