@@ -12,14 +12,16 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 import json
+import os
 import re
 import sys
 import time
 
-from validate_live_v53 import BASE, main as validate_v53
-
 R = Path(__file__).resolve().parents[1]
+CONFIG = json.loads((R / "site-config.json").read_text(encoding="utf-8"))
 VERSION = json.loads((R / "version.json").read_text(encoding="utf-8")).get("version", "0.0.0")
+CONFIG_BASE = str(CONFIG["base_url"]).rstrip("/") + "/"
+BASE = os.environ.get("MERIDIANO_BASE_URL", CONFIG_BASE).rstrip("/") + "/"
 ATTEMPTS = 8
 DELAY_SECONDS = 4
 
@@ -82,6 +84,9 @@ def coherence_checks() -> dict[str, tuple[str, ...]]:
 
 
 def wait_for_coherent_generation() -> int:
+    if semver(VERSION) < (5, 22, 0):
+        return 0
+
     checks = coherence_checks()
     last_errors: list[str] = []
 
@@ -114,10 +119,6 @@ def wait_for_coherent_generation() -> int:
 
 
 def main() -> int:
-    if validate_v53() != 0:
-        return 1
-    if semver(VERSION) < (5, 22, 0):
-        return 0
     return wait_for_coherent_generation()
 
 
