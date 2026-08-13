@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import json
 import re
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -13,6 +14,12 @@ START = "<!-- CLOSE-V510:START -->"
 END = "<!-- CLOSE-V510:END -->"
 STYLE = '<link rel="stylesheet" href="conversion-close-v510.css">'
 SCRIPT = '<script defer src="conversion-close-v510.js"></script>'
+VERSION = json.loads((ROOT / "version.json").read_text(encoding="utf-8")).get("version", "0.0.0")
+
+
+def semver(value: str) -> tuple[int, int, int]:
+    match = re.fullmatch(r"(\d+)\.(\d+)\.(\d+)", str(value))
+    return tuple(map(int, match.groups())) if match else (0, 0, 0)
 
 
 def remove_block(text: str) -> str:
@@ -56,14 +63,25 @@ def patch_index() -> None:
     text = remove_block(text)
     text = re.sub(r'\sdata-commercial-close-v510="true"', '', text)
 
-    form_marker = '<form class="contact-form" id="contact-form" data-contact-v49="true" data-commercial-intake-v59="true">'
-    if form_marker not in text:
-        raise RuntimeError("index.html: falta formulario comercial v5.9")
-    text = text.replace(
-        form_marker,
-        '<form class="contact-form" id="contact-form" data-contact-v49="true" data-commercial-intake-v59="true" data-commercial-close-v510="true">',
-        1,
-    )
+    if semver(VERSION) >= (5, 23, 0):
+        form_match = re.search(r'<form class="contact-form" id="contact-form"(?P<attrs>[^>]*)>', text)
+        if not form_match:
+            raise RuntimeError("index.html: falta formulario canónico de contacto")
+        attrs = form_match.group("attrs")
+        if 'data-commercial-intake-v59="true"' not in attrs:
+            raise RuntimeError("index.html: formulario canónico pierde intake comercial v5.9")
+        attrs = re.sub(r'\s+data-commercial-close-v510="true"', '', attrs)
+        replacement = '<form class="contact-form" id="contact-form"' + attrs + ' data-commercial-close-v510="true">'
+        text = text[:form_match.start()] + replacement + text[form_match.end():]
+    else:
+        form_marker = '<form class="contact-form" id="contact-form" data-contact-v49="true" data-commercial-intake-v59="true">'
+        if form_marker not in text:
+            raise RuntimeError("index.html: falta formulario comercial v5.9")
+        text = text.replace(
+            form_marker,
+            '<form class="contact-form" id="contact-form" data-contact-v49="true" data-commercial-intake-v59="true" data-commercial-close-v510="true">',
+            1,
+        )
 
     anchor = '<!-- COMMERCIAL-V59-QUALIFICATION:END -->'
     if anchor not in text:
