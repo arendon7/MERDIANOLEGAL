@@ -86,3 +86,10 @@
 @media(max-width:1120px){.home-decision-grid-v520{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:760px){.home-decision-v520{padding:34px 0 18px}.home-decision-grid-v520{grid-template-columns:1fr}.home-decision-v520 .proof-model-card-v512{min-height:auto}.recommendation-v514.decision-action-v515.home-decision-compare-v520{padding-bottom:34px}}
 /* HOME-DECISION-V520:END */
+
+/* CONTACT-COMPRESSION-V523-A11Y:START */
+.contact-synthesis-v523 #contact-synthesis-v523-title{color:#f5f1e8}
+.contact-synthesis-v523 #commercial-brief-v513-title{color:#e0c58f}
+.contact-synthesis-v523 .commercial-brief-note-v513,
+.contact-synthesis-v523 .recommendation-brief-state-v514{color:#d9d2c4}
+/* CONTACT-COMPRESSION-V523-A11Y:END */

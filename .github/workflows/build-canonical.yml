@@ -104,6 +104,9 @@ on:
       - scripts/validate_capability_truth_v521.py
       - scripts/apply_offer_narrative_v522.py
       - scripts/validate_offer_narrative_v522.py
+      - scripts/apply_contact_compression_v523.py
+      - scripts/normalize_contact_compression_v523.py
+      - scripts/validate_contact_compression_v523.py
       - scripts/validate_browser_v54.py
       - scripts/run_quality_v55.mjs
       - scripts/validate_quality_v55.py
