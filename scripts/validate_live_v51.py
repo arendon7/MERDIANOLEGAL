@@ -4,26 +4,42 @@ from __future__ import annotations
 
 from pathlib import Path
 import json
+import re
 import sys
 
 from validate_live_v50 import BASE, CONFIG_BASE, get, main as validate_v50
 
 R = Path(__file__).resolve().parents[1]
 DATA = json.loads((R / "growth-solutions-v51.json").read_text(encoding="utf-8"))
+VERSION = json.loads((R / "version.json").read_text(encoding="utf-8")).get("version", "0.0.0")
 SOLUTIONS = DATA["solutions"]
+
+
+def semver(value: str) -> tuple[int, int, int]:
+    match = re.fullmatch(r"(\d+)\.(\d+)\.(\d+)", str(value))
+    return tuple(map(int, match.groups())) if match else (0, 0, 0)
 
 
 def main() -> int:
     if validate_v50() != 0:
         return 1
     errors: list[str] = []
+    home_markers = [
+        "Empiece por la situación empresarial, no por el nombre del servicio.",
+        "growth-v51.css",
+        "soluciones/",
+    ]
+    if semver(VERSION) < (5, 22, 0):
+        home_markers.append("La prueba pública debe poder revisarse, no solo prometerse.")
+    else:
+        home_markers.extend((
+            "CÓMO SE VE EL CRITERIO SENIOR",
+            "La experiencia se demuestra en las preguntas, el alcance y la capacidad de ejecutar.",
+            "Antes de contratar, revise si la propuesta identifica régimen, fuentes, supuestos, responsables, límites, entregables y cierre.",
+        ))
+
     checks = {
-        "": [
-            "Empiece por la situación empresarial, no por el nombre del servicio.",
-            "La prueba pública debe poder revisarse, no solo prometerse.",
-            "growth-v51.css",
-            "soluciones/",
-        ],
+        "": home_markers,
         "soluciones/": [
             "SOLUCIONES POR SITUACIÓN EMPRESARIAL",
             "Empiece por la decisión. La modalidad jurídica viene después.",
@@ -62,7 +78,10 @@ def main() -> int:
         for error in errors:
             print(f"- {error}")
         return 1
-    print(f"SMOKE PÚBLICO V5.1 OK: {BASE} sirve hub y 6 rutas comerciales con canonical e interlinking íntegros.")
+    print(
+        f"SMOKE PÚBLICO V5.1 OK: {BASE} sirve hub y 6 rutas comerciales con canonical, "
+        f"interlinking y narrativa compatible con {VERSION}."
+    )
     return 0
 
 
