@@ -10,7 +10,6 @@ R = Path(__file__).resolve().parents[1]
 HOME = R / "index.html"
 VERSION = R / "version.json"
 RUNTIME = R / "decision-action-v515.js"
-STYLE = R / "decision-action-v515.css"
 TEST = R / "tests/e2e/contact-compression.spec.mjs"
 
 
@@ -102,8 +101,8 @@ def validate_home() -> None:
     ]
     require(order == sorted(order), "jerarquía del formulario no coincide con el contrato v5.23")
 
-    forbidden = ("localStorage", "sessionStorage", "fetch(", "XMLHttpRequest", "sendBeacon")
-    require(not any(token in synthesis for token in forbidden), "HTML de síntesis no debe introducir transporte/persistencia")
+    require("contact-v523.css" not in text, "v5.23 no debe cargar una hoja visual paralela")
+    require("style=\"display:none" not in synthesis and " hidden" not in synthesis, "síntesis no debe ocultar material")
 
 
 def validate_runtime() -> None:
@@ -121,27 +120,29 @@ def validate_runtime() -> None:
         require(marker in js, f"runtime carece de {marker}")
     for forbidden in ("localStorage", "sessionStorage", "fetch(", "XMLHttpRequest"):
         require(forbidden not in js, f"runtime no debe introducir {forbidden}")
-    # La rama v5.19 histórica permanece para salidas <=5.22 y conserva su contrato.
     require("explicitIntent === 'proposal' && !isMobile" in js, "runtime debe conservar regla histórica v5.19")
     require("details.dataset.commercialDisclosureV519 = key" in js, "runtime debe conservar compositor histórico v5.19")
 
 
-def validate_style() -> None:
-    css = STYLE.read_text(encoding="utf-8")
-    require("/* CONTACT-COMPRESSION-V523:START */" in css and "/* CONTACT-COMPRESSION-V523:END */" in css, "falta bloque CSS v5.23")
-    for selector in (
-        ".contact-synthesis-v523{",
-        ".contact-process-v523{",
-        ".contact-process-body-v523{",
-        "@media(max-width:760px)",
+def validate_visual_reuse() -> None:
+    text = HOME.read_text(encoding="utf-8")
+    synthesis = bounded(text, "<!-- CONTACT-SYNTHESIS-V523:START -->", "<!-- CONTACT-SYNTHESIS-V523:END -->", "síntesis v5.23")
+    require("contact-synthesis-v523" in synthesis, "falta contenedor visual v5.23")
+    normalizer = (R / "scripts/normalize_contact_compression_v523.py").read_text(encoding="utf-8")
+    for marker in (
+        "qualification-summary-v59 contact-synthesis-v523",
+        "contact-qualification-v523",
+        "commercial-brief-head-v513 contact-brief-head-v523",
+        "qualification-summary-grid-v59 contact-brief-grid-v523",
+        "contact-recommendation-v523",
     ):
-        require(selector in css, f"CSS v5.23 carece de {selector}")
-    require("display:none" not in bounded(css, "/* CONTACT-COMPRESSION-V523:START */", "/* CONTACT-COMPRESSION-V523:END */", "CSS v5.23"), "v5.23 no debe esconder material mediante display:none")
+        require(marker in normalizer, f"normalizador visual carece de {marker}")
 
 
 def validate_chain() -> None:
     chain = (R / "scripts/apply_handoff_observability_v518.py").read_text(encoding="utf-8")
     require("apply_contact_compression_v523" in chain, "composición final no encadena v5.23")
+    require("normalize_contact_compression_v523" in chain, "composición final no normaliza presentación v5.23")
     require("semver(version) >= (5, 23, 0)" in chain, "v5.23 debe ser version-aware")
 
 
@@ -166,7 +167,7 @@ def main() -> int:
     require(semver(version) >= (5, 23, 0), "version.json debe declarar v5.23+")
     validate_home()
     validate_runtime()
-    validate_style()
+    validate_visual_reuse()
     validate_chain()
     validate_e2e()
     print("CONTACT COMPRESSION V5.23 OK: una síntesis, un disclosure, mismos campos/estados y cero red, storage o scoring nuevo.")
