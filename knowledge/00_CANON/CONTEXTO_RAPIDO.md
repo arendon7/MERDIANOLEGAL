@@ -10,14 +10,16 @@ Sitio público y centro demostrativo de Meridiano Legal. Arquitectura static-fir
 
 v5.8 claridad de compra → v5.9 calificación → v5.10 propuesta/cierre → v5.11 engagement readiness → v5.12 prueba verificable → v5.13 continuidad comercial → v5.14 recomendación explicable → v5.15 recomendación→acción → hardening v5.16 → v5.17 continuidad manual del handoff → v5.18 observabilidad verificable → v5.19 disclosure adaptativo → v5.20 compresión de decisión → v5.21 frontera demo/capacidad real → **v5.22 arquitectura editorial de oferta y narrativa jurídica senior**.
 
-## Último snapshot público certificado
+## Último estado público certificado
 
-- Release pública cerrada: `5.22.0`.
-- SHA funcional certificado: `5c3f3194b45afb9ac21a8def27afdc3d2157b3e2`.
-- Run público final: `31671834728`.
-- Al cierre funcional: `main == stable` en ese SHA.
-- Browser E2E + axe: 49 observados → 47 PASS / 2 SKIP / 0 FAIL / 0 RETRY.
-- Lighthouse: 6/6 PASS; accesibilidad 1.00 en las seis superficies.
+- Release cerrada: `5.22.0`.
+- SHA funcional de las mejoras: `5c3f3194b45afb9ac21a8def27afdc3d2157b3e2`.
+- Run funcional: `31671834728`.
+- Snapshot público final `ready`: `dcb5bc9643eff595c0f8614c7cf6acbadc3bb719`.
+- Run de recertificación final: `31673266141`.
+- Canal: `github-pages-public-offer-narrative-ready`.
+- Browser E2E + axe: 49 observados → 47 PASS / 2 SKIP / 0 FAIL / 0 RETRY en la certificación funcional; el run `ready` volvió a pasar Browser E2E/axe.
+- Lighthouse: 6/6 PASS; accesibilidad 1.00 en las seis superficies en la certificación funcional; el run `ready` volvió a pasar budgets.
 - Portal real de clientes: deshabilitado; `demo.html` es exclusivamente demostrativo/noindex.
 - No existe una release funcional posterior activa.
 
@@ -60,14 +62,22 @@ La narrativa no vende horas aisladas como unidad principal. El comprador debe po
 
 ## Evidencia clave
 
+Certificación funcional:
+
 - 49 E2E observados; 47 PASS / 2 SKIP.
 - 7 superficies axe WCAG 2.1 AA sin violaciones serias/críticas.
 - Lighthouse 6/6 PASS.
 - Home: performance 1.00, a11y 1.00, LCP 1367 ms, CLS 0, TBT 55 ms.
 - Product IA: performance 0.96, a11y 1.00, LCP 1245 ms, CLS 0, TBT 210 ms.
 - CI hasta stable: 206 s; 26.2% mejor que baseline v5.5.
-- Cobertura reducida: no.
-- Budgets relajados: no.
+
+Recertificación `ready`:
+
+- todos los gates PASS;
+- CI hasta stable: 204 s;
+- mejora: 26.9%;
+- cobertura reducida: no;
+- budgets relajados: no.
 
 ## Invariantes
 
@@ -89,4 +99,4 @@ El siguiente ciclo debe empezar por auditoría y evidencia, no por numeración d
 
 ## Graphify
 
-Graphify es memoria derivada. Verifique `graphify-out/BUILD_META.json` contra el `main` realmente procesado por el último run exitoso; no use un SHA histórico como sustituto de la comprobación de frescura.
+Graphify es memoria derivada. El cierre documental final debe dejar `graphify-out/BUILD_META.json` apuntando al `main` documental procesado por el último run exitoso; `stable` puede permanecer en el snapshot público `ready` si los commits posteriores son solo documentación.
