@@ -23,7 +23,9 @@ test('fichas v5.22 explican decisión, modalidad, lente jurídica y alternativa 
   await expect(ai.locator('.offer-legal-lens-grid-v522 article')).toHaveCount(3);
   await expect(ai.getByText('CONPES 4144 de 2025')).toBeVisible();
   await expect(ai.getByRole('link', { name: /comparar alternativa/i })).toHaveAttribute('href', '../servicios/tecnologia-inteligencia-artificial.html');
-  await expect(page.locator('#detail-page')).not.toContainText('Meridiano Empresas');
+  await expect(page.locator('#detail-page')).toContainText('Meridiano Empresas cuando esté habilitado productivamente');
+  await expect(page.locator('#detail-page')).not.toContainText('Meridiano Empresas o Microsoft 365');
+  await expect(page.getByRole('link', { name: /demo/i })).toHaveCount(0);
   await expectNoHorizontalOverflow(page);
 
   await page.goto('./servicios/contratacion-estrategica.html');
