@@ -57,6 +57,8 @@ on:
       - handoff-continuity-v517.js
       - handoff-observability-v518.json
       - handoff-observability-v518.js
+      - offer-narrative-v522.json
+      - offer-v522.css
       - assets/**
       - scripts/build_catalog_shells.py
       - scripts/render_catalog_static.mjs
@@ -100,6 +102,8 @@ on:
       - scripts/validate_handoff_observability_v518.py
       - scripts/apply_capability_truth_v521.py
       - scripts/validate_capability_truth_v521.py
+      - scripts/apply_offer_narrative_v522.py
+      - scripts/validate_offer_narrative_v522.py
       - scripts/validate_browser_v54.py
       - scripts/run_quality_v55.mjs
       - scripts/validate_quality_v55.py
@@ -189,7 +193,7 @@ jobs:
         run: python3 scripts/apply_decision_action_v515.py
       - name: Apply manual handoff continuity v5.17
         run: python3 scripts/apply_handoff_v517.py
-      - name: Apply handoff observability v5.18
+      - name: Apply handoff observability v5.18+
         run: python3 scripts/apply_handoff_observability_v518.py
       - name: Commit canonical outputs
         run: |

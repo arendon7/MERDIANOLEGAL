@@ -7,23 +7,18 @@
 - Repositorio: `arendon7/MERDIANOLEGAL`.
 - Rama técnica/productiva: `main`.
 - Snapshot público certificado: `stable`.
-- Release vigente: `5.21.0`.
-- PR funcional: `#79`.
-- Merge funcional: `9af1674d9caf6353e233c3b1574cb279f0ee116c`.
-- Hotfix compatibilidad UX v4.5: PR `#80`, merge `2bed487ee39a6529b50828af360c153deff286e8`.
-- Hotfix robots demo: PR `#81`, merge `5e09f9b2b541437a89397194e0c7a892da72e91c`.
-- SHA funcional final generado y certificado: `b2a6d4d4d2608362e86b53ea4cc197cd7ce33cc1`.
-- Run final de certificación pública: `31658340092`.
-- Snapshot público certificado: `stable = b2a6d4d4d2608362e86b53ea4cc197cd7ce33cc1`.
-- PR de cierre documental principal: `#82`.
-- Merge de cierre documental principal: `8949cddaa5e0235e38badda00db15ccc8f75b985`.
-- Graphify posterior al cierre documental principal: run `31658719965`, PASS.
+- Release pública certificada: `5.21.0`.
+- Snapshot funcional certificado: `stable = b2a6d4d4d2608362e86b53ea4cc197cd7ce33cc1`.
+- Run público final v5.21: `31658340092`.
+- Release candidata en desarrollo: `5.22.0` — arquitectura editorial de oferta y narrativa jurídica senior.
+- Rama candidata: `feature/v522-offer-narrative`.
+- PR funcional candidato: `#84`.
 
-Refs, Pages, validators y tests son la autoridad para el estado productivo. `stable` conserva el snapshot funcional certificado; `main` puede avanzar con documentación/memoria sin que ello implique una nueva release funcional.
+Refs, Pages, validators y tests son la autoridad para el estado productivo. La apertura de v5.22 no modifica el snapshot público certificado: `stable` permanece en v5.21 hasta que builder, idempotencia, Pages, smoke, Browser E2E/axe, Lighthouse y release-health estén verdes.
 
 ## Estado funcional
 
-**v5.21.0 está implementada, desplegada, certificada y formalmente cerrada. No existe una v5.22 activa.**
+**v5.21.0 está implementada, desplegada, certificada y formalmente cerrada. v5.22.0 está activa únicamente como candidata y todavía no está promovida a `stable`.**
 
 ### Frontera de capacidades v5.21
 
@@ -37,35 +32,27 @@ Mientras ese estado permanezca así:
 - `demo.html` conserva datos ficticios, marca `demo-only` y exactamente un `noindex,nofollow`;
 - `demo.js` no puede inyectar dinámicamente otro meta robots.
 
-Si algún día se habilita el portal, CI exige una URL HTTPS real distinta de `demo.html` y al menos un enlace público real hacia esa URL.
-
 No hay autenticación real, cuentas reales, backend, CRM, storage persistente servidor, email transaccional, firma, pagos, agenda ni carga documental.
 
 ## Evidencia funcional final v5.21
 
 Run `31658340092`, SHA certificado `b2a6d4d4d2608362e86b53ea4cc197cd7ce33cc1`:
 
-- builder canónico: PASS;
-- segunda pasada/idempotencia: PASS;
-- validadores históricos v4.4→v5.18: PASS;
-- contrato v5.21 final: PASS;
+- builder canónico e idempotencia: PASS;
+- validadores históricos y capability truth: PASS;
 - GitHub Pages + smoke: PASS;
 - Browser E2E + axe: 43 observados → 41 PASS / 2 SKIP / 0 FAIL / 0 RETRY;
-- reporter Browser: 77 s;
-- cobertura ampliada frente a v5.20: 37 → 43 observados;
 - 7 superficies axe conservadas;
 - Lighthouse: 6/6 PASS;
 - accesibilidad Lighthouse: 1.00 en las seis superficies;
 - performance Lighthouse: 0.98–1.00;
 - portada: performance 1.00, accesibilidad 1.00, LCP 1410 ms, CLS 0, TBT 91 ms;
-- máximo global: LCP 1410 ms, CLS 0.087, TBT 91 ms;
 - CI hasta `stable`: 178 s;
 - baseline v5.5: 279 s;
 - mejora: 36.2%;
 - cobertura reducida: no;
 - budgets relajados: no;
-- release-health: PASS;
-- promoción de `stable`: PASS.
+- release-health: PASS.
 
 Artefactos finales del run `31658340092`:
 
@@ -74,31 +61,53 @@ Artefactos finales del run `31658340092`:
 - release-health `9165289152`, `sha256:0820431f230a5520912a0320ddc0749987743f0a234bd3bba36de38cc0ec28e7`;
 - Pages `9165233265`, `sha256:d437eaef17490b4f13396bc7e3c33887bbf095ae94f4f0f70495b8e1ba2ff263`.
 
-## Incidencias resueltas durante v5.21
+## Release activa v5.22
 
-### Compositor histórico v5.8
+### Problema observable
 
-Release Governance detectó que `apply_decision_v58.py` intentaba reinsertar la portada v5.8 sobre la superficie unificada v5.20. El compositor quedó version-aware: conserva las 16 fichas y no recrea la capa visual legada cuando la superficie unificada ya existe.
+Las 16 fichas profundas ya conservan buen perímetro, cantidades, entregables, responsabilidades, criterios de aceptación y límites. La debilidad auditada está en la lectura comercial/editorial: productos y servicios se perciben demasiado parecidos, varias ofertas cercanas se solapan y parte de la mejor narrativa jurídica de versiones anteriores quedó diluida al superponer capas posteriores.
 
-### Compositor histórico v5.12
+### Objetivo
 
-La siguiente pasada encontró la misma clase de acoplamiento en `apply_proof_v512.py`. Se corrigió sin eliminar el contrato de prueba verificable de las fichas profundas.
+Reconciliar las mejores decisiones históricas de contenido con el catálogo v4.1/v4.2 y la arquitectura de compra v5.20–v5.21, sin crear ofertas nuevas ni inflar la página con otro selector.
 
-### Validator UX v4.5
+Cada una de las 16 fichas conserva su profundidad y añade una sola capa editorial source-driven por `catalog-id` que responde:
 
-La primera certificación Pages pasó idempotencia, pero `validate_ux_v45.py` todavía exigía literalmente “Área de clientes”. PR #80 mantiene ese requisito hasta v5.20 y desde v5.21 exige `Demo de cliente`, además de fallar si reaparece la etiqueta productiva anterior.
+1. qué decisión empresarial debe poder tomar la dirección;
+2. por qué conviene esa modalidad;
+3. cuál es la alternativa cercana y cuándo elegirla;
+4. qué lente jurídica gobierna el análisis;
+5. qué capacidad queda instalada o administrable al cierre.
 
-### Robots duplicado en navegador
+Pares prioritarios de diferenciación:
 
-La nueva cobertura Browser descubrió que `demo.js` creaba un segundo `meta[name=robots]` aunque el HTML ya incluía uno correcto. El test no se debilitó. PR #81 retiró la inyección JS, normalizó exactamente un meta estático y añadió guards de HTML, runtime y CI para impedir regresión.
+- Diagnóstico Jurídico Empresarial ↔ Auditoría Jurídica Empresarial Integral;
+- Contratación Estratégica ↔ Sistema Contractual Empresarial;
+- Propiedad Intelectual ↔ Activos Intangibles Protegidos;
+- Tecnología e IA ↔ Programa de Gobernanza Jurídica de IA;
+- Estructuración de Proyectos Regulados ↔ Proyecto Regulado Jurídicamente Estructurado.
 
-## Contratos vigentes
+La portada conserva la secuencia v5.20 y una sola superficie de modalidad. La nueva tesis enfatiza decisión, resultado, perímetro, método, evidencia, implementación y capacidad instalada. El seniority se demuestra mediante criterio jurídico, preguntas de control, fuentes, responsables y cierre; no mediante clientes, premios, antigüedad o resultados no verificables.
+
+### Estado técnico de la candidata
+
+- `offer-narrative-v522.json`: contrato editorial de las 16 ofertas;
+- `offer-v522.css`: presentación trust-first, baja variación y sin motion decorativo;
+- `scripts/apply_offer_narrative_v522.py`: normalizador final source-driven;
+- `scripts/validate_offer_narrative_v522.py`: contrato anti-drift;
+- `tests/e2e/offer-narrative.spec.mjs`: cobertura de portada y fichas;
+- builder, Pages y Release Governance vigilan explícitamente las nuevas fuentes;
+- `CONTEXTO_RAPIDO.md` fue actualizado desde su estado obsoleto v5.18.
+
+Release Governance del PR #84 ya confirmó en una segunda pasada que la cadena histórica v5.8→v5.21 y el contrato v5.22 pueden coexistir. Esta evidencia es de candidata y no equivale todavía a certificación pública.
+
+## Invariantes vigentes
 
 - static-first;
 - 46 páginas HTML;
 - 16 fichas profundas;
 - 1 formulario físico canónico;
-- 43 entradas E2E observadas en la certificación final;
+- 43 pruebas E2E observadas en v5.21 como piso de cobertura;
 - 7 superficies axe;
 - 6 superficies Lighthouse;
 - budgets v5.5 sin relajación;
@@ -107,14 +116,13 @@ La nueva cobertura Browser descubrió que `demo.js` creaba un segundo `meta[name
 - WhatsApp manual;
 - portal real de clientes explícitamente deshabilitado;
 - sin CRM/backend, almacenamiento servidor, autenticación real, firma, pagos, agenda o portal documental ficticios;
+- sin claims de clientes, premios, experiencia o resultados no verificables;
 - `stable` solo después de gates verdes para cambios funcionales/publicables.
 
 ## Graphify / procedencia
 
-Tras el cierre documental principal, Graphify validó correctamente `version = 5.21.0` y frescura respecto del `main` procesado, con 611 nodos, 990 relaciones y 94 notas wiki.
-
-La rama `knowledge/graphify-live` es memoria derivada. La regla permanente no es fijar aquí su `source_commit`, porque cada actualización documental vuelve a regenerar el grafo. La comprobación correcta es leer `graphify-out/BUILD_META.json` y verificar que `source_commit` coincida con el `main` procesado por el último run exitoso.
+La rama `knowledge/graphify-live` es memoria derivada. La comprobación correcta de frescura es leer `graphify-out/BUILD_META.json` y verificar que `source_commit` coincida con el `main` realmente procesado por el último run exitoso; no fijar un SHA derivado como regla permanente.
 
 ## Estado del ciclo
 
-El gate de cierre formal de v5.21 está satisfecho. Cualquier trabajo funcional posterior debe abrir una tarea/release nueva con objetivo, contrato, no-objetivos y criterios de cierre propios. **No existe una v5.22 activa.**
+v5.22 está abierta con objetivo, contrato, no-objetivos y criterios de cierre definidos. No debe promoverse ni declararse cerrada hasta superar builder canónico, segunda pasada, validadores históricos + v5.22, Pages, smoke, Browser E2E/axe, Lighthouse, release-health, actualización controlada de `stable` y cierre documental. **No existe una v5.23 activa.**

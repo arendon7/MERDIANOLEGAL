@@ -1,0 +1,187 @@
+{
+  "version": "5.22.0",
+  "principles": {
+    "commercial_unit": "resultado-y-alcance-verificable",
+    "seniority_evidence": "criterio-metodo-perimetro-fuentes-responsables-cierre",
+    "claims_policy": "sin-clientes-premios-antiguedad-resultados-no-verificables",
+    "capability_truth": "la-demo-no-es-portal-productivo"
+  },
+  "offers": {
+    "service-diagnostic": {
+      "decision": "Determinar qué exposición jurídica merece atención primero y qué profundidad de intervención es proporcional antes de abrir un proyecto mayor.",
+      "modality_reason": "Es un servicio de delimitación y priorización: sirve cuando la empresa todavía no debe comprar una auditoría integral ni una implementación extensa porque primero necesita convertir señales dispersas en un mapa de decisión.",
+      "installed": "Una lectura ejecutiva de prioridades, dependencias y próximos pasos que permite decidir qué corregir, qué auditar y qué puede gestionarse con acompañamiento especializado.",
+      "alternative": {"label": "Auditoría Jurídica Empresarial Integral", "href": "../productos/diagnostico-juridico-empresarial.html", "copy": "Elija la auditoría si ya necesita una revisión transversal cerrada, evidencia documentada, un número definido de hallazgos y criterios objetivos de cierre."},
+      "legal_lens": [
+        ["Gobierno y capacidad de decisión", "Existencia, representación, atribuciones, decisiones societarias, delegaciones y evidencia corporativa que soporta la operación."],
+        ["Relaciones y obligaciones materiales", "Contratos, obligaciones regulatorias, laborales, de datos, consumidor e intangibles que puedan generar exposición relevante según el modelo de negocio."],
+        ["Materialidad y remediación", "Probabilidad, impacto, urgencia, dependencia de terceros y capacidad real de cierre para priorizar una intervención jurídicamente proporcionada."]
+      ]
+    },
+    "service-direction": {
+      "decision": "Dotar a la gerencia de una capacidad jurídica recurrente que priorice, recuerde posiciones y acompañe decisiones sin convertir cada asunto en una contratación independiente.",
+      "modality_reason": "Es acompañamiento recurrente: conviene cuando el valor está en la continuidad, el triage, la coordinación y la memoria institucional, no en un único entregable con fecha de terminación.",
+      "installed": "Un sistema de gobierno del servicio con prioridades, criterios, responsables, agenda de riesgos y trazabilidad de asuntos para que la función jurídica sea administrable por la dirección.",
+      "alternative": {"label": "Empresa Jurídicamente Organizada", "href": "../productos/empresa-juridicamente-organizada.html", "copy": "Elija el producto cerrado si la necesidad principal es ordenar estructura, contratos, obligaciones y expediente mediante un proyecto de implementación con perímetro y cierre definidos."},
+      "legal_lens": [
+        ["Gobierno de asuntos", "Competencia para decidir, materialidad, conflicto, urgencia, responsables y escalamiento antes de producir documentos o posiciones."],
+        ["Consistencia jurídica", "Coherencia entre contratos, gobierno societario, políticas, intangibles, datos, relaciones laborales y exigencias sectoriales aplicables."],
+        ["Memoria y control", "Registro de criterios, obligaciones, compromisos, cambios y evidencia para reducir dependencia de correos, personas o decisiones no trazables."]
+      ]
+    },
+    "service-contracts": {
+      "decision": "Estructurar o negociar una relación contractual material sin perder de vista asignación de riesgos, operación posterior, mecanismos de cambio y salida.",
+      "modality_reason": "Es un servicio especializado por asunto: conviene cuando una negociación concreta exige criterio jurídico adaptable, iteración con contraparte y decisiones que no pueden predeterminarse como paquete estándar.",
+      "installed": "Una posición contractual administrable: documento negociado, matriz de temas críticos y reglas para ejecutar obligaciones, cambios, renovaciones, incumplimientos y terminación.",
+      "alternative": {"label": "Sistema Contractual Empresarial", "href": "../productos/sistema-contractual-empresarial.html", "copy": "Elija el sistema contractual si el problema no es un contrato material sino la repetición de relaciones, plantillas, aprobaciones, obligaciones y renovaciones en toda la empresa."},
+      "legal_lens": [
+        ["Formación y exigibilidad", "Capacidad, representación, consentimiento, objeto, obligaciones, condiciones, formalidades y evidencia necesarias para una relación exigible."],
+        ["Asignación de riesgo", "Responsabilidad, indemnidad, garantías, seguros, propiedad intelectual, datos, confidencialidad, cumplimiento y eventos de terminación según la relación."],
+        ["Administración posterior", "Hitos, entregables, aceptación, cambios, preavisos, renovaciones, remedios y evidencia para que el contrato funcione después de la firma."]
+      ]
+    },
+    "service-corporate": {
+      "decision": "Definir reglas de poder, capital, gobierno o inversión para que una decisión societaria pueda aprobarse, documentarse y ejecutarse sin ambigüedad entre socios y administradores.",
+      "modality_reason": "Es un servicio a medida porque las posiciones de socios, inversionistas, órganos y terceros determinan la arquitectura; la solución puede exigir negociación y varias rutas jurídicas posibles.",
+      "installed": "Reglas corporativas ejecutables sobre decisión, control, capital, información, mayorías, restricciones, salidas y formalización, conectadas con los documentos societarios aplicables.",
+      "alternative": {"label": "Empresa Lista para Inversión", "href": "../productos/empresa-lista-para-inversion.html", "copy": "Elija el producto de inversión si el objetivo es preparar integralmente la compañía para un proceso de revisión de inversionistas con data room, red flags y regularización predefinida."},
+      "legal_lens": [
+        ["Régimen societario", "Código de Comercio, Ley 1258 de 2008 cuando aplique, estatutos, acuerdos de accionistas y reglas internas que distribuyen competencias y derechos."],
+        ["Deberes y conflictos", "Deberes de administradores, conflictos de interés, abuso de derecho, información y trazabilidad de las decisiones materiales."],
+        ["Capital y ejecución", "Emisión o transferencia de participaciones, restricciones, mayorías, condiciones precedentes, registros y documentos necesarios para ejecutar la decisión acordada."]
+      ]
+    },
+    "service-ip": {
+      "decision": "Resolver un problema específico de titularidad, protección, licencia o explotación de un activo intangible cuyo tratamiento depende de antecedentes y relaciones concretas.",
+      "modality_reason": "Es un servicio especializado cuando existe controversia, negociación, cadena de titularidad compleja, estrategia de explotación o activo singular que exige análisis más allá de un paquete de regularización estándar.",
+      "installed": "Una posición jurídicamente sustentada sobre quién controla el activo, qué puede protegerse o explotarse, bajo qué condiciones y qué evidencia debe conservarse.",
+      "alternative": {"label": "Marca, Software y Activos Intangibles Protegidos", "href": "../productos/activos-intangibles-protegidos.html", "copy": "Elija el producto cerrado si necesita inventariar y regularizar de forma sistemática un portafolio acotado de marcas, software, contenidos, know-how y relaciones de creación."},
+      "legal_lens": [
+        ["Titularidad y cadena de derechos", "Autoría, creación laboral o por encargo, cesiones, licencias, antecedentes y evidencia que permitan demostrar control o autorización de uso."],
+        ["Protección adecuada", "Propiedad industrial, derecho de autor, secretos empresariales y mecanismos contractuales seleccionados según la naturaleza y explotación del activo."],
+        ["Explotación y restricciones", "Territorio, plazo, exclusividad, sublicencia, mejoras, datos, garantías, infracción, terminación y retorno de activos en relaciones de licencia o transferencia."]
+      ]
+    },
+    "service-ai": {
+      "decision": "Resolver jurídicamente un caso, proveedor, contrato o arquitectura de IA concreta cuando la adopción tecnológica exige criterio adaptable y coordinación entre negocio, datos, tecnología y riesgo.",
+      "modality_reason": "Es un servicio especializado para decisiones singulares o de alta complejidad. No presupone que exista una ley general de IA que resuelva el caso: identifica obligaciones vigentes por materia y el estándar de gobierno apropiado.",
+      "installed": "Una posición de uso o contratación de IA con responsabilidades, controles, condiciones de proveedor, datos, supervisión humana y evidencia proporcionadas al impacto del caso.",
+      "alternative": {"label": "Programa de Gobernanza Jurídica y Uso Responsable de IA", "href": "../productos/programa-gobernanza-ia.html", "copy": "Elija el programa cerrado si el problema es institucional: múltiples casos de uso y proveedores necesitan inventario, clasificación, reglas comunes, controles y entrenamiento dentro de un perímetro definido."},
+      "legal_lens": [
+        ["Obligaciones vigentes por materia", "Protección de datos, consumidor, propiedad intelectual, contratación, trabajo, competencia, derechos fundamentales y regulación sectorial según el caso de uso."],
+        ["Gobierno basado en riesgo", "Propósito, impacto sobre personas, datos, proveedor, nivel de autonomía, supervisión, explicabilidad, incidentes y evidencia como preguntas de control."],
+        ["Política pública y evolución normativa", "El CONPES 4144 de 2025 orienta la Política Nacional de IA; su existencia no debe confundirse con una ley general e integral de IA ya vigente."]
+      ]
+    },
+    "service-regulated": {
+      "decision": "Determinar la viabilidad y secuencia jurídica de un proyecto cuya ejecución depende de autoridades, territorio, habilitaciones, contratos y condiciones que cambian con los hechos.",
+      "modality_reason": "Es un servicio a medida cuando la ruta no puede cerrarse de antemano porque actores públicos, permisos, alternativas técnicas, suelo, ambiente o regulación sectorial obligan a iterar la estrategia.",
+      "installed": "Una ruta jurídica de decisión que conecta actividad, territorio, actores, permisos, contratos, condiciones precedentes, dependencias y riesgos con el cronograma real del proyecto.",
+      "alternative": {"label": "Proyecto Regulado Jurídicamente Estructurado", "href": "../productos/proyecto-regulado-estructurado.html", "copy": "Elija el producto cerrado cuando ya existe un proyecto y territorio definidos y es posible acotar autoridades, permisos, contratos y entregables dentro de un perímetro estándar."},
+      "legal_lens": [
+        ["Competencia y habilitación", "Qué autoridad decide, qué instrumento habilita la actividad, qué requisitos son previos y qué actuaciones no pueden sustituirse contractualmente."],
+        ["Territorio y sector", "Uso del suelo, ambiente, servicios públicos, salud, agroindustria u otras reglas sectoriales que condicionen localización, operación y responsabilidades."],
+        ["Secuencia y contratos", "Condiciones precedentes, hitos, asignación de riesgos, coordinación público-privada y evidencia necesaria para que la ruta jurídica converse con la ejecución técnica y financiera."]
+      ]
+    },
+    "service-ops": {
+      "decision": "Rediseñar cómo entra, se prioriza, se ejecuta y se mide el trabajo jurídico cuando el problema es de operación del servicio y no de una consulta sustantiva aislada.",
+      "modality_reason": "Es un servicio de transformación porque procesos, roles, tecnología, adopción y métricas deben adaptarse a la organización y validarse mediante pilotos, no imponerse como una plantilla universal.",
+      "installed": "Un modelo operativo jurídico con catálogo de servicios, flujos, roles, artefactos, indicadores y piloto funcional que permita gestionar demanda, tiempos, documentos y evidencia.",
+      "alternative": {"label": "Empresa Jurídicamente Organizada", "href": "../productos/empresa-juridicamente-organizada.html", "copy": "Elija el producto cerrado si la prioridad es regularizar la arquitectura jurídica de la empresa; elija Legal Operations si la estructura existe pero la forma de prestar y controlar el servicio jurídico es el problema."},
+      "legal_lens": [
+        ["Gobierno de la función", "Mandatos, roles, segregación, escalamiento y criterios para decidir qué asuntos requieren abogado, aprobación ejecutiva o especialista externo."],
+        ["Trazabilidad y evidencia", "Registro de solicitud, decisión, versión, aprobación, obligación y cierre con controles proporcionales al riesgo y a la sensibilidad de la información."],
+        ["Tecnología con propósito", "Automatización y herramientas solo cuando reducen fricción o riesgo sin degradar revisión profesional, seguridad, privacidad o capacidad de auditoría."]
+      ]
+    },
+    "product-diagnostic": {
+      "decision": "Saber, con evidencia y dentro de un perímetro cerrado, qué exposiciones jurídicas existen, cuáles son prioritarias y cómo ejecutar su remediación en 90 días.",
+      "modality_reason": "Es una auditoría de alcance cerrado: la empresa compra profundidad transversal, cantidades definidas, hallazgos documentados y criterios objetivos de cierre; no solo una orientación sobre qué mirar.",
+      "installed": "Informe ejecutivo, matriz priorizada, inventario de obligaciones y plan de remediación con responsables, dependencias y evidencia para gobernar el cierre de hallazgos.",
+      "alternative": {"label": "Diagnóstico Jurídico Empresarial", "href": "../servicios/diagnostico-juridico-empresarial.html", "copy": "Elija el diagnóstico si todavía debe decidir qué frentes merecen revisión y no necesita asumir desde el inicio el perímetro y profundidad de una auditoría transversal."},
+      "legal_lens": [
+        ["Estructura y gobierno", "Existencia, representación, estatutos, libros, decisiones, atribuciones y deberes de administradores según la forma societaria y los hechos."],
+        ["Exposición transversal", "Contratos, laboral, datos, consumidor, propiedad intelectual, regulación y demás frentes incluidos, revisados contra evidencia y materialidad."],
+        ["Cierre verificable", "Cada hallazgo debe vincular riesgo, fuente, acción, responsable, dependencia y evidencia de remediación; no se presenta una certificación abstracta de cumplimiento total."]
+      ]
+    },
+    "product-organized": {
+      "decision": "Pasar de acuerdos, contratos, atribuciones y obligaciones dispersas a una arquitectura jurídica que la empresa pueda operar y mantener.",
+      "modality_reason": "Es un producto de implementación porque el resultado puede fijarse desde el inicio mediante instrumentos, modelos, matrices, repositorio y transferencia dentro de un perímetro estándar.",
+      "installed": "Una base jurídica operativa: reglas de gobierno, instrumentos corporativos, modelos contractuales, matriz de obligaciones, procedimiento básico y repositorio estructurado en el entorno habilitado por el cliente.",
+      "alternative": {"label": "Dirección Jurídica Externa", "href": "../servicios/direccion-juridica-externa.html", "copy": "Elija acompañamiento recurrente si la necesidad principal no es instalar una arquitectura inicial sino disponer de criterio, priorización y seguimiento jurídico mes a mes."},
+      "legal_lens": [
+        ["Gobierno y delegación", "Competencias de socios, órganos, administradores y apoderados; formalización de decisiones y controles sobre atribuciones materiales."],
+        ["Contratación y obligaciones", "Modelos, aprobaciones, obligaciones recurrentes, vencimientos y evidencia mínima para administrar relaciones sin depender de documentos aislados."],
+        ["Memoria jurídica", "Expediente, versiones, responsables y procedimiento de actualización para que la organización pueda demostrar qué decidió, qué documento aplica y qué obligación sigue vigente."]
+      ]
+    },
+    "product-assets": {
+      "decision": "Demostrar titularidad y reglas de explotación de un portafolio acotado de marcas, software, contenidos y conocimiento empresarial antes de licenciar, invertir o escalar.",
+      "modality_reason": "Es un producto cerrado de regularización cuando el portafolio y las relaciones de creación pueden inventariarse, documentarse y ordenar mediante cantidades e instrumentos definidos.",
+      "installed": "Inventario de activos, mapa de titularidad, ruta de protección, instrumentos de cesión/licencia/confidencialidad y repositorio de evidencia para administrar el portafolio.",
+      "alternative": {"label": "Propiedad Intelectual y Activos Intangibles", "href": "../servicios/propiedad-intelectual.html", "copy": "Elija el servicio especializado si existe controversia, negociación singular, cadena compleja de derechos o una estrategia de explotación que no pueda cerrarse en el paquete estándar."},
+      "legal_lens": [
+        ["Cadena de titularidad", "Origen del activo, autoría, creación laboral o contratada, cesiones, licencias y documentos que permiten acreditar control o derecho de uso."],
+        ["Mecanismo de protección", "Propiedad industrial, derecho de autor, secreto empresarial y contrato seleccionados según la naturaleza, territorio y estrategia de explotación."],
+        ["Explotación y evidencia", "Licencias, restricciones, mejoras, sublicencias, confidencialidad y expediente probatorio que sostienen valoración, negociación y defensa del activo."]
+      ]
+    },
+    "product-investment": {
+      "decision": "Preparar la empresa para que un inversionista pueda revisar gobierno, capital, contratos, intangibles y contingencias sin descubrir tardíamente vacíos básicos de ejecución.",
+      "modality_reason": "Es un producto cerrado de readiness: ordena la compañía y su evidencia antes o durante una ronda dentro de un perímetro definido, sin sustituir la negociación integral de una transacción específica.",
+      "installed": "Informe de readiness, cap table, red flags, revisión de contratos materiales, instrumentos de regularización y data room estructurado para responder preguntas de inversión con trazabilidad.",
+      "alternative": {"label": "Sociedades, Gobierno e Inversión", "href": "../servicios/sociedades-gobierno-inversion.html", "copy": "Elija el servicio especializado si ya existe una transacción, negociación entre socios o arquitectura de inversión concreta que exige diseñar y negociar términos a la medida."},
+      "legal_lens": [
+        ["Capital y gobierno", "Estructura de capital, derechos, mayorías, restricciones, órganos, administradores y decisiones que pueden afectar control o ejecución de la inversión."],
+        ["Activos y contratos materiales", "Titularidad de intangibles, relaciones críticas, change of control, exclusividades, garantías, terminaciones y obligaciones que puedan afectar valor o continuidad."],
+        ["Divulgación y cierre", "Red flags, contingencias, regularización, data room, preguntas y condiciones precedentes organizadas para reducir sorpresas entre revisión, negociación y cierre."]
+      ]
+    },
+    "product-ai": {
+      "decision": "Instalar reglas comunes para que múltiples casos de IA puedan inventariarse, clasificarse, aprobarse, contratarse y supervisarse con evidencia proporcional al riesgo.",
+      "modality_reason": "Es un programa cerrado de gobierno institucional: conviene cuando el problema ya no es una herramienta concreta sino la ausencia de un sistema común de roles, controles y documentación para varios casos y proveedores.",
+      "installed": "Inventario de casos, clasificación de riesgo, matriz de controles, instrumentos de gobierno, criterios de proveedor, ruta de incidentes y transferencia a responsables internos.",
+      "alternative": {"label": "Tecnología e Inteligencia Artificial", "href": "../servicios/tecnologia-inteligencia-artificial.html", "copy": "Elija el servicio especializado si necesita resolver un caso, contrato, proveedor o arquitectura tecnológica singular cuya complejidad no requiere todavía un programa institucional completo."},
+      "legal_lens": [
+        ["Marco vigente por materia", "Datos personales, consumidor, propiedad intelectual, contratos, trabajo, competencia, derechos fundamentales y regulación sectorial según propósito e impacto del caso."],
+        ["Controles de gobierno", "Finalidad, datos, proveedor, autonomía, supervisión humana, impacto, explicabilidad, seguridad, incidentes y evidencia como controles jurídicos y de decisión."],
+        ["Evolución regulatoria", "El CONPES 4144 de 2025 funciona como política pública nacional de IA; el programa debe distinguirlo de proyectos legislativos y ajustar su matriz cuando cambie el derecho vigente."]
+      ]
+    },
+    "product-regulated": {
+      "decision": "Convertir un proyecto y territorio definidos en una secuencia jurídica ejecutable de autoridades, permisos, contratos, hitos y condiciones precedentes.",
+      "modality_reason": "Es un producto cerrado cuando la actividad, localización y perímetro permiten acotar el mapa regulatorio y contractual desde el inicio y producir entregables comparables con criterios de cierre.",
+      "installed": "Memo de viabilidad, mapas de actores y autoridades, matriz de permisos, hitos, instrumentos jurídicos, condiciones precedentes, riesgos y obligaciones regulatorias administrables.",
+      "alternative": {"label": "Estructuración Jurídica de Proyectos Regulados", "href": "../servicios/proyectos-regulados.html", "copy": "Elija el servicio a medida cuando todavía existen alternativas de territorio, estructura, actores o estrategia que obligan a iterar la ruta jurídica durante el proyecto."},
+      "legal_lens": [
+        ["Viabilidad y competencia", "Actividad, territorio, autoridad competente, título habilitante y requisitos que condicionan si el proyecto puede avanzar y en qué secuencia."],
+        ["Permisos y dependencias", "Suelo, ambiente, servicios públicos u otras reglas sectoriales aplicables conectadas con requisitos técnicos, cronograma y evidencia."],
+        ["Arquitectura contractual", "Contratos, responsabilidades, condiciones precedentes, derechos sobre predios o activos y mecanismos de coordinación necesarios para ejecutar la ruta regulatoria."]
+      ]
+    },
+    "product-contract-system": {
+      "decision": "Pasar de contratos aislados a un sistema que estandarice solicitud, aprobación, negociación, firma, obligaciones, cambios, renovación y terminación.",
+      "modality_reason": "Es un producto de sistema porque el problema es repetitivo y organizacional: puede medirse en relaciones, modelos, cláusulas, posiciones de negociación y obligaciones dentro de un perímetro estándar.",
+      "installed": "Inventario contractual, modelos, biblioteca de cláusulas, playbook de negociación, flujo de aprobación y matriz de obligaciones para administrar contratos durante todo su ciclo de vida.",
+      "alternative": {"label": "Contratación Estratégica y Gestión Contractual", "href": "../servicios/contratacion-estrategica.html", "copy": "Elija el servicio especializado si el problema es una negociación o contrato material concreto y no la arquitectura contractual repetitiva de la organización."},
+      "legal_lens": [
+        ["Validez y autoridad", "Capacidad, representación, aprobaciones, formalidades, firma, evidencia y reglas internas que determinan quién puede obligar a la empresa y bajo qué condiciones."],
+        ["Riesgo contractual repetible", "Posiciones sobre responsabilidad, garantías, pagos, datos, PI, cumplimiento, cambios, terminación y solución de controversias convertidas en criterios reutilizables."],
+        ["Administración del ciclo", "Obligaciones, hitos, renovaciones, preavisos, modificaciones, responsables y evidencia para evitar que la gestión termine al momento de la firma."]
+      ]
+    },
+    "product-data-consumer": {
+      "decision": "Convertir obligaciones de datos personales, consumidor y canales digitales en procesos, responsables, contratos y evidencia que funcionen en la operación cotidiana.",
+      "modality_reason": "Es un programa cerrado cuando tratamientos, canales, bases, proveedores e instrumentos pueden inventariarse y regularizarse dentro de cantidades definidas y con criterios de aceptación verificables.",
+      "installed": "Inventario de tratamientos y canales, instrumentos jurídicos, reglas con proveedores, matriz de obligaciones y controles, procedimientos de atención y expediente de evidencia administrable.",
+      "alternative": {"label": "Servicio jurídico especializado", "href": "../index.html#servicios", "copy": "Elija un servicio a medida si existe investigación, reclamación compleja, incidente, litigio, operación multinacional o asunto sectorial que exceda el perímetro estándar del programa."},
+      "legal_lens": [
+        ["Protección de datos", "Ley 1581 de 2012 y regulación aplicable al tratamiento: finalidad, autorización o base jurídica, derechos, encargados, seguridad, transferencias y evidencia según el caso."],
+        ["Protección del consumidor", "Ley 1480 de 2011 y reglas aplicables al canal: información, publicidad, condiciones, garantías, comercio electrónico y atención de peticiones o reclamaciones."],
+        ["Operación y terceros", "Contratos con proveedores, trazabilidad de consentimientos y avisos, procedimientos, responsables, tiempos de respuesta e incidentes conectados con los sistemas y canales reales."]
+      ]
+    }
+  }
+}

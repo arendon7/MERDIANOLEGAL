@@ -116,6 +116,8 @@ jobs:
         run: python3 scripts/validate_handoff_v517.py
       - name: Validate handoff observability v5.18
         run: python3 scripts/validate_handoff_observability_v518.py
+      - name: Validate offer narrative v5.22
+        run: python3 scripts/validate_offer_narrative_v522.py
       - name: Validate guided decision flow
         run: python3 scripts/validate_decision_flow.py
       - name: Validate page context and structured data
@@ -153,6 +155,8 @@ jobs:
           node --check tests/e2e/public-site.spec.mjs
           node --check tests/e2e/demo.spec.mjs
           node --check tests/e2e/accessibility.spec.mjs
+          node --check tests/e2e/capability-truth.spec.mjs
+          node --check tests/e2e/offer-narrative.spec.mjs
           node --check tests/e2e/ci-summary-reporter.mjs
           node --check scripts/run_quality_v55.mjs
           node --check scripts/render_catalog_static.mjs
@@ -176,6 +180,7 @@ jobs:
           python3 -m json.tool conversion-close-v510.json > /dev/null
           python3 -m json.tool recommendation-v514.json > /dev/null
           python3 -m json.tool handoff-observability-v518.json > /dev/null
+          python3 -m json.tool offer-narrative-v522.json > /dev/null
           for f in catalog-services-v42/*.json; do python3 -m json.tool "$f" > /dev/null; done
           for f in catalog-products-v41/*.json; do python3 -m json.tool "$f" > /dev/null; done
 
@@ -363,6 +368,7 @@ jobs:
           python3 scripts/validate_decision_action_v515.py
           python3 scripts/validate_handoff_v517.py
           python3 scripts/validate_handoff_observability_v518.py
+          python3 scripts/validate_offer_narrative_v522.py
           cat ci-artifacts/v5.7/release-health.md >> "$GITHUB_STEP_SUMMARY"
       - name: Upload release governance health report
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7

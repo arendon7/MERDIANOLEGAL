@@ -33,6 +33,8 @@ on:
       - handoff-continuity-v517.js
       - handoff-observability-v518.json
       - handoff-observability-v518.js
+      - offer-narrative-v522.json
+      - offer-v522.css
       - demo.js
       - site-v3.js
       - catalog-products-v41/**
@@ -61,6 +63,8 @@ on:
       - scripts/validate_handoff_observability_v518.py
       - scripts/apply_capability_truth_v521.py
       - scripts/validate_capability_truth_v521.py
+      - scripts/apply_offer_narrative_v522.py
+      - scripts/validate_offer_narrative_v522.py
       - scripts/validate_operations_v49.py
       - scripts/validate_static_catalog.py
       - scripts/validate_quality_v55.py
@@ -137,10 +141,12 @@ jobs:
         run: |
           python3 scripts/apply_handoff_v517.py
           python3 scripts/validate_handoff_v517.py
-      - name: Validate handoff observability v5.18
+      - name: Validate handoff observability v5.18+
         run: |
           python3 scripts/apply_handoff_observability_v518.py
           python3 scripts/validate_handoff_observability_v518.py
+      - name: Validate offer narrative v5.22
+        run: python3 scripts/validate_offer_narrative_v522.py
       - name: Publish release-health report
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7

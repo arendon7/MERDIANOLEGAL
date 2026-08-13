@@ -177,6 +177,9 @@ def main() -> int:
         f"CAPABILITY TRUTH V5.21 aplicada: portal real {state}; "
         f"{changed} superficies públicas normalizadas con frontera demo explícita."
     )
+    if semver(VERSION) >= (5, 22, 0):
+        from apply_offer_narrative_v522 import main as apply_offer_narrative_v522
+        return apply_offer_narrative_v522()
     return 0
 
 
