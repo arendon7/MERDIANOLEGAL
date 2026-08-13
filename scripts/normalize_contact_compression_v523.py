@@ -24,8 +24,8 @@ def main() -> int:
     text = HOME.read_text(encoding="utf-8")
     text = replace_once(
         text,
-        '<section class="contact-synthesis-v523 full"',
-        '<section class="qualification-summary-v59 contact-synthesis-v523 full"',
+        '<div class="contact-synthesis-v523 full"',
+        '<div class="qualification-summary-v59 contact-synthesis-v523 full"',
         "contenedor de síntesis v5.23",
     )
     text = replace_once(
