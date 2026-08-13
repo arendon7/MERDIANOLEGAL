@@ -23,6 +23,7 @@ version_tuple = tuple(map(int, match.groups())) if match else (0, 0, 0)
 if not match or version_tuple < (4, 5, 0):
     errors.append(f"version.json debe ser 4.5.0 o superior y registra {version!r}")
 compact_home_v520 = version_tuple >= (5, 20, 0)
+capability_truth_v521 = version_tuple >= (5, 21, 0)
 
 text = INDEX.read_text(encoding="utf-8")
 required = [
@@ -38,8 +39,9 @@ required = [
     'Interfaz ilustrativa y datos ficticios', 'id="planes"', 'id="honorarios"',
     'id="contratacion"', 'class="contracting-route-v45"', 'assets/route-meridiano-v3.svg',
     'id="sectores"', 'id="perspectivas"', 'id="firma"', 'id="preguntas"', 'id="contacto"',
-    'Planes y honorarios', 'demo.html#documentos', 'Área de clientes',
+    'Planes y honorarios', 'demo.html#documentos',
 ]
+required.append('Demo de cliente' if capability_truth_v521 else 'Área de clientes')
 if not compact_home_v520:
     required.append('id="elegir"')
 else:
@@ -48,6 +50,9 @@ else:
 for marker in required:
     if marker not in text:
         errors.append(f"index.html: falta {marker!r}")
+
+if capability_truth_v521 and re.search(r'>\s*Área de clientes\s*<', text, re.I):
+    errors.append("v5.21 no debe presentar la demo como Área de clientes")
 
 if compact_home_v520 and 'id="elegir"' in text:
     errors.append("v5.20 no debe materializar la sección histórica #elegir")
@@ -115,4 +120,4 @@ if errors:
         print(f"- {error}")
     sys.exit(1)
 
-print("VALIDACIÓN UX/UI V4.5 OK: narrativa, densidad, navegación, mockup, accesibilidad y móvil íntegros; v5.20 compatible.")
+print("VALIDACIÓN UX/UI V4.5 OK: narrativa, densidad, navegación, mockup, accesibilidad y móvil íntegros; v5.20/v5.21 compatibles.")
