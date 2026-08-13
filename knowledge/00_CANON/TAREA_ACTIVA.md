@@ -6,21 +6,19 @@ Actualizado: 2026-08-13.
 
 **No hay una release funcional activa.**
 
-v5.22.0 — arquitectura editorial de oferta y narrativa jurídica senior — está implementada, desplegada, certificada y funcionalmente cerrada.
+v5.22.0 — arquitectura editorial de oferta y narrativa jurídica senior — está implementada, desplegada, certificada y formalmente cerrada.
 
-Snapshot funcional certificado:
+### SHAs de cierre
 
-`5c3f3194b45afb9ac21a8def27afdc3d2157b3e2`
+- SHA funcional de las mejoras: `5c3f3194b45afb9ac21a8def27afdc3d2157b3e2`.
+- Run funcional: `31671834728`.
+- Snapshot público final `ready`: `dcb5bc9643eff595c0f8614c7cf6acbadc3bb719`.
+- Run final de recertificación: `31673266141`.
+- Canal: `github-pages-public-offer-narrative-ready`.
 
-Run público final:
+El snapshot `ready` volvió a pasar builder/idempotencia, validadores, Pages, smoke, Browser E2E/axe, Lighthouse y release-health antes de mover `stable`.
 
-`31671834728`
-
-Al cierre funcional:
-
-`main == stable == 5c3f3194b45afb9ac21a8def27afdc3d2157b3e2`.
-
-El trabajo actual es exclusivamente de cierre documental y sincronización de memoria. Los commits documentales pueden hacer avanzar `main` sin mover `stable` si el runtime certificado no cambia.
+Después del snapshot `ready`, los únicos cambios admisibles dentro de este cierre son documentales o de memoria. Esos commits pueden hacer avanzar `main` sin mover `stable` siempre que no cambien runtime ni salida pública.
 
 ## Qué quedó resuelto en v5.22
 
@@ -33,23 +31,27 @@ El trabajo actual es exclusivamente de cierre documental y sincronización de me
 7. Capability truth vive en los JSON fuente v4.1/v4.2.
 8. `Meridiano Empresas` solo puede aparecer con condición productiva real o como demostración explícita.
 9. El runtime preserva el HTML prerenderizado static-first y no rehidrata destructivamente `#detail-page`.
-10. El último contraste AA pendiente de las fichas profundas quedó corregido sin relajar axe ni budgets.
+10. El contraste AA de las fichas profundas quedó corregido sin relajar axe ni budgets.
 
 ## Evidencia de cierre
 
-- Release Governance: PASS.
-- Builder canónico: PASS.
-- Segunda pasada/idempotencia: PASS.
-- Validadores históricos + v5.22: PASS.
-- Pages + smoke: PASS.
-- Browser E2E + axe: 49 observados → 47 PASS / 2 SKIP / 0 FAIL / 0 RETRY.
+Certificación funcional:
+
+- 49 E2E observados → 47 PASS / 2 SKIP / 0 FAIL / 0 RETRY.
 - 7 superficies axe WCAG 2.1 AA limpias de violaciones serias/críticas.
-- Lighthouse: 6/6 PASS.
-- Accesibilidad Lighthouse: 1.00 en las seis superficies.
+- Lighthouse 6/6 PASS.
+- Accesibilidad Lighthouse 1.00 en las seis superficies.
 - CI hasta `stable`: 206 s frente a baseline 279 s; mejora 26.2%.
-- Cobertura reducida: no.
-- Budgets relajados: no.
-- `stable`: promovida correctamente al SHA funcional final.
+
+Recertificación `ready`:
+
+- run `31673266141`;
+- SHA `dcb5bc9643eff595c0f8614c7cf6acbadc3bb719`;
+- todos los gates: PASS;
+- CI hasta `stable`: 204 s;
+- mejora frente a baseline: 26.9%;
+- cobertura reducida: no;
+- budgets relajados: no.
 
 ## Archivos canónicos de referencia
 
