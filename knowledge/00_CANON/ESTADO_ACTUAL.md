@@ -14,13 +14,16 @@
 - Hotfix robots demo: PR `#81`, merge `5e09f9b2b541437a89397194e0c7a892da72e91c`.
 - SHA funcional final generado y certificado: `b2a6d4d4d2608362e86b53ea4cc197cd7ce33cc1`.
 - Run final de certificación pública: `31658340092`.
-- Snapshot público certificado al cierre funcional: `stable = b2a6d4d4d2608362e86b53ea4cc197cd7ce33cc1`.
+- Snapshot público certificado: `stable = b2a6d4d4d2608362e86b53ea4cc197cd7ce33cc1`.
+- PR de cierre documental principal: `#82`.
+- Merge de cierre documental principal: `8949cddaa5e0235e38badda00db15ccc8f75b985`.
+- Graphify posterior al cierre documental principal: run `31658719965`, PASS.
 
-Refs, Pages, validators y tests son la autoridad para el estado productivo. `stable` conserva el snapshot funcional certificado; `main` puede avanzar posteriormente con documentación/memoria sin que ello implique una nueva release funcional.
+Refs, Pages, validators y tests son la autoridad para el estado productivo. `stable` conserva el snapshot funcional certificado; `main` puede avanzar con documentación/memoria sin que ello implique una nueva release funcional.
 
 ## Estado funcional
 
-**v5.21.0 está implementada, desplegada y funcionalmente certificada. El trabajo restante del ciclo es exclusivamente documental y de frescura de Graphify.**
+**v5.21.0 está implementada, desplegada, certificada y formalmente cerrada. No existe una v5.22 activa.**
 
 ### Frontera de capacidades v5.21
 
@@ -108,10 +111,10 @@ La nueva cobertura Browser descubrió que `demo.js` creaba un segundo `meta[name
 
 ## Graphify / procedencia
 
-Graphify ya reconoce `version = 5.21.0`. El snapshot previo al cierre documental procesó el merge funcional/hotfix y todavía no el commit generado por builder `b2a6d4d4...`.
+Tras el cierre documental principal, Graphify validó correctamente `version = 5.21.0` y frescura respecto del `main` procesado, con 611 nodos, 990 relaciones y 94 notas wiki.
 
-La frescura final no se presume: después de fusionar el cierre documental debe verificarse `knowledge/graphify-live/graphify-out/BUILD_META.json` y comprobar que `source_commit` corresponda al `main` realmente procesado por el último run exitoso. No fijar como regla permanente un SHA derivado que quede obsoleto por la propia regeneración.
+La rama `knowledge/graphify-live` es memoria derivada. La regla permanente no es fijar aquí su `source_commit`, porque cada actualización documental vuelve a regenerar el grafo. La comprobación correcta es leer `graphify-out/BUILD_META.json` y verificar que `source_commit` coincida con el `main` procesado por el último run exitoso.
 
 ## Estado del ciclo
 
-v5.21 está funcionalmente certificada. El cierre formal exige integrar `RELEASE-v5.21.md`, README y memoria canónica, confirmar diff exclusivamente documental y verificar Graphify fresco. **No se abre v5.22 dentro de este ciclo.**
+El gate de cierre formal de v5.21 está satisfecho. Cualquier trabajo funcional posterior debe abrir una tarea/release nueva con objetivo, contrato, no-objetivos y criterios de cierre propios. **No existe una v5.22 activa.**
