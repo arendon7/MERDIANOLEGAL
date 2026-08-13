@@ -164,15 +164,17 @@ def validate_static_first_runtime() -> None:
         "STATIC-FIRST-V522",
         "const staticCatalog = document.getElementById('detail-page');",
         "if (staticCatalog?.dataset.staticCatalog === 'true') return;",
+        "if (!productSources[id]) return;",
     )
     for marker in required:
         if marker not in text:
             fail(f"catalog-page.js: falta guard static-first {marker!r}")
+    product_gate = text.index("if (!productSources[id]) return;")
     guard = text.index("if (staticCatalog?.dataset.staticCatalog === 'true') return;")
     renderer = text.index("const render = (entry) =>")
     fetcher = text.index("fetch(productSources[id]")
-    if not (guard < renderer < fetcher):
-        fail("catalog-page.js: el guard static-first debe ejecutarse antes del renderer/fetch legado")
+    if not (product_gate < guard < renderer < fetcher):
+        fail("catalog-page.js: servicios deben salir antes del guard y productos static-first antes del renderer/fetch legado")
 
 
 def static_body(text: str, path: Path) -> str:
@@ -185,8 +187,13 @@ def static_body(text: str, path: Path) -> str:
 def validate_materialized_pages(pages: dict[str, Path]) -> None:
     for catalog_id, path in pages.items():
         text = path.read_text(encoding="utf-8")
-        if text.count('data-static-catalog="true"') != 1:
-            fail(f"{path.relative_to(R)}: debe declarar exactamente un HTML canónico static-first")
+        static_count = text.count('data-static-catalog="true"')
+        if catalog_id.startswith("product-"):
+            if static_count != 1:
+                fail(f"{path.relative_to(R)}: producto debe declarar exactamente un HTML canónico static-first")
+        elif static_count != 0:
+            fail(f"{path.relative_to(R)}: servicio no necesita marca product-only data-static-catalog")
+
         marker = f'data-offer-narrative-v522="{catalog_id}"'
         if text.count(marker) != 1:
             fail(f"{path.relative_to(R)}: debe materializar exactamente una capa v5.22")
@@ -244,7 +251,7 @@ def main() -> int:
     validate_static_first_runtime()
     validate_materialized_pages(pages)
     validate_home()
-    print("OFFER NARRATIVE V5.22 OK: 16/16 ofertas, 5 pares diferenciados, lente jurídica x3, capability truth source-driven, runtime static-first y arquitectura v5.20 preservadas.")
+    print("OFFER NARRATIVE V5.22 OK: 16/16 ofertas, 5 pares diferenciados, lente jurídica x3, capability truth source-driven, productos static-first sin rehidratación y servicios preservados por product gate.")
     return 0
 
 
