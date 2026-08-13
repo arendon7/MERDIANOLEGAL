@@ -69,6 +69,8 @@ on:
       - scripts/validate_static_catalog.py
       - scripts/validate_growth_v51.py
       - scripts/validate_live_v51.py
+      - scripts/validate_live_v53.py
+      - scripts/validate_live_v522.py
       - scripts/validate_quality_v55.py
       - scripts/validate_ci_v56.py
       - scripts/validate_release_governance_v57.py
@@ -101,7 +103,7 @@ jobs:
         run: python3 scripts/apply_handoff_v517.py
       - name: Validate governance contracts
         run: |
-          python3 -m py_compile scripts/validate_live_v51.py
+          python3 -m py_compile scripts/validate_live_v51.py scripts/validate_live_v53.py scripts/validate_live_v522.py
           python3 scripts/validate_growth_v51.py
           python3 scripts/validate_quality_v55.py
           python3 scripts/validate_ci_v56.py
