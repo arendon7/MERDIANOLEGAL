@@ -1,8 +1,3 @@
-const robotsMeta = document.createElement('meta');
-robotsMeta.name = 'robots';
-robotsMeta.content = 'noindex,nofollow';
-document.head.appendChild(robotsMeta);
-
 const users = {
   'cliente@empresa-demo.com': {
     password: 'Cliente2026!',
