@@ -35,6 +35,7 @@ on:
       - handoff-observability-v518.js
       - offer-narrative-v522.json
       - offer-v522.css
+      - contact-v523.css
       - demo.js
       - site-v3.js
       - catalog-products-v41/**
