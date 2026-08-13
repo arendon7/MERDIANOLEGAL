@@ -22,8 +22,8 @@ test('firma distingue trayectoria del director de la experiencia demostrativa', 
   await expect(trajectory).toContainText('Incubik');
   await expect(trajectory).toContainText('Compañía de Empaques');
   await expect(trajectory).toContainText(/no constituye una lista de clientes/i);
-  await expect(page.getByRole('link', { name: 'Trayectoria' })).toHaveAttribute('href', '#trayectoria');
-  await expect(page.getByRole('link', { name: 'Ver trayectoria profesional' })).toHaveAttribute('href', '#trayectoria');
-  await expect(page.getByRole('link', { name: 'Ver experiencia demostrativa' })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: 'Trayectoria', exact: true })).toHaveAttribute('href', '#trayectoria');
+  await expect(page.getByRole('link', { name: 'Ver trayectoria profesional', exact: true })).toHaveAttribute('href', '#trayectoria');
+  await expect(page.getByRole('link', { name: 'Ver experiencia demostrativa', exact: true })).toHaveCount(0);
   await expectNoHorizontalOverflow(page);
 });
