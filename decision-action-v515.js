@@ -49,6 +49,21 @@
     const isMobile = window.matchMedia('(max-width: 760px)').matches;
     const expandForExplicitProposal = explicitIntent === 'proposal' && !isMobile;
 
+    // CONTACT-COMPRESSION-V523:START
+    // Desde v5.23 el HTML canónico ya contiene una única superficie nativa para
+    // proceso/límites/condiciones. No se crean dos disclosures internos. La intención
+    // explícita proposal puede abrir ese único detalle en cualquier viewport; ninguna
+    // etapa se infiere ni se cambia automáticamente.
+    const compressedProcess = form.querySelector('[data-contact-process-v523="true"]');
+    if (compressedProcess) {
+      const expandCompressedV523 = explicitIntent === 'proposal';
+      compressedProcess.dataset.defaultStateV523 = expandCompressedV523 ? 'expanded-proposal' : 'collapsed-secondary';
+      compressedProcess.dataset.defaultStateV519 = expandCompressedV523 ? 'expanded-proposal' : 'collapsed-secondary';
+      compressedProcess.open = expandCompressedV523;
+      return;
+    }
+    // CONTACT-COMPRESSION-V523:END
+
     const makeDisclosure = (root, keepClass, key, title, copy) => {
       if (!root || root.querySelector(':scope > details[data-mobile-disclosure-v516]')) return;
       const keep = root.querySelector(`:scope > .${keepClass}`);
@@ -188,5 +203,6 @@
     privacy: Object.freeze({ networkTransport: false, persistentStorage: false, piiInTelemetry: false }),
     mobileUxV516: Object.freeze({ progressiveDisclosure: true, keyboardScrollableRegions: true, maxWidthPx: 760, hiddenMaterialContent: false }),
     commercialFocusV519: Object.freeze({ progressiveDisclosure: true, defaultCollapsed: true, defaultExpandedIntent: 'proposal', explicitIntentOnly: true, automaticDecisionChange: false, hiddenMaterialContent: false }),
+    contactCompressionV523: Object.freeze({ singleSynthesis: true, singleProcessDisclosure: true, explicitProposalMayExpand: true, automaticDecisionChange: false, hiddenMaterialContent: false }),
   });
 })();

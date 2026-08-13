@@ -33,7 +33,17 @@ def main() -> int:
     version = json.loads((ROOT / "version.json").read_text(encoding="utf-8")).get("version", "0.0.0")
     if semver(version) >= (5, 21, 0):
         from apply_capability_truth_v521 import main as apply_capability_truth_v521
-        return apply_capability_truth_v521()
+        result = apply_capability_truth_v521()
+        if result:
+            return result
+        if semver(version) >= (5, 23, 0):
+            from apply_contact_compression_v523 import main as apply_contact_compression_v523
+            from normalize_contact_compression_v523 import main as normalize_contact_compression_v523
+            result = apply_contact_compression_v523()
+            if result:
+                return result
+            return normalize_contact_compression_v523()
+        return 0
     return 0
 
 
