@@ -1,4 +1,4 @@
-# Meridiano Legal · Web canónica v5.21.0
+# Meridiano Legal · Web canónica v5.22.0
 
 Sitio público, responsive, static-first y autocontenido de Meridiano Legal, publicado mediante GitHub Pages.
 
@@ -7,6 +7,12 @@ URL pública: `https://arendon7.github.io/MERDIANOLEGAL/`
 ## Estado actual
 
 La publicación conserva 46 páginas HTML, 16 fichas profundas y un único formulario físico canónico. `stable` solo se mueve cuando builder, idempotencia, Pages, smoke, Browser E2E, axe, Lighthouse y release-health están verdes.
+
+Release funcional certificada: **v5.22.0**.
+
+SHA funcional certificado: `5c3f3194b45afb9ac21a8def27afdc3d2157b3e2`.
+
+Run público final: `31671834728`.
 
 ## Capas vigentes
 
@@ -23,58 +29,76 @@ La publicación conserva 46 páginas HTML, 16 fichas profundas y un único formu
 - **v5.18:** observabilidad verificable del handoff sin PII;
 - **v5.19:** progressive disclosure por intención explícita;
 - **v5.20:** compresión de la decisión comercial en portada;
-- **v5.21:** frontera verificable entre demo y capacidades reales.
+- **v5.21:** frontera verificable entre demo y capacidades reales;
+- **v5.22:** arquitectura editorial de oferta y narrativa jurídica senior.
 
-v5.21 no añade un portal productivo: hace técnicamente imposible presentarlo como activo mientras no exista. La demo continúa siendo ficticia, client-side y `noindex`; el estado real del portal se declara en configuración y se comprueba en CI y navegador.
+## v5.22 · Oferta más clara sin perder profundidad
 
-## v5.21 · Veracidad de capacidades
+v5.22 integra las mejores capas históricas de narrativa con el catálogo profundo v4.1/v4.2. No añade ofertas: hace más fácil entender qué decisión compra la empresa, por qué conviene una modalidad y no otra, qué criterio jurídico gobierna el trabajo y qué queda instalado al cierre.
 
-La configuración canónica declara actualmente:
+Cada una de las 16 fichas incorpora una capa editorial source-driven con:
 
-```json
-"capabilities": {
-  "client_portal": {
-    "enabled": false,
-    "url": ""
-  }
-}
-```
+1. decisión empresarial;
+2. por qué esta modalidad;
+3. alternativa cercana;
+4. lente jurídica;
+5. capacidad instalada.
 
-Consecuencias públicas y técnicas:
+La diferenciación es explícita en cinco pares: diagnóstico/auditoría, contrato puntual/sistema contractual, PI, IA y proyectos regulados.
 
-- no se presenta “Área de clientes” como capacidad activa;
-- los 25 accesos públicos identificados hacia `demo.html` están rotulados como demo/demostrativos;
-- `runtime-config.js` y `site-status.json` reflejan que el portal real está deshabilitado;
-- `demo.html` conserva `data-capability-v521="demo-only"` y exactamente un `noindex,nofollow`;
-- `demo.js` no inyecta un segundo meta robots;
-- una futura activación exige URL HTTPS real, distinta de `demo.html`, y un acceso público verificable.
+La portada conserva una sola arquitectura de decisión v5.20 y refuerza la tesis de Meridiano: el valor no está en producir respuestas aisladas, sino en convertir criterio jurídico en decisiones, instrumentos, responsables y acciones verificables.
+
+## Veracidad de capacidades
+
+La frontera v5.21 continúa vigente. El portal real de clientes está deshabilitado y la demo sigue siendo ficticia, client-side y `noindex`.
+
+Las fuentes v4.1/v4.2 fueron saneadas para que `Meridiano Empresas` solo aparezca condicionado a una habilitación productiva real o como relación explícitamente demostrativa. El compositor v5.22 no reescribe silenciosamente el contrato fuente después del render.
 
 No se añadieron autenticación, cuentas reales, backend, CRM, almacenamiento servidor, PII, email transaccional, firma electrónica, pagos, agenda ni carga documental.
 
-## Evidencia funcional v5.21
+## Evidencia funcional v5.22
 
-PR funcional #79 + hotfixes #80/#81 → SHA certificado `b2a6d4d4d2608362e86b53ea4cc197cd7ce33cc1`.
+Run final `31671834728`, SHA `5c3f3194b45afb9ac21a8def27afdc3d2157b3e2`:
 
-Run final `31658340092`:
-
-- `main == stable == b2a6d4d4d2608362e86b53ea4cc197cd7ce33cc1` al cierre funcional;
-- builder + idempotencia + validadores históricos: PASS;
+- builder + segunda pasada/idempotencia: PASS;
+- validadores históricos + v5.22: PASS;
 - Pages + smoke: PASS;
-- Browser E2E + axe: 43 observados → 41 PASS / 2 SKIP / 0 FAIL / 0 RETRY;
-- cobertura Browser ampliada frente a v5.20, no reducida;
-- 7 superficies axe conservadas;
-- Lighthouse 6/6 PASS;
-- accesibilidad Lighthouse 1.00 en las seis superficies;
-- performance Lighthouse 0.98–1.00;
-- portada: performance 1.00, accesibilidad 1.00, LCP 1410 ms, CLS 0, TBT 91 ms;
-- máximo global: LCP 1410 ms, CLS 0.087, TBT 91 ms;
-- CI hasta `stable`: 178 s, 36.2% mejor que baseline v5.5 de 279 s;
+- Browser E2E + axe: 49 observados → 47 PASS / 2 SKIP / 0 FAIL / 0 RETRY;
+- 7 superficies axe WCAG 2.1 AA sin violaciones serias/críticas;
+- Lighthouse: 6/6 PASS;
+- accesibilidad Lighthouse: 1.00 en las seis superficies;
+- performance Lighthouse: 0.96–1.00;
+- portada: performance 1.00, accesibilidad 1.00, LCP 1367 ms, CLS 0, TBT 55 ms;
+- CI hasta `stable`: 206 s;
+- baseline v5.5: 279 s;
+- mejora frente al baseline: 26.2%;
 - cobertura reducida: no;
-- budgets relajados: no.
+- budgets relajados: no;
+- release-health: PASS.
+
+Artefactos del run:
+
+- Lighthouse `9170023458`;
+- CI `9170051799`;
+- release-health `9170052414`;
+- Pages `9169986924`.
+
+## Arquitectura v5.22
+
+Fuentes y controles principales:
+
+- `offer-narrative-v522.json` — contrato editorial de 16 ofertas;
+- `offer-v522.css` — presentación trust-first;
+- `catalog-products-v41/` y `catalog-services-v42/` — fuente jurídica/comercial;
+- `scripts/apply_offer_narrative_v522.py` — materialización final idempotente;
+- `scripts/validate_offer_narrative_v522.py` — contrato anti-drift;
+- `tests/e2e/offer-narrative.spec.mjs` — cobertura Browser de portada y fichas.
+
+El runtime conserva el HTML prerenderizado cuando la ficha declara `data-static-catalog="true"`; no rehidrata destructivamente `#detail-page` con el template legado.
 
 ## Integraciones externas: estado verdadero
 
-Activas: GitHub Pages, WhatsApp como handoff manual, contexto comercial client-side, telemetría first-party/local sin PII, sitemap/robots/canonical/Open Graph, demo estático/noindex y pipeline de certificación.
+Activas: GitHub Pages, WhatsApp como handoff manual, contexto comercial client-side, telemetría first-party/local sin PII, sitemap/robots/canonical/Open Graph, demo estática/noindex y pipeline de certificación.
 
 Explícitamente deshabilitada: portal real de clientes.
 
@@ -82,7 +106,8 @@ No declarar activas sin configuración real: autenticación/cuentas reales, anal
 
 ## Documentación
 
-- `RELEASE-v5.21.md`: frontera de capacidades, incidencias y evidencia final;
+- `RELEASE-v5.22.md`: narrativa, catálogo, incidencias y evidencia final;
+- `RELEASE-v5.21.md`: frontera demo/capacidad;
 - `RELEASE-v5.20.md`: compresión de decisión;
 - `RELEASE-v5.19.md`: foco comercial adaptativo;
 - `knowledge/HOME.md`: entrada a memoria operativa.
@@ -96,4 +121,5 @@ No declarar activas sin configuración real: autenticación/cuentas reales, anal
 - No inferir intención comercial que el usuario no haya declarado.
 - No convertir acciones locales en afirmaciones sobre envío, lectura, aceptación o conversión.
 - Una demo no equivale a una capacidad productiva.
+- El contenido contractual se corrige en la fuente, no mediante mutaciones ocultas post-render.
 - Graphify orienta; `main`, Pages, validadores y tests deciden.
