@@ -12,5 +12,11 @@
     "provider": "none",
     "site_id": ""
   },
+  "capabilities": {
+    "client_portal": {
+      "enabled": false,
+      "url": ""
+    }
+  },
   "search_console_verification": ""
 }

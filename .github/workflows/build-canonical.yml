@@ -97,6 +97,8 @@ on:
       - scripts/validate_handoff_v517.py
       - scripts/apply_handoff_observability_v518.py
       - scripts/validate_handoff_observability_v518.py
+      - scripts/apply_capability_truth_v521.py
+      - scripts/validate_capability_truth_v521.py
       - scripts/validate_browser_v54.py
       - scripts/run_quality_v55.mjs
       - scripts/validate_quality_v55.py

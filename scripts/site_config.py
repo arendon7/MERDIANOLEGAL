@@ -48,6 +48,22 @@ def load_site_config() -> dict:
     if enabled and not site_id:
         raise ValueError("site-config.json: analítica habilitada requiere analytics.site_id")
 
+    capabilities = data.get("capabilities") or {}
+    client_portal = capabilities.get("client_portal") or {}
+    portal_enabled = bool(client_portal.get("enabled", False))
+    portal_url = str(client_portal.get("url", "") or "").strip()
+    if portal_enabled:
+        portal_parsed = urlsplit(portal_url)
+        if portal_parsed.scheme != "https" or not portal_parsed.netloc:
+            raise ValueError("site-config.json: client_portal.url debe ser HTTPS absoluta cuando el portal está habilitado")
+        if portal_parsed.query or portal_parsed.fragment:
+            raise ValueError("site-config.json: client_portal.url no puede incluir query ni fragment")
+        demo_url = base_url + "demo.html"
+        if portal_url.rstrip("/") == demo_url.rstrip("/"):
+            raise ValueError("site-config.json: demo.html no puede declararse como portal real de clientes")
+    elif portal_url:
+        raise ValueError("site-config.json: client_portal.url debe estar vacío mientras client_portal.enabled=false")
+
     verification = str(data.get("search_console_verification", "") or "").strip()
     if verification and not re.fullmatch(r"[A-Za-z0-9_\-:.]+", verification):
         raise ValueError("site-config.json: search_console_verification contiene caracteres no permitidos")
@@ -59,6 +75,9 @@ def load_site_config() -> dict:
     normalized["custom_domain"] = custom_domain
     normalized["contact"] = {"whatsapp": whatsapp}
     normalized["analytics"] = {"enabled": enabled, "provider": provider, "site_id": site_id}
+    normalized["capabilities"] = {
+        "client_portal": {"enabled": portal_enabled, "url": portal_url}
+    }
     normalized["search_console_verification"] = verification
     return normalized
 

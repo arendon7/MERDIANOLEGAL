@@ -7,6 +7,8 @@ on:
     paths:
       - .github/workflows/**
       - .github/dependabot.yml
+      - version.json
+      - site-config.json
       - package.json
       - package-lock.json
       - release-governance-v57.json
@@ -56,6 +58,8 @@ on:
       - scripts/validate_handoff_v517.py
       - scripts/apply_handoff_observability_v518.py
       - scripts/validate_handoff_observability_v518.py
+      - scripts/apply_capability_truth_v521.py
+      - scripts/validate_capability_truth_v521.py
       - scripts/validate_operations_v49.py
       - scripts/validate_static_catalog.py
       - scripts/validate_quality_v55.py
