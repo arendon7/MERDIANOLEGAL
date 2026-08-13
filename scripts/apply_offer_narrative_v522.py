@@ -112,55 +112,67 @@ def patch_deep_page(path: Path, offers: dict) -> str:
     return catalog_id
 
 
-def replace_once(text: str, old: str, new: str, label: str) -> str:
-    count = text.count(old)
-    if count != 1:
-        raise RuntimeError(f"index.html: {label} esperaba 1 coincidencia y encontró {count}")
-    return text.replace(old, new, 1)
+def normalize_once(text: str, old: str, new: str, label: str) -> str:
+    new_count = text.count(new)
+    old_count = text.count(old)
+    if new_count == 1 and old_count == 0:
+        return text
+    if old_count == 1 and new_count == 0:
+        return text.replace(old, new, 1)
+    raise RuntimeError(
+        f"index.html: {label} en estado inesperado; histórico={old_count}, v5.22={new_count}"
+    )
 
 
 def patch_home() -> None:
     text = HOME.read_text(encoding="utf-8")
     text = ensure_css(text, CSS_LINK_HOME)
-    text = re.sub(r'<section class="hero(?: home-narrative-v522)?"(?: data-home-narrative-v522="true")?>', '<section class="hero home-narrative-v522" data-home-narrative-v522="true">', text, count=1)
+    text, hero_count = re.subn(
+        r'<section class="hero(?: home-narrative-v522)?"(?: data-home-narrative-v522="true")?>',
+        '<section class="hero home-narrative-v522" data-home-narrative-v522="true">',
+        text,
+        count=1,
+    )
+    if hero_count != 1:
+        raise RuntimeError("index.html: no se pudo normalizar la sección hero v5.22")
 
-    text = replace_once(
+    text = normalize_once(
         text,
         '<h1>Dirección jurídica <em>para empresas que avanzan.</em></h1>',
         '<h1>Dirección jurídica <em>para decisiones que deben avanzar.</em></h1>',
         "hero H1",
     )
-    text = replace_once(
+    text = normalize_once(
         text,
         '<p class="lead">Integramos criterio jurídico, lectura empresarial y seguimiento para convertir decisiones complejas en estructuras, documentos, responsables y rutas de implementación administrables.</p>',
         '<p class="lead">Integramos criterio jurídico, comprensión empresarial y tecnología aplicada para estructurar decisiones, proteger activos y convertir asuntos complejos en documentos, responsables y rutas de implementación administrables.</p>',
         "hero lead",
     )
-    text = replace_once(
+    text = normalize_once(
         text,
         '<div class="hero-card"><strong>El trabajo jurídico debe ayudar a decidir y también poder ejecutarse.</strong><small>Contexto · riesgo · evidencia · implementación</small></div>',
         '<div class="hero-card"><strong>No entregamos respuestas aisladas: el criterio jurídico debe convertirse en decisiones, instrumentos y acciones verificables.</strong><small>Contexto · riesgo · alcance · evidencia · implementación</small></div>',
         "hero card",
     )
-    text = replace_once(
+    text = normalize_once(
         text,
         '<h2 id="proof-router-v512-title">Elija la modalidad por el tipo de incertidumbre y por el resultado que necesita.</h2>\n      <p>La situación empresarial define qué debe resolverse; la modalidad define cómo conviene contratar el trabajo. No necesita recorrer varios selectores para llegar a la misma decisión.</p>',
         '<h2 id="proof-router-v512-title">Primero defina qué necesita resolver; después elija cómo conviene contratarlo.</h2>\n      <p>La necesidad define la decisión jurídica. La modalidad define la relación de trabajo: diagnóstico para delimitar, auditoría para revisar un perímetro cerrado, producto para instalar un resultado definido, servicio para adaptar criterio a hechos y actores, o acompañamiento para gobernar demanda recurrente.</p>',
         "selector de modalidad",
     )
-    text = replace_once(
+    text = normalize_once(
         text,
         '<p class="eyebrow dark">ANTES DE CONTRATAR</p><h2>La prueba pública debe poder revisarse, no solo prometerse.</h2><p>Por eso la web expone alcance, método, límites, conocimiento sectorial y una demostración ficticia antes de pedir información confidencial.</p>',
         '<p class="eyebrow dark">CÓMO SE VE EL CRITERIO SENIOR</p><h2>La experiencia se demuestra en las preguntas, el alcance y la capacidad de ejecutar.</h2><p>Antes de contratar, revise si la propuesta identifica régimen, fuentes, supuestos, responsables, límites, entregables y cierre. El seniority no depende de adjetivos: debe poder leerse en cómo se estructura la decisión.</p>',
         "prueba pública",
     )
-    text = replace_once(
+    text = normalize_once(
         text,
         '<p class="eyebrow dark">SERVICIOS PROFESIONALES</p><h2>Soluciones jurídicas conectadas con la empresa.</h2></div><p>Para asuntos complejos o a la medida que requieren análisis, negociación, implementación o coordinación profesional y no pueden reducirse a una plantilla.</p>',
         '<p class="eyebrow dark">SERVICIOS PROFESIONALES</p><h2>Intervenciones para hechos, actores y negociaciones que exigen criterio adaptable.</h2></div><p>Elija un servicio cuando la decisión está identificada, pero el alcance debe evolucionar con la evidencia, la negociación, la regulación o las actuaciones de terceros. Aquí el valor está en el juicio profesional aplicado al caso, no en forzar un paquete estándar.</p>',
         "intro servicios",
     )
-    text = replace_once(
+    text = normalize_once(
         text,
         '<p class="eyebrow">PRODUCTOS DE ALCANCE CERRADO</p><h2>Resultados definidos, metodología y límites explícitos.</h2></div><p>Cada producto parte de una pregunta ejecutiva y termina en entregables verificables. Las fichas indican duración orientativa, exclusiones y relación con el servicio profesional correspondiente.</p>',
         '<p class="eyebrow">PRODUCTOS DE ALCANCE CERRADO</p><h2>Resultados jurídicos con perímetro, entregables y cierre definidos desde el inicio.</h2></div><p>Elija un producto cuando el problema permite fijar cantidades, método, responsables, formatos y aceptación antes de comenzar. La ficha muestra exactamente qué se instala y cuándo una necesidad exige pasar a un servicio a medida.</p>',
