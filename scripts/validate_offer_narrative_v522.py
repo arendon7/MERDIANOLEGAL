@@ -96,8 +96,15 @@ def validate_source_contract(payload: dict, pages: dict[str, Path]) -> None:
     ai_product = json.dumps(offers["product-ai"], ensure_ascii=False)
     if "CONPES 4144 de 2025" not in ai_service or "CONPES 4144 de 2025" not in ai_product:
         fail("IA debe distinguir la Política Nacional de IA mediante CONPES 4144 de 2025")
-    if "ley general" not in ai_service.lower() or "ley general" not in ai_product.lower():
-        fail("IA debe evitar presentar el CONPES como ley general vigente")
+    service_policy_boundary = "ley general" in ai_service.lower() and "conpes" in ai_service.lower()
+    product_policy_boundary = (
+        "conpes" in ai_product.lower()
+        and "política pública" in ai_product.lower()
+        and "proyectos legislativos" in ai_product.lower()
+        and "derecho vigente" in ai_product.lower()
+    )
+    if not service_policy_boundary or not product_policy_boundary:
+        fail("IA debe diferenciar semánticamente política pública, proyectos legislativos y derecho vigente")
 
     data = json.dumps(offers["product-data-consumer"], ensure_ascii=False)
     if "Ley 1581 de 2012" not in data or "Ley 1480 de 2011" not in data:
