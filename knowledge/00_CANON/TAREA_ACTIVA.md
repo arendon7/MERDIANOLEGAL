@@ -16,16 +16,17 @@ La secuencia de composición pública está declarada en más de un lugar: build
 
 ## Objetivo
 
-Crear una única fuente de verdad ejecutable para el orden de composición canónica y hacer que builder y segunda pasada/idempotencia consuman esa misma secuencia.
+Establecer una fuente de verdad declarativa y ejecutable para el orden canónico y convertir cualquier divergencia entre builder, segunda pasada y manifiesto en un fallo verificable del pipeline.
 
 ## Contrato v5.24
 
-1. `scripts/canonical_pipeline_v524.py` declara una secuencia ordenada, identificable y sin pasos duplicados.
-2. Build canónico y segunda pasada de Pages invocan el mismo orquestador.
-3. Los scripts históricos siguen existiendo y conservan sus contratos; v5.24 no los fusiona ni reescribe por conveniencia.
-4. Release Governance valida la estructura del orquestador y vigila directamente sus archivos.
-5. El sitio público no debe cambiar intencionalmente como consecuencia de esta release.
-6. Ningún budget, validator, E2E, axe gate o requisito de promoción a `stable` se reduce.
+1. `scripts/canonical_pipeline_v524.py` declara los 30 pasos canónicos, con identidad, orden y comando normalizado.
+2. El manifiesto compara la secuencia real de `build-canonical.yml` y la segunda pasada de `pages.yml`; ambas deben coincidir exactamente con esos 30 pasos.
+3. `apply_handoff_observability_v518.py`, ya ejecutado por builder, Pages y Governance, activa este guard para `version >= 5.24.0`.
+4. Los workflows siguen explícitos en esta release; v5.24 no modifica Actions ni permisos. El objetivo es eliminar drift silencioso antes de cualquier futura migración de ejecución.
+5. Los scripts históricos siguen existiendo y conservan sus contratos; v5.24 no los fusiona ni reescribe por conveniencia.
+6. El sitio público no debe cambiar intencionalmente como consecuencia de esta release.
+7. Ningún budget, validator, E2E, axe gate o requisito de promoción a `stable` se reduce.
 
 ## No objetivos
 
@@ -33,13 +34,14 @@ Crear una única fuente de verdad ejecutable para el orden de composición canó
 - no cambios de copy, precios, productos, servicios o firma;
 - no backend, CRM, portal real, storage, PII, scoring ni red nueva;
 - no eliminación masiva de scripts históricos;
+- no modificación de permisos, triggers ni estructura de GitHub Actions;
 - no alteración retrospectiva del contrato funcional v5.23.
 
 ## Criterios de cierre
 
-- manifiesto/orquestador v5.24 validado;
-- builder consume una sola secuencia canónica;
-- segunda pasada consume exactamente la misma secuencia;
+- manifiesto v5.24 declara exactamente 30 pasos únicos;
+- builder == segunda pasada == manifiesto en contenido y orden;
+- cualquier drift probado produce fallo determinista;
 - builder completo PASS;
 - idempotencia PASS;
 - todos los validators históricos PASS;
@@ -47,5 +49,6 @@ Crear una única fuente de verdad ejecutable para el orden de composición canó
 - Browser E2E/axe sin reducción de cobertura PASS;
 - Lighthouse 6/6 dentro de budgets vigentes;
 - release-health PASS;
+- sitio público sin cambio funcional intencional;
 - solo entonces promoción de `stable`;
 - documentación y Graphify frescos antes del cierre formal.
