@@ -40,6 +40,7 @@ UNSAFE_PLATFORM_PHRASES = (
     "Meridiano Empresas o entorno disponible",
 )
 CATALOG_DIRS = (R / "catalog-services-v42", R / "catalog-products-v41")
+DETAIL_STATIC_PATTERN = re.compile(r'<div\s+id="detail-page"\s+data-static-catalog="true">')
 
 
 def fail(message: str) -> None:
@@ -174,7 +175,7 @@ def validate_static_first_runtime() -> None:
     renderer = text.index("const render = (entry) =>")
     fetcher = text.index("fetch(productSources[id]")
     if not (product_gate < guard < renderer < fetcher):
-        fail("catalog-page.js: servicios deben salir antes del guard y productos static-first antes del renderer/fetch legado")
+        fail("catalog-page.js: servicios deben salir por product gate y productos static-first antes del renderer/fetch legado")
 
 
 def static_body(text: str, path: Path) -> str:
@@ -187,12 +188,8 @@ def static_body(text: str, path: Path) -> str:
 def validate_materialized_pages(pages: dict[str, Path]) -> None:
     for catalog_id, path in pages.items():
         text = path.read_text(encoding="utf-8")
-        static_count = text.count('data-static-catalog="true"')
-        if catalog_id.startswith("product-"):
-            if static_count != 1:
-                fail(f"{path.relative_to(R)}: producto debe declarar exactamente un HTML canónico static-first")
-        elif static_count != 0:
-            fail(f"{path.relative_to(R)}: servicio no necesita marca product-only data-static-catalog")
+        if len(DETAIL_STATIC_PATTERN.findall(text)) != 1:
+            fail(f"{path.relative_to(R)}: #detail-page debe declarar exactamente una vez data-static-catalog=true")
 
         marker = f'data-offer-narrative-v522="{catalog_id}"'
         if text.count(marker) != 1:
@@ -251,7 +248,7 @@ def main() -> int:
     validate_static_first_runtime()
     validate_materialized_pages(pages)
     validate_home()
-    print("OFFER NARRATIVE V5.22 OK: 16/16 ofertas, 5 pares diferenciados, lente jurídica x3, capability truth source-driven, productos static-first sin rehidratación y servicios preservados por product gate.")
+    print("OFFER NARRATIVE V5.22 OK: 16/16 ofertas, 5 pares diferenciados, lente jurídica x3, capability truth source-driven, #detail-page canónico y runtime sin rehidratación destructiva.")
     return 0
 
 
