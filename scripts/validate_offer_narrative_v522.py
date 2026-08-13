@@ -32,10 +32,29 @@ FORBIDDEN_CLAIMS = (
     "portal productivo meridiano empresas",
     "ley general de ia vigente en colombia",
 )
+UNSAFE_PLATFORM_PHRASES = (
+    "Meridiano Empresas o SharePoint/OneDrive",
+    "Meridiano Empresas o Microsoft 365",
+    "Meridiano Empresas o tablero acordado",
+    "Meridiano Empresas o entorno disponible",
+)
+CATALOG_DIRS = (R / "catalog-services-v42", R / "catalog-products-v41")
 
 
 def fail(message: str) -> None:
     raise SystemExit(f"OFFER NARRATIVE V5.22 ERROR: {message}")
+
+
+def safe_meridiano_reference(text: str) -> bool:
+    if "Meridiano Empresas" not in text:
+        return True
+    conditional = re.search(
+        r"Meridiano Empresas[^.\n]{0,120}(?:habilitad[oa]|habilitación productiva|opere productivamente|operación productiva)",
+        text,
+        re.I,
+    )
+    explicit_demo = "Demostración" in text and "demo.html" in text
+    return bool(conditional or explicit_demo)
 
 
 def load_contract() -> dict:
@@ -63,6 +82,19 @@ def load_contract() -> dict:
             if claim in corpus:
                 fail(f"{catalog_id}: claim no verificable/prohibido: {claim}")
     return payload
+
+
+def validate_catalog_capability_truth() -> None:
+    files = [path for folder in CATALOG_DIRS for path in sorted(folder.glob("*.json"))]
+    if len(files) != 16:
+        fail(f"se esperaban 16 fuentes de catálogo y se encontraron {len(files)}")
+    for path in files:
+        text = path.read_text(encoding="utf-8")
+        for phrase in UNSAFE_PLATFORM_PHRASES:
+            if phrase in text:
+                fail(f"{path.relative_to(R)}: referencia de plataforma ambigua: {phrase}")
+        if not safe_meridiano_reference(text):
+            fail(f"{path.relative_to(R)}: Meridiano Empresas debe estar condicionado a operación productiva o identificado como demo")
 
 
 def page_map() -> dict[str, Path]:
@@ -155,8 +187,11 @@ def validate_materialized_pages(pages: dict[str, Path]) -> None:
             fail(f"{path.relative_to(R)}: la capa debe tener 3 bloques editoriales")
         if body.count('offer-legal-lens-grid-v522') != 1:
             fail(f"{path.relative_to(R)}: lente jurídica duplicada o ausente")
-        if "Meridiano Empresas" in body:
-            fail(f"{path.relative_to(R)}: referencia de plataforma ambigua dentro del catálogo")
+        for phrase in UNSAFE_PLATFORM_PHRASES:
+            if phrase in body:
+                fail(f"{path.relative_to(R)}: referencia de plataforma ambigua: {phrase}")
+        if not safe_meridiano_reference(body):
+            fail(f"{path.relative_to(R)}: mención de Meridiano Empresas sin condición productiva ni contexto demo")
 
 
 def validate_home() -> None:
@@ -183,11 +218,12 @@ def validate_home() -> None:
 
 def main() -> int:
     payload = load_contract()
+    validate_catalog_capability_truth()
     pages = page_map()
     validate_source_contract(payload, pages)
     validate_materialized_pages(pages)
     validate_home()
-    print("OFFER NARRATIVE V5.22 OK: 16/16 ofertas, 5 pares diferenciados, lente jurídica x3, capability truth y arquitectura v5.20 preservadas.")
+    print("OFFER NARRATIVE V5.22 OK: 16/16 ofertas, 5 pares diferenciados, lente jurídica x3, capability truth source-driven y arquitectura v5.20 preservadas.")
     return 0
 
 

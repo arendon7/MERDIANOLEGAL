@@ -17,6 +17,12 @@ CSS_LINK_HOME = '<link rel="stylesheet" href="offer-v522.css">'
 CSS_LINK_DEEP = '<link rel="stylesheet" href="../offer-v522.css">'
 START = "<!-- OFFER-NARRATIVE-V522:START -->"
 END = "<!-- OFFER-NARRATIVE-V522:END -->"
+UNSAFE_PLATFORM_PHRASES = (
+    "Meridiano Empresas o SharePoint/OneDrive",
+    "Meridiano Empresas o Microsoft 365",
+    "Meridiano Empresas o tablero acordado",
+    "Meridiano Empresas o entorno disponible",
+)
 
 
 def semver(value: str) -> tuple[int, int, int]:
@@ -44,16 +50,20 @@ def remove_existing_block(text: str) -> str:
     return pattern.sub("\n", text, count=1)
 
 
-def normalize_demo_platform_copy(static_body: str) -> str:
-    replacements = {
-        "Meridiano Empresas o SharePoint/OneDrive": "entorno digital acordado con el cliente (por ejemplo, SharePoint/OneDrive)",
-        "Meridiano Empresas o Microsoft 365": "entorno digital acordado con el cliente (por ejemplo, Microsoft 365)",
-        "Meridiano Empresas o tablero acordado": "tablero acordado o entorno digital habilitado por el cliente",
-        "Meridiano Empresas o entorno disponible": "entorno digital habilitado por el cliente",
-    }
-    for old, new in replacements.items():
-        static_body = static_body.replace(old, new)
-    return static_body.replace("Meridiano Empresas", "entorno digital habilitado por el cliente")
+def preserve_source_platform_copy(static_body: str, path: Path) -> str:
+    """No reescribe contenido contractual después del render.
+
+    Capability truth debe vivir en la fuente. Las menciones condicionales como
+    "Meridiano Empresas cuando esté habilitado productivamente" y los enlaces
+    marcados como demostración son válidos; las formulaciones ambiguas obligan
+    a corregir el JSON fuente en lugar de mutarlo silenciosamente aquí.
+    """
+    for phrase in UNSAFE_PLATFORM_PHRASES:
+        if phrase in static_body:
+            raise RuntimeError(
+                f"{path.relative_to(R)}: copy de plataforma ambiguo {phrase!r}; corríjalo en el catálogo fuente"
+            )
+    return static_body
 
 
 def narrative_block(catalog_id: str, entry: dict) -> str:
@@ -101,7 +111,7 @@ def patch_deep_page(path: Path, offers: dict) -> str:
     body_match = body_pattern.search(text)
     if not body_match:
         raise RuntimeError(f"{path.relative_to(R)}: falta STATIC-CATALOG-BODY")
-    static_body = normalize_demo_platform_copy(body_match.group(2))
+    static_body = preserve_source_platform_copy(body_match.group(2), path)
     situations_anchor = '<section class="detail-section soft" aria-labelledby="situaciones-title">'
     if situations_anchor not in static_body:
         raise RuntimeError(f"{path.relative_to(R)}: falta ancla de situaciones para v5.22")
