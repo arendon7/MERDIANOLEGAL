@@ -7,77 +7,87 @@
 - Repositorio: `arendon7/MERDIANOLEGAL`.
 - Rama técnica/productiva: `main`.
 - Snapshot público certificado: `stable`.
-- Release vigente: `5.20.0`.
-- PR funcional: `#74`.
-- Merge funcional inicial: `745723c0de896e9d0a7f613dd1b83e5efcaa4878`.
-- Hotfix idempotencia: PR `#75`, merge `5ba9053c0e995c77bff555cbd9c37c2909814d81`.
-- Hotfix contrato global: PR `#76`.
-- SHA funcional final certificado: `85bdcfc9b52172e085dfa9b1df8e8d081b136233`.
-- Run final de certificación pública: `31651473515`.
-- Snapshot público certificado: `stable = 85bdcfc9b52172e085dfa9b1df8e8d081b136233`.
-- PR de cierre documental: `#77`.
-- Merge de cierre documental: `62f2f9b5069682ed1fbd8b72865bec267f6c6ac3`.
+- Release vigente: `5.21.0`.
+- PR funcional: `#79`.
+- Merge funcional: `9af1674d9caf6353e233c3b1574cb279f0ee116c`.
+- Hotfix compatibilidad UX v4.5: PR `#80`, merge `2bed487ee39a6529b50828af360c153deff286e8`.
+- Hotfix robots demo: PR `#81`, merge `5e09f9b2b541437a89397194e0c7a892da72e91c`.
+- SHA funcional final generado y certificado: `b2a6d4d4d2608362e86b53ea4cc197cd7ce33cc1`.
+- Run final de certificación pública: `31658340092`.
+- Snapshot público certificado al cierre funcional: `stable = b2a6d4d4d2608362e86b53ea4cc197cd7ce33cc1`.
 
-Refs, Pages, validators y tests son la autoridad para el estado productivo. `stable` conserva el snapshot funcional certificado; `main` puede avanzar con documentación/memoria sin que ello implique una nueva release funcional.
+Refs, Pages, validators y tests son la autoridad para el estado productivo. `stable` conserva el snapshot funcional certificado; `main` puede avanzar posteriormente con documentación/memoria sin que ello implique una nueva release funcional.
 
 ## Estado funcional
 
-**v5.20.0 está implementada, desplegada, certificada y formalmente cerrada. No existe una v5.21 abierta.**
+**v5.21.0 está implementada, desplegada y funcionalmente certificada. El trabajo restante del ciclo es exclusivamente documental y de frescura de Graphify.**
 
-### Compresión de decisión v5.20
+### Frontera de capacidades v5.21
 
-La portada ya no superpone varios mecanismos que piden resolver repetidamente cómo contratar.
+El portal real de clientes está explícitamente deshabilitado en `site-config.json` mediante `capabilities.client_portal.enabled=false`.
 
-La arquitectura final contiene dos pasos:
+Mientras ese estado permanezca así:
 
-1. seis rutas por situación empresarial;
-2. una única superficie con cinco modalidades de contratación.
+- ninguna superficie indexable puede presentar `demo.html` como “Área de clientes” productiva;
+- todos los enlaces públicos hacia `demo.html` deben decir `demo` o `demostrativo`;
+- runtime y `site-status.json` deben reflejar la capacidad deshabilitada;
+- `demo.html` conserva datos ficticios, marca `demo-only` y exactamente un `noindex,nofollow`;
+- `demo.js` no puede inyectar dinámicamente otro meta robots.
 
-El estándar verificable de propuesta v5.12 permanece visible. Los límites y alternativas v5.14 siguen disponibles mediante `<details>`. Las 16 fichas profundas conservan perímetro, entregables, formatos, responsabilidades, aceptación, límites y CTA.
+Si algún día se habilita el portal, CI exige una URL HTTPS real distinta de `demo.html` y al menos un enlace público real hacia esa URL.
 
-Desde v5.20 la salida final no materializa el bloque separado de “Forma de contratar” v5.8 ni la sección histórica `#elegir`. Los contratos históricos permanecen protegidos mediante selectores semánticos y validadores version-aware.
+No hay autenticación real, cuentas reales, backend, CRM, storage persistente servidor, email transaccional, firma, pagos, agenda ni carga documental.
 
-No hay scoring, inferencia adicional, cambio automático de etapa, PII nueva, storage persistente nuevo, transporte de red nuevo, backend ni CRM.
+## Evidencia funcional final v5.21
 
-## Evidencia funcional final v5.20
+Run `31658340092`, SHA certificado `b2a6d4d4d2608362e86b53ea4cc197cd7ce33cc1`:
 
-Run `31651473515`, SHA certificado `85bdcfc9b52172e085dfa9b1df8e8d081b136233`:
-
-- builder e idempotencia: PASS;
-- validadores históricos y contratos v5.8→v5.19: PASS;
+- builder canónico: PASS;
+- segunda pasada/idempotencia: PASS;
+- validadores históricos v4.4→v5.18: PASS;
+- contrato v5.21 final: PASS;
 - GitHub Pages + smoke: PASS;
-- Browser E2E + axe: 37 observados → 35 PASS / 2 SKIP / 0 FAIL / 0 RETRY;
-- reporter Browser: 85 s;
-- 7 superficies axe sin violaciones serias/críticas;
+- Browser E2E + axe: 43 observados → 41 PASS / 2 SKIP / 0 FAIL / 0 RETRY;
+- reporter Browser: 77 s;
+- cobertura ampliada frente a v5.20: 37 → 43 observados;
+- 7 superficies axe conservadas;
 - Lighthouse: 6/6 PASS;
 - accesibilidad Lighthouse: 1.00 en las seis superficies;
 - performance Lighthouse: 0.98–1.00;
-- portada: performance 1.00, accesibilidad 1.00, LCP 1421 ms, CLS 0, TBT 83 ms;
-- máximo global: LCP 1421 ms, CLS 0.087, TBT 83 ms;
-- CI hasta `stable`: 191 s;
+- portada: performance 1.00, accesibilidad 1.00, LCP 1410 ms, CLS 0, TBT 91 ms;
+- máximo global: LCP 1410 ms, CLS 0.087, TBT 91 ms;
+- CI hasta `stable`: 178 s;
 - baseline v5.5: 279 s;
-- mejora: 31.5%;
+- mejora: 36.2%;
 - cobertura reducida: no;
 - budgets relajados: no;
 - release-health: PASS;
 - promoción de `stable`: PASS.
 
-Artefactos finales del run `31651473515`:
+Artefactos finales del run `31658340092`:
 
-- Lighthouse `9162821238`, `sha256:681cd883c725e44c26b65c2f9b0c6a276c8668096266618dfe36c75567a3b3c0`;
-- CI `9162836693`, `sha256:1862dea240db5ea3c491afc0d8505d51d5bed74dff6cf081a255a8ab1f6564af`;
-- release-health `9162837264`, `sha256:00c1e747dc887dc37d4daae63fd4fdd5a279d2e813745312802277931b60c323`;
-- Pages `9162779134`, `sha256:31cea6e7fd74a2bdb73543660c6a49ec6d9838341f6fb98bfd604f8abc5d852a`.
+- Lighthouse `9165276023`, `sha256:798847e408280e0730accc2d9a2f7e84ad5f2399aed8c3d9dedad4a77184e6ff`;
+- CI `9165288913`, `sha256:df0b5776c71cea97f1d8b51956c1e4750c03626e60f5fb9cfe2988a82d5e5091`;
+- release-health `9165289152`, `sha256:0820431f230a5520912a0320ddc0749987743f0a234bd3bba36de38cc0ec28e7`;
+- Pages `9165233265`, `sha256:d437eaef17490b4f13396bc7e3c33887bbf095ae94f4f0f70495b8e1ba2ff263`.
 
-## Incidencias de compatibilidad resueltas
+## Incidencias resueltas durante v5.21
 
-### v4.5 / idempotencia
+### Compositor histórico v5.8
 
-La segunda pasada inicial del builder falló porque `apply_ux_v45.py` aún exigía `#elegir`. PR #75 hizo generador y validator version-aware. No se omitió el gate: idempotencia se reejecutó y pasó.
+Release Governance detectó que `apply_decision_v58.py` intentaba reinsertar la portada v5.8 sobre la superficie unificada v5.20. El compositor quedó version-aware: conserva las 16 fichas y no recrea la capa visual legada cuando la superficie unificada ya existe.
 
-### validate_site / marcador histórico
+### Compositor histórico v5.12
 
-Después, el validador global todavía exigía literalmente “CÓMO ELEGIR”. PR #76 mantuvo ese requisito hasta v5.19 y desde v5.20 exige la nueva superficie, además de fallar si reaparece la sección histórica. El gate volvió a ejecutarse y pasó.
+La siguiente pasada encontró la misma clase de acoplamiento en `apply_proof_v512.py`. Se corrigió sin eliminar el contrato de prueba verificable de las fichas profundas.
+
+### Validator UX v4.5
+
+La primera certificación Pages pasó idempotencia, pero `validate_ux_v45.py` todavía exigía literalmente “Área de clientes”. PR #80 mantiene ese requisito hasta v5.20 y desde v5.21 exige `Demo de cliente`, además de fallar si reaparece la etiqueta productiva anterior.
+
+### Robots duplicado en navegador
+
+La nueva cobertura Browser descubrió que `demo.js` creaba un segundo `meta[name=robots]` aunque el HTML ya incluía uno correcto. El test no se debilitó. PR #81 retiró la inyección JS, normalizó exactamente un meta estático y añadió guards de HTML, runtime y CI para impedir regresión.
 
 ## Contratos vigentes
 
@@ -85,22 +95,23 @@ Después, el validador global todavía exigía literalmente “CÓMO ELEGIR”. 
 - 46 páginas HTML;
 - 16 fichas profundas;
 - 1 formulario físico canónico;
-- 37 entradas E2E;
+- 43 entradas E2E observadas en la certificación final;
 - 7 superficies axe;
 - 6 superficies Lighthouse;
 - budgets v5.5 sin relajación;
 - telemetría sin PII;
 - analítica externa apagada (`provider:none`);
 - WhatsApp manual;
-- sin CRM/backend, almacenamiento servidor, firma, pagos, agenda o portal documental ficticios;
+- portal real de clientes explícitamente deshabilitado;
+- sin CRM/backend, almacenamiento servidor, autenticación real, firma, pagos, agenda o portal documental ficticios;
 - `stable` solo después de gates verdes para cambios funcionales/publicables.
 
 ## Graphify / procedencia
 
-Tras el PR documental #77, Graphify validó `version = 5.20.0` y `source_commit = 62f2f9b5069682ed1fbd8b72865bec267f6c6ac3`, con 588 nodos, 948 relaciones y 94 notas wiki.
+Graphify ya reconoce `version = 5.21.0`. El snapshot previo al cierre documental procesó el merge funcional/hotfix y todavía no el commit generado por builder `b2a6d4d4...`.
 
-La rama `knowledge/graphify-live` es memoria derivada. La comprobación correcta de frescura es leer `graphify-out/BUILD_META.json` y contrastar su `source_commit` con el último run exitoso que produjo ese snapshot; no fijar un SHA derivado como regla permanente.
+La frescura final no se presume: después de fusionar el cierre documental debe verificarse `knowledge/graphify-live/graphify-out/BUILD_META.json` y comprobar que `source_commit` corresponda al `main` realmente procesado por el último run exitoso. No fijar como regla permanente un SHA derivado que quede obsoleto por la propia regeneración.
 
 ## Estado del ciclo
 
-El gate de cierre formal de v5.20 está satisfecho. Cualquier trabajo funcional posterior debe abrir una tarea/release nueva y no modificar retrospectivamente el contrato certificado de v5.20. **No existe una v5.21 activa.**
+v5.21 está funcionalmente certificada. El cierre formal exige integrar `RELEASE-v5.21.md`, README y memoria canónica, confirmar diff exclusivamente documental y verificar Graphify fresco. **No se abre v5.22 dentro de este ciclo.**
