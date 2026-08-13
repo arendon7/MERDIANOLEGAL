@@ -35,6 +35,8 @@ on:
       - handoff-observability-v518.js
       - offer-narrative-v522.json
       - offer-v522.css
+      - professional-authority-v525.json
+      - professional-authority-v525.css
       - demo.js
       - site-v3.js
       - catalog-products-v41/**
@@ -68,6 +70,8 @@ on:
       - scripts/apply_contact_compression_v523.py
       - scripts/normalize_contact_compression_v523.py
       - scripts/validate_contact_compression_v523.py
+      - scripts/apply_professional_authority_v525.py
+      - scripts/validate_professional_authority_v525.py
       - scripts/validate_operations_v49.py
       - scripts/validate_static_catalog.py
       - scripts/validate_growth_v51.py
@@ -156,6 +160,8 @@ jobs:
         run: python3 scripts/validate_offer_narrative_v522.py
       - name: Validate contact compression v5.23
         run: python3 scripts/validate_contact_compression_v523.py
+      - name: Validate professional authority v5.25
+        run: python3 scripts/validate_professional_authority_v525.py
       - name: Publish release-health report
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
