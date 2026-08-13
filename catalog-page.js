@@ -38,6 +38,11 @@
   };
   if (!productSources[id]) return;
 
+  // STATIC-FIRST-V522: el HTML canónico prerenderizado es la fuente pública.
+  // No rehidratarlo ni reemplazar capas posteriores (v5.8→v5.22).
+  const staticCatalog = document.getElementById('detail-page');
+  if (staticCatalog?.dataset.staticCatalog === 'true') return;
+
   const esc = (value = '') => String(value).replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
   const cards = (items, className, prefix) => `<div class="${className}-grid">${(items || []).map(([title, description], index) => `<article class="${className}-card"><span>${String(index + 1).padStart(2, '0')} · ${prefix}</span><h3>${esc(title)}</h3><p>${esc(description)}</p></article>`).join('')}</div>`;
   const section = ({ id: sid, eyebrow, title, description = '', className = '', body: content }) => `<section class="detail-section${className ? ` ${className}` : ''}" aria-labelledby="${sid}-title"><div class="container"><div class="detail-heading"><p class="eyebrow">${esc(eyebrow)}</p><h2 id="${sid}-title">${esc(title)}</h2>${description ? `<p>${esc(description)}</p>` : ''}</div>${content}</div></section>`;

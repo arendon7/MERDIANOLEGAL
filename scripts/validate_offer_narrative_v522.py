@@ -9,6 +9,7 @@ import re
 R = Path(__file__).resolve().parents[1]
 CONTRACT = R / "offer-narrative-v522.json"
 HOME = R / "index.html"
+CATALOG_RUNTIME = R / "catalog-page.js"
 EXPECTED_IDS = {
     "service-diagnostic", "service-direction", "service-contracts", "service-corporate",
     "service-ip", "service-ai", "service-regulated", "service-ops",
@@ -39,6 +40,7 @@ UNSAFE_PLATFORM_PHRASES = (
     "Meridiano Empresas o entorno disponible",
 )
 CATALOG_DIRS = (R / "catalog-services-v42", R / "catalog-products-v41")
+DETAIL_STATIC_PATTERN = re.compile(r'<div\s+id="detail-page"\s+data-static-catalog="true">')
 
 
 def fail(message: str) -> None:
@@ -157,6 +159,25 @@ def validate_source_contract(payload: dict, pages: dict[str, Path]) -> None:
                 fail(f"{catalog_id}: alternativa local inexistente: {href}")
 
 
+def validate_static_first_runtime() -> None:
+    text = CATALOG_RUNTIME.read_text(encoding="utf-8")
+    required = (
+        "STATIC-FIRST-V522",
+        "const staticCatalog = document.getElementById('detail-page');",
+        "if (staticCatalog?.dataset.staticCatalog === 'true') return;",
+        "if (!productSources[id]) return;",
+    )
+    for marker in required:
+        if marker not in text:
+            fail(f"catalog-page.js: falta guard static-first {marker!r}")
+    product_gate = text.index("if (!productSources[id]) return;")
+    guard = text.index("if (staticCatalog?.dataset.staticCatalog === 'true') return;")
+    renderer = text.index("const render = (entry) =>")
+    fetcher = text.index("fetch(productSources[id]")
+    if not (product_gate < guard < renderer < fetcher):
+        fail("catalog-page.js: servicios deben salir por product gate y productos static-first antes del renderer/fetch legado")
+
+
 def static_body(text: str, path: Path) -> str:
     match = re.search(r'<!-- STATIC-CATALOG-BODY:START -->(.*?)<!-- STATIC-CATALOG-BODY:END -->', text, re.S)
     if not match:
@@ -167,6 +188,9 @@ def static_body(text: str, path: Path) -> str:
 def validate_materialized_pages(pages: dict[str, Path]) -> None:
     for catalog_id, path in pages.items():
         text = path.read_text(encoding="utf-8")
+        if len(DETAIL_STATIC_PATTERN.findall(text)) != 1:
+            fail(f"{path.relative_to(R)}: #detail-page debe declarar exactamente una vez data-static-catalog=true")
+
         marker = f'data-offer-narrative-v522="{catalog_id}"'
         if text.count(marker) != 1:
             fail(f"{path.relative_to(R)}: debe materializar exactamente una capa v5.22")
@@ -221,9 +245,10 @@ def main() -> int:
     validate_catalog_capability_truth()
     pages = page_map()
     validate_source_contract(payload, pages)
+    validate_static_first_runtime()
     validate_materialized_pages(pages)
     validate_home()
-    print("OFFER NARRATIVE V5.22 OK: 16/16 ofertas, 5 pares diferenciados, lente jurídica x3, capability truth source-driven y arquitectura v5.20 preservadas.")
+    print("OFFER NARRATIVE V5.22 OK: 16/16 ofertas, 5 pares diferenciados, lente jurídica x3, capability truth source-driven, #detail-page canónico y runtime sin rehidratación destructiva.")
     return 0
 
 
