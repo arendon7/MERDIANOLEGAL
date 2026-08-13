@@ -69,18 +69,27 @@ for marker in (
         errors.append(f"growth-v51.css: falta {marker!r}")
 
 index = INDEX.read_text(encoding="utf-8") if INDEX.exists() else ""
-for marker in (
+index_markers = [
     'href="growth-v51.css"',
     "GROWTH-V51-CSS:START",
     "GROWTH-V51-PROOF:START",
     "Empiece por la situación empresarial, no por el nombre del servicio.",
-    "La prueba pública debe poder revisarse, no solo prometerse.",
     'href="soluciones/"',
     "16 fichas profundas",
     "8 lecturas sectoriales",
     "6 perspectivas desarrolladas",
     "Centro Demo",
-):
+]
+if semver(VERSION) < (5, 22, 0):
+    index_markers.append("La prueba pública debe poder revisarse, no solo prometerse.")
+else:
+    index_markers.extend((
+        "CÓMO SE VE EL CRITERIO SENIOR",
+        "La experiencia se demuestra en las preguntas, el alcance y la capacidad de ejecutar.",
+        "Antes de contratar, revise si la propuesta identifica régimen, fuentes, supuestos, responsables, límites, entregables y cierre.",
+    ))
+
+for marker in index_markers:
     if marker not in index:
         errors.append(f"index.html: falta {marker!r}")
 if index.count("GROWTH-V51-PROOF:START") != 1 or index.count("GROWTH-V51-CSS:START") != 1:
@@ -175,4 +184,4 @@ if errors:
         print(f"- {error}", file=sys.stderr)
     raise SystemExit(1)
 
-print("VALIDACIÓN DE CRECIMIENTO V5.1 OK: 6 rutas, hub, evidencia verificable, SEO e interlinking íntegros.")
+print("VALIDACIÓN DE CRECIMIENTO V5.1 OK: 6 rutas, hub, evidencia verificable, SEO e interlinking íntegros; narrativa v5.22 compatible cuando aplica.")
