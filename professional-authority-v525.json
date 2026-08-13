@@ -1,0 +1,33 @@
+{
+  "version": "5.25.0",
+  "director": {
+    "name": "Agustín Rendón Calle",
+    "role": "Fundador y director",
+    "base": "Medellín, Colombia",
+    "education": [
+      {"credential": "Abogado", "institution": "Universidad EAFIT", "year": "2018", "status": "completed"},
+      {"credential": "Propiedad Intelectual y Nuevas Tecnologías", "institution": "UNIR, España", "status": "postgraduate_training"}
+    ],
+    "languages": ["Español", "Inglés C1", "Italiano B1"]
+  },
+  "roles": [
+    {"period": "2023–actualidad", "organization": "Greenatics S.A.S.", "role": "Director Jurídico y Administrativo", "sector": "Agroindustria y proyectos ambientales", "focus": "Dirección jurídica, contratación, gobierno corporativo, cumplimiento regulatorio, propiedad intelectual, alianzas y estructuración de proyectos."},
+    {"period": "2022–2023", "organization": "Herbalgem S.A.S.", "role": "Gerente General", "sector": "Agroindustria regulada", "focus": "Dirección empresarial, contratación, cumplimiento regulatorio, operación y relacionamiento institucional."},
+    {"period": "2020–2023", "organization": "Grupo Pineal S.A.S.", "role": "Consultor Jurídico y de Proyectos", "sector": "Agrotech", "focus": "Contratación, proyectos, tecnología, propiedad intelectual, convenios, gobierno y estructuración empresarial."},
+    {"period": "2018–2019", "organization": "Incubik", "role": "Experiencia profesional", "sector": "Inmobiliario", "focus": "Estudios de títulos, análisis predial y estructuración contractual inmobiliaria."},
+    {"period": "2017–2018", "organization": "Compañía de Empaques", "role": "Experiencia profesional", "sector": "Corporativo y laboral", "focus": "Asuntos corporativos y laborales, relaciones sindicales y tratamiento de datos personales."}
+  ],
+  "representative_matters": [
+    {"title": "Tecnología, software y activos intangibles", "copy": "Contratación tecnológica, NDA, licenciamiento, cadena de titularidad y trabajo asociado a software de trazabilidad agrícola y registro ante la DNDA."},
+    {"title": "Agroindustria y negocios regulados", "copy": "Cumplimiento y estructuración jurídica en operaciones sujetas a autoridades y registros, incluyendo frentes relacionados con Ministerio de Justicia e ICA."},
+    {"title": "I+D+i, propiedad intelectual y alianzas", "copy": "Protección de activos intangibles, propiedad intelectual asociada a desarrollos y genéticas, y estructuración de convenios con actores académicos."},
+    {"title": "Societario, contratación y proyectos", "copy": "Gobierno corporativo, contratos civiles, comerciales, laborales y administrativos, estructuración de negocios y acompañamiento a proyectos empresariales y públicos."}
+  ],
+  "boundaries": {
+    "not_client_list": true,
+    "no_testimonials": true,
+    "no_success_metrics": true,
+    "no_result_guarantees": true,
+    "copy": "La trayectoria resume roles y tipos de asuntos documentados en la experiencia profesional del director. No constituye una lista de clientes de Meridiano Legal ni atribuye resultados específicos a terceros."
+  }
+}
