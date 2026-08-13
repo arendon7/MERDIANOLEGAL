@@ -4,45 +4,35 @@ Actualizado: 2026-08-13.
 
 ## Estado
 
-**v5.23.0 — compresión del contacto comercial: funcionalmente cerrada; cierre documental en curso.**
+**No existe una release funcional activa.**
 
-SHA funcional certificado y `stable`: `8d749ab286e8ecbec4d4bd7a083b03dc2b47e5ca`.
+v5.23.0 — compresión del contacto comercial — está implementada, desplegada, certificada, documentada y formalmente cerrada.
 
-Run público final: `31730632791`.
+- SHA funcional certificado y `stable`: `8d749ab286e8ecbec4d4bd7a083b03dc2b47e5ca`.
+- Run público final: `31730632791`.
+- Browser E2E/axe: 58 observados → 56 PASS / 2 SKIP / 0 FAIL / 0 RETRY.
+- Lighthouse: 6/6 PASS.
+- Cobertura reducida: no.
+- Budgets relajados: no.
 
-No existe una v5.24 activa.
+## Memoria de cierre
 
-## Contrato cumplido
+- `RELEASE-v5.23.md` contiene contrato, incidencias, métricas, artefactos y trazabilidad.
+- README y `ESTADO_ACTUAL.md` reflejan v5.23.
+- Graphify post-PR #100 procesó `main = 6a468a16f3a9590eab49c67e6796635aaf474fe7` con 675 nodos, 1.126 relaciones y 96 notas.
+- Este último cierre documental debe volver a actualizar el `source_commit` de Graphify al `main` final.
+- `stable` debe permanecer en el SHA funcional certificado durante los commits exclusivamente documentales.
 
-v5.23 deja:
+## Próximo ciclo
 
-- un solo formulario físico;
-- una sola síntesis comercial con v5.9/v5.13/v5.14/v5.15;
-- un solo disclosure de proceso con v5.10/v5.11;
-- mismos campos y privacidad;
-- handoff manual v5.17 y observabilidad sin PII v5.18 intactos;
-- intención explícita como única señal adaptativa;
-- cero scoring, inferencia, storage, backend o transporte nuevo.
+**No existe una v5.24 abierta.**
 
-## Gates de cierre funcional
+Antes de crear una nueva release se debe:
 
-- builder + segunda pasada/idempotencia: PASS;
-- contratos históricos + validator v5.23: PASS;
-- Pages + smoke: PASS;
-- Browser E2E/axe: 58 observados → 56 PASS / 2 SKIP / 0 FAIL / 0 RETRY;
-- 7 superficies axe: PASS;
-- Lighthouse 6/6: PASS;
-- release-health: PASS;
-- `stable`: promovida a `8d749ab286e8ecbec4d4bd7a083b03dc2b47e5ca`;
-- cobertura reducida: no;
-- budgets relajados: no.
+1. auditar el estado público y técnico vigente;
+2. identificar un problema observable y material;
+3. definir objetivo, contrato y no-objetivos;
+4. fijar criterios de cierre y gates;
+5. abrir rama/PR solo después de esa definición.
 
-## Tarea restante de este ciclo
-
-1. integrar `RELEASE-v5.23.md`, README y memoria canónica mediante PR exclusivamente documental;
-2. verificar Graphify después del merge y exigir `source_commit == main` documental;
-3. cerrar `TAREA_ACTIVA.md` en un último commit/PR documental;
-4. mantener `stable` en el SHA funcional certificado durante estos cambios de memoria;
-5. no abrir v5.24 automáticamente.
-
-Detalle técnico y artefactos: `RELEASE-v5.23.md`.
+No modificar retrospectivamente v5.23 para abrir nuevas funcionalidades.

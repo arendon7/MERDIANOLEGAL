@@ -7,10 +7,11 @@
 - Repositorio: `arendon7/MERDIANOLEGAL`.
 - Rama técnica/productiva: `main`.
 - Snapshot público certificado: `stable`.
-- Release funcional certificada: **5.23.0 — compresión del contacto comercial**.
+- Release funcional certificada y cerrada: **5.23.0 — compresión del contacto comercial**.
 - SHA funcional: `8d749ab286e8ecbec4d4bd7a083b03dc2b47e5ca`.
 - Run final: `31730632791`.
-- Al cierre funcional: `main == stable == 8d749ab286e8ecbec4d4bd7a083b03dc2b47e5ca`.
+- Snapshot público: `stable = 8d749ab286e8ecbec4d4bd7a083b03dc2b47e5ca`.
+- Cierre documental principal: `main = 6a468a16f3a9590eab49c67e6796635aaf474fe7` antes de este cierre final.
 - No existe una release funcional posterior activa.
 
 `version.json` conserva el channel técnico `github-pages-public-contact-compression-candidate`. No se renombra durante un cierre exclusivamente documental porque esa entrada dispara builder/Pages. El estado certificado lo determinan los gates, `stable` y esta memoria.
@@ -73,14 +74,14 @@ Artefactos: Pages `9193089702`; Lighthouse `9193157108`; CI `9193218997`; releas
 
 ## Graphify
 
-Antes del cierre documental, Graphify 0.9.26 procesa exactamente `8d749ab286e8ecbec4d4bd7a083b03dc2b47e5ca`: 675 nodos, 1.126 relaciones y 96 notas. Tras el merge documental debe actualizar `source_commit` al nuevo `main`; ese avance no debe mover `stable`.
+Después del PR documental #100, Graphify 0.9.26 procesó exactamente `main = 6a468a16f3a9590eab49c67e6796635aaf474fe7` y registró 675 nodos, 1.126 relaciones y 96 notas. La memoria derivada estaba fresca antes de este cierre final; el último commit documental debe volver a actualizar `source_commit` sin mover `stable`.
 
 ## Trazabilidad
 
-PRs principales v5.23: #92, #93, #95, #97, #98 y #99. Detalle completo en `RELEASE-v5.23.md`.
+PRs principales v5.23: #92, #93, #95, #97, #98 y #99. PR #100: release note, README y memoria de cierre. Detalle completo en `RELEASE-v5.23.md`.
 
 ## Estado del ciclo
 
-**v5.23 está funcionalmente cerrada y su documentación de cierre está en curso. No existe una v5.24 activa.**
+**v5.23 está implementada, desplegada, certificada, documentada y formalmente cerrada. No existe una v5.24 activa ni una tarea funcional abierta.**
 
 Cualquier ciclo posterior debe empezar con auditoría independiente, problema observable, objetivo, contrato, no-objetivos y criterios de cierre.
