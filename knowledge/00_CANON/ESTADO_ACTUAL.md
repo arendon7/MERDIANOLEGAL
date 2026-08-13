@@ -7,17 +7,19 @@
 - Repositorio: `arendon7/MERDIANOLEGAL`.
 - Rama técnica/productiva: `main`.
 - Snapshot público certificado: `stable`.
-- Release pública certificada: `5.22.0`.
-- Snapshot funcional certificado: `5c3f3194b45afb9ac21a8def27afdc3d2157b3e2`.
-- Run público final v5.22: `31671834728`.
-- Canal de release: `github-pages-public-offer-narrative-ready`.
+- Release pública certificada y cerrada: `5.22.0`.
+- SHA funcional de las mejoras v5.22: `5c3f3194b45afb9ac21a8def27afdc3d2157b3e2`.
+- Run de certificación funcional: `31671834728`.
+- Snapshot público final `ready`: `stable = dcb5bc9643eff595c0f8614c7cf6acbadc3bb719`.
+- Run final de recertificación `ready`: `31673266141`.
+- Canal: `github-pages-public-offer-narrative-ready`.
 - No existe una release funcional posterior activa.
 
-Refs, Pages, validators y tests son la autoridad para el estado productivo. Al cierre funcional v5.22, `main == stable == 5c3f3194b45afb9ac21a8def27afdc3d2157b3e2`. Los commits documentales posteriores pueden hacer avanzar `main` sin alterar el snapshot funcional; cualquier cambio publicable posterior deberá volver a superar todos los gates antes de mover `stable`.
+El SHA `5c3f3194…` identifica el cierre funcional de las mejoras de producto/contenido. El SHA `dcb5bc96…` incorpora además el cierre documental y metadata `ready` y volvió a superar toda la certificación pública. Después de este punto, commits exclusivamente documentales pueden hacer avanzar `main` sin mover `stable`, siempre que no modifiquen runtime o salida pública.
 
 ## Estado funcional
 
-**v5.22.0 está implementada, desplegada, certificada y funcionalmente cerrada.**
+**v5.22.0 está implementada, desplegada, certificada y formalmente cerrada.**
 
 La release reconcilia la mejor narrativa histórica con el catálogo profundo v4.1/v4.2 y la arquitectura comercial v5.20–v5.21, sin crear ofertas nuevas.
 
@@ -62,16 +64,13 @@ v5.22 endurece además el source-of-truth del catálogo: `Meridiano Empresas` so
 
 El runtime preserva el HTML prerenderizado de las fichas cuando `#detail-page` declara `data-static-catalog="true"`. `catalog-page.js` ya no reemplaza la salida canónica con el template dinámico legado; el renderer dinámico queda como fallback para superficies no canónicas.
 
-## Evidencia funcional final v5.22
+## Evidencia funcional v5.22
 
-Run `31671834728`, SHA certificado `5c3f3194b45afb9ac21a8def27afdc3d2157b3e2`:
+Run `31671834728`, SHA funcional `5c3f3194b45afb9ac21a8def27afdc3d2157b3e2`:
 
-- builder canónico: PASS;
-- segunda pasada/idempotencia: PASS;
-- validadores históricos: PASS;
-- validator v5.22: PASS;
-- GitHub Pages: PASS;
-- smoke público: PASS;
+- builder + idempotencia: PASS;
+- validadores históricos + v5.22: PASS;
+- Pages + smoke: PASS;
 - Browser E2E + axe: 49 observados → 47 PASS / 2 SKIP / 0 FAIL / 0 RETRY;
 - 7 superficies axe WCAG 2.1 AA sin violaciones serias/críticas;
 - Lighthouse: 6/6 PASS;
@@ -80,19 +79,40 @@ Run `31671834728`, SHA certificado `5c3f3194b45afb9ac21a8def27afdc3d2157b3e2`:
 - portada: performance 1.00, accesibilidad 1.00, LCP 1367 ms, CLS 0, TBT 55 ms;
 - Product IA: performance 0.96, accesibilidad 1.00, LCP 1245 ms, CLS 0, TBT 210 ms;
 - CI hasta `stable`: 206 s;
-- baseline v5.5: 279 s;
-- mejora: 26.2%;
+- mejora frente a baseline 279 s: 26.2%;
 - cobertura reducida: no;
-- budgets relajados: no;
-- release-health: PASS;
-- promoción de `stable`: PASS.
+- budgets relajados: no.
 
-Artefactos finales:
+Artefactos funcionales:
 
 - Lighthouse `9170023458`, `sha256:1184af3788a4cf82a017c59e301bdc30f72bfa0291efd27fb6fd17387168457c`;
 - CI `9170051799`, `sha256:d4bcc4135c9e3f5047f00d6e29e398fb30434a62711bfe779cc7cda65ae76365`;
 - release-health `9170052414`, `sha256:c947f7b9c4b98b03bc63059d317c6c35f9da8b3dfa43fe0a28156ebab3d42dce`;
 - Pages `9169986924`, `sha256:247be73a2e8077eef40f4080f900bab98b0ba528f28a8473221d85a6c7eef3c8`.
+
+## Recertificación pública de cierre `ready`
+
+Run `31673266141`, SHA público final `dcb5bc9643eff595c0f8614c7cf6acbadc3bb719`:
+
+- Validate current site: PASS;
+- builder/segunda pasada e idempotencia: PASS;
+- Pages: PASS;
+- smoke público: PASS;
+- Browser E2E/axe: PASS;
+- Lighthouse: PASS;
+- release-health: PASS;
+- `stable` promovida: PASS;
+- tiempo hasta gate `stable`: 204 s;
+- mejora frente al baseline: 26.9%;
+- cobertura reducida: no;
+- budgets relajados: no.
+
+Artefactos de recertificación:
+
+- Lighthouse `9170555585`, `sha256:caa45c6b95f374fcbafd1ccdc2f4d900047747e045575bbcdc23394ca788c72b`;
+- CI `9170580133`, `sha256:d4a2f062fb94acd5534774bce0b9c0f92b5bc77e249535934a21f141331a6bdf`;
+- release-health `9170580558`, `sha256:6ede271d091608c1094b091593f51c27c76885d12a029fddd09c781729921e3a`;
+- Pages `9170509163`, `sha256:80f860e54f8c55715ca18e9dcf8d633ca3bf5324d25a661a8c4169eb97f548bf`.
 
 ## Trazabilidad v5.22
 
@@ -101,7 +121,8 @@ Artefactos finales:
 - PR #86: capability truth desde catálogo fuente;
 - PR #87: smoke público version-aware;
 - PR #88: preservación del prerender static-first en runtime;
-- PR #89: contraste AA de ficha profunda.
+- PR #89: contraste AA de ficha profunda;
+- PR #90: cierre formal, release note, README y canal `ready`.
 
 La documentación extensa vive en `RELEASE-v5.22.md`.
 
@@ -126,10 +147,10 @@ La documentación extensa vive en `RELEASE-v5.22.md`.
 
 ## Graphify / procedencia
 
-La rama `knowledge/graphify-live` es memoria derivada. La comprobación correcta de frescura es leer `graphify-out/BUILD_META.json` y verificar que `source_commit` coincida con el `main` realmente procesado por el último run exitoso.
+La rama `knowledge/graphify-live` es memoria derivada. La comprobación correcta de frescura es leer `graphify-out/BUILD_META.json` y verificar que `source_commit` coincida con el `main` documental realmente procesado por el último run exitoso.
 
 ## Estado del ciclo
 
-v5.22 está funcionalmente cerrada. El único trabajo permitido dentro de este cierre es documentación, sincronización de memoria y verificación de Graphify. **No existe una v5.23 activa.**
+**v5.22 está cerrada. No existe una v5.23 activa.**
 
 Un ciclo posterior debe empezar con una auditoría independiente, definir problema observable, objetivo, contrato, no-objetivos y criterios de cierre antes de crear una nueva versión funcional.
