@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""v5.24: única fuente de verdad para el orden de composición canónica pública."""
+"""v5.24: fuente de verdad verificable para el orden de composición canónica pública."""
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -11,6 +11,8 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 VERSION_FILE = ROOT / "version.json"
+BUILD_WORKFLOW = ROOT / ".github/workflows/build-canonical.yml"
+PAGES_WORKFLOW = ROOT / ".github/workflows/pages.yml"
 
 
 @dataclass(frozen=True)
@@ -67,6 +69,34 @@ def semver(value: str) -> tuple[int, int, int]:
     return tuple(map(int, match.groups())) if match else (0, 0, 0)
 
 
+def workflow_command(step: Step) -> str:
+    target = Path(step.command[-1]).name
+    return f"node scripts/{target}" if target.endswith(".mjs") else f"python3 scripts/{target}"
+
+
+def extract_commands(text: str, start: str, end: str, label: str) -> list[str]:
+    a = text.find(start)
+    b = text.find(end, a + len(start)) if a >= 0 else -1
+    if a < 0 or b < 0:
+        raise SystemExit(f"CANONICAL PIPELINE V5.24 FAIL: no se reconoce bloque {label}")
+    block = text[a:b]
+    return [" ".join(match.groups()) for match in re.finditer(r"(?m)^\s*(python3|node)\s+(scripts/[^\s]+)\s*$", block)]
+
+
+def validate_workflow_contracts() -> None:
+    expected = [workflow_command(step) for step in CANONICAL_STEPS]
+    build = BUILD_WORKFLOW.read_text(encoding="utf-8")
+    pages = PAGES_WORKFLOW.read_text(encoding="utf-8")
+    build_commands = extract_commands(build, "- name: Generate catalog shells", "- name: Commit canonical outputs", "builder")
+    pages_commands = extract_commands(pages, "- name: Check canonical generators are idempotent", "git diff --exit-code", "segunda pasada Pages")
+    if build_commands != expected:
+        raise SystemExit(f"CANONICAL PIPELINE V5.24 FAIL: builder diverge del manifiesto: {build_commands}")
+    if pages_commands != expected:
+        raise SystemExit(f"CANONICAL PIPELINE V5.24 FAIL: Pages diverge del manifiesto: {pages_commands}")
+    if build_commands != pages_commands:
+        raise SystemExit("CANONICAL PIPELINE V5.24 FAIL: builder y Pages no ejecutan la misma secuencia")
+
+
 def validate_manifest() -> None:
     version = json.loads(VERSION_FILE.read_text(encoding="utf-8")).get("version", "0.0.0")
     if semver(version) < (5, 24, 0):
@@ -77,39 +107,37 @@ def validate_manifest() -> None:
     if len(CANONICAL_STEPS) != 30:
         raise SystemExit(f"CANONICAL PIPELINE V5.24 FAIL: se esperaban 30 pasos y hay {len(CANONICAL_STEPS)}")
     if CANONICAL_STEPS[-1].key != "handoff-observability-v518-plus":
-        raise SystemExit("CANONICAL PIPELINE V5.24 FAIL: la extensión canónica final debe permanecer en v5.18+")
+        raise SystemExit("CANONICAL PIPELINE V5.24 FAIL: la extensión final debe permanecer en v5.18+")
     for step in CANONICAL_STEPS:
         target = step.command[-1]
         if target.endswith((".py", ".mjs")) and not Path(target).exists():
             raise SystemExit(f"CANONICAL PIPELINE V5.24 FAIL: falta {target}")
+    validate_workflow_contracts()
 
 
 def run_pipeline() -> int:
     validate_manifest()
-    print(f"CANONICAL PIPELINE V5.24: {len(CANONICAL_STEPS)} pasos, una única secuencia declarada.")
     for index, step in enumerate(CANONICAL_STEPS, start=1):
         print(f"[{index:02d}/{len(CANONICAL_STEPS)}] {step.key} · {step.title}", flush=True)
         completed = subprocess.run(step.command, cwd=ROOT)
         if completed.returncode:
-            raise SystemExit(
-                f"CANONICAL PIPELINE V5.24 FAIL: paso {index} ({step.key}) terminó con {completed.returncode}"
-            )
-    print("CANONICAL PIPELINE V5.24 OK: composición completa ejecutada sin rutas alternativas.")
+            raise SystemExit(f"CANONICAL PIPELINE V5.24 FAIL: paso {index} ({step.key}) terminó con {completed.returncode}")
+    print("CANONICAL PIPELINE V5.24 OK")
     return 0
 
 
 def main(argv: list[str] | None = None) -> int:
     args = list(sys.argv[1:] if argv is None else argv)
-    mode = args[0] if args else "apply"
+    mode = args[0] if args else "validate"
     if mode == "apply":
         return run_pipeline()
     if mode == "validate":
         validate_manifest()
-        print("CANONICAL PIPELINE V5.24 MANIFEST OK")
+        print("CANONICAL PIPELINE V5.24 MANIFEST OK: 30 pasos; builder == Pages == manifiesto.")
         return 0
     if mode == "list":
         for index, step in enumerate(CANONICAL_STEPS, start=1):
-            print(f"{index:02d}\t{step.key}\t{step.title}\t{' '.join(step.command)}")
+            print(f"{index:02d}\t{step.key}\t{step.title}\t{workflow_command(step)}")
         return 0
     raise SystemExit(f"uso: {Path(sys.argv[0]).name} [apply|validate|list]")
 
