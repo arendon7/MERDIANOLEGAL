@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Normaliza la presentación v5.23 reutilizando estilos históricos ya certificados."""
+"""Normaliza la presentación v5.23 reutilizando estilos históricos y contraste AA explícito."""
 from __future__ import annotations
 
 from pathlib import Path
@@ -22,6 +22,12 @@ def replace_once(text: str, old: str, new: str, label: str) -> str:
 
 def main() -> int:
     text = HOME.read_text(encoding="utf-8")
+    text = replace_once(
+        text,
+        '  <link rel="stylesheet" href="decision-action-v515.css">\n',
+        '  <link rel="stylesheet" href="decision-action-v515.css">\n  <link rel="stylesheet" href="contact-v523.css">\n',
+        "hoja de contraste v5.23",
+    )
     text = replace_once(
         text,
         '<div class="contact-synthesis-v523 full"',
@@ -71,7 +77,7 @@ def main() -> int:
         raise RuntimeError(f"normalización v5.23 inválida: {detail}")
     if result.stdout.strip():
         print(result.stdout.strip())
-    print("CONTACT PRESENTATION V5.23 OK: síntesis integrada sobre componentes visuales certificados.")
+    print("CONTACT PRESENTATION V5.23 OK: síntesis integrada con contraste AA explícito.")
     return 0
 
 
