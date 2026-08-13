@@ -1,14 +1,20 @@
 #!/usr/bin/env python3
-"""Aplica v5.18: observabilidad local del handoff manual, sin PII ni persistencia."""
+"""Aplica v5.18 y encadena extensiones canónicas posteriores al handoff."""
 from __future__ import annotations
 
 from pathlib import Path
+import json
 import re
 
 ROOT = Path(__file__).resolve().parents[1]
 HOME = ROOT / "index.html"
 SCRIPT = '<script defer src="handoff-observability-v518.js"></script>'
 ANCHOR = '<script defer src="telemetry-v50.js"></script>'
+
+
+def semver(value: str) -> tuple[int, int, int]:
+    match = re.fullmatch(r"(\d+)\.(\d+)\.(\d+)", str(value))
+    return tuple(map(int, match.groups())) if match else (0, 0, 0)
 
 
 def main() -> int:
@@ -23,6 +29,11 @@ def main() -> int:
         raise RuntimeError("index.html: observabilidad v5.18 debe cargar después de telemetry-v50.js")
     HOME.write_text(text, encoding="utf-8")
     print("HANDOFF OBSERVABILITY V5.18 OK: runtime local insertado después de telemetry-v50.js.")
+
+    version = json.loads((ROOT / "version.json").read_text(encoding="utf-8")).get("version", "0.0.0")
+    if semver(version) >= (5, 21, 0):
+        from apply_capability_truth_v521 import main as apply_capability_truth_v521
+        return apply_capability_truth_v521()
     return 0
 
 
