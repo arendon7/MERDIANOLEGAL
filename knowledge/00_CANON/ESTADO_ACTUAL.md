@@ -5,56 +5,50 @@
 ## Fuente canónica
 
 - Repositorio: `arendon7/MERDIANOLEGAL`.
-- Rama técnica/productiva: `main`.
-- Snapshot público certificado: `stable`.
-- Release funcional certificada y cerrada: **5.23.0 — compresión del contacto comercial**.
-- SHA funcional: `8d749ab286e8ecbec4d4bd7a083b03dc2b47e5ca`.
-- Run final: `31730632791`.
-- Snapshot público: `stable = 8d749ab286e8ecbec4d4bd7a083b03dc2b47e5ca`.
-- Cierre documental principal: `main = 6a468a16f3a9590eab49c67e6796635aaf474fe7` antes de este cierre final.
+- Rama técnica/documental: `main`.
+- Snapshot funcional certificado: `stable`.
+- Release funcional certificada: **5.24.0 — orquestación canónica verificable**.
+- SHA funcional: `73ba88fda16545cc3a257594b2a91d67a9c848b6`.
+- Run final: `31739813251`.
+- Snapshot certificado: `stable = 73ba88fda16545cc3a257594b2a91d67a9c848b6`.
 - No existe una release funcional posterior activa.
 
-`version.json` conserva el channel técnico `github-pages-public-contact-compression-candidate`. No se renombra durante un cierre exclusivamente documental porque esa entrada dispara builder/Pages. El estado certificado lo determinan los gates, `stable` y esta memoria.
+## Qué dejó v5.24
 
-## Qué dejó v5.23
+v5.24 incorpora `scripts/canonical_pipeline_v524.py` como manifiesto explícito de 30 pasos y exige que las dos rutas de composición existentes ejecuten exactamente los mismos comandos y en el mismo orden.
 
-El formulario conserva los mismos campos y la misma lógica comercial, pero reduce superficies visibles:
+Contrato:
 
-1. datos de contacto y necesidad;
-2. momento, horizonte y presupuesto opcional;
-3. una única síntesis dinámica con v5.9/v5.13/v5.14/v5.15;
-4. un único disclosure con v5.10/v5.11;
-5. contexto general, privacidad y CTA;
-6. handoff manual v5.17/v5.18.
+`builder == segunda pasada == manifiesto`
 
-La síntesis final es `div[role="region"]`. Una intención explícita `proposal` puede abrir el disclosure; orientación/alcance permanecen colapsados. No hay scoring, inferencia, storage, PII nueva ni transporte automático.
+El guard se integra en la cadena canónica ya existente. Los scripts históricos permanecen, no se redujo cobertura y no se relajaron budgets.
+
+No hubo rediseño intencional ni cambio de productos, servicios, precios, firma, formulario o capacidades externas. La release es un hardening de reproducibilidad y mantenimiento.
 
 ## Evidencia certificada
 
-Run `31730632791`:
+Run `31739813251`:
 
-- builder + segunda pasada/idempotencia: PASS;
-- validadores históricos + v5.23: PASS;
+- builder y manifiesto de 30 pasos: PASS;
+- segunda pasada/idempotencia: PASS;
+- validadores históricos: PASS;
 - Pages + smoke: PASS;
 - Browser E2E + axe: **58 observados → 56 PASS / 2 SKIP / 0 FAIL / 0 RETRY**;
 - 7 superficies axe WCAG 2.1 AA sin violaciones serias/críticas;
-- Lighthouse: **6/6 PASS**;
-- Home: performance 1.00, accesibilidad 1.00, LCP 1304 ms, CLS 0, TBT 11 ms;
-- CI hasta `stable`: 264 s frente a baseline 279 s;
+- Lighthouse: **6/6 PASS**, performance 1.00 y accesibilidad 1.00 en las seis superficies;
+- Home: LCP 1421 ms, CLS 0, TBT 42 ms;
+- CI hasta `stable`: 196 s frente a baseline 279 s, mejora 29.7%;
 - cobertura reducida: no;
 - budgets relajados: no;
 - promoción de `stable`: PASS.
 
-Artefactos: Pages `9193089702`; Lighthouse `9193157108`; CI `9193218997`; release-health `9193219605`. Digests completos: `RELEASE-v5.23.md`.
+Artefactos: Pages `9196603570`; Lighthouse `9196671033`; CI `9196701543`; release-health `9196701995`. Digests completos en `RELEASE-v5.24.md`.
 
 ## Incidencias cerradas
 
-- compatibilidad version-aware v4.9/v5.10 para controles existentes con serialización no literal;
-- corrección raíz v4.5: wrapper v5.23 como `DIV`, evitando truncado de `#contacto`;
-- E2E de integridad protege `DIV + message + privacy + submit`;
-- accesibilidad version-aware exige un disclosure único v5.23 con v5.10/v5.11 completos y target ≥44 px;
-- cuatro fallos reales de contraste axe corregidos, sin exclusiones;
-- builder y Release Governance vigilan directamente los tres scripts v5.23 y existe un gate nominal de validación final.
+- el parser inicial del manifiesto solo reconocía comandos YAML multiline; se corrigió para normalizar formas inline y multiline sin cambiar las rutas reales;
+- el canal inicial no se identificaba como superficie pública; el validator de producción bloqueó correctamente y la metadata se corrigió antes de recertificar desde cero;
+- ningún validator histórico se debilitó para resolver estas incidencias.
 
 ## Invariantes
 
@@ -62,26 +56,25 @@ Artefactos: Pages `9193089702`; Lighthouse `9193157108`; CI `9193218997`; releas
 - 46 HTML;
 - 16 fichas profundas;
 - 1 formulario físico canónico;
-- piso v5.23: 58 tests observados, 7 superficies axe y 6 Lighthouse;
+- piso de cobertura: 58 tests observados, 7 superficies axe y 6 Lighthouse;
 - budgets v5.5 intactos;
 - telemetría sin PII;
 - WhatsApp manual;
-- analítica externa apagada (`provider:none`);
+- analítica externa apagada;
 - portal real deshabilitado;
 - sin CRM/backend, storage servidor, autenticación real, firma, pagos, agenda o carga documental ficticios;
 - sin claims no verificables;
-- `stable` solo se mueve tras gates verdes.
+- `stable` solo se mueve tras gates verdes;
+- el orden canónico debe permanecer explícito y verificable.
 
 ## Graphify
 
-Después del PR documental #100, Graphify 0.9.26 procesó exactamente `main = 6a468a16f3a9590eab49c67e6796635aaf474fe7` y registró 675 nodos, 1.126 relaciones y 96 notas. La memoria derivada estaba fresca antes de este cierre final; el último commit documental debe volver a actualizar `source_commit` sin mover `stable`.
+Al cierre funcional Graphify 0.9.26 ya reconoce v5.24 con 685 nodos, 1.147 relaciones, 96 notas, 76 scripts Python, 25 fuentes JavaScript y 9 specs E2E. El cierre documental debe producir una corrida cuyo `source_commit` coincida exactamente con el `main` documental definitivo, sin mover `stable`.
 
 ## Trazabilidad
 
-PRs principales v5.23: #92, #93, #95, #97, #98 y #99. PR #100: release note, README y memoria de cierre. Detalle completo en `RELEASE-v5.23.md`.
+PR #102: orquestación canónica verificable. PR #103: corrección de metadata del canal. Builder final `31739786763`; certificación final `31739813251`. Detalle completo en `RELEASE-v5.24.md`.
 
 ## Estado del ciclo
 
-**v5.23 está implementada, desplegada, certificada, documentada y formalmente cerrada. No existe una v5.24 activa ni una tarea funcional abierta.**
-
-Cualquier ciclo posterior debe empezar con auditoría independiente, problema observable, objetivo, contrato, no-objetivos y criterios de cierre.
+**v5.24 está implementada, desplegada y funcionalmente certificada. El cierre documental/Graphify está en curso. No existe una v5.25 activa.**
