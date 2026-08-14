@@ -46,4 +46,9 @@
   .home-signal-meta-v526 span{flex:0 0 min(78vw,290px);margin:0;padding:13px 18px 13px 0;border-right:1px solid #e0d8ca;scroll-snap-align:start}
   .home-signal-meta-v526 span+span{padding-left:18px}
   .home-signal-meta-v526 span:last-child{border-right:0}
+
+  /* v5.27 · mobile commercial density */
+  #servicios .service-grid,#productos .product-grid,#sectores .sectors-grid,#planes .commercial-plans,#honorarios .pricing-grid-v43{display:grid;grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:min(86vw,340px);gap:14px;max-width:100%;min-width:0;overflow-x:auto;overflow-y:hidden;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory;scroll-padding-inline:2px;padding:2px 2px 16px;-webkit-overflow-scrolling:touch;scrollbar-width:thin;align-items:stretch}
+  #planes .commercial-plans,#honorarios .pricing-grid-v43{grid-auto-columns:min(88vw,350px)}
+  #servicios .service-grid>* ,#productos .product-grid>* ,#sectores .sectors-grid>* ,#planes .commercial-plans>* ,#honorarios .pricing-grid-v43>*{min-width:0;align-self:stretch;scroll-snap-align:start}
 }
