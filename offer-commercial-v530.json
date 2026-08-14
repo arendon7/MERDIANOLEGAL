@@ -1,0 +1,188 @@
+{
+  "version": "5.30.0",
+  "principles": {
+    "commercial_goal": "hacer-explicita-la-logica-de-contratacion-sin-duplicar-la-ficha",
+    "fee_truth": "explicar-como-se-dimensionan-honorarios-sin-publicar-tarifas-inventadas",
+    "scope_truth": "la-fuente-juridica-del-catalogo-manda-sobre-perimetro-entregables-limites-y-aceptacion",
+    "closure_truth": "el-cierre-se-verifica-con-entregables-y-criterios-no-con-resultados-de-terceros",
+    "no_automatic_quote": true
+  },
+  "offers": {
+    "service-diagnostic": {
+      "engagement_basis": "Proyecto de diagnóstico con perímetro confirmado antes de iniciar.",
+      "fee_logic": "Los honorarios se dimensionan según entidad, muestra documental, entrevistas y profundidad requerida. La propuesta no presume la implementación completa de las medidas correctivas que resulten del diagnóstico.",
+      "drivers": [
+        ["Perímetro societario", "Más entidades, unidades de negocio o periodos aumentan la reconstrucción de hechos, documentos y responsables."],
+        ["Muestra y profundidad", "El volumen de documentos, entrevistas y frentes que deban contrastarse determina la carga efectiva de revisión."],
+        ["Urgencia y dependencias", "Decisiones próximas, terceros, especialistas o fechas no controladas pueden exigir priorización y coordinación adicional."]
+      ],
+      "change_rule": "Si la necesidad evoluciona hacia auditoría integral, due diligence o ejecución de una remediación extensa, se delimita un alcance separado o se recomienda la solución correspondiente.",
+      "close_rule": "El diagnóstico se verifica con informe ejecutivo, matriz priorizada, plan de 90 días, mapa de obligaciones y comité de cierre dentro del perímetro acordado."
+    },
+    "service-direction": {
+      "engagement_basis": "Plan recurrente mensual o trimestral con usuarios, capacidad, SLA, canal y comité definidos.",
+      "fee_logic": "Los honorarios se estructuran por capacidad recurrente y nivel de servicio. La propuesta debe indicar la bolsa o unidad pactada, usuarios, prioridades, SLA, exclusiones y tratamiento de capacidad adicional.",
+      "drivers": [
+        ["Demanda y usuarios", "Número de solicitantes, frecuencia y diversidad de asuntos determinan la capacidad que debe reservarse."],
+        ["Complejidad y prioridad", "Negociaciones materiales, decisiones de dirección y urgencias consumen una capacidad distinta de asuntos rutinarios."],
+        ["Coordinación y disponibilidad", "Comités, especialistas externos, múltiples sociedades o ventanas de atención amplían la intensidad del servicio."]
+      ],
+      "change_rule": "Los picos de demanda pueden atenderse con capacidad adicional; transacciones extraordinarias, litigios y proyectos especiales se dimensionan como alcances separados.",
+      "close_rule": "Cada ciclo se verifica mediante tablero actualizado, atención dentro de la capacidad contratada, reglas de SLA, registro de decisiones, comité e informe periódico."
+    },
+    "service-contracts": {
+      "engagement_basis": "Una negociación o contrato material con documento principal, anexos, rondas y transferencia operativa delimitados.",
+      "fee_logic": "Los honorarios se dimensionan por negociación, documento principal y complejidad efectiva. La propuesta confirma anexos, rondas, contrapartes, reuniones y especialidades incluidas.",
+      "drivers": [
+        ["Documentos y anexos", "SLA, datos, seguridad, licencias o documentos conexos amplían el análisis más allá del contrato principal."],
+        ["Rondas y contrapartes", "Más ciclos de negociación, partes o estructuras conectadas aumentan iteración, coordinación y aprobaciones."],
+        ["Riesgo y urgencia", "Responsabilidad, PI, datos, garantías, dependencia operativa y fechas de cierre modifican la intensidad del trabajo."]
+      ],
+      "change_rule": "Rondas adicionales, anexos especializados, estructuras multilaterales o administración recurrente se incorporan únicamente mediante ampliación explícita.",
+      "close_rule": "El asunto se cierra con documento consolidado, excepciones materiales autorizadas, anexos consistentes y transferencia de obligaciones, hitos y siguientes acciones."
+    },
+    "service-corporate": {
+      "engagement_basis": "Proyecto societario o transaccional definido por sociedad, participantes, instrumentos y objetivo económico.",
+      "fee_logic": "Los honorarios dependen del número de entidades y participantes, instrumentos, intensidad de negociación y formalidades. Valoración, tributación, contabilidad y controversia no se presumen incluidas.",
+      "drivers": [
+        ["Entidades y participantes", "Sociedades, socios, inversionistas o vehículos adicionales multiplican posiciones, documentos y aprobaciones."],
+        ["Instrumentos e iteraciones", "Estatutos, acuerdos, actas, documentos de inversión y ciclos de negociación determinan la carga documental."],
+        ["Complejidad de la operación", "Capital, control, permanencia, salida, condiciones precedentes y conflictos potenciales cambian la profundidad requerida."]
+      ],
+      "change_rule": "Vehículos, participantes, instrumentos, due diligence o controversias adicionales solo se incorporan mediante una extensión expresamente acordada.",
+      "close_rule": "El cierre exige cap table de trabajo validado, instrumentos acordados listos para firma o formalización, decisiones resueltas y checklist de cierre y formalización."
+    },
+    "service-ip": {
+      "engagement_basis": "Proyecto por activo o portafolio con activos, evidencias, familias de protección e instrumentos jurídicos delimitados.",
+      "fee_logic": "Los honorarios se dimensionan por volumen de activos, relaciones de creación, complejidad de la cadena de derechos, jurisdicciones y actos jurídicos. Tasas oficiales y agentes extranjeros se mantienen separados.",
+      "drivers": [
+        ["Activos y creadores", "Más activos, autores, desarrolladores o antecedentes aumentan la reconstrucción de titularidad y evidencia."],
+        ["Protección y jurisdicción", "Familias registrales, territorios y estrategias de protección pueden requerir trámites o especialistas adicionales."],
+        ["Negociación y controversia", "Licencias, cesiones, oposiciones o desacuerdos con terceros exceden una regularización documental estándar."]
+      ],
+      "change_rule": "Activos adicionales, trámites registrales, licencias complejas o due diligence de PI se dimensionan como extensiones separadas.",
+      "close_rule": "El servicio se cierra con inventario conciliado, brechas de titularidad documentadas, instrumentos incluidos listos y calendario de protección y mantenimiento."
+    },
+    "service-ai": {
+      "engagement_basis": "Diagnóstico, implementación o gobierno continuo dimensionado por casos de uso, proveedores y nivel de impacto.",
+      "fee_logic": "Los honorarios dependen de la fase contratada, cantidad y criticidad de casos, proveedores y coordinación con tecnología, datos, seguridad y negocio. El gobierno recurrente se contrata como capacidad continua.",
+      "drivers": [
+        ["Casos e impacto", "Usos que afectan personas, decisiones sensibles o procesos críticos requieren mayor análisis, evidencia y supervisión."],
+        ["Proveedores y datos", "Número de terceros, fuentes de datos, integraciones y dependencias contractuales amplían la diligencia necesaria."],
+        ["Gobierno y recurrencia", "Comités, revisiones periódicas, excepciones e incidentes requieren una modalidad continua distinta del proyecto inicial."]
+      ],
+      "change_rule": "Casos, proveedores, evaluaciones de impacto o gobierno recurrente adicionales se incorporan únicamente mediante extensión expresa.",
+      "close_rule": "El alcance se verifica con casos clasificados, aprobaciones definidas, proveedores evaluados, instrumentos entregados y procedimiento de incidentes operable."
+    },
+    "service-regulated": {
+      "engagement_basis": "Un proyecto de viabilidad y estructuración definido por modelo operativo, territorio, autoridades, permisos y relaciones críticas.",
+      "fee_logic": "Los honorarios se dimensionan con la configuración jurídica del proyecto. Cambios en territorio, tecnología, autoridades, permisos o contratos exigen recalificar el alcance; estudios técnicos y trámites completos no se presumen incluidos.",
+      "drivers": [
+        ["Configuración y territorio", "Actividad, localización, capacidad y modelo de operación determinan el régimen y las restricciones aplicables."],
+        ["Autoridades y permisos", "Más competencias, habilitaciones o secuencias administrativas aumentan investigación y coordinación."],
+        ["Contratos y dependencias", "Alianzas, predios, financiación, suministro u operación pueden crear condiciones precedentes y riesgos adicionales."]
+      ],
+      "change_rule": "Autoridades, permisos, territorios, trámites o contratos adicionales se dimensionan como extensiones del proyecto.",
+      "close_rule": "El servicio se cierra con supuestos explícitos, ruta regulatoria trazada, condiciones precedentes identificadas y decisión documentada de avanzar, rediseñar o detener."
+    },
+    "service-ops": {
+      "engagement_basis": "Proyecto de transformación definido por catálogo de servicios, flujos, artefactos, datos y piloto.",
+      "fee_logic": "Los honorarios dependen del número y complejidad de procesos, usuarios, fuentes de datos y herramientas. Licencias, desarrollo a medida e integraciones complejas se cotizan separadamente.",
+      "drivers": [
+        ["Flujos y usuarios", "Más procesos, áreas y aprobadores aumentan diseño, RACI, pruebas y gestión del cambio."],
+        ["Datos y herramientas", "Calidad de datos, fuentes, seguridad e integraciones condicionan qué puede medirse o automatizarse."],
+        ["Piloto y adopción", "Número de pilotos, capacitación, iteraciones y soporte de despliegue modifican la intensidad de implementación."]
+      ],
+      "change_rule": "Flujos adicionales, integraciones, automatización documental u operación gestionada requieren unidades o proyectos complementarios.",
+      "close_rule": "El proyecto se verifica con catálogo aprobado, flujos operables, datos medibles y piloto cerrado con ajustes documentados antes de escalar."
+    },
+    "product-diagnostic": {
+      "engagement_basis": "Producto cerrado sobre el perímetro estándar de una sociedad, documentos, entrevistas, frentes y hallazgos definidos en la ficha.",
+      "fee_logic": "Los honorarios corresponden al producto y su perímetro estándar. Sociedades, frentes, documentos, remediaciones, trámites o especialistas adicionales se incorporan como suplementos o alcances separados.",
+      "drivers": [
+        ["Perímetro adicional", "Otra sociedad, más documentos, entrevistas o frentes amplían la muestra y el número de relaciones que deben contrastarse."],
+        ["Remediación", "La auditoría incluye solo los instrumentos correctivos definidos; ejecutar el plan completo es una intervención distinta."],
+        ["Especialidad y actuaciones", "Litigio, tributación, técnica o trámites ante autoridades requieren especialistas o alcance separado."]
+      ],
+      "change_rule": "Una sociedad o frente adicional, remediación ampliada o acompañamiento mensual se añade sin convertir el producto base en una obligación abierta.",
+      "close_rule": "El producto termina con expediente completo dentro del perímetro, hallazgos trazables, ronda consolidada y comité ejecutivo con pendientes fuera de alcance."
+    },
+    "product-organized": {
+      "engagement_basis": "Implementación cerrada para una sociedad con instrumentos, modelos, obligaciones, repositorio y transferencia cuantificados.",
+      "fee_logic": "Los honorarios cubren el paquete estándar descrito en la ficha. Modelos, instrumentos, sociedades, migraciones o mantenimiento recurrente adicionales se contratan como suplementos.",
+      "drivers": [
+        ["Sociedades y gobierno", "Entidades, órganos, atribuciones o decisiones corporativas adicionales amplían la arquitectura a documentar."],
+        ["Documentos y modelos", "Más instrumentos corporativos o contractuales superan las cantidades incluidas en el paquete estándar."],
+        ["Migración y mantenimiento", "Volúmenes de archivo, normalización histórica o continuidad posterior requieren capacidad adicional."]
+      ],
+      "change_rule": "Cada modelo, instrumento, sociedad o modalidad de mantenimiento fuera del perímetro se incorpora como suplemento explícito.",
+      "close_rule": "El producto se cierra con documentos aprobados, responsables asignados, repositorio operativo y sesiones de transferencia completadas."
+    },
+    "product-assets": {
+      "engagement_basis": "Producto cerrado para un portafolio delimitado de activos, relaciones de creación, signos o registros e instrumentos de regularización.",
+      "fee_logic": "Los honorarios cubren el perímetro estándar. Activos, registros, contratos complejos, jurisdicciones o actuaciones adicionales se dimensionan separadamente; tasas oficiales y agentes externos no se incluyen.",
+      "drivers": [
+        ["Activos y cadena de derechos", "Más activos, creadores o contratos aumentan la reconstrucción de titularidad y evidencia."],
+        ["Registros y territorios", "Solicitudes, clases, jurisdicciones y renovaciones pueden exigir trámites y costos externos distintos."],
+        ["Terceros y negociación", "Regularizaciones que dependen de terceros o licencias complejas requieren negociación adicional."]
+      ],
+      "change_rule": "Activos, registros, contratos complejos o programas de secretos adicionales se incorporan mediante suplementos expresos.",
+      "close_rule": "El producto termina con inventario conciliado, brechas documentadas, instrumentos incluidos entregados y ruta futura de protección definida."
+    },
+    "product-investment": {
+      "engagement_basis": "Producto cerrado de investment readiness para una sociedad objetivo, muestra documental, contratos materiales, red flags y regularizaciones cuantificadas.",
+      "fee_logic": "Los honorarios cubren la preparación dentro del perímetro de readiness. Negociación de inversión, due diligence ampliada, sociedades adicionales o acompañamiento extendido al Q&A se cotizan por separado.",
+      "drivers": [
+        ["Estructura societaria", "Instrumentos de capital, deuda, derechos y entidades vinculadas determinan la complejidad de la conciliación."],
+        ["Volumen de revisión", "Documentos, contratos materiales, red flags y regularizaciones fuera de los máximos exigen ampliar el perímetro."],
+        ["Transacción y urgencia", "Tipo de inversión, cronograma, inversionistas y proceso efectivo de Q&A pueden requerir soporte adicional."]
+      ],
+      "change_rule": "Negociación de inversión, sociedad adicional, due diligence inversa o soporte durante el Q&A real se contratan como extensiones.",
+      "close_rule": "El producto se cierra con data room estructurado, red flags priorizados, regularizaciones incluidas y comité de readiness con pendientes y Q&A."
+    },
+    "product-ai": {
+      "engagement_basis": "Producto cerrado de gobernanza para casos de uso, proveedores, instrumentos, controles y capacitaciones definidos.",
+      "fee_logic": "Los honorarios cubren la implementación estándar. Casos, proveedores, evaluaciones de impacto o gobierno recurrente adicionales se dimensionan como suplementos.",
+      "drivers": [
+        ["Casos y criticidad", "Más casos o usos de alto impacto exigen mayor clasificación, control, evidencia y coordinación."],
+        ["Proveedores y datos", "Terceros, integraciones y tratamientos de datos aumentan la revisión contractual y de responsabilidades."],
+        ["Evaluaciones especializadas", "Impacto, seguridad, sesgo o materias sectoriales pueden requerir especialistas fuera del paquete jurídico."]
+      ],
+      "change_rule": "Cada caso, proveedor, evaluación de impacto o modalidad de gobierno continuo fuera del perímetro se incorpora como suplemento explícito.",
+      "close_rule": "El producto termina con casos inventariados, controles asignados, documentos de gobierno aprobados y al menos un caso recorrido mediante el nuevo flujo."
+    },
+    "product-regulated": {
+      "engagement_basis": "Producto cerrado para una sociedad promotora, un proyecto y localización con permisos, autoridades, contratos, predios y condiciones cuantificados.",
+      "fee_logic": "Los honorarios cubren la configuración declarada. Cambios materiales de localización, tecnología, capacidad, titular, permisos o contratos redimensionan el alcance; trámites y estudios técnicos se contratan aparte.",
+      "drivers": [
+        ["Configuración del proyecto", "Tecnología, capacidad, titular, etapas e insumos determinan el régimen y las dependencias jurídicas."],
+        ["Territorio y permisos", "Municipios, predios, autoridades y habilitaciones adicionales amplían la ruta regulatoria."],
+        ["Contratos y condiciones", "Más relaciones críticas o condiciones precedentes aumentan la estructuración y documentación requerida."]
+      ],
+      "change_rule": "Permisos, autoridades, municipios, predios, trámites o contratos fuera del perímetro se incorporan mediante suplemento o servicio especializado.",
+      "close_rule": "El producto se cierra con proyecto definido, ruta completa dentro del perímetro, decisiones trazables y comité ejecutivo con recomendación y pendientes."
+    },
+    "product-contract-system": {
+      "engagement_basis": "Producto cerrado para una sociedad y procesos contractuales definidos, con modelos, módulos, playbook, inventario, obligaciones y piloto cuantificados.",
+      "fee_logic": "Los honorarios cubren la implementación estándar. Modelos, contratos extraordinarios, migraciones, automatizaciones o integraciones adicionales se dimensionan separadamente.",
+      "drivers": [
+        ["Familias y modelos", "Más tipos contractuales, módulos o posiciones de playbook aumentan diseño, revisión y capacitación."],
+        ["Volumen histórico", "Contratos, relaciones y obligaciones por encima del perímetro exigen una migración o revisión ampliada."],
+        ["Tecnología y despliegue", "Automatización, firma, integraciones o CLM implican un proyecto tecnológico distinto del sistema jurídico base."]
+      ],
+      "change_rule": "Modelos adicionales, contratos extraordinarios, migración ampliada o Legal Operations se añaden como extensiones separadas.",
+      "close_rule": "El producto termina con modelos aprobados, playbook utilizable, inventario y obligaciones operativos y negociación piloto completada con ronda consolidada."
+    },
+    "product-data-consumer": {
+      "engagement_basis": "Producto cerrado para una sociedad y canales principales con tratamientos, bases, instrumentos, contratos y controles cuantificados.",
+      "fee_logic": "Los honorarios cubren la implementación jurídica estándar. Sociedades, canales, proveedores, actuaciones ante autoridad, incidentes o implementación técnica adicionales se dimensionan por separado.",
+      "drivers": [
+        ["Canales y entidades", "Más sociedades, sitios, ecommerce, CRM o canales de atención amplían flujos y documentos que deben conciliarse."],
+        ["Tratamientos y terceros", "Más procesos, bases, proveedores y transferencias incrementan inventario, contratos y controles."],
+        ["Tecnología y jurisdicción", "Implementaciones técnicas, seguridad o adecuaciones internacionales requieren alcance y especialistas adicionales."]
+      ],
+      "change_rule": "Canales, sociedades, proveedores, respuesta a incidentes o mantenimiento recurrente fuera del perímetro se incorporan como extensiones.",
+      "close_rule": "El producto se cierra con mapa conciliado, documentos coherentes con la operación, casos piloto probados y mantenimiento con responsables definido."
+    }
+  }
+}
