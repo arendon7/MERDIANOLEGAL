@@ -17,6 +17,37 @@ NESTED = (
     + list((ROOT / 'perspectivas').glob('*.html'))
 )
 
+V526_PRINCIPLES_ANCHOR = '''    <section class="principles" aria-label="Oferta pública de Meridiano Legal"><div class="container principles-grid"><article><svg><use href="#i-compass"/></svg><div><strong>8 servicios</strong><span>especializados</span></div></article><article><svg><use href="#i-contract"/></svg><div><strong>8 productos</strong><span>de alcance cerrado</span></div></article><article><svg><use href="#i-building"/></svg><div><strong>5 planes</strong><span>recurrentes</span></div></article><article><svg><use href="#i-chart"/></svg><div><strong>8 sectores</strong><span>con lectura operativa</span></div></article><article><svg><use href="#i-network"/></svg><div><strong>Centro demo</strong><span>y portal demostrativo</span></div></article></div></section>'''
+V526_AUDIENCE_ANCHOR = '''    <section class="audience-strip" aria-label="Empresas para las que puede ser útil Meridiano Legal"><div class="container audience-grid"><div class="audience-intro"><strong>Meridiano es especialmente útil cuando la decisión jurídica está conectada con crecimiento, inversión, operación o regulación.</strong><span>No es necesario conocer previamente el servicio correcto: el punto de entrada puede definirse desde la necesidad.</span></div><article><strong>Gerencia y dirección</strong><span>Decisiones que requieren criterio, priorización y ejecución.</span></article><article><strong>Socios e inversionistas</strong><span>Gobierno, capital, control, activos y reglas de relación.</span></article><article><strong>Equipos jurídicos y operativos</strong><span>Capacidad especializada, procesos, documentos y seguimiento.</span></article></div></section>'''
+
+
+def version_tuple(value: str) -> tuple[int, int, int]:
+    match = re.fullmatch(r'(\d+)\.(\d+)\.(\d+)', str(value))
+    return tuple(map(int, match.groups())) if match else (0, 0, 0)
+
+
+def rehydrate_v526_ux_anchors(text: str) -> str:
+    """Restaura solo durante composición las anclas que v4.5 todavía necesita.
+
+    v5.26 las consolida de nuevo al final del paso v5.18+. Nunca deben quedar
+    materializadas en el HTML público final.
+    """
+    if version_tuple(VERSION) < (5, 26, 0):
+        return text
+    missing_principles = 'class="principles"' not in text
+    missing_audience = 'class="audience-strip"' not in text
+    if not missing_principles and not missing_audience:
+        return text
+    anchor = '<section class="section needs-section" id="necesidades">'
+    if text.count(anchor) != 1:
+        raise RuntimeError('v5.26: no se encontró un único #necesidades para rehidratar anclas v4.5')
+    blocks = []
+    if missing_principles:
+        blocks.append(V526_PRINCIPLES_ANCHOR)
+    if missing_audience:
+        blocks.append(V526_AUDIENCE_ANCHOR)
+    return text.replace(anchor, '\n'.join(blocks) + '\n' + anchor, 1)
+
 
 def remove_managed_tag(text: str, tag: str) -> str:
     """Elimina una copia previa sin alterar el resto de la línea o del documento."""
@@ -27,6 +58,8 @@ def remove_managed_tag(text: str, tag: str) -> str:
 
 def patch(path: Path, prefix: str = '') -> None:
     text = path.read_text(encoding='utf-8')
+    if path.name == 'index.html':
+        text = rehydrate_v526_ux_anchors(text)
     text = text.replace(
         f'{prefix}assets/logo-meridiano-v3-light.svg',
         f'{prefix}assets/brand/meridiano-logo-horizontal-light.svg',
@@ -60,10 +93,6 @@ def patch(path: Path, prefix: str = '') -> None:
             text,
             count=1,
         )
-        # El hero debe entrar al primer layout con el mismo estado que tendrá
-        # después de ejecutar JS. Añadir esta clase en HTML evita que la imagen
-        # pase de elemento en flujo a position:absolute durante el arranque,
-        # que era la fuente del CLS de portada detectado por Lighthouse v5.5.
         text = text.replace(
             '<div class="hero-art"><img ',
             '<div class="hero-art"><img class="visual-home-hero" ',
