@@ -27,17 +27,25 @@ test('v5.28 acerca el contacto al cierre comercial sin eliminar profundidad', as
   await expect(contactSection.locator('[data-contact-synthesis-v523="true"]')).toHaveCount(1);
   await expect(contactSection.locator('details[data-contact-process-v523="true"]')).toHaveCount(1);
 
+  const readiness = contactSection.locator('.contact-readiness-items-v528');
+  await expect(readiness).toHaveAttribute('tabindex', '0');
+  await expect(readiness).toHaveAttribute('role', 'region');
+  await expect(readiness).toHaveAttribute('aria-label', 'Datos mínimos de la solicitud');
+  await readiness.focus();
+  await expect(readiness).toBeFocused();
+
   for (const [selector, label] of [
-    ['.contact-readiness-items-v528', 'Datos mínimos de la solicitud'],
     ['.contact-synthesis-grid-v523', 'Síntesis de la solicitud'],
     ['.contact-brief-grid-v523', 'Modalidad y estándar de trabajo'],
   ]) {
-    const region = contactSection.locator(selector);
-    await expect(region).toHaveAttribute('tabindex', '0');
-    await expect(region).toHaveAttribute('role', 'region');
-    await expect(region).toHaveAttribute('aria-label', label);
-    await region.focus();
-    await expect(region).toBeFocused();
+    const deck = contactSection.locator(selector);
+    await expect(deck).toHaveAttribute('tabindex', '0');
+    await expect(deck).toHaveAttribute('aria-label', label);
+    await expect(deck).not.toHaveAttribute('role', 'region');
+    const tagName = await deck.evaluate((node) => node.tagName);
+    expect(tagName).toBe('DL');
+    await deck.focus();
+    await expect(deck).toBeFocused();
   }
 
   const depth = page.locator('[data-conversion-depth-v528="true"]');
