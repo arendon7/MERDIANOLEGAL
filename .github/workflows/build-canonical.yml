@@ -67,6 +67,8 @@ on:
       - funnel-contract-v529.json
       - funnel-observability-v529.js
       - funnel-trust-v529.css
+      - offer-commercial-v530.json
+      - offer-commercial-v530.css
       - assets/**
       - scripts/build_catalog_shells.py
       - scripts/render_catalog_static.mjs
@@ -123,6 +125,8 @@ on:
       - scripts/validate_conversion_path_v528.py
       - scripts/apply_funnel_trust_v529.py
       - scripts/validate_funnel_trust_v529.py
+      - scripts/apply_offer_commercial_v530.py
+      - scripts/validate_offer_commercial_v530.py
       - scripts/validate_browser_v54.py
       - scripts/run_quality_v55.mjs
       - scripts/validate_quality_v55.py
