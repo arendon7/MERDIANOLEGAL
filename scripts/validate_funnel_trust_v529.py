@@ -13,6 +13,7 @@ CONTRACT = ROOT / 'funnel-contract-v529.json'
 AUTHORITY = ROOT / 'professional-authority-v525.json'
 SCRIPT = ROOT / 'funnel-observability-v529.js'
 CSS = ROOT / 'funnel-trust-v529.css'
+DETAIL_TARGETS = sorted((ROOT / 'servicios').glob('*.html')) + sorted((ROOT / 'productos').glob('*.html'))
 
 
 def semver(value: str) -> tuple[int, int, int]:
@@ -50,8 +51,9 @@ def main() -> int:
     require([item.get('rank') for item in stages] == list(range(7)), 'ranks del funnel inválidos')
 
     require(text.count('<link rel="stylesheet" href="funnel-trust-v529.css">') == 1, 'CSS v5.29 debe cargarse una vez')
-    require(text.count('<script defer src="funnel-observability-v529.js"></script>') == 1, 'runtime v5.29 debe cargarse una vez')
+    require(text.count('<script defer src="funnel-observability-v529.js"></script>') == 1, 'runtime home v5.29 debe cargarse una vez')
     require(text.count('data-funnel-trust-v529="true"') == 1, 'debe existir una sola señal de confianza')
+    require('<aside class="decision-trust-v529"' in text, 'la confianza debe ser aside contextual, no una nueva section')
     commercial = text.find('<!-- COMMERCIAL-V43:END -->')
     trust = text.find('data-funnel-trust-v529="true"')
     contact = text.find('id="contacto" data-conversion-path-v528="true"')
@@ -68,8 +70,17 @@ def main() -> int:
 
     anchor = '<script defer src="handoff-observability-v518.js"></script>'
     runtime = '<script defer src="funnel-observability-v529.js"></script>'
-    require(text.find(anchor) < text.find(runtime), 'runtime v5.29 debe cargar después de observabilidad v5.18')
-    for marker in ('window.MeridianoFunnelV529', "'funnel_checkpoint'", 'IntersectionObserver', 'telemetry.snapshot()', "window.addEventListener('meridiano:telemetry'"):
+    require(text.find(anchor) < text.find(runtime), 'runtime home v5.29 debe cargar después de observabilidad v5.18')
+    require(len(DETAIL_TARGETS) == 16, f'se esperaban 16 fichas y hay {len(DETAIL_TARGETS)}')
+    for path in DETAIL_TARGETS:
+        detail = path.read_text(encoding='utf-8')
+        detail_anchor = '<script defer src="../telemetry-v50.js"></script>'
+        detail_runtime = '<script defer src="../funnel-observability-v529.js"></script>'
+        require(detail.count(detail_runtime) == 1, f'{path.name}: runtime v5.29 debe cargarse una vez')
+        require(detail.find(detail_anchor) < detail.find(detail_runtime), f'{path.name}: runtime debe cargar después de telemetry-v50')
+        require('data-catalog-id=' in detail, f'{path.name}: falta identidad canónica de oferta')
+
+    for marker in ('window.MeridianoFunnelV529', "'funnel_checkpoint'", 'IntersectionObserver', 'telemetry.snapshot()', "window.addEventListener('meridiano:telemetry'", 'dataset.catalogId', "target: `offer:${catalogId}`"):
         require(marker in js, f'runtime carece de {marker}')
     for forbidden in ('localStorage', 'sessionStorage', 'indexedDB', 'document.cookie', 'navigator.sendBeacon', 'XMLHttpRequest', 'crypto.randomUUID', 'crypto.getRandomValues'):
         require(forbidden not in js, f'runtime no puede usar {forbidden}')
@@ -82,7 +93,7 @@ def main() -> int:
     for forbidden in ('display:none', 'visibility:hidden', 'content-visibility:hidden'):
         require(forbidden not in css, f'v5.29 no puede ocultar evidencia con {forbidden}')
 
-    print('FUNNEL + TRUST V5.29 OK: funnel acotado, cero PII/persistencia propia y confianza trazable antes del contacto.')
+    print('FUNNEL + TRUST V5.29 OK: funnel acotado en home + 16 fichas, cero PII/persistencia propia y confianza trazable antes del contacto.')
     return 0
 
 
