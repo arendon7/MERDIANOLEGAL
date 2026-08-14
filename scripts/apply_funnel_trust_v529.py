@@ -24,6 +24,8 @@ DETAIL_SCRIPT_ANCHOR = '<script defer src="../telemetry-v50.js"></script>'
 START = '<!-- FUNNEL-TRUST-V529:START -->'
 END = '<!-- FUNNEL-TRUST-V529:END -->'
 COMMERCIAL_END = '<!-- COMMERCIAL-V43:END -->'
+VISUAL_CSS = '<link rel="stylesheet" href="visual-v39.css">'
+COMMERCIAL_CSS = '<link rel="stylesheet" href="commercial-v43.css">'
 
 
 def semver(value: str) -> tuple[int, int, int]:
@@ -42,10 +44,26 @@ def strip_block(text: str) -> str:
 
 
 def ensure_link(text: str, link: str, anchor: str) -> str:
-    text = re.sub(r'(?m)^\s*' + re.escape(link) + r'\s*(?:\r?\n)?', '', text)
+    # Solo consume sangría horizontal y el salto de la propia línea. Usar \s aquí
+    # permitiría absorber saltos adyacentes y producir deriva de formato entre pasadas.
+    text = re.sub(
+        r'(?m)^[ \t]*' + re.escape(link) + r'[ \t]*(?:\r?\n)?',
+        '',
+        text,
+    )
     if anchor not in text:
         raise RuntimeError(f'falta ancla para {link}')
     return text.replace(anchor, anchor + '\n  ' + link, 1)
+
+
+def normalize_home_head(text: str) -> str:
+    """Fija el separador commercial-v43 → visual-v39 tras renderers históricos."""
+    pattern = re.escape(COMMERCIAL_CSS) + r'[ \t]*(?:\r?\n)(?:[ \t]*(?:\r?\n))*[ \t]*' + re.escape(VISUAL_CSS)
+    replacement = COMMERCIAL_CSS + '\n  ' + VISUAL_CSS
+    text, count = re.subn(pattern, replacement, text, count=1)
+    if count != 1:
+        raise RuntimeError('index.html: no se pudo normalizar commercial-v43.css → visual-v39.css')
+    return text
 
 
 def trust_block(source: dict) -> str:
@@ -84,6 +102,7 @@ def patch_home(source: dict) -> None:
     if text.count(COMMERCIAL_END) != 1:
         raise RuntimeError('index.html: el cierre comercial debe existir exactamente una vez')
     text = text.replace(COMMERCIAL_END, COMMERCIAL_END + '\n' + trust_block(source), 1)
+    text = normalize_home_head(text)
     HOME.write_text(text, encoding='utf-8')
 
 
