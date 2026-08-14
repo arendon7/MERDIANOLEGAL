@@ -50,10 +50,14 @@ def main() -> int:
             result = normalize_contact_compression_v523()
             if result:
                 return result
-            # v5.25 permanece dentro del paso v5.18+ y debe ser idempotente sobre HTML ya materializado.
             if semver(version) >= (5, 25, 0):
                 from apply_professional_authority_v525 import main as apply_professional_authority_v525
-                return apply_professional_authority_v525()
+                result = apply_professional_authority_v525()
+                if result:
+                    return result
+            if semver(version) >= (5, 26, 0):
+                from apply_integral_visual_v526 import main as apply_integral_visual_v526
+                return apply_integral_visual_v526()
             return 0
         return 0
     return 0
