@@ -14,10 +14,13 @@ HOME = ROOT / "index.html"
 VERSION = ROOT / "version.json"
 AUTHORITY = ROOT / "professional-authority-v525.json"
 CONTRACT = ROOT / "funnel-contract-v529.json"
+DETAIL_TARGETS = sorted((ROOT / "servicios").glob("*.html")) + sorted((ROOT / "productos").glob("*.html"))
 CSS_LINK = '<link rel="stylesheet" href="funnel-trust-v529.css">'
 CSS_ANCHOR = '<link rel="stylesheet" href="conversion-path-v528.css">'
-SCRIPT = '<script defer src="funnel-observability-v529.js"></script>'
-SCRIPT_ANCHOR = '<script defer src="handoff-observability-v518.js"></script>'
+HOME_SCRIPT = '<script defer src="funnel-observability-v529.js"></script>'
+HOME_SCRIPT_ANCHOR = '<script defer src="handoff-observability-v518.js"></script>'
+DETAIL_SCRIPT = '<script defer src="../funnel-observability-v529.js"></script>'
+DETAIL_SCRIPT_ANCHOR = '<script defer src="../telemetry-v50.js"></script>'
 START = '<!-- FUNNEL-TRUST-V529:START -->'
 END = '<!-- FUNNEL-TRUST-V529:END -->'
 COMMERCIAL_END = '<!-- COMMERCIAL-V43:END -->'
@@ -41,7 +44,7 @@ def strip_block(text: str) -> str:
 def ensure_link(text: str, link: str, anchor: str) -> str:
     text = re.sub(r'(?m)^\s*' + re.escape(link) + r'\s*(?:\r?\n)?', '', text)
     if anchor not in text:
-        raise RuntimeError(f'index.html: falta ancla para {link}')
+        raise RuntimeError(f'falta ancla para {link}')
     return text.replace(anchor, anchor + '\n  ' + link, 1)
 
 
@@ -77,11 +80,20 @@ def patch_home(source: dict) -> None:
     text = HOME.read_text(encoding='utf-8')
     text = strip_block(text)
     text = ensure_link(text, CSS_LINK, CSS_ANCHOR)
-    text = ensure_link(text, SCRIPT, SCRIPT_ANCHOR)
+    text = ensure_link(text, HOME_SCRIPT, HOME_SCRIPT_ANCHOR)
     if text.count(COMMERCIAL_END) != 1:
         raise RuntimeError('index.html: el cierre comercial debe existir exactamente una vez')
     text = text.replace(COMMERCIAL_END, COMMERCIAL_END + '\n' + trust_block(source), 1)
     HOME.write_text(text, encoding='utf-8')
+
+
+def patch_details() -> None:
+    if len(DETAIL_TARGETS) != 16:
+        raise RuntimeError(f'se esperaban 16 fichas profundas y se encontraron {len(DETAIL_TARGETS)}')
+    for path in DETAIL_TARGETS:
+        text = path.read_text(encoding='utf-8')
+        text = ensure_link(text, DETAIL_SCRIPT, DETAIL_SCRIPT_ANCHOR)
+        path.write_text(text, encoding='utf-8')
 
 
 def validate_materialized() -> None:
@@ -109,8 +121,9 @@ def main() -> int:
     if contract.get('version') != '5.29.0':
         raise RuntimeError('funnel-contract-v529.json debe declarar 5.29.0')
     patch_home(source)
+    patch_details()
     validate_materialized()
-    print('FUNNEL + TRUST V5.29 OK: observabilidad no PII y confianza verificable materializadas.')
+    print('FUNNEL + TRUST V5.29 OK: observabilidad no PII en home + 16 fichas y confianza verificable materializadas.')
     return 0
 
 
