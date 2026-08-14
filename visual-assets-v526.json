@@ -1,0 +1,57 @@
+{
+  "version": "5.26.0",
+  "principles": {
+    "design_direction": "trust-first premium legal services",
+    "palette": ["#13263A", "#2C5878", "#F5F1E8", "#A88454", "#292D31"],
+    "motion": "minimal-purposeful",
+    "density": "reduced-visible-layers",
+    "image_rule": "Only render binaries that physically exist in the repository. External references may guide art direction but must never become broken public URLs."
+  },
+  "assets": [
+    {
+      "id": "home-hero",
+      "path": "assets/images/global/home-hero.webp",
+      "status": "ready_in_repo",
+      "role": "primary-home-visual",
+      "alt": "Panorama empresarial de Medellín que representa dirección jurídica, empresa y territorio"
+    },
+    {
+      "id": "decision-map",
+      "path": "assets/decision-map-v526.svg",
+      "status": "recovered_from_repo_history",
+      "source": "iteration-v3.1-clarity",
+      "role": "home-method-visual",
+      "alt": "Ruta Meridiano: comprender, calificar, estructurar, implementar y seguir"
+    },
+    {
+      "id": "brand-monogram",
+      "path": "assets/brand/meridiano-monogram.svg",
+      "status": "ready_in_repo",
+      "role": "brand-detail"
+    }
+  ],
+  "external_references": [
+    {
+      "title": "Tablero de identidad de Meridiano Legal.png",
+      "status": "reference_only_pending_binary_ingest",
+      "use": "palette, typography and visual motifs"
+    },
+    {
+      "title": "Estudio jurídico Meridiano: diseño web corporativo.png",
+      "status": "reference_only_pending_binary_ingest",
+      "use": "clean corporate card hierarchy and whitespace"
+    },
+    {
+      "title": "Sitio web jurídico moderno en azul y dorado.png",
+      "status": "reference_only_pending_binary_ingest",
+      "use": "dark hero, city/compass composition and premium visual tone"
+    }
+  ],
+  "slots": [
+    {"id": "home.hero", "asset": "home-hero", "state": "active"},
+    {"id": "home.method", "asset": "decision-map", "state": "active_v526"},
+    {"id": "firm.authority", "asset": null, "state": "pending_exact_binary", "public_render": false},
+    {"id": "editorial.sectors", "asset": null, "state": "pending_curated_series", "public_render": false},
+    {"id": "editorial.perspectives", "asset": null, "state": "pending_curated_series", "public_render": false}
+  ]
+}
