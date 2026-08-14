@@ -69,7 +69,8 @@ test('v5.29 reconoce una ficha profunda como oferta sin afirmar conversión', as
   await expect.poll(() => page.evaluate(() => window.MeridianoFunnelV529.snapshot().milestones.some((item) => item.stage === 'offer'))).toBe(true);
 
   const snapshot = await page.evaluate(() => window.MeridianoFunnelV529.snapshot());
-  expect(snapshot.milestones.some((item) => item.event === 'solution_view')).toBe(true);
+  const offer = snapshot.milestones.find((item) => item.stage === 'offer');
+  expect(offer.event).toBe('funnel_checkpoint');
+  expect(offer.target).toBe('offer:service-diagnostic');
   expect(snapshot.milestones.some((item) => item.stage === 'handoff')).toBe(false);
-  expect(window === window).toBe(true);
 });
