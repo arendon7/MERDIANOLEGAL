@@ -39,16 +39,22 @@ test('v5.29 observa el funnel en memoria sin capturar contenido del formulario',
   expect(api.privacy.networkTransportIntroduced).toBe(false);
   expect(Object.values(api.limits).every((value) => value === false)).toBe(true);
 
-  for (const selector of ['#necesidades', '#servicios', '#contratacion', '#contacto']) {
+  const checkpoints = [
+    ['#necesidades', 'need'],
+    ['#servicios', 'offer'],
+    ['#contratacion', 'decision'],
+    ['#contacto', 'contact'],
+  ];
+  for (const [selector, stage] of checkpoints) {
     await page.locator(selector).scrollIntoViewIfNeeded();
-    await page.waitForTimeout(120);
+    await expect.poll(() => page.evaluate((expected) => (
+      window.MeridianoFunnelV529.snapshot().milestones.some((item) => item.stage === expected)
+    ), stage)).toBe(true);
   }
 
   const sentinel = 'PII-V529-NO-CAPTURAR-7421';
   const message = page.locator('#contact-form textarea[name="message"]');
   if (await message.count()) await message.fill(sentinel);
-  await page.locator('#contacto').scrollIntoViewIfNeeded();
-  await page.waitForTimeout(120);
 
   const snapshot = await page.evaluate(() => window.MeridianoFunnelV529.snapshot());
   const stages = snapshot.milestones.map((item) => item.stage);
