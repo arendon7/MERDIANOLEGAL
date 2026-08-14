@@ -10,6 +10,10 @@
     "cross_session_identifier": false,
     "fingerprinting": false
   },
+  "observation": {
+    "minimum_intersection_ratio": 0.05,
+    "meaning": "Un checkpoint de portada se considera expuesto cuando al menos 5% de su superficie está visible. El umbral evita exigir que se vea simultáneamente una fracción imposible de secciones más altas que el viewport móvil."
+  },
   "stages": [
     {"code":"awareness","rank":0,"meaning":"La página pública fue cargada."},
     {"code":"need","rank":1,"meaning":"El visitante expuso o alcanzó una superficie de necesidad/selección."},
