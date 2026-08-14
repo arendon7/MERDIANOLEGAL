@@ -27,6 +27,19 @@ test('v5.28 acerca el contacto al cierre comercial sin eliminar profundidad', as
   await expect(contactSection.locator('[data-contact-synthesis-v523="true"]')).toHaveCount(1);
   await expect(contactSection.locator('details[data-contact-process-v523="true"]')).toHaveCount(1);
 
+  for (const [selector, label] of [
+    ['.contact-readiness-items-v528', 'Datos mínimos de la solicitud'],
+    ['.contact-synthesis-grid-v523', 'Síntesis de la solicitud'],
+    ['.contact-brief-grid-v523', 'Modalidad y estándar de trabajo'],
+  ]) {
+    const region = contactSection.locator(selector);
+    await expect(region).toHaveAttribute('tabindex', '0');
+    await expect(region).toHaveAttribute('role', 'region');
+    await expect(region).toHaveAttribute('aria-label', label);
+    await region.focus();
+    await expect(region).toBeFocused();
+  }
+
   const depth = page.locator('[data-conversion-depth-v528="true"]');
   await expect(depth).toHaveCount(1);
   await expect(depth.locator('a[href="#sectores"]')).toHaveCount(1);
@@ -52,6 +65,8 @@ test('v5.28 contiene la síntesis comercial dentro del viewport móvil', async (
       }));
       expect(metrics.children).toBeGreaterThan(1);
       expect(metrics.scrollWidth).toBeGreaterThan(metrics.clientWidth + 20);
+      await deck.focus();
+      await expect(deck).toBeFocused();
     }
   }
 
