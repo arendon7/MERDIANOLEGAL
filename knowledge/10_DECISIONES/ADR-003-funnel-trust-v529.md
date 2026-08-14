@@ -1,7 +1,7 @@
 # ADR-003 — Observar el funnel sin PII y acercar confianza verificable a la decisión
 
 Fecha: 2026-08-14
-Estado: aceptada e implementada en v5.29
+Estado: aceptada, implementada y certificada en v5.29
 
 ## Contexto
 
@@ -44,14 +44,16 @@ La solución no debía crear analytics invasivo ni social proof ficticio. Tampoc
 - No se sabe si un mensaje de WhatsApp fue enviado, entregado o leído.
 - No se sabe si una propuesta fue aceptada ni si comenzó una relación profesional.
 
-## Verificación final
+## Verificación
 
 - `scripts/validate_funnel_trust_v529.py` protege privacidad, semántica, orden, fuente de autoridad, umbral observable y cobertura de las 16 fichas.
 - `tests/e2e/funnel-trust-v529.spec.mjs` verifica navegación, memoria local, ausencia de contenido del formulario, ficha profunda, checkpoints reales y compatibilidad con v5.28.
 - Los validators históricos, axe, Lighthouse, Pages/smoke y Release Governance permanecieron obligatorios.
-- Certificación funcional final: `31823985048` sobre `8a8d3bfe473dd5b0ca931c05fbb73b60afaa1f70` — PASS.
-- Browser E2E/axe: 88 observados · 86 PASS · 2 SKIP · 0 FAIL · 0 retries.
+- Certificación funcional: Site Quality #374, `31823985048` — PASS.
+- Certificación documental `certified`: Site Quality #375, `31824770838` — PASS.
+- Builder documental: `31824748343` — PASS.
+- Graphify documental: `31824748359` — PASS.
 
-## Estado
+## Estado final
 
-La decisión quedó implementada y certificada funcionalmente. El commit documental que marque el canal `certified` debe volver a atravesar todos los gates antes de convertirse en la referencia final de v5.29.
+**ADR-003 está aceptada, implementada y certificada. Sus límites semánticos y de privacidad forman parte de las invariantes de la baseline v5.29 para cualquier ciclo posterior.**
