@@ -13,6 +13,7 @@ CONTRACT = ROOT / 'visual-assets-v526.json'
 CSS = ROOT / 'integral-v526.css'
 START = '<!-- INTEGRAL-V526-HOME:START -->'
 END = '<!-- INTEGRAL-V526-HOME:END -->'
+MOBILE_REGION = 'class="home-signal-meta-v526" data-mobile-scrollable-v516="true" tabindex="0" role="region" aria-label="Cobertura pública de Meridiano Legal"'
 
 
 def require(condition: bool, message: str) -> None:
@@ -50,8 +51,7 @@ def validate() -> None:
     require('class="principles"' not in text, 'la banda histórica de métricas debe quedar consolidada')
     require('class="audience-strip"' not in text, 'la banda histórica de audiencias debe quedar consolidada')
     require(text.count('data-integral-v526="signal"') == 1, 'debe existir una sola señal editorial v5.26')
-    require(text.count('data-mobile-scrollable-v516="true"') >= 3, 'la nueva señal debe conservar el piso de tres regiones móviles accesibles')
-    require('class="home-signal-meta-v526" data-mobile-scrollable-v516="true" tabindex="0" role="region" aria-label="Cobertura pública de Meridiano Legal"' in text, 'la señal compacta debe ser región móvil accesible y enfocada')
+    require(text.count(MOBILE_REGION) == 1, 'la señal v5.26 debe aportar exactamente una región móvil accesible y enfocada')
     for marker in (
         'Menos capas. Más criterio aplicable.',
         '8 servicios + 8 productos',
@@ -81,7 +81,7 @@ def validate() -> None:
 
 def main() -> int:
     validate()
-    print('INTEGRAL VISUAL V5.26 OK: jerarquía compacta, hero móvil visible, regiones accesibles y activos locales íntegros.')
+    print('INTEGRAL VISUAL V5.26 OK: jerarquía compacta, hero móvil visible, región accesible propia y activos locales íntegros.')
     return 0
 
 
