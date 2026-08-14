@@ -4,47 +4,50 @@ Actualizado: 2026-08-14.
 
 ## Estado
 
-**v5.29.0 — funnel observable y confianza contextual: activa.**
+**No existe un ciclo funcional activo. v5.29.0 — funnel observable y confianza contextual — está cerrada funcionalmente y en proceso de cierre documental certificado.**
 
 Baseline funcional certificada:
 
-`main = stable = 92edb1aac33ed83cbab49175f212546941dfaa5d` (v5.28.0).
+`main = stable = 8a8d3bfe473dd5b0ca931c05fbb73b60afaa1f70` (v5.29.0, antes del commit documental final).
 
-## Problema observable
+## Qué quedó resuelto en v5.29
 
-v5.28 cerró la compresión de la ruta de conversión, pero quedaron dos brechas:
+1. Funnel observable unificado: `awareness → need → offer → evidence → decision → contact → handoff`.
+2. Cola limitada a 48 eventos y mantenida únicamente en memoria.
+3. Cero lectura de valores del formulario y cero PII, persistencia, identificador cross-session, fingerprinting o transporte de red nuevo.
+4. Checkpoints de portada y cobertura de las 16 fichas profundas mediante `data-catalog-id`.
+5. Umbral observable contractual de 5% de superficie visible, válido para secciones más altas que el viewport móvil.
+6. Límites semánticos expresos: contacto/handoff no equivalen a envío, aceptación, encargo ni cliente convertido.
+7. `<aside>` compacto de confianza entre `#contratacion` y `#contacto`, derivado exclusivamente de `professional-authority-v525.json`.
+8. Invariante v5.28 preservada: `#contacto` continúa siendo la siguiente `<section>` narrativa después de `#contratacion`.
+9. Pipeline canónico preservado en exactamente 30 pasos, con v5.29 encadenada después de v5.28 dentro de `v5.18+`.
+10. Validator, E2E, axe, Lighthouse, Pages, Release Governance e idempotencia verdes.
 
-- la telemetría v5.0, medición v5.3 y observabilidad de handoff v5.18 existen como capas separadas y no permiten leer un funnel semántico único;
-- la autoridad profesional v5.25 es verificable, pero queda lejos del punto inmediatamente anterior a `#contacto` para quien ya recorrió honorarios y contratación.
+## Evidencia funcional
 
-## Contrato v5.29
+- SHA: `8a8d3bfe473dd5b0ca931c05fbb73b60afaa1f70`.
+- Builder: `31823965908`.
+- Site Quality and Deploy: `31823985048`.
+- Release Governance final relevante: `31823922160`.
+- Browser E2E/axe: 88 observados · 86 PASS · 2 SKIP · 0 FAIL · 0 retries.
+- Lighthouse: PASS.
+- promoción de `stable`: PASS.
 
-1. Unificar el funnel observable en siete etapas: `awareness → need → offer → evidence → decision → contact → handoff`.
-2. Mantener la cola v5.29 únicamente en memoria y limitada a 48 eventos.
-3. No leer valores del formulario, no introducir PII, persistencia, identificador cross-session, fingerprinting ni transporte de red propio.
-4. Reutilizar `MeridianoTelemetry` sin activar el proveedor público, que continúa deshabilitado.
-5. Instrumentar checkpoints de exposición en portada y reconocer las 16 fichas profundas mediante su `data-catalog-id`.
-6. No llamar “conversión” a un hecho que el navegador no conoce: envío, entrega, lectura, propuesta aceptada, encargo iniciado y cliente convertido permanecen `unknown`.
-7. Insertar un `<aside>` compacto de confianza entre `#contratacion` y `#contacto`, derivado exclusivamente de `professional-authority-v525.json`.
-8. Preservar la invariante v5.28: `#contacto` sigue siendo la siguiente `<section>` después de `#contratacion`; el nuevo bloque es contextual, no una nueva sección narrativa.
-9. Mantener intactos el único formulario físico, privacidad, calificación, propuesta, límites y WhatsApp manual.
-10. Ejecutar v5.29 al final de la extensión canónica `v5.18+`, después de v5.28, conservando exactamente 30 pasos.
-11. Añadir validator y E2E específicos y mantener todos los gates históricos, axe, Lighthouse, Pages y Release Governance.
+## Fuentes v5.29
 
-## Fuentes y archivos del ciclo
+- `funnel-contract-v529.json`.
+- `funnel-observability-v529.js`.
+- `funnel-trust-v529.css`.
+- `scripts/apply_funnel_trust_v529.py`.
+- `scripts/validate_funnel_trust_v529.py`.
+- `tests/e2e/funnel-trust-v529.spec.mjs`.
+- `knowledge/10_DECISIONES/ADR-003-funnel-trust-v529.md`.
+- `knowledge/00_CANON/RELEASE-v5.29.md`.
 
-- `funnel-contract-v529.json`: taxonomía, privacidad y límites semánticos.
-- `funnel-observability-v529.js`: agregador de eventos y checkpoints en memoria.
-- `funnel-trust-v529.css`: presentación compacta de confianza.
-- `scripts/apply_funnel_trust_v529.py`: compositor final.
-- `scripts/validate_funnel_trust_v529.py`: contrato estático.
-- `tests/e2e/funnel-trust-v529.spec.mjs`: comportamiento real.
-- `knowledge/10_DECISIONES/ADR-003-funnel-trust-v529.md`: decisión de arquitectura.
+## Siguiente ciclo
 
-## No objetivos
+No se abre automáticamente una v5.30. Debe partir del SHA documental finalmente certificado de v5.29 y declarar un problema observable nuevo antes de modificar la arquitectura.
 
-No habilitar Google Analytics, CRM, backend, cookies, píxeles, persistencia local, identificación de usuario, scoring automático, atribución de clientes, testimonios, resultados, aceptación de propuesta o inicio automático del encargo.
+## Cierre pendiente de esta rama documental
 
-## Cierre requerido
-
-Composición v5.29, idempotencia, 16 fichas instrumentadas, validators históricos, Release Governance, Pages/smoke, Browser E2E/axe, Lighthouse, promoción de `stable` y regeneración de Graphify deben quedar verdes antes de declarar la release cerrada.
+Cambiar canal a `github-pages-production-funnel-trust-certified`, aceptar ADR-003, sincronizar memoria canónica y registrar release note. Ese commit documental debe recorrer nuevamente Release Governance, builder, idempotencia, 37 validaciones, Pages/smoke, Browser E2E/axe, Lighthouse, promoción de `stable` y Graphify. Solo ese SHA será la referencia definitiva de v5.29.

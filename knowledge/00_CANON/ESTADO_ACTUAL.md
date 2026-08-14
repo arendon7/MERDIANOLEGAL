@@ -7,58 +7,64 @@
 - Repositorio: `arendon7/MERDIANOLEGAL`.
 - Fuente técnica/documental: `main`.
 - Snapshot funcional certificado: `stable`.
-- Release certificada y cerrada: **5.28.0 — ruta de conversión compacta**.
-- SHA público/canónico certificado previo al commit documental de cierre: `786bd9d4dc720f027f64067c9dd83d583e7e934c`.
-- Builder autoritativo final: `31819573869`.
-- Run público final: `31819606409`.
-- Release Governance final relevante: `31819530202`.
-- Al cierre funcional: `main = stable = 786bd9d4dc720f027f64067c9dd83d583e7e934c`.
+- Release certificada y cerrada: **5.29.0 — funnel observable y confianza contextual**.
+- SHA funcional certificado previo al cierre documental: `8a8d3bfe473dd5b0ca931c05fbb73b60afaa1f70`.
+- Builder funcional final: `31823965908`.
+- Run público funcional final: `31823985048`.
+- Release Governance final relevante: `31823922160`.
+- Al cierre funcional: `main = stable = 8a8d3bfe473dd5b0ca931c05fbb73b60afaa1f70`.
 
-## Contrato v5.28
+## Contrato v5.29
 
-La portada materializa `#contacto` inmediatamente después de `#contratacion`. Sectores, perspectivas, firma y FAQ permanecen íntegros después del contacto como profundidad opcional. El preámbulo redundante de tres tarjetas fue reemplazado por una franja de preparación con decisión/problema, plazo/urgencia y resultado esperado.
+La capa v5.29 materializa un funnel observable de siete etapas (`awareness`, `need`, `offer`, `evidence`, `decision`, `contact`, `handoff`) sobre la telemetría local ya existente. La cola está limitada a 48 eventos en memoria y no introduce persistencia, identificación entre sesiones, fingerprinting ni transporte de red.
 
-Se conserva un único formulario físico canónico y todas las capas de calificación, propuesta, engagement, brief, recomendación, síntesis, proceso y handoff manual. En móvil, las rejillas de síntesis usan overflow horizontal local contenido. Son focables por teclado y mantienen la semántica nativa de `<dl>`.
+Los checkpoints de portada usan un umbral contractual de 5% de superficie visible, compatible con secciones más altas que el viewport móvil. Las 16 fichas profundas se integran al mismo modelo mediante `data-catalog-id`.
 
-## Evidencia final
+La capa no inspecciona valores de formulario. Ninguna señal permite afirmar que un mensaje fue enviado, entregado o leído, que una propuesta fue aceptada, que comenzó un encargo o que existe una conversión a cliente.
+
+Antes de `#contacto` se presenta un `<aside>` compacto de confianza derivado exclusivamente de `professional-authority-v525.json`. El bloque declara expresamente los límites de esa evidencia y preserva la secuencia de `<section>` establecida por v5.28.
+
+## Evidencia funcional final
 
 - generación canónica de 30 pasos: PASS;
 - segunda pasada/idempotencia: PASS;
 - 37 validaciones estáticas: PASS;
 - Release Governance: PASS;
+- 16 fichas profundas instrumentadas: PASS;
 - GitHub Pages: PASS;
 - smoke público: PASS;
-- Browser E2E/axe: **79 observados · 77 PASS · 2 SKIP · 0 FAIL · 0 retries**;
-- axe portada y superficies cubiertas: 0 violaciones serias/críticas;
+- Browser E2E/axe: **88 observados · 86 PASS · 2 SKIP · 0 FAIL · 0 retries**;
+- axe: 0 violaciones serias/críticas en las superficies cubiertas;
 - Lighthouse performance/accesibilidad: PASS contra budgets existentes;
 - promoción automática de `stable`: PASS;
 - budgets relajados: no;
-- cobertura reducida: no.
+- cobertura reducida: no;
+- PII/persistencia/transporte nuevo: no.
 
-## Hallazgos corregidos durante la certificación
+## Hallazgos corregidos durante v5.29
 
-1. Whitespace no determinista del compositor: corregido sin relajar `git diff --exit-code`.
-2. Validator UX v4.5 con orden narrativo histórico: hecho version-aware; conserva el contrato antiguo hasta v5.27 y exige el nuevo desde v5.28.
-3. Contraste y foco de regiones desplazables: corregidos; el acento de preparación supera AA y los decks son alcanzables por teclado.
-4. Semántica `<dl>`: se retiró `role="region"` de las listas de definición para preservar `dt/dd`, manteniendo `tabindex` y `aria-label`.
+1. Dos guardias PII inicialmente demasiado amplios (`name:` y `contact-form`) se estrecharon a acceso real de controles/valores, manteniendo las etiquetas semánticas legítimas.
+2. Una deriva de whitespace en el `<head>` rompía `git diff --exit-code`; el compositor final quedó byte-determinista sin relajar idempotencia.
+3. El checkpoint móvil de `#contacto` usaba un 25% de `intersectionRatio`, geométricamente inalcanzable para una sección más alta que el viewport. El contrato fija 5% como exposición observable y el E2E espera milestones reales, sin sleeps fijos.
 
 ## Invariantes
 
 - 46 HTML;
 - 16 fichas profundas;
 - 1 formulario físico canónico;
-- WhatsApp manual y telemetría local sin PII;
+- WhatsApp manual;
 - portal real deshabilitado;
 - demo explícitamente ficticia;
+- funnel v5.29 solo en memoria y sin PII;
+- no inferir conversión comercial desde navegación, contacto o handoff;
 - `stable` solo se mueve tras gates verdes;
 - ningún hecho profesional nuevo se publica fuera del contrato verificable correspondiente;
-- no se oculta contenido material para mejorar densidad;
-- la accesibilidad no puede implementarse sustituyendo semántica HTML nativa sin necesidad.
+- no se oculta contenido material ni se relajan budgets o cobertura.
 
 ## Graphify
 
-El snapshot derivado verde disponible declara v5.28, `graphify_version = 0.9.26`, 740 nodos, 1.256 aristas y 100 notas wiki, con `source_commit = 7f9caa0a77923b79da6b1d5e2054680dfce0f63d`. Es anterior al SHA canónico certificado `786bd9d4…`; `main` continúa siendo la autoridad hasta la siguiente regeneración.
+Graphify funcional v5.29 fue regenerado correctamente sobre `8a8d3bfe473dd5b0ca931c05fbb73b60afaa1f70`. El commit documental de cierre debe volver a regenerarlo con versión `5.29.0`, canal `github-pages-production-funnel-trust-certified` y `source_commit` idéntico al `main` final.
 
 ## Estado del ciclo
 
-**v5.28 está implementada, desplegada, certificada y funcionalmente cerrada. No existe un ciclo posterior activo.**
+**v5.29 está implementada, desplegada y funcionalmente certificada. El cierre documental cambia el canal a `certified` y debe recorrer nuevamente todos los gates antes de declarar el SHA documental definitivo.**
