@@ -1,31 +1,33 @@
-# Meridiano Legal · Web canónica v5.24.0
+# Meridiano Legal · Web canónica v5.25.0
 
 Sitio público static-first de Meridiano Legal: `https://arendon7.github.io/MERDIANOLEGAL/`.
 
 ## Estado certificado
 
-**v5.24.0 — orquestación canónica verificable**.
+**v5.25.0 — autoridad profesional verificable**.
 
-- SHA funcional certificado: `73ba88fda16545cc3a257594b2a91d67a9c848b6`.
-- Run final: `31739813251`.
+- SHA funcional certificado: `b5a23e0ac1b675cade3ad69d197bbf86d5b998d8`.
+- Run público final: `31772394136`.
+- Builder autoritativo: `31772373318`.
 - 46 HTML, 16 fichas profundas y 1 formulario físico canónico.
-- Browser E2E + axe: 58 observados → 56 PASS / 2 SKIP / 0 FAIL / 0 RETRY.
-- Lighthouse: 6/6 PASS; performance y accesibilidad 1.00 en las seis superficies.
-- Home: LCP 1421 ms, CLS 0, TBT 42 ms.
-- CI hasta `stable`: 196 s; mejora 29.7% frente al baseline de 279 s.
+- Browser E2E + axe: 64 observados → 62 PASS / 2 SKIP / 0 FAIL / 0 RETRY.
+- 7 superficies axe WCAG 2.1 AA sin violaciones serias/críticas.
+- Lighthouse: 6/6 PASS; accesibilidad 1.00 en las seis superficies.
+- Home: performance 1.00, LCP 1387 ms, CLS 0, TBT 72 ms.
+- CI hasta `stable`: 240 s; mejora 14.0% frente al baseline de 279 s.
 - Cobertura reducida: no. Budgets relajados: no.
 
-## v5.24
+## v5.25
 
-`scripts/canonical_pipeline_v524.py` declara 30 pasos de composición y exige que las dos rutas canónicas ejecuten los mismos comandos en el mismo orden.
+`professional-authority-v525.json` es la fuente canónica de la autoridad profesional publicada. Portada y `firma.html#trayectoria` muestran formación, trayectoria y asuntos representativos del director con fronteras explícitas de verdad: las organizaciones citadas no se presentan como lista de clientes, no hay testimonios o métricas de éxito inventadas y la formación de UNIR se mantiene como formación de posgrado.
 
-`builder == segunda pasada == manifiesto`
+El compositor v5.25 se integra dentro del paso canónico v5.18+; el manifiesto v5.24 continúa en 30 pasos. Builder y Release Governance vigilan explícitamente JSON, CSS, compositor y validator v5.25, y Governance ejecuta el gate nominal `Validate professional authority v5.25`.
 
-No se rediseñó la web ni se añadieron capacidades externas. Los contratos comerciales v5.20–v5.23, el handoff manual, la telemetría local sin PII y la frontera demo/capacidad permanecen vigentes.
+El centro demo continúa ficticio/noindex, el portal real permanece deshabilitado y no se añadieron capacidades externas.
 
 ## Documentación
 
-- `RELEASE-v5.24.md`: contrato, incidencias, métricas, artefactos y digests.
+- `RELEASE-v5.25.md`: contrato, incidencias, métricas, artefactos y digests.
 - `knowledge/00_CANON/ESTADO_ACTUAL.md`: estado canónico.
 - `knowledge/00_CANON/TAREA_ACTIVA.md`: tarea vigente/cierre.
 - `knowledge/HOME.md`: navegación de memoria.
