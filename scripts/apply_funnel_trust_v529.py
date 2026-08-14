@@ -52,7 +52,7 @@ def trust_block(source: dict) -> str:
     matters = source['representative_matters']
     boundary = source['boundaries']['copy']
     return f'''{START}
-<section class="decision-trust-v529" data-funnel-trust-v529="true" aria-labelledby="decision-trust-v529-title">
+<aside class="decision-trust-v529" data-funnel-trust-v529="true" aria-labelledby="decision-trust-v529-title">
   <div class="container decision-trust-inner-v529">
     <div class="decision-trust-copy-v529">
       <span>RESPALDO DEL CRITERIO</span>
@@ -69,7 +69,7 @@ def trust_block(source: dict) -> str:
       <a class="decision-trust-link-v529" href="firma.html#trayectoria">Ver trayectoria completa →</a>
     </div>
   </div>
-</section>
+</aside>
 {END}'''
 
 
