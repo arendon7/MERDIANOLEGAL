@@ -44,6 +44,7 @@
   const milestones = new Map();
   const checkpointSeen = new Set();
   let furthestStage = '';
+  let sequence = 0;
 
   const classify = (event) => {
     const name = safe(event?.name, 48);
@@ -59,8 +60,9 @@
   const ingest = (event, source = 'telemetry') => {
     const stage = classify(event);
     if (!stage) return null;
+    sequence += 1;
     const item = Object.freeze({
-      sequence: events.length ? events[events.length - 1].sequence + 1 : 1,
+      sequence,
       stage,
       event: safe(event?.name, 48),
       target: safe(event?.detail?.target, 80),
@@ -97,6 +99,9 @@
       ingest({ name: 'funnel_checkpoint', detail }, 'checkpoint-local');
     }
   };
+
+  const catalogId = safe(document.body?.dataset.catalogId, 64);
+  if (catalogId) emitCheckpoint(Object.freeze({ stage: 'offer', target: `offer:${catalogId}` }));
 
   if ('IntersectionObserver' in window) {
     const observer = new IntersectionObserver((entries) => {
