@@ -1,8 +1,8 @@
 {
   "name": "Meridiano Legal Web",
-  "version": "5.26.0",
+  "version": "5.27.0",
   "release_date": "2026-08-14",
-  "channel": "github-pages-production-integral-visual-candidate",
-  "commit_scope": "integral-visual-simplification",
+  "channel": "github-pages-production-mobile-density-candidate",
+  "commit_scope": "mobile-commercial-density",
   "source_baseline": "main"
 }
