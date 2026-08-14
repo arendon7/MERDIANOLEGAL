@@ -80,7 +80,7 @@ def validate() -> None:
         '.home-signal-map-v526',
         '.home-signal-map-v526 figcaption{margin-top:10px;color:#59646c',
         'display:block!important',
-        'height:360px;min-height:360px',
+        'width:100%;max-width:none;margin:0;height:360px;min-height:360px',
         'height:300px;min-height:300px',
         'height:100%;min-height:0',
         'overflow-x:auto',
@@ -96,7 +96,7 @@ def validate() -> None:
 
 def main() -> int:
     validate()
-    print('INTEGRAL VISUAL V5.26 OK: jerarquía compacta, hero móvil estable, contraste AA, región accesible contenida y activos locales íntegros.')
+    print('INTEGRAL VISUAL V5.26 OK: jerarquía compacta, hero móvil con ancho estable, contraste AA, región accesible contenida y activos locales íntegros.')
     return 0
 
 
