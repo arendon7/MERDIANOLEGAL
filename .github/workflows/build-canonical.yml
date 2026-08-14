@@ -59,6 +59,8 @@ on:
       - handoff-observability-v518.js
       - offer-narrative-v522.json
       - offer-v522.css
+      - professional-authority-v525.json
+      - professional-authority-v525.css
       - assets/**
       - scripts/build_catalog_shells.py
       - scripts/render_catalog_static.mjs
@@ -107,6 +109,8 @@ on:
       - scripts/apply_contact_compression_v523.py
       - scripts/normalize_contact_compression_v523.py
       - scripts/validate_contact_compression_v523.py
+      - scripts/apply_professional_authority_v525.py
+      - scripts/validate_professional_authority_v525.py
       - scripts/validate_browser_v54.py
       - scripts/run_quality_v55.mjs
       - scripts/validate_quality_v55.py
