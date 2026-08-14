@@ -45,6 +45,10 @@ def main() -> int:
     require(privacy.get('uses_existing_telemetry_adapter') is True, 'debe reutilizar el adaptador de telemetría existente')
     limits = contract.get('semantic_limits', {})
     require(limits and all(value is False for value in limits.values()), 'ningún resultado externo puede declararse conocido')
+    observation = contract.get('observation', {})
+    threshold = observation.get('minimum_intersection_ratio')
+    require(threshold == 0.05, 'el umbral observable debe permanecer en 0.05')
+    require('viewport móvil' in observation.get('meaning', ''), 'el contrato debe explicar la geometría móvil')
 
     stages = contract.get('stages', [])
     require([item.get('code') for item in stages] == ['awareness','need','offer','evidence','decision','contact','handoff'], 'orden semántico del funnel inválido')
@@ -80,8 +84,10 @@ def main() -> int:
         require(detail.find(detail_anchor) < detail.find(detail_runtime), f'{path.name}: runtime debe cargar después de telemetry-v50')
         require('data-catalog-id=' in detail, f'{path.name}: falta identidad canónica de oferta')
 
-    for marker in ('window.MeridianoFunnelV529', "'funnel_checkpoint'", 'IntersectionObserver', 'telemetry.snapshot()', "window.addEventListener('meridiano:telemetry'", 'dataset.catalogId', "target: `offer:${catalogId}`"):
+    for marker in ('window.MeridianoFunnelV529', "'funnel_checkpoint'", 'IntersectionObserver', 'telemetry.snapshot()', "window.addEventListener('meridiano:telemetry'", 'dataset.catalogId', "target: `offer:${catalogId}`", 'const CHECKPOINT_THRESHOLD = 0.05', 'threshold: [CHECKPOINT_THRESHOLD]'):
         require(marker in js, f'runtime carece de {marker}')
+    require('intersectionRatio < CHECKPOINT_THRESHOLD' in js, 'runtime debe aplicar el umbral contractual')
+    require('intersectionRatio < 0.25' not in js and 'threshold: [0.25]' not in js, 'no debe reaparecer el umbral incompatible con secciones móviles altas')
     for forbidden in ('localStorage', 'sessionStorage', 'indexedDB', 'document.cookie', 'navigator.sendBeacon', 'XMLHttpRequest', 'crypto.randomUUID', 'crypto.getRandomValues'):
         require(forbidden not in js, f'runtime no puede usar {forbidden}')
     require(re.search(r'\bfetch\s*\(', js) is None, 'runtime v5.29 no puede introducir fetch')
@@ -95,7 +101,7 @@ def main() -> int:
     for forbidden in ('display:none', 'visibility:hidden', 'content-visibility:hidden'):
         require(forbidden not in css, f'v5.29 no puede ocultar evidencia con {forbidden}')
 
-    print('FUNNEL + TRUST V5.29 OK: funnel acotado en home + 16 fichas, cero PII/persistencia propia y confianza trazable antes del contacto.')
+    print('FUNNEL + TRUST V5.29 OK: funnel acotado en home + 16 fichas, umbral móvil observable, cero PII/persistencia propia y confianza trazable antes del contacto.')
     return 0
 
 

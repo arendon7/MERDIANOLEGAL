@@ -1,6 +1,7 @@
 (() => {
   const VERSION = '5.29.0';
   const MAX_EVENTS = 48;
+  const CHECKPOINT_THRESHOLD = 0.05;
   const STAGE_ORDER = Object.freeze(['awareness', 'need', 'offer', 'evidence', 'decision', 'contact', 'handoff']);
   const STAGE_RANK = Object.freeze(Object.fromEntries(STAGE_ORDER.map((stage, rank) => [stage, rank])));
   const SOURCE_EVENTS = Object.freeze({
@@ -106,13 +107,13 @@
   if ('IntersectionObserver' in window) {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
-        if (!entry.isIntersecting || entry.intersectionRatio < 0.25) return;
+        if (!entry.isIntersecting || entry.intersectionRatio < CHECKPOINT_THRESHOLD) return;
         const checkpoint = CHECKPOINTS.find((item) => document.querySelector(item.selector) === entry.target);
         if (!checkpoint) return;
         emitCheckpoint(checkpoint);
         observer.unobserve(entry.target);
       });
-    }, { threshold: [0.25] });
+    }, { threshold: [CHECKPOINT_THRESHOLD] });
     CHECKPOINTS.forEach((checkpoint) => {
       const node = document.querySelector(checkpoint.selector);
       if (node) observer.observe(node);
