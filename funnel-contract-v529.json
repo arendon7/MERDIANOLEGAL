@@ -1,0 +1,61 @@
+{
+  "version": "5.29.0",
+  "purpose": "Unificar la observabilidad comercial ya existente en un funnel semántico verificable, sin convertir señales de navegación en afirmaciones de conversión.",
+  "privacy": {
+    "pii_allowed": false,
+    "form_content_allowed": false,
+    "network_transport_introduced": false,
+    "uses_existing_telemetry_adapter": true,
+    "persistent_storage": false,
+    "cross_session_identifier": false,
+    "fingerprinting": false
+  },
+  "stages": [
+    {"code":"awareness","rank":0,"meaning":"La página pública fue cargada."},
+    {"code":"need","rank":1,"meaning":"El visitante expuso o alcanzó una superficie de necesidad/selección."},
+    {"code":"offer","rank":2,"meaning":"El visitante expuso o abrió una oferta o modalidad concreta."},
+    {"code":"evidence","rank":3,"meaning":"El visitante abrió evidencia, sector, perspectiva, FAQ o prueba relacionada."},
+    {"code":"decision","rank":4,"meaning":"El visitante alcanzó honorarios o contratación, sin inferir aceptación."},
+    {"code":"contact","rank":5,"meaning":"El visitante alcanzó o activó el punto de contacto."},
+    {"code":"handoff","rank":6,"meaning":"El navegador preparó o reabrió el handoff manual; no prueba envío ni recepción."}
+  ],
+  "checkpoint_targets": {
+    "#necesidades": {"stage":"need","target":"home:needs"},
+    "#servicios": {"stage":"offer","target":"home:services"},
+    "#productos": {"stage":"offer","target":"home:products"},
+    "#honorarios": {"stage":"decision","target":"home:fees"},
+    "#contratacion": {"stage":"decision","target":"home:contracting"},
+    "#contacto": {"stage":"contact","target":"home:contact"}
+  },
+  "source_events": {
+    "page_view": "awareness",
+    "solution_view": "offer",
+    "route_open": "offer",
+    "authority_open": "evidence",
+    "evidence_open": "evidence",
+    "faq_open": "evidence",
+    "contact_intent": "contact",
+    "lead_prepared": "handoff",
+    "handoff_prepared": "handoff",
+    "handoff_reopen_requested": "handoff",
+    "handoff_copy_succeeded": "handoff",
+    "handoff_copy_failed": "handoff",
+    "handoff_edit_requested": "contact",
+    "handoff_draft_stale": "handoff"
+  },
+  "cta_target_stages": {
+    "detail-page": "offer",
+    "sector-page": "evidence",
+    "perspective": "evidence",
+    "contact-form": "contact",
+    "whatsapp": "contact"
+  },
+  "semantic_limits": {
+    "sent_known": false,
+    "delivered_known": false,
+    "read_known": false,
+    "proposal_accepted_known": false,
+    "engagement_started_known": false,
+    "client_conversion_known": false
+  }
+}
