@@ -103,6 +103,25 @@ def normalize_css_link(text: str) -> str:
     return text.replace(CSS_ANCHOR, CSS_ANCHOR + "\n  " + CSS_LINK, 1)
 
 
+def normalize_layout_whitespace(text: str) -> str:
+    """Fija separadores que generadores históricos pueden variar entre pasadas."""
+    text = re.sub(
+        r'(<link rel="stylesheet" href="commercial-v43\.css">)\s*'
+        r'(<link rel="stylesheet" href="visual-v39\.css">)',
+        r'\1\n\n  \2',
+        text,
+        count=1,
+    )
+    text = re.sub(
+        re.escape(READINESS_END) + r'\s*<div class="contact-layout">',
+        READINESS_END + '\n<div class="contact-layout">',
+        text,
+        count=1,
+    )
+    text = re.sub(r'\n[ \t]*\n[ \t]*\n  </main>', '\n\n  </main>', text, count=1)
+    return text
+
+
 def patch_home() -> None:
     text = HOME.read_text(encoding="utf-8")
     text = remove_managed(text, DEPTH_START, DEPTH_END)
@@ -114,6 +133,7 @@ def patch_home() -> None:
     insertion = COMMERCIAL_END + "\n\n" + contact + "\n" + depth_markup()
     text = text.replace(COMMERCIAL_END, insertion, 1)
     text = normalize_css_link(text)
+    text = normalize_layout_whitespace(text)
 
     if text.count('data-conversion-path-v528="true"') != 1:
         raise RuntimeError("index.html: v5.28 debe marcar una sola sección de contacto")
