@@ -78,7 +78,11 @@ def validate() -> None:
         '.home-signal-grid-v526',
         '.home-signal-grid-v526>*{min-width:0}',
         '.home-signal-map-v526',
+        '.home-signal-map-v526 figcaption{margin-top:10px;color:#59646c',
         'display:block!important',
+        'height:360px;min-height:360px',
+        'height:300px;min-height:300px',
+        'height:100%;min-height:0',
         'overflow-x:auto',
         'overflow-y:hidden',
         'width:100%;max-width:100%;min-width:0',
@@ -92,7 +96,7 @@ def validate() -> None:
 
 def main() -> int:
     validate()
-    print('INTEGRAL VISUAL V5.26 OK: jerarquía compacta, hero móvil visible, región accesible contenida y activos locales íntegros.')
+    print('INTEGRAL VISUAL V5.26 OK: jerarquía compacta, hero móvil estable, contraste AA, región accesible contenida y activos locales íntegros.')
     return 0
 
 
