@@ -1,33 +1,33 @@
 # ADR-004 — Hacer explícita la lógica de contratación dentro del resumen ejecutivo de cada oferta
 
 Fecha: 2026-08-14
-Estado: propuesta para v5.30
+Estado: aceptada e implementada en v5.30
 
 ## Contexto
 
-Las 16 ofertas de Meridiano Legal ya contienen profundidad jurídica y comercial significativa. Los catálogos fuente definen perímetro, método, entregables, formatos, cronograma, responsabilidades, aceptación, límites y extensiones. Además, v5.8 materializa una lectura ejecutiva de encaje, compra, entregables, participación y límites; v5.22 explica decisión empresarial, modalidad, capacidad instalada, alternativa y lente jurídica.
+Las 16 ofertas de Meridiano Legal ya contenían profundidad jurídica y comercial significativa. Los catálogos fuente definían perímetro, método, entregables, formatos, cronograma, responsabilidades, aceptación, límites y extensiones. Además, v5.8 materializaba una lectura ejecutiva de encaje, compra, entregables, participación y límites; v5.22 explicaba decisión empresarial, modalidad, capacidad instalada, alternativa y lente jurídica.
 
-La auditoría v5.30 identificó que la fricción remanente no consiste en falta de contenido, sino en la necesidad de reconstruir manualmente cinco preguntas de contratación distribuidas a lo largo de la ficha: unidad de contratación, lógica de honorarios, variables de dimensionamiento, regla de ampliación y definición de cierre.
+La auditoría v5.30 identificó que la fricción remanente no consistía en falta de contenido, sino en la necesidad de reconstruir manualmente cinco preguntas de contratación distribuidas a lo largo de la ficha: unidad de contratación, lógica de honorarios, variables de dimensionamiento, regla de ampliación y definición de cierre.
 
-Crear otra sección larga duplicaría v5.8/v5.22 y aumentaría densidad. Publicar tarifas genéricas o un cotizador automático sería igualmente incorrecto, porque varias ofertas dependen de entidades, documentos, rondas, actores, urgencia y especialidades que modifican materialmente el esfuerzo.
+Crear otra sección larga habría duplicado v5.8/v5.22 y aumentado densidad. Publicar tarifas genéricas o un cotizador automático también habría sido incorrecto, porque varias ofertas dependen de entidades, documentos, rondas, actores, urgencia y especialidades que modifican materialmente el esfuerzo.
 
-## Decisión
+## Decisión implementada
 
-1. Crear `offer-commercial-v530.json` como contrato complementario para exactamente las 16 ofertas.
-2. Mantener `catalog-products-v41/` y `catalog-services-v42/` como fuente jurídica principal de perímetro, entregables, aceptación, límites y suplementos.
-3. Exigir por oferta cinco elementos: `engagement_basis`, `fee_logic`, tres `drivers`, `change_rule` y `close_rule`.
-4. No almacenar importes, monedas, descuentos ni tarifas en el contrato v5.30.
-5. Materializar la información mediante `scripts/apply_offer_commercial_v530.py` dentro del bloque `buying-clarity-v58`, inmediatamente después de `buying-clarity-meta-v58`.
-6. No crear una nueva `<section>` narrativa. La extensión debe ser un bloque compacto subordinado al resumen ejecutivo existente.
-7. Enlazar desde el bloque a `#perimetro-title`, `#aceptacion-title` y `#contacto` para que la síntesis remita a la fuente detallada y al siguiente paso.
-8. Mostrar los tres drivers dentro de un `<details>` para mantener visible la conclusión comercial y dejar la explicación ampliada bajo demanda.
-9. No introducir JavaScript funcional para la capa v5.30; la interacción nativa de `<details>` es suficiente.
-10. Encadenar v5.30 después de v5.29 dentro de `apply_handoff_observability_v518.py`, conservando exactamente los 30 pasos canónicos del pipeline v5.24.
-11. Proteger la capa con validator estático, E2E, axe, Lighthouse, Release Governance, idempotencia, Pages y promoción de `stable`.
+1. `offer-commercial-v530.json` funciona como contrato complementario para exactamente las 16 ofertas.
+2. `catalog-products-v41/` y `catalog-services-v42/` permanecen como fuente jurídica principal de perímetro, entregables, aceptación, límites y suplementos.
+3. Cada oferta declara `engagement_basis`, `fee_logic`, tres `drivers`, `change_rule` y `close_rule`.
+4. El contrato v5.30 no almacena importes, monedas, descuentos ni tarifas.
+5. `scripts/apply_offer_commercial_v530.py` materializa la información dentro de `buying-clarity-v58`, inmediatamente después de `buying-clarity-meta-v58`.
+6. No se creó una nueva `<section>` narrativa; la extensión permanece subordinada al resumen ejecutivo existente.
+7. El bloque enlaza a `#perimetro-title`, `#aceptacion-title` y `#contacto`.
+8. Los tres drivers se muestran en un `<details>` nativo para mantener visible la síntesis y dejar la explicación ampliada bajo demanda.
+9. No se introdujo JavaScript funcional para la capa v5.30.
+10. v5.30 se ejecuta después de v5.29 dentro de `apply_handoff_observability_v518.py`, conservando exactamente los 30 pasos canónicos del pipeline v5.24.
+11. La capa quedó protegida por validator estático, E2E, axe, Lighthouse, Release Governance, idempotencia, Pages y promoción de `stable`.
 
 ## Consecuencias positivas
 
-- La profundidad ya existente se vuelve más fácil de comprar sin reducir rigor.
+- La profundidad ya existente es más fácil de comprar sin reducir rigor.
 - Los productos explican con mayor claridad la relación entre paquete base y suplementos.
 - Los servicios explican cómo se dimensiona una propuesta sin fingir una tarifa universal.
 - El cliente puede distinguir alcance inicial, variables de ampliación y cierre antes de recorrer la ficha completa.
@@ -42,8 +42,18 @@ Crear otra sección larga duplicaría v5.8/v5.22 y aumentaría densidad. Publica
 - No se crean capacidades de CRM, pago, firma, agenda, autenticación o portal.
 - Las cantidades exactas siguen viviendo en los catálogos fuente; v5.30 no las replica como segunda verdad.
 
-## Verificación
+## Verificación final
 
-- `scripts/validate_offer_commercial_v530.py` verifica cobertura exacta de 16 ofertas, estructura contractual, ausencia de importes/monedas, ubicación dentro de v5.8, enlaces a perímetro/aceptación/contacto y tres drivers exactos por ficha.
-- `tests/e2e/offer-commercial-v530.spec.mjs` verifica las 16 rutas, transparencia de honorarios sin cifras, servicio recurrente, foco nativo y ausencia de overflow móvil.
-- Los gates históricos permanecen obligatorios y no deben relajarse para certificar v5.30.
+- PR #134: integrada.
+- Release Governance `31834565612`: PASS.
+- Builder canónico `31834618506`: PASS.
+- SHA funcional canónico: `ee88b8ced3347255cf85ee62e3bf4022b7c34a42`.
+- Site Quality and Deploy `31834646140`: PASS.
+- Idempotencia y 37/37 validaciones estáticas: PASS.
+- Browser E2E/axe: **100 observados · 98 PASS · 2 SKIP · 0 FAIL · 0 reintentos**.
+- Lighthouse: PASS contra budgets existentes.
+- Promoción de `stable`: PASS.
+
+## Estado
+
+La decisión quedó implementada y certificada funcionalmente. El cierre documental se considera definitivo cuando el commit que contiene esta ADR haya atravesado el mismo pipeline público y los refs vigentes `main` y `stable` coincidan.
