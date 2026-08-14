@@ -18,6 +18,8 @@ READINESS_START = '<!-- CONVERSION-READINESS-V528:START -->'
 READINESS_END = '<!-- CONVERSION-READINESS-V528:END -->'
 DEPTH_START = '<!-- CONVERSION-DEPTH-V528:START -->'
 DEPTH_END = '<!-- CONVERSION-DEPTH-V528:END -->'
+SYNTHESIS_DECK = '<dl class="qualification-summary-grid-v59 contact-synthesis-grid-v523" tabindex="0" role="region" aria-label="Síntesis de la solicitud">'
+BRIEF_DECK = '<dl class="qualification-summary-grid-v59 contact-brief-grid-v523" tabindex="0" role="region" aria-label="Modalidad y estándar de trabajo">'
 
 
 def semver(value: str) -> tuple[int, int, int]:
@@ -55,7 +57,7 @@ def readiness_markup() -> str:
     <strong>Cuéntenos tres cosas. El alcance profesional se define después.</strong>
     <p>No envíe documentos ni información confidencial en esta etapa. Primero validamos contexto, conflicto, disponibilidad y el alcance a cotizar.</p>
   </div>
-  <div class="contact-readiness-items-v528" aria-label="Datos mínimos de la solicitud">
+  <div class="contact-readiness-items-v528" tabindex="0" role="region" aria-label="Datos mínimos de la solicitud">
     <span><b>1</b><small>Decisión o problema</small></span>
     <span><b>2</b><small>Plazo o urgencia</small></span>
     <span><b>3</b><small>Resultado esperado</small></span>
@@ -80,6 +82,24 @@ def depth_markup() -> str:
 {DEPTH_END}'''
 
 
+def normalize_focusable_decks(block: str) -> str:
+    block = re.sub(
+        r'<dl class="qualification-summary-grid-v59 contact-synthesis-grid-v523"[^>]*>',
+        SYNTHESIS_DECK,
+        block,
+        count=1,
+    )
+    block = re.sub(
+        r'<dl class="qualification-summary-grid-v59 contact-brief-grid-v523"[^>]*>',
+        BRIEF_DECK,
+        block,
+        count=1,
+    )
+    if block.count(SYNTHESIS_DECK) != 1 or block.count(BRIEF_DECK) != 1:
+        raise RuntimeError("index.html: no fue posible normalizar accesibilidad de los decks v5.28")
+    return block
+
+
 def normalize_contact_block(block: str) -> str:
     block = remove_managed(block, READINESS_START, READINESS_END)
     block = re.sub(r'<div class="contact-prelude">.*?</div>', "", block, count=1, flags=re.S)
@@ -89,6 +109,7 @@ def normalize_contact_block(block: str) -> str:
         block,
         count=1,
     )
+    block = normalize_focusable_decks(block)
     anchor = '<section class="section contact-section" id="contacto" data-conversion-path-v528="true"><div class="container">'
     if anchor not in block:
         raise RuntimeError("index.html: no se reconoce el contenedor de #contacto para v5.28")
@@ -164,7 +185,7 @@ def main() -> int:
         return 0
     patch_home()
     validate_materialized_contract()
-    print("CONVERSION PATH V5.28 OK: contacto adelantado, preparación compacta y profundidad preservada.")
+    print("CONVERSION PATH V5.28 OK: contacto adelantado, preparación compacta, decks accesibles y profundidad preservada.")
     return 0
 
 
