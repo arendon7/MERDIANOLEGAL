@@ -2,7 +2,7 @@
 .contact-section[data-conversion-path-v528="true"]{border-top:1px solid rgba(19,38,58,.12)}
 .contact-readiness-v528{display:grid;grid-template-columns:minmax(220px,.72fr) minmax(0,1.28fr);gap:18px 28px;align-items:center;margin:0 0 28px;padding:20px 22px;border-top:1px solid #d8ccb8;border-bottom:1px solid #d8ccb8;background:#f5f1e8;color:#13263a}
 .contact-readiness-copy-v528{display:grid;gap:7px}
-.contact-readiness-copy-v528>span{font-size:.68rem;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:#8b6b42}
+.contact-readiness-copy-v528>span{font-size:.68rem;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:#725431}
 .contact-readiness-copy-v528>strong{font-family:var(--font-serif,Georgia,serif);font-size:clamp(1.16rem,2vw,1.52rem);line-height:1.18}
 .contact-readiness-copy-v528>p{margin:0;color:#59646c;font-size:.82rem;line-height:1.5}
 .contact-readiness-items-v528{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:#d8ccb8}
