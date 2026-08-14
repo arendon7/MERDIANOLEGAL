@@ -63,6 +63,7 @@ on:
       - professional-authority-v525.css
       - visual-assets-v526.json
       - integral-v526.css
+      - conversion-path-v528.css
       - assets/**
       - scripts/build_catalog_shells.py
       - scripts/render_catalog_static.mjs
@@ -115,6 +116,8 @@ on:
       - scripts/validate_professional_authority_v525.py
       - scripts/apply_integral_visual_v526.py
       - scripts/validate_integral_visual_v526.py
+      - scripts/apply_conversion_path_v528.py
+      - scripts/validate_conversion_path_v528.py
       - scripts/validate_browser_v54.py
       - scripts/run_quality_v55.mjs
       - scripts/validate_quality_v55.py
