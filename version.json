@@ -2,7 +2,7 @@
   "name": "Meridiano Legal Web",
   "version": "5.28.0",
   "release_date": "2026-08-14",
-  "channel": "github-pages-production-conversion-path-candidate",
+  "channel": "github-pages-production-conversion-path-certified",
   "commit_scope": "conversion-path-compression",
   "source_baseline": "main"
 }
