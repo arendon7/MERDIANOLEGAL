@@ -31,7 +31,7 @@
 @media(max-width:900px){
   .hero.home-narrative-v522 .hero-grid,.home-signal-grid-v526{grid-template-columns:1fr}
   .hero.home-narrative-v522 .hero-copy h1{max-width:15ch}
-  .hero.home-narrative-v522 .hero-art{display:block!important;height:360px;min-height:360px}
+  .hero.home-narrative-v522 .hero-art{display:block!important;width:100%;max-width:none;margin:0;height:360px;min-height:360px}
   .hero.home-narrative-v522 .visual-home-hero{display:block!important;height:100%;min-height:0}
   .home-signal-copy-v526 h2{max-width:15ch}
   .growth-proof-v51 .growth-proof-grid-v51 a{border-right:0;border-bottom:1px solid rgba(19,38,58,.12)}
