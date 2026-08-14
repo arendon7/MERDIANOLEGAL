@@ -8,11 +8,11 @@
 - Fuente técnica/documental: `main`.
 - Snapshot funcional certificado: `stable`.
 - Release certificada y cerrada: **5.29.0 — funnel observable y confianza contextual**.
-- SHA funcional certificado previo al cierre documental: `8a8d3bfe473dd5b0ca931c05fbb73b60afaa1f70`.
-- Builder funcional final: `31823965908`.
-- Run público funcional final: `31823985048`.
-- Release Governance final relevante: `31823922160`.
-- Al cierre funcional: `main = stable = 8a8d3bfe473dd5b0ca931c05fbb73b60afaa1f70`.
+- Canal: `github-pages-production-funnel-trust-certified`.
+- Builder de cierre documental: `31824748343` — PASS.
+- Site Quality and Deploy #375: `31824770838` — PASS.
+- Graphify de cierre: `31824748359` — PASS.
+- El SHA exacto vigente se lee de `main` y `stable`; al cierre ambos refs deben estar alineados.
 
 ## Contrato v5.29
 
@@ -24,7 +24,7 @@ La capa no inspecciona valores de formulario. Ninguna señal permite afirmar que
 
 Antes de `#contacto` se presenta un `<aside>` compacto de confianza derivado exclusivamente de `professional-authority-v525.json`. El bloque declara expresamente los límites de esa evidencia y preserva la secuencia de `<section>` establecida por v5.28.
 
-## Evidencia funcional final
+## Evidencia de cierre
 
 - generación canónica de 30 pasos: PASS;
 - segunda pasada/idempotencia: PASS;
@@ -33,13 +33,14 @@ Antes de `#contacto` se presenta un `<aside>` compacto de confianza derivado exc
 - 16 fichas profundas instrumentadas: PASS;
 - GitHub Pages: PASS;
 - smoke público: PASS;
-- Browser E2E/axe: **88 observados · 86 PASS · 2 SKIP · 0 FAIL · 0 retries**;
-- axe: 0 violaciones serias/críticas en las superficies cubiertas;
+- Browser E2E/axe: PASS;
 - Lighthouse performance/accesibilidad: PASS contra budgets existentes;
 - promoción automática de `stable`: PASS;
 - budgets relajados: no;
 - cobertura reducida: no;
 - PII/persistencia/transporte nuevo: no.
+
+La certificación funcional previa al cierre registró **88 tests observados · 86 PASS · 2 SKIP · 0 FAIL · 0 retries**, con 0 violaciones axe serias/críticas en las superficies cubiertas. El ciclo documental `certified` volvió a ejecutar Browser E2E/axe y Lighthouse con resultado PASS.
 
 ## Hallazgos corregidos durante v5.29
 
@@ -63,8 +64,8 @@ Antes de `#contacto` se presenta un `<aside>` compacto de confianza derivado exc
 
 ## Graphify
 
-Graphify funcional v5.29 fue regenerado correctamente sobre `8a8d3bfe473dd5b0ca931c05fbb73b60afaa1f70`. El commit documental de cierre debe volver a regenerarlo con versión `5.29.0`, canal `github-pages-production-funnel-trust-certified` y `source_commit` idéntico al `main` final.
+Graphify es memoria derivada. El cierre documental v5.29 fue regenerado correctamente con versión `5.29.0`, canal `github-pages-production-funnel-trust-certified` y el `source_commit` correspondiente al `main` que produjo ese snapshot. Al retomar el proyecto debe verificarse nuevamente la igualdad con `main`.
 
 ## Estado del ciclo
 
-**v5.29 está implementada, desplegada y funcionalmente certificada. El cierre documental cambia el canal a `certified` y debe recorrer nuevamente todos los gates antes de declarar el SHA documental definitivo.**
+**v5.29 está implementada, desplegada, certificada, documentada y cerrada. No existe un ciclo funcional posterior abierto.**
