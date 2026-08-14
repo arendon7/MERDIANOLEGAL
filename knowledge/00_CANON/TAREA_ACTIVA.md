@@ -1,34 +1,48 @@
 # Meridiano Legal — Tarea activa
 
-Actualizado: 2026-08-13.
+Actualizado: 2026-08-14.
 
 ## Estado
 
-**v5.25.0 — autoridad profesional verificable: activa.**
+**No existe una release funcional activa. v5.25.0 está cerrada.**
 
-Baseline certificado: `stable = 73ba88fda16545cc3a257594b2a91d67a9c848b6` (v5.24.0).
+Snapshot funcional certificado:
 
-## Problema
+`stable = b5a23e0ac1b675cade3ad69d197bbf86d5b998d8`.
 
-La oferta y la autoridad temática ya tienen contratos verificables, pero la web muestra poca trayectoria profesional concreta. La portada describe método; `firma.html` enumera formación y sectores; `experiencia.html` es correctamente ficticia y noindex. Falta distinguir con claridad conocimiento temático, demostración y experiencia profesional real del director.
+## Cierre v5.25
 
-## Contrato
+La release de autoridad profesional verificable cumplió su contrato:
 
-1. `professional-authority-v525.json` es la fuente canónica de hechos publicados por v5.25.
-2. La portada muestra una síntesis breve de formación y trayectoria.
-3. `firma.html` incorpora `#trayectoria` con formación, cinco entradas cronológicas y cuatro grupos de asuntos representativos.
-4. Las organizaciones citadas son trayectoria del director, no una lista de clientes de Meridiano Legal.
-5. La formación de UNIR se publica como formación de posgrado, no como título completado.
-6. Portada y firma mantienen un grafo Organization ↔ Person coherente.
-7. El centro demo conserva su naturaleza ficticia y noindex.
-8. No se publican testimonios, logos de terceros, métricas de éxito, garantías ni claims de liderazgo no sustentados.
-9. v5.25 se integra dentro del paso canónico v5.18+ sin alterar los 30 pasos de v5.24.
-10. No se reduce ningún validator, E2E, axe gate, budget ni requisito de promoción a stable.
+- fuente canónica `professional-authority-v525.json`;
+- prueba profesional breve en portada;
+- `firma.html#trayectoria` con formación, cinco entradas cronológicas y cuatro grupos de asuntos;
+- Organization ↔ Person coherente;
+- frontera explícita entre trayectoria del director, clientes de Meridiano Legal y experiencia demo;
+- UNIR presentada como formación de posgrado, no como título completado;
+- demo ficticia/noindex preservada;
+- sin testimonios, logos de terceros, métricas de éxito, garantías o claims de liderazgo no sustentados;
+- integración dentro del paso v5.18+ sin alterar el manifiesto canónico de 30 pasos;
+- vigilancia explícita de los cuatro archivos v5.25 en Builder y Release Governance.
 
-## No objetivos
+## Gates finales
 
-No hay rediseño general, cambio de precios/oferta, nuevas capacidades externas, backend, CRM, portal real, almacenamiento, PII ni reescritura retrospectiva de v5.24.
+Run público `31772394136`:
 
-## Cierre
+- builder e idempotencia: PASS;
+- validadores históricos y v5.25: PASS;
+- Pages + smoke: PASS;
+- Browser/axe: 64 → 62 PASS / 2 SKIP / 0 FAIL / 0 RETRY;
+- Lighthouse: 6/6 PASS;
+- release-health: PASS;
+- cobertura reducida: no;
+- budgets relajados: no;
+- `stable`: promovida a `b5a23e0ac1b675cade3ad69d197bbf86d5b998d8`.
 
-Fuente, compositor, validator y E2E v5.25 deben pasar; builder e idempotencia deben pasar; validadores históricos, Pages, smoke, Browser/axe, Lighthouse y release-health deben permanecer verdes. `stable` solo se mueve después de la certificación completa y del cierre documental/Graphify.
+Detalle y artefactos: `RELEASE-v5.25.md`.
+
+## Siguiente movimiento permitido
+
+No abrir v5.26 por continuidad numérica. El siguiente ciclo solo debe comenzar después de una auditoría nueva que identifique un problema material y verificable.
+
+Los commits exclusivamente documentales pueden avanzar `main` después de este cierre sin mover `stable`. Graphify debe considerarse fresco cuando su `BUILD_META.source_commit` coincida con el último `main` procesado exitosamente.
