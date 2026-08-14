@@ -40,6 +40,14 @@ def main() -> int:
     require(text.count('data-contact-process-v523="true"') == 1, "debe preservarse el disclosure de proceso v5.23")
     require('class="contact-prelude"' not in text, "el preámbulo redundante de tres tarjetas debe quedar consolidado")
 
+    focusable_regions = (
+        '<div class="contact-readiness-items-v528" tabindex="0" role="region" aria-label="Datos mínimos de la solicitud">',
+        '<dl class="qualification-summary-grid-v59 contact-synthesis-grid-v523" tabindex="0" role="region" aria-label="Síntesis de la solicitud">',
+        '<dl class="qualification-summary-grid-v59 contact-brief-grid-v523" tabindex="0" role="region" aria-label="Modalidad y estándar de trabajo">',
+    )
+    for region in focusable_regions:
+        require(text.count(region) == 1, f"región desplazable debe ser focable y etiquetada: {region}")
+
     commercial = text.find('<!-- COMMERCIAL-V43:END -->')
     contact = text.find('id="contacto" data-conversion-path-v528="true"')
     sectors = text.find('id="sectores"')
@@ -59,6 +67,7 @@ def main() -> int:
         '.contact-readiness-items-v528',
         '.post-contact-depth-v528',
         '.contact-synthesis-grid-v523,.contact-brief-grid-v523',
+        'color:#725431',
         'overflow-x:auto',
         'overflow-y:hidden',
         'scroll-snap-type:x proximity',
@@ -69,7 +78,7 @@ def main() -> int:
     for forbidden in ('display:none', 'visibility:hidden', 'content-visibility:hidden'):
         require(forbidden not in css, f"v5.28 no puede ocultar contenido material con {forbidden}")
 
-    print("CONVERSION PATH V5.28 OK: contacto adelantado, un solo formulario, profundidad preservada y síntesis móvil contenida.")
+    print("CONVERSION PATH V5.28 OK: contacto adelantado, un solo formulario, decks focables, contraste reforzado y profundidad preservada.")
     return 0
 
 
