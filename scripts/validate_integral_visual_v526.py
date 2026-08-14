@@ -73,7 +73,18 @@ def validate() -> None:
     validate_local_images(text)
 
     css = CSS.read_text(encoding='utf-8')
-    for marker in ('.home-signal-v526', '.home-signal-grid-v526', '.home-signal-map-v526', 'display:block!important', 'overflow-x:auto', '@media(max-width:900px)', '@media(max-width:620px)'):
+    for marker in (
+        '.home-signal-v526',
+        '.home-signal-grid-v526',
+        '.home-signal-grid-v526>*{min-width:0}',
+        '.home-signal-map-v526',
+        'display:block!important',
+        'overflow-x:auto',
+        'overflow-y:hidden',
+        'width:100%;max-width:100%;min-width:0',
+        '@media(max-width:900px)',
+        '@media(max-width:620px)',
+    ):
         require(marker in css, f'CSS v5.26 carece de {marker}')
     for forbidden in ('animation:', '@keyframes', 'filter:blur', 'backdrop-filter'):
         require(forbidden not in css, f'v5.26 no debe añadir efecto decorativo innecesario: {forbidden}')
@@ -81,7 +92,7 @@ def validate() -> None:
 
 def main() -> int:
     validate()
-    print('INTEGRAL VISUAL V5.26 OK: jerarquía compacta, hero móvil visible, región accesible propia y activos locales íntegros.')
+    print('INTEGRAL VISUAL V5.26 OK: jerarquía compacta, hero móvil visible, región accesible contenida y activos locales íntegros.')
     return 0
 
 
