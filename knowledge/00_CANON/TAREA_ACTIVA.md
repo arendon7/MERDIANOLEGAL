@@ -4,11 +4,9 @@ Actualizado: 2026-08-14.
 
 ## Estado
 
-**No existe un ciclo funcional activo. v5.29.0 — funnel observable y confianza contextual — está cerrada funcionalmente y en proceso de cierre documental certificado.**
+**No existe un ciclo funcional activo. v5.29.0 — funnel observable y confianza contextual — está implementada, publicada, certificada, documentada y cerrada.**
 
-Baseline funcional certificada:
-
-`main = stable = 8a8d3bfe473dd5b0ca931c05fbb73b60afaa1f70` (v5.29.0, antes del commit documental final).
+La baseline para cualquier trabajo posterior es la release 5.29.0 en canal `github-pages-production-funnel-trust-certified`. Antes de iniciar un nuevo ciclo deben verificarse `main`, `stable`, `version.json` y `knowledge/graphify-live/graphify-out/BUILD_META.json`.
 
 ## Qué quedó resuelto en v5.29
 
@@ -21,15 +19,18 @@ Baseline funcional certificada:
 7. `<aside>` compacto de confianza entre `#contratacion` y `#contacto`, derivado exclusivamente de `professional-authority-v525.json`.
 8. Invariante v5.28 preservada: `#contacto` continúa siendo la siguiente `<section>` narrativa después de `#contratacion`.
 9. Pipeline canónico preservado en exactamente 30 pasos, con v5.29 encadenada después de v5.28 dentro de `v5.18+`.
-10. Validator, E2E, axe, Lighthouse, Pages, Release Governance e idempotencia verdes.
+10. Validator, E2E, axe, Lighthouse, Pages, Release Governance, idempotencia y promoción de `stable` verdes.
 
-## Evidencia funcional
+## Evidencia de cierre
 
-- SHA: `8a8d3bfe473dd5b0ca931c05fbb73b60afaa1f70`.
-- Builder: `31823965908`.
-- Site Quality and Deploy: `31823985048`.
-- Release Governance final relevante: `31823922160`.
-- Browser E2E/axe: 88 observados · 86 PASS · 2 SKIP · 0 FAIL · 0 retries.
+- Builder documental: `31824748343`.
+- Site Quality and Deploy #375: `31824770838`.
+- Graphify documental: `31824748359`.
+- Pipeline canónico: 30 pasos PASS.
+- Idempotencia: PASS.
+- Validaciones estáticas: 37/37 PASS.
+- Pages + smoke: PASS.
+- Browser E2E/axe: PASS.
 - Lighthouse: PASS.
 - promoción de `stable`: PASS.
 
@@ -46,8 +47,4 @@ Baseline funcional certificada:
 
 ## Siguiente ciclo
 
-No se abre automáticamente una v5.30. Debe partir del SHA documental finalmente certificado de v5.29 y declarar un problema observable nuevo antes de modificar la arquitectura.
-
-## Cierre pendiente de esta rama documental
-
-Cambiar canal a `github-pages-production-funnel-trust-certified`, aceptar ADR-003, sincronizar memoria canónica y registrar release note. Ese commit documental debe recorrer nuevamente Release Governance, builder, idempotencia, 37 validaciones, Pages/smoke, Browser E2E/axe, Lighthouse, promoción de `stable` y Graphify. Solo ese SHA será la referencia definitiva de v5.29.
+No se abre automáticamente una v5.30. Un nuevo ciclo debe declarar primero un problema observable y conservar como baseline todos los invariantes ya certificados. No debe reinterpretar las señales v5.29 como conversiones reales ni habilitar capacidades externas sin contrato, implementación y QA propios.
