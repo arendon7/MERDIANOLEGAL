@@ -85,7 +85,9 @@ def main() -> int:
     for forbidden in ('localStorage', 'sessionStorage', 'indexedDB', 'document.cookie', 'navigator.sendBeacon', 'XMLHttpRequest', 'crypto.randomUUID', 'crypto.getRandomValues'):
         require(forbidden not in js, f'runtime no puede usar {forbidden}')
     require(re.search(r'\bfetch\s*\(', js) is None, 'runtime v5.29 no puede introducir fetch')
-    for forbidden in ('contact-form', 'FormData', 'textarea', 'HTMLInputElement', 'HTMLTextAreaElement', 'HTMLSelectElement', '.value'):
+    # `contact-form` es una etiqueta semántica heredada de CTA v5.0 y se permite.
+    # Lo prohibido es inspeccionar controles o leer valores del formulario.
+    for forbidden in ('FormData', 'textarea', 'HTMLInputElement', 'HTMLTextAreaElement', 'HTMLSelectElement', '.value', '.elements', 'querySelector(\'form', 'querySelector("form'):
         require(forbidden not in js, f'runtime v5.29 no puede leer contenido de formulario: {forbidden}')
 
     for marker in ('.decision-trust-v529', '.decision-trust-evidence-v529', '@media(max-width:760px)', 'overflow-x:auto', 'scroll-snap-type:x proximity'):
