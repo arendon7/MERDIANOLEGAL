@@ -7,60 +7,46 @@
 - Repositorio: `arendon7/MERDIANOLEGAL`.
 - Fuente técnica/documental: `main`.
 - Snapshot funcional certificado: `stable`.
-- Release certificada y cerrada: **5.25.0 — autoridad profesional verificable**.
-- SHA funcional: `b5a23e0ac1b675cade3ad69d197bbf86d5b998d8`.
-- Builder autoritativo: `31772373318`.
-- Run público final: `31772394136`.
-- `stable = b5a23e0ac1b675cade3ad69d197bbf86d5b998d8`.
+- Release certificada y cerrada: **5.27.0 — densidad comercial móvil**.
+- SHA público/canónico certificado: `26c90ec3a0e1ea08ae251673cba0a7fc56b4e0b2`.
+- Builder autoritativo: `31813283560`.
+- Run público final: `31813319651`.
+- `main = stable = 26c90ec3a0e1ea08ae251673cba0a7fc56b4e0b2` al cierre.
 
-## Contrato v5.25
+## Contrato v5.27
 
-`professional-authority-v525.json` es la fuente de verdad de la capa profesional publicada. La portada incorpora prueba profesional breve y `firma.html#trayectoria` materializa formación, cinco entradas cronológicas y cuatro grupos de asuntos representativos.
+La portada conserva las 8 opciones de servicios, 8 productos, 5 planes, 4 grupos de referencias de honorarios y 8 sectores. En viewport móvil esas colecciones se presentan como decks horizontales contenidos con `scroll-snap`, sin alterar escritorio, sin ocultar opciones y sin generar overflow horizontal global.
 
-Las organizaciones citadas corresponden a trayectoria del director, no a una lista de clientes de Meridiano Legal. No se publican testimonios inventados, logos como social proof, métricas de éxito, garantías de resultado ni claims de liderazgo no sustentados. UNIR se mantiene como formación de posgrado y el centro demo continúa ficticio/noindex.
-
-El compositor se integra dentro del paso v5.18+; el manifiesto protegido v5.24 continúa con 30 pasos. Builder y Release Governance vigilan explícitamente JSON, CSS, compositor y validator v5.25. Release Governance ejecuta además `Validate professional authority v5.25`.
+La capa está materializada en `integral-v526.css` como extensión responsive v5.27 y protegida por `tests/e2e/mobile-density-v527.spec.mjs`.
 
 ## Evidencia
 
-- builder canónico de 30 pasos: PASS;
+- generación canónica: PASS;
 - segunda pasada/idempotencia: PASS;
-- validadores históricos y v5.25: PASS;
+- validadores históricos: PASS;
 - Pages + smoke: PASS;
-- Browser E2E + axe: 64 observados → 62 PASS / 2 SKIP / 0 FAIL / 0 RETRY;
-- 7 superficies axe WCAG 2.1 AA sin violaciones serias/críticas;
-- Lighthouse: 6/6 PASS;
-- Home: performance 1.00, accesibilidad 1.00, LCP 1387 ms, CLS 0, TBT 72 ms;
-- CI hasta `stable`: 240 s, 14.0% mejor que el baseline de 279 s;
-- cobertura reducida: no;
+- Browser E2E + axe: PASS;
+- Lighthouse: PASS;
+- promoción de `stable`: PASS;
 - budgets relajados: no;
-- promoción de `stable`: PASS.
-
-Artefactos, digests e incidencias: `RELEASE-v5.25.md`.
+- cobertura reducida: no.
 
 ## Invariantes
 
 - 46 HTML;
 - 16 fichas profundas;
 - 1 formulario físico canónico;
-- 64 tests observados, 7 superficies axe y 6 Lighthouse como piso certificado;
-- 30 pasos del pipeline canónico, con `builder == segunda pasada == manifiesto`;
 - WhatsApp manual y telemetría local sin PII;
 - portal real deshabilitado;
 - demo explícitamente ficticia;
 - `stable` solo se mueve tras gates verdes;
-- ningún hecho profesional nuevo debe publicarse fuera de la fuente v5.25 sin actualizar su contrato y validación.
+- ningún hecho profesional nuevo debe publicarse fuera de la fuente v5.25 sin actualizar su contrato y validación;
+- la densidad móvil no puede resolverse ocultando contenido material.
 
 ## Graphify
 
-Graphify es memoria derivada. Su frescura se comprueba comparando `graphify-out/BUILD_META.json.source_commit` con el último `main` procesado exitosamente. Los commits exclusivamente documentales pueden hacer que `main` avance sin mover `stable`.
-
-## Trazabilidad
-
-PR #106: implementación principal. PR #107: idempotencia. PRs #108–#111: precisión del contrato E2E responsive/accesible. PR #113: hardening de workflows. Detalle completo en `RELEASE-v5.25.md`.
+Graphify es memoria derivada. El snapshot disponible declara v5.27 y `source_commit = 75d18b45d7273ae10a3722617bfc3808350a3f0f`, mientras el `main` canónico certificado terminó en `26c90ec3…`. Hasta la siguiente regeneración, `main` es la autoridad.
 
 ## Estado del ciclo
 
-**v5.25 está implementada, desplegada, certificada y funcionalmente cerrada. No existe una v5.26 activa ni una tarea funcional abierta.**
-
-El cierre documental puede hacer avanzar `main` exclusivamente por memoria/documentación; `stable` debe conservar el SHA funcional certificado. Cualquier ciclo posterior debe comenzar con una auditoría independiente.
+**v5.27 está implementada, desplegada, certificada y funcionalmente cerrada. v5.28 está activa en `TAREA_ACTIVA.md`; `stable` debe permanecer en v5.27 hasta la certificación completa de ese ciclo.**
