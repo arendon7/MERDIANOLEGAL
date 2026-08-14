@@ -67,7 +67,14 @@ def main() -> int:
             # contacto canónico sin que una capa histórica lo reubique de nuevo.
             if semver(version) >= (5, 28, 0):
                 from apply_conversion_path_v528 import main as apply_conversion_path_v528
-                return apply_conversion_path_v528()
+                result = apply_conversion_path_v528()
+                if result:
+                    return result
+            # v5.29 es la última normalización: observa el funnel materializado y
+            # coloca confianza contextual sin alterar el orden de secciones v5.28.
+            if semver(version) >= (5, 29, 0):
+                from apply_funnel_trust_v529 import main as apply_funnel_trust_v529
+                return apply_funnel_trust_v529()
             return 0
         return 0
     return 0
