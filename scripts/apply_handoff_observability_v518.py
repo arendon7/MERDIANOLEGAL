@@ -55,6 +55,9 @@ def main() -> int:
                 result = apply_professional_authority_v525()
                 if result:
                     return result
+            # v5.26 se ejecuta al final: las anclas históricas necesarias para v4.5
+            # pueden rehidratarse durante segunda pasada, pero nunca deben quedar
+            # presentes en la salida pública simplificada.
             if semver(version) >= (5, 26, 0):
                 from apply_integral_visual_v526 import main as apply_integral_visual_v526
                 return apply_integral_visual_v526()
