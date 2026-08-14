@@ -8,31 +8,31 @@ Sitio público y centro demostrativo de Meridiano Legal. Arquitectura static-fir
 
 ## Estado funcional
 
-- Última release certificada: **5.29.0 — funnel observable y confianza contextual**.
-- SHA funcional certificado previo al cierre documental: `8a8d3bfe473dd5b0ca931c05fbb73b60afaa1f70`.
-- Builder funcional final v5.29: `31823965908`.
-- Certificación pública funcional final v5.29: `31823985048`.
-- Release Governance final relevante: `31823922160`.
-- Browser E2E/axe: 88 observados · 86 PASS · 2 SKIP · 0 FAIL · 0 retries.
-- Pages, smoke, Lighthouse, E2E/axe y promoción de `stable`: PASS.
+- Última release: **5.29.0 — funnel observable y confianza contextual**.
+- Estado: **implementada, publicada, certificada y cerrada**.
+- Canal: `github-pages-production-funnel-trust-certified`.
+- Certificación documental completada: Site Quality and Deploy #375, run `31824770838`, PASS.
+- Builder del cierre: `31824748343`, 30 pasos canónicos PASS.
+- Graphify del cierre: `31824748359`, PASS.
+- La referencia SHA exacta se obtiene de `refs/heads/main` y `refs/heads/stable`; al cierre ambos refs deben estar alineados.
 - Portal real de clientes: deshabilitado; `demo.html` continúa siendo demostrativo/noindex.
 
 ## Qué aporta v5.29
 
 La web unifica señales ya existentes en un funnel semántico verificable de siete etapas: `awareness → need → offer → evidence → decision → contact → handoff`. La cola v5.29 vive solo en memoria, está limitada a 48 eventos, no lee valores del formulario y no introduce persistencia, identificadores entre sesiones, fingerprinting ni transporte de red propio.
 
-La portada observa checkpoints de exposición y las 16 fichas profundas se reconocen por su `data-catalog-id`. `contact` y `handoff` describen únicamente hechos que el navegador puede observar: no prueban envío, entrega, lectura, aceptación de propuesta, inicio de encargo ni conversión a cliente.
+La portada observa checkpoints de exposición y las 16 fichas profundas se reconocen por su `data-catalog-id`. `contact` y `handoff` describen únicamente hechos observables por el navegador: no prueban envío, entrega, lectura, aceptación de propuesta, inicio de encargo ni conversión a cliente.
 
 Entre `#contratacion` y `#contacto` existe un `<aside>` compacto de confianza derivado exclusivamente de `professional-authority-v525.json`. No crea una nueva sección narrativa, por lo que `#contacto` sigue siendo la siguiente `<section>` después de `#contratacion`, preservando v5.28.
 
 ## Ciclo activo
 
-**No hay un incremento funcional abierto después del cierre de v5.29.** El siguiente ciclo debe abrirse explícitamente desde esta baseline certificada.
+**No hay un incremento funcional abierto.** El siguiente ciclo debe abrirse explícitamente desde la baseline v5.29 certificada y partir de un problema observable nuevo.
 
 ## Source-of-truth
 
 - `main`: verdad técnica y documental.
-- `stable`: último snapshot público certificado.
+- `stable`: último snapshot funcional certificado.
 - `catalog-products-v41/` y `catalog-services-v42/`: fuente jurídica/comercial de las 16 ofertas.
 - `offer-narrative-v522.json`: contrato editorial de oferta.
 - `professional-authority-v525.json`: hechos profesionales publicables y fuente del trust contextual v5.29.
@@ -56,4 +56,4 @@ Entre `#contratacion` y `#contacto` existe un `<aside>` compacto de confianza de
 
 ## Graphify
 
-Graphify es memoria derivada. El snapshot funcional v5.29 ya fue regenerado contra `8a8d3bfe473dd5b0ca931c05fbb73b60afaa1f70`. El cierre documental cambiará el canal a `certified` y debe generar un snapshot final cuyo `source_commit` coincida exactamente con el `main` de cierre.
+Graphify es memoria derivada y no sustituye a `main`. El cierre v5.29 fue regenerado con versión `5.29.0`, canal `github-pages-production-funnel-trust-certified` y `source_commit` alineado con el commit de cierre que lo produjo. Para retomar el proyecto, comprobar siempre que `graphify-out/BUILD_META.json.source_commit` corresponda al `main` actual.
