@@ -70,11 +70,18 @@ def main() -> int:
                 result = apply_conversion_path_v528()
                 if result:
                     return result
-            # v5.29 es la última normalización: observa el funnel materializado y
-            # coloca confianza contextual sin alterar el orden de secciones v5.28.
+            # v5.29 observa el funnel materializado y coloca confianza contextual
+            # sin alterar el orden de secciones v5.28.
             if semver(version) >= (5, 29, 0):
                 from apply_funnel_trust_v529 import main as apply_funnel_trust_v529
-                return apply_funnel_trust_v529()
+                result = apply_funnel_trust_v529()
+                if result:
+                    return result
+            # v5.30 es la normalización final de las fichas profundas: hace visible
+            # la lógica de contratación sin duplicar perímetro, aceptación o tarifa.
+            if semver(version) >= (5, 30, 0):
+                from apply_offer_commercial_v530 import main as apply_offer_commercial_v530
+                return apply_offer_commercial_v530()
             return 0
         return 0
     return 0
