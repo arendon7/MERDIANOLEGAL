@@ -13,6 +13,7 @@ CONTRACT = ROOT / 'visual-assets-v526.json'
 CSS = ROOT / 'integral-v526.css'
 START = '<!-- INTEGRAL-V526-HOME:START -->'
 END = '<!-- INTEGRAL-V526-HOME:END -->'
+MOBILE_REGION = 'class="home-signal-meta-v526" data-mobile-scrollable-v516="true" tabindex="0" role="region" aria-label="Cobertura pública de Meridiano Legal"'
 
 
 def require(condition: bool, message: str) -> None:
@@ -50,11 +51,13 @@ def validate() -> None:
     require('class="principles"' not in text, 'la banda histórica de métricas debe quedar consolidada')
     require('class="audience-strip"' not in text, 'la banda histórica de audiencias debe quedar consolidada')
     require(text.count('data-integral-v526="signal"') == 1, 'debe existir una sola señal editorial v5.26')
+    require(text.count(MOBILE_REGION) == 1, 'la señal v5.26 debe aportar exactamente una región móvil accesible y enfocada')
     for marker in (
         'Menos capas. Más criterio aplicable.',
+        '8 servicios + 8 productos',
         '16 fichas con alcance verificable',
-        '5 modalidades de contratación',
-        '8 lecturas sectoriales',
+        '5 planes + 5 modalidades de contratación',
+        '8 sectores · 8 lecturas sectoriales',
         'assets/decision-map-v526.svg',
         'id="necesidades"',
         'data-home-decision-v520="true"',
@@ -70,7 +73,7 @@ def validate() -> None:
     validate_local_images(text)
 
     css = CSS.read_text(encoding='utf-8')
-    for marker in ('.home-signal-v526', '.home-signal-grid-v526', '.home-signal-map-v526', '@media(max-width:900px)', '@media(max-width:620px)'):
+    for marker in ('.home-signal-v526', '.home-signal-grid-v526', '.home-signal-map-v526', 'display:block!important', 'overflow-x:auto', '@media(max-width:900px)', '@media(max-width:620px)'):
         require(marker in css, f'CSS v5.26 carece de {marker}')
     for forbidden in ('animation:', '@keyframes', 'filter:blur', 'backdrop-filter'):
         require(forbidden not in css, f'v5.26 no debe añadir efecto decorativo innecesario: {forbidden}')
@@ -78,7 +81,7 @@ def validate() -> None:
 
 def main() -> int:
     validate()
-    print('INTEGRAL VISUAL V5.26 OK: jerarquía compacta, activos locales íntegros y referencias pendientes no publicadas.')
+    print('INTEGRAL VISUAL V5.26 OK: jerarquía compacta, hero móvil visible, región accesible propia y activos locales íntegros.')
     return 0
 
 
