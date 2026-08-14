@@ -18,8 +18,8 @@ READINESS_START = '<!-- CONVERSION-READINESS-V528:START -->'
 READINESS_END = '<!-- CONVERSION-READINESS-V528:END -->'
 DEPTH_START = '<!-- CONVERSION-DEPTH-V528:START -->'
 DEPTH_END = '<!-- CONVERSION-DEPTH-V528:END -->'
-SYNTHESIS_DECK = '<dl class="qualification-summary-grid-v59 contact-synthesis-grid-v523" tabindex="0" role="region" aria-label="Síntesis de la solicitud">'
-BRIEF_DECK = '<dl class="qualification-summary-grid-v59 contact-brief-grid-v523" tabindex="0" role="region" aria-label="Modalidad y estándar de trabajo">'
+SYNTHESIS_DECK = '<dl class="qualification-summary-grid-v59 contact-synthesis-grid-v523" tabindex="0" aria-label="Síntesis de la solicitud">'
+BRIEF_DECK = '<dl class="qualification-summary-grid-v59 contact-brief-grid-v523" tabindex="0" aria-label="Modalidad y estándar de trabajo">'
 
 
 def semver(value: str) -> tuple[int, int, int]:
@@ -185,7 +185,7 @@ def main() -> int:
         return 0
     patch_home()
     validate_materialized_contract()
-    print("CONVERSION PATH V5.28 OK: contacto adelantado, preparación compacta, decks accesibles y profundidad preservada.")
+    print("CONVERSION PATH V5.28 OK: contacto adelantado, preparación compacta, decks accesibles y semántica nativa preservada.")
     return 0
 
 
