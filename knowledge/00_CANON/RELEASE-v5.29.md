@@ -1,6 +1,8 @@
 # Meridiano Legal — Release v5.29.0
 
-Fecha de cierre funcional: 2026-08-14.
+Fecha de cierre: 2026-08-14.
+Estado: **certificada y cerrada**.
+Canal: `github-pages-production-funnel-trust-certified`.
 
 ## Alcance
 
@@ -30,20 +32,29 @@ Entre `#contratacion` y `#contacto` se materializa un `<aside>` compacto derivad
 
 El bloque no es una nueva `<section>`, por lo que la secuencia narrativa v5.28 permanece intacta.
 
-## Evidencia funcional certificada
+## Evidencia de certificación
 
-- SHA funcional: `8a8d3bfe473dd5b0ca931c05fbb73b60afaa1f70`.
-- Builder final: `31823965908`.
+### Cierre funcional
+
+- SHA funcional certificado: `8a8d3bfe473dd5b0ca931c05fbb73b60afaa1f70`.
+- Builder: `31823965908`.
 - Site Quality and Deploy #374: `31823985048`.
-- Release Governance final relevante: `31823922160`.
+- Release Governance relevante: `31823922160`.
+- Browser E2E/axe: **88 observados · 86 PASS · 2 SKIP · 0 FAIL · 0 retries**.
+- axe: 0 violaciones serias/críticas en las superficies cubiertas.
+
+### Cierre documental `certified`
+
+- Commit de cierre certificado: `13da6f19fe3ed12c03801e3f65f55c7be0d94cc0`.
+- Builder #153: `31824748343` — PASS.
+- Site Quality and Deploy #375: `31824770838` — PASS.
+- Graphify #297: `31824748359` — PASS.
 - Pipeline canónico: 30 pasos — PASS.
 - Segunda pasada / `git diff --exit-code`: PASS.
 - Validaciones estáticas: 37/37 — PASS.
-- Cobertura de 16 fichas profundas: PASS.
 - GitHub Pages: PASS.
 - Smoke público: PASS.
-- Browser E2E/axe: **88 observados · 86 PASS · 2 SKIP · 0 FAIL · 0 retries**.
-- axe: 0 violaciones serias/críticas en las superficies cubiertas.
+- Browser E2E/axe: PASS.
 - Lighthouse performance/accesibilidad: PASS contra budgets existentes.
 - Promoción automática de `stable`: PASS.
 - Budgets relajados: no.
@@ -84,6 +95,6 @@ El contrato se corrigió a 5% de exposición visible y el E2E dejó de usar paus
 - Sin conversión inferida desde navegación.
 - `stable` únicamente después de todos los gates verdes.
 
-## Cierre documental
+## Estado final
 
-El canal pasa de `github-pages-production-funnel-trust-candidate` a `github-pages-production-funnel-trust-certified`. Este cambio documental debe volver a atravesar builder, idempotencia, validaciones, Pages/smoke, Browser E2E/axe, Lighthouse, promoción de `stable` y Graphify. El SHA resultante de ese último ciclo será la referencia definitiva de v5.29.
+**v5.29 está implementada, desplegada, certificada, documentada y cerrada. No existe un ciclo funcional posterior abierto.** La referencia SHA exacta vigente debe leerse de `main` y `stable`, ya que una sincronización exclusivamente documental posterior puede avanzar ambos refs sin cambiar el comportamiento certificado.
