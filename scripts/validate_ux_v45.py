@@ -24,6 +24,7 @@ if not match or version_tuple < (4, 5, 0):
     errors.append(f"version.json debe ser 4.5.0 o superior y registra {version!r}")
 compact_home_v520 = version_tuple >= (5, 20, 0)
 capability_truth_v521 = version_tuple >= (5, 21, 0)
+conversion_path_v528 = version_tuple >= (5, 28, 0)
 
 text = INDEX.read_text(encoding="utf-8")
 required = [
@@ -46,6 +47,12 @@ if not compact_home_v520:
     required.append('id="elegir"')
 else:
     required.extend(['data-home-decision-v520="true"', 'data-proof-router-v512="true"'])
+if conversion_path_v528:
+    required.extend([
+        'data-conversion-path-v528="true"',
+        'data-conversion-readiness-v528="true"',
+        'data-conversion-depth-v528="true"',
+    ])
 
 for marker in required:
     if marker not in text:
@@ -75,12 +82,23 @@ if not compact_home_v520:
     order.append('id="elegir"')
 order.extend([
     'id="servicios"', 'id="productos"', 'id="entregables"', 'id="experiencia"',
-    'id="planes"', 'id="honorarios"', 'id="contratacion"', 'id="sectores"',
-    'id="perspectivas"', 'id="firma"', 'id="preguntas"', 'id="contacto"',
+    'id="planes"', 'id="honorarios"', 'id="contratacion"',
 ])
+if conversion_path_v528:
+    order.extend(['id="contacto"', 'id="sectores"', 'id="perspectivas"', 'id="firma"', 'id="preguntas"'])
+else:
+    order.extend(['id="sectores"', 'id="perspectivas"', 'id="firma"', 'id="preguntas"', 'id="contacto"'])
 positions = [text.find(marker) for marker in order]
 if any(position < 0 for position in positions) or positions != sorted(positions):
-    errors.append("El orden narrativo v4.5/v5.20 de la portada no es canónico")
+    contract = "v5.28" if conversion_path_v528 else "v4.5/v5.20"
+    errors.append(f"El orden narrativo {contract} de la portada no es canónico")
+
+if conversion_path_v528:
+    contracting_position = text.find('id="contratacion"')
+    contact_position = text.find('id="contacto"')
+    sectors_position = text.find('id="sectores"')
+    if not (contracting_position >= 0 and contracting_position < contact_position < sectors_position):
+        errors.append("v5.28 debe ubicar contacto después de contratación y antes de la profundidad sectorial")
 
 if compact_home_v520:
     need_position = text.find('id="necesidades"')
@@ -120,4 +138,5 @@ if errors:
         print(f"- {error}")
     sys.exit(1)
 
-print("VALIDACIÓN UX/UI V4.5 OK: narrativa, densidad, navegación, mockup, accesibilidad y móvil íntegros; v5.20/v5.21 compatibles.")
+compat = "; v5.28 conversion-path compatible" if conversion_path_v528 else ""
+print(f"VALIDACIÓN UX/UI V4.5 OK: narrativa, densidad, navegación, mockup, accesibilidad y móvil íntegros; v5.20/v5.21 compatibles{compat}.")
