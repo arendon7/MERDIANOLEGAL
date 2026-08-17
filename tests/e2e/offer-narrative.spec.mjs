@@ -15,10 +15,20 @@ test('portada v5.22 diferencia necesidad, modalidad, servicios y productos sin d
 
 test('fichas v5.22 explican decisión, modalidad, lente jurídica y alternativa cercana', async ({ page }) => {
   await page.goto('./productos/programa-gobernanza-ia.html');
+  const depth = page.locator('details[data-decision-compression-v531="offer-narrative"]');
   const ai = page.locator('[data-offer-narrative-v522="product-ai"]');
+  await expect(depth).toHaveCount(1);
+  await expect(depth).not.toHaveAttribute('open', '');
   await expect(ai).toHaveCount(1);
   await expect(ai.locator('.offer-positioning-card-v522')).toHaveCount(3);
+  await expect(ai).toContainText('CAPACIDAD QUE QUEDA INSTALADA');
+
+  const depthSummary = depth.locator(':scope > summary');
+  await expect(depthSummary).toHaveCount(1);
+  await depthSummary.click();
+  await expect(depth).toHaveAttribute('open', '');
   await expect(ai.getByText('CAPACIDAD QUE QUEDA INSTALADA')).toBeVisible();
+
   await ai.locator('summary').click();
   await expect(ai.locator('.offer-legal-lens-grid-v522 article')).toHaveCount(3);
   await expect(ai.getByText('CONPES 4144 de 2025')).toBeVisible();
