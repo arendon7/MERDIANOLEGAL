@@ -1,0 +1,81 @@
+/* v5.31 — compresión decisional mediante divulgación progresiva nativa. */
+.decision-depth-v531,
+.solution-depth-v531 {
+  width: 100%;
+  border: 1px solid rgba(24, 38, 49, .16);
+  border-radius: 18px;
+  background: #fbfaf7;
+  overflow: clip;
+}
+
+.decision-depth-v531 > summary,
+.solution-depth-v531 > summary {
+  cursor: pointer;
+  padding: 18px 22px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.decision-depth-v531 > summary span,
+.solution-depth-v531 > summary span {
+  display: block;
+  margin-bottom: 4px;
+  font-size: .72rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  opacity: .72;
+}
+
+.decision-depth-v531 > summary strong,
+.solution-depth-v531 > summary strong {
+  display: block;
+  font-size: 1rem;
+}
+
+.decision-depth-v531[open] > summary,
+.solution-depth-v531[open] > summary {
+  border-bottom: 1px solid rgba(24, 38, 49, .12);
+}
+
+.decision-depth-v531 .offer-positioning-v522,
+.solution-depth-v531 > section {
+  margin: 0;
+}
+
+.decision-result-v531 {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.decision-result-v531 > .detail-section {
+  min-width: 0;
+  padding-block: clamp(30px, 4vw, 54px);
+}
+
+.decision-result-v531 > .detail-section > .container {
+  width: min(100% - 36px, 620px);
+}
+
+.solution-depth-v531 {
+  width: min(1180px, calc(100% - 32px));
+  margin: 22px auto;
+}
+
+.solution-depth-v531 > .growth-section-v51 {
+  border-radius: 0;
+}
+
+@media (max-width: 760px) {
+  .decision-result-v531 {
+    grid-template-columns: 1fr;
+  }
+
+  .decision-depth-v531 > summary,
+  .solution-depth-v531 > summary {
+    padding: 16px 18px;
+  }
+
+  .decision-result-v531 > .detail-section > .container {
+    width: min(100% - 28px, 620px);
+  }
+}
