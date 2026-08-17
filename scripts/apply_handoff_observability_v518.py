@@ -77,11 +77,17 @@ def main() -> int:
                 result = apply_funnel_trust_v529()
                 if result:
                     return result
-            # v5.30 es la normalización final de las fichas profundas: hace visible
-            # la lógica de contratación sin duplicar perímetro, aceptación o tarifa.
+            # v5.30 hace explícita la lógica de contratación de las fichas profundas.
             if semver(version) >= (5, 30, 0):
                 from apply_offer_commercial_v530 import main as apply_offer_commercial_v530
-                return apply_offer_commercial_v530()
+                result = apply_offer_commercial_v530()
+                if result:
+                    return result
+            # v5.31 es la normalización final de jerarquía: conserva toda la profundidad
+            # y convierte solo soporte decisional secundario a divulgación progresiva.
+            if semver(version) >= (5, 31, 0):
+                from apply_decision_compression_v531 import main as apply_decision_compression_v531
+                return apply_decision_compression_v531()
             return 0
         return 0
     return 0

@@ -45,6 +45,8 @@ on:
       - funnel-trust-v529.css
       - offer-commercial-v530.json
       - offer-commercial-v530.css
+      - decision-compression-v531.json
+      - decision-compression-v531.css
       - assets/decision-map-v526.svg
       - demo.js
       - site-v3.js
@@ -89,6 +91,8 @@ on:
       - scripts/validate_funnel_trust_v529.py
       - scripts/apply_offer_commercial_v530.py
       - scripts/validate_offer_commercial_v530.py
+      - scripts/apply_decision_compression_v531.py
+      - scripts/validate_decision_compression_v531.py
       - scripts/validate_operations_v49.py
       - scripts/validate_static_catalog.py
       - scripts/validate_growth_v51.py
@@ -187,6 +191,8 @@ jobs:
         run: python3 scripts/validate_funnel_trust_v529.py
       - name: Validate offer commercial depth v5.30
         run: python3 scripts/validate_offer_commercial_v530.py
+      - name: Validate decision compression v5.31
+        run: python3 scripts/validate_decision_compression_v531.py
       - name: Publish release-health report
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
