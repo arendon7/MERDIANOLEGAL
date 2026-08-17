@@ -78,6 +78,7 @@ on:
       - scripts/enrich_editorial_pages.py
       - scripts/apply_commercial_v43.py
       - scripts/apply_visual_assets.py
+      - scripts/validate_visual_assets.py
       - scripts/apply_ux_v45.py
       - scripts/apply_detail_ux_v46.py
       - scripts/apply_editorial_ux_v47.py
