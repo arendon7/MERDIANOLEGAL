@@ -25,7 +25,9 @@ test('fichas v5.22 explican decisión, modalidad, lente jurídica y alternativa 
 
   const depthSummary = depth.locator(':scope > summary');
   await expect(depthSummary).toHaveCount(1);
-  await depthSummary.click();
+  await depthSummary.focus();
+  await expect(depthSummary).toBeFocused();
+  await depthSummary.press('Enter');
   await expect(depth).toHaveAttribute('open', '');
   await expect(ai.getByText('CAPACIDAD QUE QUEDA INSTALADA')).toBeVisible();
 
@@ -39,9 +41,18 @@ test('fichas v5.22 explican decisión, modalidad, lente jurídica y alternativa 
   await expectNoHorizontalOverflow(page);
 
   await page.goto('./servicios/contratacion-estrategica.html');
+  const serviceDepth = page.locator('details[data-decision-compression-v531="offer-narrative"]');
   const contracts = page.locator('[data-offer-narrative-v522="service-contracts"]');
+  await expect(serviceDepth).toHaveCount(1);
+  await expect(serviceDepth).not.toHaveAttribute('open', '');
   await expect(contracts).toHaveCount(1);
   await expect(contracts).toContainText('Sistema Contractual Empresarial');
+  const serviceDepthSummary = serviceDepth.locator(':scope > summary');
+  await expect(serviceDepthSummary).toHaveCount(1);
+  await serviceDepthSummary.focus();
+  await expect(serviceDepthSummary).toBeFocused();
+  await serviceDepthSummary.press('Enter');
+  await expect(serviceDepth).toHaveAttribute('open', '');
   await expect(contracts.getByRole('link', { name: /comparar alternativa/i })).toHaveAttribute('href', '../productos/sistema-contractual-empresarial.html');
   await expectNoHorizontalOverflow(page);
 });
