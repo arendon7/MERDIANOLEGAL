@@ -8,26 +8,26 @@ Sitio público y centro demostrativo de Meridiano Legal. Arquitectura static-fir
 
 ## Estado funcional
 
-- Release funcional certificada: **5.30.0 — profundidad comercial de las 16 ofertas**.
-- SHA funcional certificado: `ee88b8ced3347255cf85ee62e3bf4022b7c34a42`.
-- Site Quality and Deploy funcional: `31834646140` — PASS.
-- Browser E2E/axe: **100 observados · 98 PASS · 2 SKIP · 0 FAIL · 0 reintentos**.
-- Canal certificado: `github-pages-production-offer-commercial-depth-certified`.
+- Release funcional certificada: **5.31.0 — compresión decisional mediante divulgación progresiva**.
+- SHA funcional certificado: `159be8a9e467a303faa8d302bfac93b33c2e7b29`.
+- Builder canónico funcional: `32059316508` — PASS.
+- Site Quality and Deploy #383: `32059355395` — PASS.
+- Browser E2E/axe: **112 observados · 110 PASS · 2 SKIP · 0 FAIL · 0 reintentos**.
+- Lighthouse: PASS con budgets existentes.
+- Canal: `github-pages-production-decision-compression-certified`.
 - No hay un ciclo funcional posterior abierto.
-- Para la referencia documental definitiva, verificar que los refs actuales `main` y `stable` coincidan; no incrustar un SHA recursivo de cierre en esta nota.
+- Para la referencia documental definitiva, verificar los refs vigentes `main` y `stable`; no incrustar un SHA recursivo de cierre en esta nota.
 - Portal real de clientes: deshabilitado; `demo.html` continúa siendo demostrativo/noindex.
 
-## Qué cambió en v5.30
+## Qué cambió en v5.31
 
-Las 16 ofertas mantienen su profundidad jurídica original y ahora hacen explícita, dentro del resumen ejecutivo v5.8, la lógica de contratación que antes debía inferirse entre varias secciones. Cada oferta declara:
+La auditoría del recorrido público confirmó que la web ya tenía suficiente profundidad jurídica y comercial. La fricción era de jerarquía: demasiadas capas decisionales válidas permanecían abiertas simultáneamente.
 
-- unidad/base de contratación;
-- cómo se dimensionan los honorarios sin publicar tarifas inventadas;
-- exactamente tres variables que pueden modificar alcance y honorarios;
-- regla de ampliación o cambio de modalidad;
-- criterio de cierre verificable.
-
-La síntesis enlaza a perímetro, aceptación y contacto. Los catálogos fuente siguen siendo la verdad jurídica del alcance, entregables, responsabilidades, límites y cantidades.
+- En 16/16 fichas, v5.8 + v5.30 permanecen como primer grupo abierto y pregunta ejecutiva + resultado como segundo grupo compacto.
+- `offer-narrative-v522` se conserva íntegro en el DOM bajo `<details>/<summary>` nativo cerrado por defecto.
+- En 6/6 rutas de necesidad permanecen abiertos hero, señales, encaje, decisiones, modalidad, honorarios, resultado, límites y CTA.
+- Solo objeciones, FAQ, rutas relacionadas y prueba/contexto pasan a divulgación progresiva.
+- No se eliminó copy, perímetro, límites, alternativas, evidencia ni honorarios aprobados.
 
 ## Source-of-truth
 
@@ -35,7 +35,8 @@ La síntesis enlaza a perímetro, aceptación y contacto. Los catálogos fuente 
 - `stable`: snapshot certificado; debe coincidir con `main` al cierre de una release.
 - `catalog-products-v41/` y `catalog-services-v42/`: fuente jurídica/comercial principal de las 16 ofertas.
 - `offer-narrative-v522.json`: contrato editorial de decisión y modalidad.
-- `offer-commercial-v530.json`: contrato complementario de lógica de contratación; nunca sustituye perímetro o aceptación de los catálogos.
+- `offer-commercial-v530.json`: lógica de contratación complementaria.
+- `decision-compression-v531.json`: contrato de jerarquía/divulgación progresiva.
 - `professional-authority-v525.json`: hechos profesionales publicables.
 - `visual-assets-v526.json`: verdad de activos visuales.
 - `funnel-contract-v529.json`: límites semánticos y de privacidad del funnel.

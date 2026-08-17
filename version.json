@@ -2,7 +2,7 @@
   "name": "Meridiano Legal Web",
   "version": "5.31.0",
   "release_date": "2026-08-17",
-  "channel": "github-pages-candidate-decision-compression",
+  "channel": "github-pages-production-decision-compression-certified",
   "commit_scope": "decision-compression-deep-solutions",
   "source_baseline": "main"
 }
