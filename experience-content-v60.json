@@ -1,0 +1,79 @@
+{
+  "version": "6.0.0",
+  "home": {
+    "eyebrow": "DERECHO · EMPRESA · TECNOLOGÍA",
+    "title": "Decisiones empresariales complejas, convertidas en estructura jurídica ejecutable.",
+    "lead": "Meridiano integra criterio jurídico, comprensión del negocio y tecnología aplicada para delimitar riesgos, estructurar instrumentos y dejar responsables, evidencia y rutas de implementación que la dirección pueda administrar.",
+    "primary_cta": "Presentar una necesidad",
+    "secondary_cta": "Ver cómo podemos ayudar",
+    "assurance": ["Alcance verificable", "Entregables identificables", "Límites explícitos", "Seguimiento trazable"],
+    "situations": [
+      ["01", "La empresa creció más rápido que su estructura jurídica", "Ordenar el riesgo jurídico"],
+      ["02", "La gerencia necesita capacidad jurídica recurrente", "Explorar dirección jurídica externa"],
+      ["03", "La organización está adoptando o desarrollando IA", "Gobernar el uso de IA"],
+      ["04", "Se aproxima una inversión, financiación o alianza material", "Prepararse para inversión"],
+      ["05", "Un proyecto depende de regulación, territorio o autoridades", "Estructurar proyecto regulado"],
+      ["06", "La operación jurídica depende de correos y memoria individual", "Ordenar la operación jurídica"]
+    ],
+    "outcomes": [
+      ["01", "Prioridad y ruta de decisión", "Qué merece atención, qué depende de terceros y qué intervención es proporcional."],
+      ["02", "Instrumentos y reglas operables", "Contratos, decisiones, políticas, matrices o procedimientos diseñados para funcionar después de la entrega."],
+      ["03", "Responsables, obligaciones y evidencia", "Compromisos, fechas, dependencias y evidencia conectados para reducir decisiones dispersas."],
+      ["04", "Gobierno y memoria jurídica", "Criterios, posiciones, prioridades y seguimiento para administrar trabajo recurrente con continuidad."]
+    ],
+    "method": [
+      ["01", "Comprender", "Hechos, objetivo, actores y restricciones."],
+      ["02", "Delimitar", "Régimen, materialidad, perímetro y evidencia."],
+      ["03", "Estructurar", "Posición, entregables, responsables y cierre."],
+      ["04", "Implementar", "Coordinación, cambios y obligaciones cuando aplica."],
+      ["05", "Cerrar y recordar", "Evidencia, pendientes y memoria para decisiones posteriores."]
+    ],
+    "evidence": [
+      "Alcance, entregables, responsabilidades y límites identificables antes de contratar",
+      "Trayectoria profesional del director diferenciada de una lista de clientes",
+      "Sectores y perspectivas con criterio aplicado y fuentes cuando corresponda",
+      "Experiencia demo expresamente demostrativa para visualizar método, no capability productiva"
+    ],
+    "offer_families": [
+      ["Diagnosticar y auditar", "Delimitar exposición o revisar un perímetro cerrado con evidencia y cierre."],
+      ["Resolver e instalar", "Servicios especializados y productos cerrados para decisiones o resultados definidos."],
+      ["Acompañar y gobernar", "Capacidad jurídica recurrente y transformación de la operación jurídica."]
+    ]
+  },
+  "pilots": {
+    "product-diagnostic": {
+      "kind": "product",
+      "eyebrow": "AUDITORÍA JURÍDICA EMPRESARIAL · ALCANCE CERRADO",
+      "title": "Sepa qué riesgo jurídico existe, qué evidencia falta y qué debe corregirse primero.",
+      "lead": "Revisión transversal y documentada de una sociedad colombiana para convertir estructura, contratos, obligaciones, activos y controles en hallazgos trazables, prioridades ejecutivas y un plan jurídico de 90 días.",
+      "meta": [["Horizonte", "5 a 6 semanas"], ["Modalidad", "Auditoría jurídica de alcance cerrado"], ["Dirigido a", "Gerencia, socios, administración y empresas en crecimiento"]],
+      "result_title": "La dirección termina con una lectura priorizada y una ruta de regularización.",
+      "result_points": ["Exposiciones jurídicas identificadas dentro del perímetro", "Evidencia faltante visible", "Hallazgos trazables y prioridades ordenadas", "Decisiones ejecutivas delimitadas", "Plan jurídico de 90 días"],
+      "deliverables_title": "Tres salidas ejecutivas organizan el cierre; la ficha profunda conserva el expediente completo.",
+      "deliverables": [["01", "1 informe jurídico ejecutivo", "Lectura ejecutiva del alcance, metodología, hallazgos materiales, supuestos y recomendaciones."], ["02", "1 matriz maestra de riesgos", "Hasta 80 hallazgos con clasificación, tratamiento, responsable, fecha objetivo y evidencia requerida."], ["03", "1 plan jurídico de 90 días", "Secuencia priorizada de acciones rápidas, proyectos, dependencias y decisiones de dirección."]],
+      "perimeter": [["Sociedad", "1 sociedad colombiana"], ["Entrevistas", "Hasta 8"], ["Documentos", "Hasta 60"], ["Frentes", "Hasta 8 frentes jurídicos"], ["Hallazgos", "Hasta 80"], ["Instrumentos correctivos", "Hasta 5"]],
+      "method": [["01", "Definir", "Objetivos, perímetro, decisiones próximas, responsables y fuentes."], ["02", "Inventariar", "Documentos, contratos, obligaciones, registros y pendientes."], ["03", "Contrastar", "Hechos, documentos, régimen aplicable y evidencia disponible."], ["04", "Calificar", "Impacto, probabilidad, urgencia, control existente y riesgo residual."], ["05", "Cerrar", "Comité ejecutivo, plan de 90 días, responsables y criterios de cierre."]],
+      "limits": ["No es auditoría de aseguramiento absoluto ni certificación de cumplimiento.", "Las conclusiones dependen de los hechos, documentos y perímetro revelados.", "Litigios, tributación, seguridad técnica, valoraciones y auditorías especializadas requieren alcance separado.", "La ejecución completa del plan de 90 días no está incluida salvo los cinco instrumentos correctivos pactados.", "Trámites, tasas, registros o actuaciones ante autoridades se cotizan cuando sean necesarios."],
+      "close": "El producto termina con expediente completo dentro del perímetro, hallazgos trazables, ronda consolidada y comité ejecutivo con pendientes fuera de alcance.",
+      "scope_change": "Una sociedad o frente adicional, remediación ampliada o acompañamiento mensual se añade sin convertir el producto base en una obligación abierta.",
+      "primary_cta": "Solicitar propuesta para este alcance"
+    },
+    "service-ai": {
+      "kind": "service",
+      "eyebrow": "GOBERNANZA JURÍDICA DE TECNOLOGÍA E IA",
+      "title": "Adopte inteligencia artificial con casos, datos, proveedores y responsabilidades gobernables.",
+      "lead": "Gobernanza jurídica para identificar dónde se usa IA, clasificar impacto, ordenar responsabilidades, revisar proveedores y dejar controles, supervisión y evidencia proporcionales al caso de uso.",
+      "meta": [["Horizonte", "4 a 10 semanas o programa recurrente"], ["Modalidad", "Diagnóstico, implementación o gobierno continuo"], ["Dirigido a", "Dirección, tecnología, datos, innovación y cumplimiento"]],
+      "question": "¿La organización sabe dónde usa inteligencia artificial, qué datos intervienen, quién responde, cómo supervisa resultados y qué debe hacer ante un incidente?",
+      "deliverables_title": "Inventario → clasificación → gobierno.",
+      "deliverables": [["01", "1 inventario de IA", "Hasta 20 casos con finalidad, responsable, proveedor, datos y estado."], ["02", "1 matriz de clasificación", "Criterios de riesgo, controles, aprobación y revisión."], ["03", "1 marco de gobernanza", "Roles, comité, política, procedimiento y excepciones."]],
+      "perimeter": [["Casos de uso", "Hasta 20"], ["Proveedores críticos", "Hasta 8"], ["Clasificación", "1 matriz"], ["Instrumentos de gobierno", "Hasta 3"], ["Transferencia", "2 sesiones"]],
+      "method": [["01", "Descubrir", "Mapear casos, sistemas, datos, proveedores y decisiones."], ["02", "Clasificar", "Asignar nivel de riesgo e identificar controles proporcionales."], ["03", "Diseñar", "Definir política, roles, aprobaciones, diligencia y excepciones."], ["04", "Implementar", "Ajustar contratos, registros, controles, capacitación e incidentes."], ["05", "Revisar", "Evaluar cambios, desempeño, incidentes y riesgo residual."]],
+      "close_points": ["Casos clasificados", "Aprobaciones definidas", "Proveedores evaluados", "Instrumentos entregados", "Procedimiento de incidentes operable"],
+      "limits": ["No constituye auditoría técnica, certificación algorítmica, pentesting ni evaluación científica del modelo.", "Casos de alto impacto pueden requerir especialistas técnicos, éticos, sectoriales y de seguridad."],
+      "close": "El alcance se verifica con casos clasificados, aprobaciones definidas, proveedores evaluados, instrumentos entregados y procedimiento de incidentes operable.",
+      "scope_change": "Casos, proveedores, evaluaciones de impacto o gobierno recurrente adicionales se incorporan únicamente mediante extensión expresa.",
+      "primary_cta": "Definir alcance de gobernanza"
+    }
+  }
+}
