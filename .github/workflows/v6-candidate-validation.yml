@@ -7,6 +7,8 @@ on:
       - version.json
       - experience-system-v60.json
       - experience-content-v60.json
+      - catalog-products-v41/**
+      - catalog-services-v42/**
       - assets/css/v6/**
       - scripts/apply_experience_v60.py
       - scripts/validate_experience_v60.py
@@ -44,22 +46,27 @@ jobs:
         run: |
           python3 scripts/apply_experience_v60.py
           python3 scripts/validate_experience_v60.py
-          git diff -- index.html productos/diagnostico-juridico-empresarial.html servicios/tecnologia-inteligencia-artificial.html > /tmp/v6-pass-1.diff
+          git diff -- index.html productos servicios > /tmp/v6-pass-1.diff
           test -s /tmp/v6-pass-1.diff
       - name: Prove second-pass idempotence
         run: |
           python3 scripts/apply_experience_v60.py
           python3 scripts/validate_experience_v60.py
-          git diff -- index.html productos/diagnostico-juridico-empresarial.html servicios/tecnologia-inteligencia-artificial.html > /tmp/v6-pass-2.diff
+          git diff -- index.html productos servicios > /tmp/v6-pass-2.diff
           cmp --silent /tmp/v6-pass-1.diff /tmp/v6-pass-2.diff
           echo "Experience System v6 is idempotent across two passes."
-      - name: Verify no public file outside pilots was materialized
+      - name: Verify Wave 2 materialization boundary
         run: |
           CHANGED="$(git diff --name-only)"
           printf '%s\n' "$CHANGED"
-          UNEXPECTED="$(printf '%s\n' "$CHANGED" | grep -Ev '^(index\.html|productos/diagnostico-juridico-empresarial\.html|servicios/tecnologia-inteligencia-artificial\.html)$' || true)"
+          UNEXPECTED="$(printf '%s\n' "$CHANGED" | grep -Ev '^(index\.html|productos/[^/]+\.html|servicios/[^/]+\.html)$' || true)"
           if [ -n "$UNEXPECTED" ]; then
-            echo "El renderer v6 modificó archivos públicos fuera de los pilotos:" >&2
+            echo "El renderer v6 modificó archivos públicos fuera de Home + 16 fichas:" >&2
             printf '%s\n' "$UNEXPECTED" >&2
+            exit 1
+          fi
+          COUNT="$(printf '%s\n' "$CHANGED" | sed '/^$/d' | wc -l | tr -d ' ')"
+          if [ "$COUNT" -ne 17 ]; then
+            echo "Wave 2 esperaba exactamente 17 archivos públicos materializados y encontró $COUNT." >&2
             exit 1
           fi
