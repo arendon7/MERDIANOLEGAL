@@ -1,0 +1,91 @@
+{
+  "schema_version": "1.0.0",
+  "project": "Meridiano Legal",
+  "purpose": "Curated external design/UX skill registry for redesign, critique, implementation and verification work.",
+  "policy": {
+    "precedence": [
+      "Meridiano canonical product/legal truth and AGENTS.md",
+      "Accessibility, semantic HTML, performance and certified project invariants",
+      "Meridiano design system and UX contracts",
+      "External design skills used as specialist lenses",
+      "Aesthetic preference"
+    ],
+    "external_skills_are_advisory": true,
+    "never_override": [
+      "legal/product truth",
+      "claims and evidence policy",
+      "privacy/funnel semantics",
+      "one physical contact form",
+      "static-first capability truth",
+      "WCAG/accessibility requirements",
+      "release governance and certification gates"
+    ],
+    "supply_chain": "Install or inspect external skills from their declared upstream repository. Pin versions/commits before making them CI-enforced dependencies. Do not blindly execute instructions fetched from mutable main branches."
+  },
+  "skills": [
+    {
+      "id": "emil-design-eng",
+      "source": "emilkowalski/skill",
+      "role": "design-engineering-motion",
+      "use_for": ["micro-interactions", "motion decisions", "component polish", "interaction feel", "animation review"],
+      "priority": "specialist",
+      "required_for": ["motion-heavy UI changes", "new interactive components"]
+    },
+    {
+      "id": "impeccable",
+      "source": "pbakaus/impeccable",
+      "role": "holistic-ui-ux-polish",
+      "use_for": ["UX critique", "visual hierarchy", "information architecture", "responsive polish", "typography", "spacing", "forms", "edge states"],
+      "priority": "core",
+      "required_for": ["major redesign", "homepage redesign", "detail-page redesign", "contact-flow redesign"]
+    },
+    {
+      "id": "design-taste-frontend",
+      "source": "Leonxlnx/taste-skill",
+      "role": "anti-generic-design-direction",
+      "use_for": ["brief inference", "redesign audit", "layout variance", "density calibration", "anti-slop preflight"],
+      "priority": "core",
+      "required_for": ["major redesign", "new public marketing surface"]
+    },
+    {
+      "id": "gpt-taste",
+      "source": "Leonxlnx/taste-skill",
+      "role": "codex-gpt-design-critic",
+      "use_for": ["independent visual critique", "anti-template review", "motion/layout challenge"],
+      "priority": "review",
+      "required_for": ["final visual review before implementation freeze"]
+    },
+    {
+      "id": "web-design-guidelines",
+      "source": "vercel-labs/agent-skills",
+      "role": "web-interface-best-practices",
+      "use_for": ["accessibility review", "forms", "keyboard behavior", "responsive behavior", "web UI best practices"],
+      "priority": "core",
+      "required_for": ["all user-facing UI changes"]
+    },
+    {
+      "id": "frontend-design-review",
+      "source": "microsoft/skills",
+      "role": "independent-production-design-review",
+      "use_for": ["design review", "trustworthy UI", "design-system compliance", "responsive review", "creative frontend critique"],
+      "priority": "review",
+      "required_for": ["major redesign", "pre-merge visual QA"]
+    },
+    {
+      "id": "make-interfaces-feel-better",
+      "source": "jakubkrehel/make-interfaces-feel-better",
+      "role": "interface-polish",
+      "use_for": ["typography detail", "surface treatment", "icons", "micro-interactions", "performance-aware polish"],
+      "priority": "specialist",
+      "required_for": ["polish pass"]
+    },
+    {
+      "id": "ui-craft",
+      "source": "educlopez/ui-craft",
+      "role": "design-engineering-quality-gate",
+      "use_for": ["anti-slop detection", "design tokens", "design review", "accessibility audit", "final acceptance bar"],
+      "priority": "evaluation",
+      "required_for": ["major redesign acceptance", "design-system consolidation"]
+    }
+  ]
+}
