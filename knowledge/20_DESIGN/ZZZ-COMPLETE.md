@@ -1,1 +1,0 @@
-Foundation authoring pass complete.
