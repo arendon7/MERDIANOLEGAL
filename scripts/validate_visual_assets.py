@@ -55,9 +55,7 @@ if "classList.add('visual-home-hero')" in visual_js or 'classList.add("visual-ho
 
 version = json.loads((ROOT / 'version.json').read_text(encoding='utf-8'))
 version_value = str(version.get('version', '')).strip()
-channel = str(version.get('channel', '')).strip().lower()
-public_channel = 'public' in channel or 'production' in channel
-version_label = 'Web pública' if public_channel else 'Web demostrativa'
+version_label = 'Web pública'
 if not re.fullmatch(r'\d+\.\d+\.\d+', version_value):
     errors.append('version.json no contiene una versión semántica válida')
 elif f'{version_label} v{version_value}' not in index:

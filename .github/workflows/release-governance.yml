@@ -54,6 +54,7 @@ on:
       - catalog-services-v42/**
       - tests/e2e/**
       - scripts/sync_public_version.py
+      - scripts/validate_visual_assets.py
       - scripts/apply_decision_v58.py
       - scripts/validate_decision_v58.py
       - scripts/apply_operations_v49.py
@@ -140,6 +141,7 @@ jobs:
         run: |
           python3 scripts/sync_public_version.py
           python3 scripts/validate_production_v50.py
+          python3 scripts/validate_visual_assets.py
       - name: Validate buying decision contract v5.8
         run: |
           python3 scripts/apply_decision_v58.py
