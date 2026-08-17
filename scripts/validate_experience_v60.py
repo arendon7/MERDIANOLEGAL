@@ -129,13 +129,25 @@ def validate_home() -> None:
         fail("Home v6 debe exponer un único id=contacto")
     if value.count('id="contacto-v531-legacy"') != 1:
         fail("Home v6 debe renombrar el contacto legacy una sola vez")
+
+    # v5.11 y v5.17 viven dentro del mismo formulario físico. Al mover ese formulario
+    # al cierre v6, sus contratos deben permanecer una única vez en la página, no en
+    # el bloque legacy del que deliberadamente se extrajo el formulario.
+    for marker in (
+        "<!-- ENGAGEMENT-V511:START -->",
+        "<!-- ENGAGEMENT-V511:END -->",
+        "<!-- HANDOFF-V517:START -->",
+        "<!-- HANDOFF-V517:END -->",
+        'data-engagement-v511="true"',
+        'data-handoff-v517="true"',
+    ):
+        assert_once(value, marker, "Home v6 form contracts")
+
     legacy = legacy_block(value, "Home v6")
     assert_contains(
         legacy,
         [
             "PROFESSIONAL-AUTHORITY-V525-HOME:START",
-            "ENGAGEMENT-V511:START",
-            "HANDOFF-V517:START",
             "EXPERIENCIA SECTORIAL",
             "PERSPECTIVAS",
             "PREGUNTAS FRECUENTES",
@@ -144,6 +156,8 @@ def validate_home() -> None:
     )
     if re.search(r"<form\b", legacy):
         fail("Home legacy no puede conservar una segunda copia del formulario")
+    if "ENGAGEMENT-V511:START" in legacy or "HANDOFF-V517:START" in legacy:
+        fail("los contratos v5.11/v5.17 deben viajar con el formulario canónico, no duplicarse en legacy")
 
 
 def validate_detail(catalog_id: str, path: Path) -> None:
