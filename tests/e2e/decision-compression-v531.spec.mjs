@@ -45,7 +45,8 @@ test('v5.31 reduce las fichas a dos grupos decisionales abiertos sin perder prof
 test('v5.31 mantiene la narrativa secundaria accesible por teclado y conserva su contenido', async ({ page }) => {
   await page.goto('./productos/programa-gobernanza-ia.html');
   const depth = page.locator('details[data-decision-compression-v531="offer-narrative"]');
-  const summary = depth.locator('summary');
+  const summary = depth.locator(':scope > summary');
+  await expect(summary).toHaveCount(1);
   await summary.focus();
   await expect(summary).toBeFocused();
   await summary.press('Enter');

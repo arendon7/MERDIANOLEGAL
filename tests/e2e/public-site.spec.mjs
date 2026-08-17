@@ -92,9 +92,17 @@ test('solución registra vista y apertura de FAQ sin PII', async ({ page }) => {
     event.name === 'solution_view' && event.detail?.target === 'solution:gobernar-inteligencia-artificial-empresa'
   )).toBe(true);
 
+  const faqDepth = page.locator('details[data-decision-compression-v531="solution-faq"]');
+  await expect(faqDepth).toHaveCount(1);
+  await expect(faqDepth).not.toHaveAttribute('open', '');
+  const faqDepthSummary = faqDepth.locator(':scope > summary');
+  await expect(faqDepthSummary).toHaveCount(1);
+  await faqDepthSummary.click();
+  await expect(faqDepth).toHaveAttribute('open', '');
+
   const faq = page.locator('.cro-faq-v52 details').first();
   await expect(faq).toBeVisible();
-  await faq.locator('summary').click();
+  await faq.locator(':scope > summary').click();
   await expect(faq).toHaveAttribute('open', '');
   await expect.poll(async () => (await telemetrySnapshot(page)).some((event) =>
     event.name === 'faq_open' && event.detail?.target === 'faq:1'
