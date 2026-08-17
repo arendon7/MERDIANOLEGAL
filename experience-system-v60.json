@@ -1,0 +1,116 @@
+{
+  "version": "6.0.0",
+  "status": "candidate",
+  "architecture": "static-first-source-driven-semantic-experience-system",
+  "baseline": {
+    "public_release": "5.31.0",
+    "main_sha_at_open": "56b6d179345966fd4fbb99159d9d1d12652c31d6",
+    "html_total": 46,
+    "deep_offers": 16,
+    "products": 8,
+    "services": 8,
+    "solutions": 7,
+    "sectors": 8,
+    "perspectives_internal": 6,
+    "physical_forms": 1,
+    "builder_steps": 30,
+    "home_css_requests_inventory": 23,
+    "home_js_requests_inventory": 13
+  },
+  "invariants": {
+    "static_first": true,
+    "single_physical_form": true,
+    "manual_whatsapp_handoff": true,
+    "no_pii_persistence": true,
+    "no_business_conversion_inference": true,
+    "no_fake_backend_capability": true,
+    "no_invented_clients_results_prices": true,
+    "full_legal_depth_preserved": true,
+    "native_progressive_disclosure": true,
+    "builder_steps_exact": 30,
+    "stable_only_after_all_gates": true
+  },
+  "semantic_components": [
+    "decision_statement",
+    "situation_index",
+    "outcome_ledger",
+    "deliverable_ledger",
+    "process_timeline",
+    "perimeter_matrix",
+    "responsibility_note",
+    "boundary_band",
+    "evidence_block",
+    "commercial_matrix",
+    "scope_drivers_disclosure",
+    "deep_disclosure",
+    "contextual_cta",
+    "canonical_contact_form",
+    "whatsapp_handoff"
+  ],
+  "surface_models": {
+    "home": [
+      "decision_statement",
+      "situation_index",
+      "outcome_ledger",
+      "process_timeline",
+      "evidence_block",
+      "offer_families",
+      "canonical_contact_form"
+    ],
+    "product": [
+      "decision_statement",
+      "outcome_ledger",
+      "deliverable_ledger",
+      "perimeter_matrix",
+      "process_timeline",
+      "boundary_band",
+      "commercial_matrix",
+      "deep_disclosure",
+      "contextual_cta"
+    ],
+    "service": [
+      "decision_statement",
+      "outcome_ledger",
+      "intervention_layers",
+      "perimeter_matrix",
+      "process_timeline",
+      "boundary_band",
+      "commercial_matrix",
+      "deep_disclosure",
+      "contextual_cta"
+    ]
+  },
+  "pilot_ids": {
+    "home": "home",
+    "product": "product-diagnostic",
+    "service": "service-ai"
+  },
+  "waves": [
+    "foundations",
+    "pilots",
+    "deep-offers",
+    "solutions",
+    "sectors",
+    "perspectives",
+    "remaining-public-surfaces"
+  ],
+  "non_goals": [
+    "spa_framework_migration",
+    "backend_crm_auth_payments_esign_upload",
+    "new_unverified_commercial_claims",
+    "remove_legal_depth",
+    "new_production_font_without_review",
+    "decorative_motion_before_information_architecture",
+    "add_builder_step_31",
+    "solve_with_single_legacy_override_stylesheet"
+  ],
+  "qa": {
+    "truth_parity_required": true,
+    "two_pass_idempotence_required": true,
+    "axe_serious_critical_zero": true,
+    "lighthouse_existing_budgets": true,
+    "pages_smoke_required": true,
+    "graphify_alignment_required": true,
+    "browser_regression_required": true
+  }
+}
