@@ -31,65 +31,86 @@ def main() -> int:
     print("HANDOFF OBSERVABILITY V5.18 OK: runtime local insertado después de telemetry-v50.js.")
 
     version = json.loads((ROOT / "version.json").read_text(encoding="utf-8")).get("version", "0.0.0")
-    if semver(version) >= (5, 24, 0):
+    current = semver(version)
+    if current >= (5, 24, 0):
         from canonical_pipeline_v524 import validate_manifest as validate_canonical_pipeline_v524
         validate_canonical_pipeline_v524()
         print("CANONICAL PIPELINE V5.24 CONTRACT OK: builder y segunda pasada conservan el mismo orden.")
 
-    if semver(version) >= (5, 21, 0):
-        from apply_capability_truth_v521 import main as apply_capability_truth_v521
-        result = apply_capability_truth_v521()
+    if current < (5, 21, 0):
+        return 0
+
+    from apply_capability_truth_v521 import main as apply_capability_truth_v521
+    result = apply_capability_truth_v521()
+    if result:
+        return result
+
+    if current < (5, 23, 0):
+        return 0
+
+    from apply_contact_compression_v523 import main as apply_contact_compression_v523
+    from normalize_contact_compression_v523 import main as normalize_contact_compression_v523
+    result = apply_contact_compression_v523()
+    if result:
+        return result
+    result = normalize_contact_compression_v523()
+    if result:
+        return result
+
+    if current >= (5, 25, 0):
+        from apply_professional_authority_v525 import main as apply_professional_authority_v525
+        result = apply_professional_authority_v525()
         if result:
             return result
-        if semver(version) >= (5, 23, 0):
-            from apply_contact_compression_v523 import main as apply_contact_compression_v523
-            from normalize_contact_compression_v523 import main as normalize_contact_compression_v523
-            result = apply_contact_compression_v523()
-            if result:
-                return result
-            result = normalize_contact_compression_v523()
-            if result:
-                return result
-            if semver(version) >= (5, 25, 0):
-                from apply_professional_authority_v525 import main as apply_professional_authority_v525
-                result = apply_professional_authority_v525()
-                if result:
-                    return result
-            # v5.26 se ejecuta al final de las capas históricas: las anclas necesarias
-            # para v4.5 pueden rehidratarse durante segunda pasada, pero nunca deben
-            # quedar presentes en la salida pública simplificada.
-            if semver(version) >= (5, 26, 0):
-                from apply_integral_visual_v526 import main as apply_integral_visual_v526
-                result = apply_integral_visual_v526()
-                if result:
-                    return result
-            # v5.28 corre después de la simplificación visual para mover el único
-            # contacto canónico sin que una capa histórica lo reubique de nuevo.
-            if semver(version) >= (5, 28, 0):
-                from apply_conversion_path_v528 import main as apply_conversion_path_v528
-                result = apply_conversion_path_v528()
-                if result:
-                    return result
-            # v5.29 observa el funnel materializado y coloca confianza contextual
-            # sin alterar el orden de secciones v5.28.
-            if semver(version) >= (5, 29, 0):
-                from apply_funnel_trust_v529 import main as apply_funnel_trust_v529
-                result = apply_funnel_trust_v529()
-                if result:
-                    return result
-            # v5.30 hace explícita la lógica de contratación de las fichas profundas.
-            if semver(version) >= (5, 30, 0):
-                from apply_offer_commercial_v530 import main as apply_offer_commercial_v530
-                result = apply_offer_commercial_v530()
-                if result:
-                    return result
-            # v5.31 es la normalización final de jerarquía: conserva toda la profundidad
-            # y convierte solo soporte decisional secundario a divulgación progresiva.
-            if semver(version) >= (5, 31, 0):
-                from apply_decision_compression_v531 import main as apply_decision_compression_v531
-                return apply_decision_compression_v531()
-            return 0
-        return 0
+
+    # v5.26 se ejecuta al final de las capas históricas: las anclas necesarias
+    # para v4.5 pueden rehidratarse durante segunda pasada, pero nunca deben
+    # quedar presentes en la salida pública simplificada.
+    if current >= (5, 26, 0):
+        from apply_integral_visual_v526 import main as apply_integral_visual_v526
+        result = apply_integral_visual_v526()
+        if result:
+            return result
+
+    # v5.28 corre después de la simplificación visual para mover el único
+    # contacto canónico sin que una capa histórica lo reubique de nuevo.
+    if current >= (5, 28, 0):
+        from apply_conversion_path_v528 import main as apply_conversion_path_v528
+        result = apply_conversion_path_v528()
+        if result:
+            return result
+
+    # v5.29 observa el funnel materializado y coloca confianza contextual
+    # sin alterar el orden de secciones v5.28.
+    if current >= (5, 29, 0):
+        from apply_funnel_trust_v529 import main as apply_funnel_trust_v529
+        result = apply_funnel_trust_v529()
+        if result:
+            return result
+
+    # v5.30 hace explícita la lógica de contratación de las fichas profundas.
+    if current >= (5, 30, 0):
+        from apply_offer_commercial_v530 import main as apply_offer_commercial_v530
+        result = apply_offer_commercial_v530()
+        if result:
+            return result
+
+    # v5.31 conserva toda la profundidad y comprime solo soporte secundario.
+    if current >= (5, 31, 0):
+        from apply_decision_compression_v531 import main as apply_decision_compression_v531
+        result = apply_decision_compression_v531()
+        if result:
+            return result
+
+    # v6 permanece dentro del materializador canónico final v5.18+; de esta
+    # forma el manifiesto sigue teniendo exactamente 30 materializadores y
+    # builder == segunda pasada Pages == CANONICAL_STEPS.
+    if current >= (6, 0, 0):
+        from apply_experience_v60 import main as apply_experience_v60
+        result = apply_experience_v60()
+        if result:
+            return result
+
     return 0
 
 
