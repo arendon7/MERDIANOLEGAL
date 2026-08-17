@@ -53,7 +53,7 @@ test('v5.31 mantiene la narrativa secundaria accesible por teclado y conserva su
   await expect(depth).toHaveAttribute('open', '');
   await expect(depth.getByText('CRITERIO DE CONTRATACIÓN')).toBeVisible();
   await expect(depth.getByText('ALTERNATIVA CERCANA')).toBeVisible();
-  await expect(depth.getByText('LENTE JURÍDICA')).toBeVisible();
+  await expect(depth.getByText('LENTE JURÍDICA', { exact: true })).toBeVisible();
 });
 
 test('v5.31 deja abierta la ruta principal y pliega solo soporte secundario en las seis soluciones', async ({ page }) => {
