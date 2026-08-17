@@ -382,6 +382,33 @@ def contact_href_for(text: str, data: dict) -> str:
     return f"../index.html?{query}#contacto"
 
 
+def replace_detail_hero(text: str, new_hero: str, path: Path) -> str:
+    # La primera pasada migra el hero v5.x; pasadas posteriores re-renderizan el
+    # hero v6 desde la fuente para que cambios de JSON sigan materializándose.
+    patterns = (
+        r'<section class="v6-hero v6-detail-hero"[^>]*>.*?</section>',
+        r'<section class="detail-hero">.*?</section>',
+    )
+    for pattern in patterns:
+        text, count = re.subn(pattern, new_hero, text, count=1, flags=re.S)
+        if count == 1:
+            return text
+    raise RuntimeError(f"{path.name}: no se localizó hero v5 ni v6")
+
+
+def replace_detail_nav(text: str, new_toc: str, path: Path) -> str:
+    # Igual que el hero: v6 debe ser idempotente y, a la vez, actualizable desde
+    # fuente. Primero intenta reemplazar su propia salida; si no existe, migra v4.6.
+    text, count = re.subn(r'<nav class="v6-detail-nav"[^>]*>.*?</nav>', new_toc, text, count=1, flags=re.S)
+    if count == 1:
+        return text
+    marker_pattern = r'<!-- DETAIL-V46-NAV:START -->.*?<!-- DETAIL-V46-NAV:END -->'
+    text, count = re.subn(marker_pattern, new_toc, text, count=1, flags=re.S)
+    if count == 1:
+        return text
+    raise RuntimeError(f"{path.name}: no se localizó navegación detail v4.6 ni v6")
+
+
 def patch_detail(catalog_id: str, data: dict) -> None:
     path = PILOTS[catalog_id]
     text = path.read_text(encoding="utf-8")
@@ -390,16 +417,8 @@ def patch_detail(catalog_id: str, data: dict) -> None:
     text = mark_body(text, catalog_id)
     text = detail_header(text, contact_href)
 
-    new_hero = render_detail_hero(data, contact_href)
-    text, count = re.subn(r'<section class="detail-hero">.*?</section>', new_hero, text, count=1, flags=re.S)
-    if count != 1:
-        raise RuntimeError(f"{path.name}: no se localizó detail-hero")
-
-    new_toc = render_detail_nav(data)
-    marker_pattern = r'<!-- DETAIL-V46-NAV:START -->.*?<!-- DETAIL-V46-NAV:END -->'
-    text, count = re.subn(marker_pattern, new_toc, text, count=1, flags=re.S)
-    if count != 1:
-        raise RuntimeError(f"{path.name}: no se localizó navegación detail v4.6")
+    text = replace_detail_hero(text, render_detail_hero(data, contact_href), path)
+    text = replace_detail_nav(text, render_detail_nav(data), path)
 
     main_match, current_main = extract_main(text)
     legacy = extract_legacy(current_main)
