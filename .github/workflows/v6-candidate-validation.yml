@@ -1,0 +1,65 @@
+name: V6 candidate validation
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - version.json
+      - experience-system-v60.json
+      - experience-content-v60.json
+      - assets/css/v6/**
+      - scripts/apply_experience_v60.py
+      - scripts/validate_experience_v60.py
+      - .github/workflows/build-canonical.yml
+      - .github/workflows/v6-candidate-validation.yml
+      - index.html
+      - productos/**
+      - servicios/**
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: meridiano-v6-candidate-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Materialize and validate v6 candidate
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout candidate
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: "3.12"
+      - name: Compile v6 renderer and validator
+        run: python3 -m py_compile scripts/apply_experience_v60.py scripts/validate_experience_v60.py
+      - name: Materialize first pass and validate contracts
+        run: |
+          python3 scripts/apply_experience_v60.py
+          python3 scripts/validate_experience_v60.py
+          git diff -- index.html productos/diagnostico-juridico-empresarial.html servicios/tecnologia-inteligencia-artificial.html > /tmp/v6-pass-1.diff
+          test -s /tmp/v6-pass-1.diff
+      - name: Prove second-pass idempotence
+        run: |
+          python3 scripts/apply_experience_v60.py
+          python3 scripts/validate_experience_v60.py
+          git diff -- index.html productos/diagnostico-juridico-empresarial.html servicios/tecnologia-inteligencia-artificial.html > /tmp/v6-pass-2.diff
+          cmp --silent /tmp/v6-pass-1.diff /tmp/v6-pass-2.diff
+          echo "Experience System v6 is idempotent across two passes."
+      - name: Verify no public file outside pilots was materialized
+        run: |
+          CHANGED="$(git diff --name-only)"
+          printf '%s\n' "$CHANGED"
+          UNEXPECTED="$(printf '%s\n' "$CHANGED" | grep -Ev '^(index\.html|productos/diagnostico-juridico-empresarial\.html|servicios/tecnologia-inteligencia-artificial\.html)$' || true)"
+          if [ -n "$UNEXPECTED" ]; then
+            echo "El renderer v6 modificó archivos públicos fuera de los pilotos:" >&2
+            printf '%s\n' "$UNEXPECTED" >&2
+            exit 1
+          fi
