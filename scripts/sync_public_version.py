@@ -12,10 +12,10 @@ PATTERN = re.compile(r"Web (?:demostrativa|pública) v\d+\.\d+\.\d+")
 def main() -> int:
     data = json.loads(VERSION_PATH.read_text(encoding="utf-8"))
     version = data["version"]
-    channel = str(data.get("channel", "")).lower()
-    public_label = "Web pública" if ("public" in channel or "production" in channel) else "Web demostrativa"
+    # index.html es siempre la superficie pública, incluso cuando la release está
+    # en canal candidate. El canal describe estado de certificación, no capability.
     replacements = {
-        "index.html": f"{public_label} v{version}",
+        "index.html": f"Web pública v{version}",
         "catalog-home-v32.js": f"Web demostrativa v{version}",
         "decision-flow.js": f"Web demostrativa v{version}",
     }
@@ -31,7 +31,7 @@ def main() -> int:
             path.write_text(updated, encoding="utf-8")
             changed.append(relative)
 
-    print(f"Versión pública sincronizada: {public_label} v{version}")
+    print(f"Versión pública sincronizada: Web pública v{version}")
     for relative in changed:
         print(f"- {relative}")
     return 0
