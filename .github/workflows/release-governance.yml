@@ -53,6 +53,7 @@ on:
       - catalog-products-v41/**
       - catalog-services-v42/**
       - tests/e2e/**
+      - scripts/sync_public_version.py
       - scripts/apply_decision_v58.py
       - scripts/validate_decision_v58.py
       - scripts/apply_operations_v49.py
