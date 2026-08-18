@@ -12,109 +12,14 @@ permissions:
   contents: read
 
 concurrency:
-  group: meridiano-v6-live-diagnostic-${{ github.event_name }}-${{ github.ref }}
+  group: meridiano-v6-candidate-diag-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  MERIDIANO_BASE_URL: https://arendon7.github.io/MERDIANOLEGAL/
-
 jobs:
-  live_smoke:
-    name: Probe deployed Pages smoke
+  diagnostic_marker:
+    name: Diagnostic branch marker
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 2
     steps:
-      - name: Checkout diagnostic source
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-        with:
-          persist-credentials: false
-      - name: Setup Python
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
-        with:
-          python-version: "3.12"
-      - name: Smoke test current public URL
-        run: python3 scripts/validate_live_v53.py
-
-  live_browser_e2e:
-    name: Probe deployed Browser E2E and axe
-    runs-on: ubuntu-latest
-    timeout-minutes: 18
-    steps:
-      - name: Checkout diagnostic source
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-        with:
-          persist-credentials: false
-      - name: Setup Node.js with npm cache
-        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
-        with:
-          node-version: "22"
-          cache: npm
-          cache-dependency-path: package-lock.json
-      - name: Install locked QA dependencies
-        run: npm ci --ignore-scripts --no-audit --no-fund
-      - name: Prefer official Ubuntu mirrors for browser dependencies
-        run: |
-          if [ -f /etc/apt/apt-mirrors.txt ]; then
-            printf 'https://archive.ubuntu.com/ubuntu/\tpriority:1\nhttps://security.ubuntu.com/ubuntu/\tpriority:2\n' \
-              | sudo tee /etc/apt/apt-mirrors.txt >/dev/null
-          fi
-          printf '%s\n' \
-            'Acquire::Retries "3";' \
-            'Acquire::http::Timeout "30";' \
-            'Acquire::https::Timeout "30";' \
-            | sudo tee /etc/apt/apt.conf.d/80meridiano-network >/dev/null
-      - name: Install Chromium and WebKit
-        run: timeout 900s npx playwright install --with-deps chromium webkit
-      - name: Run deployed browser E2E suite
-        run: npm run test:e2e
-      - name: Upload browser diagnostic artifacts
-        if: failure()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        with:
-          name: v6-live-browser-diagnostic
-          path: |
-            playwright-report
-            test-results
-          if-no-files-found: ignore
-          retention-days: 7
-
-  live_lighthouse:
-    name: Probe deployed Lighthouse budgets
-    runs-on: ubuntu-latest
-    timeout-minutes: 12
-    steps:
-      - name: Checkout diagnostic source
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-        with:
-          persist-credentials: false
-      - name: Setup Node.js with npm cache
-        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
-        with:
-          node-version: "22"
-          cache: npm
-          cache-dependency-path: package-lock.json
-      - name: Install locked QA dependencies
-        run: npm ci --ignore-scripts --no-audit --no-fund
-      - name: Install pinned Lighthouse Chromium
-        run: timeout 180s npx playwright install chromium
-      - name: Resolve pinned Lighthouse Chromium
-        run: |
-          CHROME_BIN="$(node -e 'console.log(require("playwright").chromium.executablePath())')"
-          if [ ! -x "$CHROME_BIN" ]; then
-            echo "Pinned Playwright Chromium was not found." >&2
-            exit 1
-          fi
-          echo "CHROME_PATH=$CHROME_BIN" >> "$GITHUB_ENV"
-          "$CHROME_BIN" --version
-      - name: Run deployed Lighthouse performance and accessibility budgets
-        run: npm run audit:quality
-      - name: Upload Lighthouse diagnostic summary
-        if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        with:
-          name: v6-live-lighthouse-diagnostic
-          path: |
-            quality-artifacts/v5.5/summary.json
-            quality-artifacts/v5.5/summary.md
-          if-no-files-found: ignore
-          retention-days: 7
+      - name: Confirm isolated diagnostic branch
+        run: echo "Temporary diagnostic branch; canonical candidate workflow remains unchanged on main."
