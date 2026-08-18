@@ -95,6 +95,7 @@ def main() -> int:
             from apply_experience_v60 import main as apply_experience_v60
             from apply_experience_solutions_v60 import main as apply_experience_solutions_v60
             from apply_experience_sectors_v60 import main as apply_experience_sectors_v60
+            from apply_experience_perspectives_v60 import main as apply_experience_perspectives_v60
             from apply_funnel_trust_v529 import main as rehydrate_funnel_trust_v529
             from normalize_experience_compat_v60 import main as normalize_experience_compat_v60
             result = apply_experience_v60()
@@ -104,6 +105,9 @@ def main() -> int:
             if result:
                 return result
             result = apply_experience_sectors_v60()
+            if result:
+                return result
+            result = apply_experience_perspectives_v60()
             if result:
                 return result
             result = rehydrate_funnel_trust_v529()
