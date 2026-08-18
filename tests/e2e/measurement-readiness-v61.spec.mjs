@@ -14,7 +14,7 @@ test('v6.1 carga el adapter antes de telemetría y permanece sin transporte exte
     const scripts = [...document.scripts].map((script) => script.getAttribute('src') || '');
     return {
       api: window.MeridianoAnalyticsAdapter.snapshot(),
-      adapterIndex: scripts.findIndex((src) => src.endsWith('analytics-adapter-v61.js')),
+      adapterIndex: scripts.findIndex((src) => src.endsWith('assets/js/v6/analytics-adapter-v61.js')),
       telemetryIndex: scripts.findIndex((src) => src.endsWith('telemetry-v50.js')),
       providerScripts: document.querySelectorAll('script[data-meridiano-analytics-provider]').length,
     };
@@ -26,6 +26,7 @@ test('v6.1 carga el adapter antes de telemetría y permanece sin transporte exte
   expect(state.api.providerReady).toBe(false);
   expect(state.api.queuedEventNames).toEqual([]);
   expect(state.api.emittedEventNames).toEqual([]);
+  expect(state.api.observedStageNames).toEqual([]);
   expect(Object.values(state.api.privacy).every((value) => value === false)).toBe(true);
   expect(state.adapterIndex).toBeGreaterThanOrEqual(0);
   expect(state.telemetryIndex).toBeGreaterThan(state.adapterIndex);
@@ -36,10 +37,11 @@ test('v6.1 carga el adapter antes de telemetría y permanece sin transporte exte
   const afterCheckpoint = await page.evaluate(() => window.MeridianoAnalyticsAdapter.snapshot());
   expect(afterCheckpoint.queuedEventNames).toEqual([]);
   expect(afterCheckpoint.emittedEventNames).toEqual([]);
+  expect(afterCheckpoint.observedStageNames).toEqual([]);
   expect(externalAnalyticsRequests).toEqual([]);
 });
 
-test('v6.1 reconstruye eventos externos desde allowlist y descarta todo el payload original', async ({ page }) => {
+test('v6.1 acepta solo stage saneado, ignora event/target y no consume telemetría raw', async ({ page }) => {
   await page.goto('./');
   await expect.poll(() => page.evaluate(() => Boolean(window.MeridianoAnalyticsAdapter))).toBe(true);
 
@@ -47,28 +49,18 @@ test('v6.1 reconstruye eventos externos desde allowlist y descarta todo el paylo
     const adapter = window.MeridianoAnalyticsAdapter;
     const sentinel = 'PII-V61-NO-SALIR-9382';
     const cases = [
-      adapter.preview({
-        name: 'funnel_checkpoint',
-        detail: { stage: 'need', target: sentinel, email: sentinel, message: sentinel, reference: sentinel },
-      }),
-      adapter.preview({
-        name: 'lead_prepared',
-        detail: { need: sentinel, email: sentinel, message: sentinel, reference: sentinel },
-      }),
-      adapter.preview({
-        name: 'cta_click',
-        detail: { target: 'whatsapp', need: sentinel, company: sentinel },
-      }),
-      adapter.preview({
-        name: 'cta_click',
-        detail: { target: 'perspective', message: sentinel },
-      }),
-      adapter.preview({
-        name: 'unknown_event',
-        detail: { stage: 'contact', message: sentinel },
-      }),
+      adapter.preview({ stage: 'need', event: sentinel, target: sentinel, email: sentinel, message: sentinel, reference: sentinel }),
+      adapter.preview({ stage: 'handoff', event: sentinel, target: sentinel, need: sentinel, reference: sentinel }),
+      adapter.preview({ stage: 'contact', event: sentinel, target: sentinel, company: sentinel }),
+      adapter.preview({ stage: 'evidence', event: sentinel, target: sentinel, message: sentinel }),
+      adapter.preview({ stage: 'awareness', event: sentinel, target: sentinel }),
+      adapter.preview({ stage: sentinel, event: 'contact', target: 'whatsapp' }),
     ];
-    return { cases, serialized: JSON.stringify(cases), sentinel };
+    const rawTrackResult = adapter.track('lead_prepared', {
+      name: 'lead_prepared',
+      detail: { need: sentinel, email: sentinel, message: sentinel, reference: sentinel },
+    });
+    return { cases, rawTrackResult, serialized: JSON.stringify(cases), sentinel };
   });
 
   expect(result.cases).toEqual([
@@ -77,7 +69,9 @@ test('v6.1 reconstruye eventos externos desde allowlist y descarta todo el paylo
     { name: 'meridiano_funnel_contact' },
     { name: 'meridiano_funnel_evidence' },
     null,
+    null,
   ]);
+  expect(result.rawTrackResult).toBe(false);
   expect(result.serialized).not.toContain(result.sentinel);
-  expect(result.serialized).not.toMatch(/"(?:email|message|reference|company|need|target|stage)"\s*:/i);
+  expect(result.serialized).not.toMatch(/"(?:email|message|reference|company|need|target|stage|event)"\s*:/i);
 });
