@@ -1,0 +1,35 @@
+{
+  "version": "6.3.0",
+  "name": "Engagement Clarity",
+  "status": "technical-candidate",
+  "purpose": "Hacer visible, antes del contacto, qué debe aportar el cliente y cómo se distribuyen las responsabilidades del encargo, sin crear truth jurídico nuevo.",
+  "scope": {
+    "detail_pages": 16,
+    "products": 8,
+    "services": 8
+  },
+  "source_of_truth": {
+    "products": "catalog-products-v41/*.json",
+    "services": "catalog-services-v42/*.json",
+    "required_fields": [
+      "requirements",
+      "responsibilities"
+    ]
+  },
+  "presentation": {
+    "section_id": "v6-engagement",
+    "nav_label": "Para empezar",
+    "eyebrow": "CONDICIONES PARA EMPEZAR",
+    "title": "Qué debe estar listo y quién responde por qué.",
+    "requirements_title": "Qué debe estar listo del lado del cliente",
+    "responsibilities_title": "Cómo se distribuyen las responsabilidades"
+  },
+  "invariants": [
+    "No modifica los catálogos v4.1/v4.2 ni crea obligaciones nuevas.",
+    "Las matrices visibles deben reproducir exactamente requirements y responsibilities de cada fuente canónica.",
+    "Las 16 fichas profundas permanecen como único alcance de esta extensión.",
+    "No modifica entregables, perímetro, método, límites, honorarios, contacto ni capability truth.",
+    "No crea un paso histórico 31; se integra por normalize_experience_compat_v60.py.",
+    "La materialización debe ser idempotente y fail-closed si falta truth canónico."
+  ]
+}
