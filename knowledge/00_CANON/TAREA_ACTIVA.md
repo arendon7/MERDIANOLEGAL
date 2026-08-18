@@ -34,23 +34,28 @@ Por tanto podemos certificar que el recorrido funciona, pero no responder con da
 
 ### Hipótesis
 
-Si Meridiano incorpora una capa de medición gobernada que transforme la telemetría existente en un conjunto mínimo de eventos externos allowlisted —sin propiedades, PII, contenido del formulario, referencias, cookies propias, persistencia o fingerprinting— podremos habilitar medición agregada cuando exista un proveedor real y una política actualizada, sin reescribir el funnel ni degradar privacidad.
+Si Meridiano incorpora una capa de medición gobernada que transforme únicamente las etapas ya saneadas del funnel en eventos externos allowlisted —sin propiedades custom, PII del formulario, referencias, cookies propias, persistencia o fingerprinting— podremos habilitar medición agregada cuando exista un proveedor real y una política actualizada, sin reescribir el funnel ni degradar privacidad.
 
 ### Alcance de readiness
 
 1. contrato `assets/data/v6/measurement-readiness-v61.json`;
 2. adapter `assets/js/v6/analytics-adapter-v61.js` compatible con el hook histórico `MeridianoAnalyticsAdapter`;
-3. seis eventos externos de etapa: need, offer, evidence, decision, contact y handoff;
-4. payload externo limitado al **nombre del evento**; cero propiedades;
-5. Plausible como primer adapter preparado, pero deshabilitado y sin site token real;
-6. Umami evaluado como alternativa, no declarado como soporte runtime en esta fase;
-7. Cloudflare Web Analytics evaluado para RUM/pageviews, pero no elegido para el funnel porque no aporta custom events en el estado revisado;
-8. integración dentro del normalizador Experience v6 existente, sin crear un paso 31;
-9. validator estático fail-closed;
-10. E2E que demuestre cero red externa con producción apagada y descarte de payload contaminado;
-11. topología exacta: **43 superficies instrumentadas + 3 deliberadamente sin telemetría (`404.html`, `demo.html`, `experiencia.html`)**;
-12. gate dedicado `.github/workflows/v61-measurement-readiness.yml` que ejecuta contrato, Governance y suite Browser completa;
-13. Builder y Canonical Equivalence cubren los assets v6.1 mediante su filtro existente `assets/**`.
+3. fuente externa única: evento saneado `meridiano:funnel-v529`, aceptando exclusivamente `detail.stage`;
+4. raw `adapter.track(name,event)` conservado por compatibilidad pero deliberadamente `no-op`;
+5. seis eventos externos de etapa: need, offer, evidence, decision, contact y handoff;
+6. payload **custom aportado por Meridiano** limitado al nombre del evento; cero propiedades custom;
+7. deduplicación: primer evento por etapa durante la vida de la página;
+8. Plausible como primer adapter preparado, pero deshabilitado y sin site token real;
+9. pageviews automáticos de Plausible explícitamente deshabilitados (`autoCapturePageviews:false`);
+10. cualquier metadata estándar que el proveedor procese al transmitir un custom event queda sujeta a revisión y actualización previa de la política antes de activar;
+11. Umami evaluado como alternativa, no declarado como soporte runtime en esta fase;
+12. Cloudflare Web Analytics evaluado para RUM/pageviews, pero no elegido para el funnel porque no aporta custom events en el estado revisado;
+13. integración dentro del normalizador Experience v6 existente, sin crear un paso 31;
+14. validator estático fail-closed;
+15. E2E que demuestre cero red externa con producción apagada y descarte de payload contaminado;
+16. topología exacta: **43 superficies instrumentadas + 3 deliberadamente sin telemetría (`404.html`, `demo.html`, `experiencia.html`)**;
+17. gate dedicado `.github/workflows/v61-measurement-readiness.yml` que ejecuta contrato, Governance y suite Browser completa;
+18. Builder y Canonical Equivalence cubren los assets v6.1 mediante su filtro existente `assets/**`.
 
 ## Criterios de éxito
 
@@ -58,10 +63,11 @@ Si Meridiano incorpora una capa de medición gobernada que transforme la telemet
 - no aparece ningún request a proveedor externo en E2E disabled;
 - adapter carga antes de `telemetry-v50.js` en exactamente 43 superficies;
 - `404.html`, `demo.html` y `experiencia.html` permanecen sin adapter porque no tenían telemetría previa;
-- PII, nombre, empresa, correo, mensaje, referencia, presupuesto y urgencia no forman parte del payload externo;
-- eventos desconocidos se descartan;
+- PII, nombre, empresa, correo, mensaje, referencia, presupuesto y urgencia no forman parte del payload custom de Meridiano;
+- `event` y `target` del funnel saneado no se exportan como propiedades;
+- eventos/etapas desconocidos se descartan;
 - solo seis etapas allowlisted pueden convertirse en eventos externos;
-- no se introducen `fetch`, `XMLHttpRequest`, `sendBeacon`, storage, cookies o fingerprinting propios;
+- no se introducen pageviews automáticos, `fetch`, `XMLHttpRequest`, `sendBeacon`, storage, cookies o fingerprinting propios;
 - 46 HTML, 16 fichas, 1 formulario y 30 pasos canónicos permanecen intactos;
 - Browser/axe, Lighthouse, Governance y equivalencia continúan sin relajación;
 - cambios futuros en los assets de measurement vuelven a disparar Builder/Equivalence y el gate dedicado v6.1.
@@ -72,7 +78,8 @@ Si Meridiano incorpora una capa de medición gobernada que transforme la telemet
 - crear una cuenta/proyecto de analytics sin decisión explícita;
 - incluir un `pa-...` ficticio;
 - cambiar la política de privacidad como si ya existiera tratamiento por un tercero;
-- enviar propiedades custom, UTMs, contenido de formulario o identificadores;
+- asumir que el request estándar del proveedor contiene únicamente el nombre del evento;
+- enviar propiedades custom, contenido de formulario o identificadores propios;
 - inferir mensaje enviado, propuesta aceptada, encargo iniciado o cliente convertido;
 - cambiar copy, layout, productos, servicios, precios o funnel público por intuición antes de tener datos.
 
@@ -82,9 +89,10 @@ Una activación real requerirá, como mínimo:
 
 1. proveedor seleccionado;
 2. identificador/snippet auténtico del sitio;
-3. revisión y actualización previa de la política pública y configuración;
-4. validación técnica del tráfico saliente exacto;
-5. confirmación de que el payload sigue siendo event-name-only o aprobación expresa de cualquier ampliación;
-6. gates verdes y promoción automática de `stable`.
+3. revisión técnica de la metadata estándar que el proveedor transmite/procesa;
+4. revisión y actualización previa de la política pública y configuración;
+5. validación del tráfico saliente exacto con pageviews automáticos deshabilitados;
+6. confirmación de que Meridiano sigue aportando únicamente nombres de evento sin propiedades custom o aprobación expresa de cualquier ampliación;
+7. gates verdes y promoción automática de `stable`.
 
 Hasta entonces, v6.1 es **readiness**, no analítica activa.
