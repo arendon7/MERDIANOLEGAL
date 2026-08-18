@@ -14,6 +14,7 @@ R = Path(__file__).resolve().parents[1]
 CONFIG = load_site_config()
 VERSION_DATA = json.loads((R / "version.json").read_text(encoding="utf-8"))
 VERSION = VERSION_DATA["version"]
+RELEASE_DATE = VERSION_DATA["release_date"]
 BASE_URL = CONFIG["base_url"]
 PUBLIC_PATH = CONFIG["public_path"]
 errors: list[str] = []
@@ -38,6 +39,8 @@ def public_relative(path: Path) -> str:
 
 if semver(VERSION) < (5, 0, 0):
     errors.append(f"version.json debe ser >= 5.0.0 y registra {VERSION}")
+if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(RELEASE_DATE)):
+    errors.append(f"version.json debe declarar release_date ISO y registra {RELEASE_DATE!r}")
 
 for relative in (
     "site-config.json",
@@ -45,6 +48,7 @@ for relative in (
     "telemetry-v50.js",
     "site-status.json",
     "scripts/site_config.py",
+    "scripts/sync_public_version.py",
     "scripts/apply_production_v50.py",
     "scripts/validate_production_v50.py",
     "scripts/validate_live_v50.py",
@@ -58,6 +62,7 @@ if status_path.exists():
     status = json.loads(status_path.read_text(encoding="utf-8"))
     expected_status = {
         "version": VERSION,
+        "release_date": RELEASE_DATE,
         "base_url": BASE_URL,
         "public_path": PUBLIC_PATH,
         "analytics": "enabled" if CONFIG["analytics"]["enabled"] else "disabled",
@@ -74,6 +79,7 @@ for marker in (
     json.dumps(BASE_URL),
     json.dumps(PUBLIC_PATH),
     json.dumps(VERSION),
+    json.dumps(RELEASE_DATE),
 ):
     if marker not in runtime:
         errors.append(f"runtime-config.js: falta {marker!r}")
@@ -184,6 +190,6 @@ if errors:
     raise SystemExit(1)
 
 print(
-    f"VALIDACIÓN DE PRODUCCIÓN V5.0 OK: {VERSION}, configuración canónica, "
+    f"VALIDACIÓN DE PRODUCCIÓN V5.0 OK: {VERSION} ({RELEASE_DATE}), configuración canónica, "
     "dominio-ready, SEO, privacidad y telemetría local íntegros."
 )
