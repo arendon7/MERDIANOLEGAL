@@ -23,7 +23,7 @@ READINESS_START = "<!-- CONVERSION-READINESS-V528:START -->"
 READINESS_END = "<!-- CONVERSION-READINESS-V528:END -->"
 SOLUTION_LEGACY_START = "<!-- EXPERIENCE-V60-SOLUTION-LEGACY:START -->"
 CONTACT_PATTERN = re.compile(r'<section class="v6-section v6-contact" id="contacto" data-conversion-path-v528="true"')
-ANALYTICS_SCRIPT = "analytics-adapter-v61.js"
+ANALYTICS_SCRIPT = "assets/js/v6/analytics-adapter-v61.js"
 TELEMETRY_SCRIPT = "telemetry-v50.js"
 PUBLIC_DIRS = ("servicios", "productos", "soluciones", "sectores", "perspectivas")
 EXPECTED_INSTRUMENTED = 43
@@ -48,8 +48,6 @@ def normalize_home_contact_contract(text: str) -> str:
     if not CONTACT_PATTERN.search(text):
         raise RuntimeError("Experience v6: falta contacto canónico v6 para preservar v5.28")
 
-    # v6 conserva toda la profundidad histórica, por lo que el bloque v5.28 puede
-    # quedar dentro del legacy. Se extrae y se reubica, nunca se duplica.
     managed = re.search(re.escape(READINESS_START) + r".*?" + re.escape(READINESS_END), text, flags=re.S)
     readiness = managed.group(0) if managed else READINESS_MARKUP
     if managed:
@@ -65,8 +63,6 @@ def normalize_home_contact_contract(text: str) -> str:
     if text.count(READINESS_START) != 1 or text.count(READINESS_END) != 1:
         raise RuntimeError("Experience v6: marcadores de preparación v5.28 deben permanecer únicos")
 
-    # El portal real continúa deshabilitado. En el shell v6 se evita la etiqueta
-    # heredada 'Demo de cliente' y se conserva una frontera demostrativa explícita.
     text = re.sub(
         r'(<a\b[^>]*\bhref="demo\.html(?:#[^"]*)?"[^>]*>)\s*Demo de cliente\s*(</a>)',
         r'\1Centro demo\2',
@@ -127,16 +123,11 @@ def public_html_targets() -> list[Path]:
 
 
 def normalize_measurement_runtime() -> tuple[int, int]:
-    """Inserta el adapter v6.1 solo donde la telemetría local ya existe.
-
-    El adapter se carga antes que telemetry-v50.js para que una futura activación
-    explícita pueda observar desde el primer evento. Con analytics deshabilitada,
-    el archivo no crea scripts de terceros ni transporte de red.
-    """
+    """Inserta el adapter v6.1 solo donde la telemetría local ya existe."""
     instrumented = 0
     untouched = 0
     adapter_pattern = re.compile(
-        r'^[ \t]*<script defer src="[^"]*analytics-adapter-v61\.js"></script>[ \t]*(?:\r?\n)?',
+        r'^[ \t]*<script defer src="[^"]*assets/js/v6/analytics-adapter-v61\.js"></script>[ \t]*(?:\r?\n)?',
         re.M,
     )
     telemetry_pattern = re.compile(r'<script defer src="([^"]*?)telemetry-v50\.js"></script>')
