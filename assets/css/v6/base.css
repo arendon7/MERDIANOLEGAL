@@ -70,7 +70,7 @@ body[data-experience-system="v6"] .v6-btn {
   padding: 11px 17px;
   border: 1px solid transparent;
   border-radius: var(--v6-radius-sm);
-  background: var(--v6-gold);
+  background: var(--v6-gold-light);
   color: var(--v6-navy-deep);
   font-size: .7rem;
   font-weight: 900;
