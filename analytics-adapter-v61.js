@@ -89,7 +89,12 @@
     return true;
   };
 
-  const track = (event) => emit(preview(event));
+  // telemetry-v50.js conserva la firma histórica adapter.track(name, event).
+  // preview(event) permanece disponible para QA sin exponer el payload original.
+  const track = (nameOrEvent, maybeEvent) => {
+    const event = maybeEvent && typeof maybeEvent === 'object' ? maybeEvent : nameOrEvent;
+    return emit(preview(event));
+  };
 
   const setupPlausible = () => {
     if (!state.enabled || state.provider !== 'plausible') return;
