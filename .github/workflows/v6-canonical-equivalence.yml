@@ -143,6 +143,63 @@ jobs:
           python3 scripts/validate_page_context.py
           python3 scripts/validate_editorial_context.py
           python3 scripts/validate_visual_assets.py
+      - name: Validate Pages JavaScript and JSON contract before merge
+        run: |
+          node --check site-v3.js
+          node --check catalog-v32.js
+          node --check catalog-page.js
+          node --check catalog-home-v32.js
+          node --check commercial-conversion-v44.js
+          node --check decision-flow.js
+          node --check page-context.js
+          node --check experiencia.js
+          node --check demo.js
+          node --check visual-v39.js
+          node --check detail-v46.js
+          node --check editorial-v47.js
+          node --check runtime-config.js
+          node --check telemetry-v50.js
+          node --check measurement-v53.js
+          node --check commercial-intake-v59.js
+          node --check conversion-close-v510.js
+          node --check commercial-brief-v513.js
+          node --check recommendation-v514.js
+          node --check decision-action-v515.js
+          node --check handoff-continuity-v517.js
+          node --check handoff-observability-v518.js
+          node --check playwright.config.mjs
+          node --check tests/e2e/helpers.mjs
+          node --check tests/e2e/public-site.spec.mjs
+          node --check tests/e2e/demo.spec.mjs
+          node --check tests/e2e/accessibility.spec.mjs
+          node --check tests/e2e/capability-truth.spec.mjs
+          node --check tests/e2e/offer-narrative.spec.mjs
+          node --check tests/e2e/ci-summary-reporter.mjs
+          node --check scripts/run_quality_v55.mjs
+          node --check scripts/render_catalog_static.mjs
+          node --check scripts/render_services_v42.mjs
+          python3 -m json.tool manifest.webmanifest > /dev/null
+          python3 -m json.tool version.json > /dev/null
+          python3 -m json.tool site-config.json > /dev/null
+          python3 -m json.tool site-status.json > /dev/null
+          python3 -m json.tool package.json > /dev/null
+          python3 -m json.tool package-lock.json > /dev/null
+          python3 -m json.tool quality-budgets-v55.json > /dev/null
+          python3 -m json.tool ci-baseline-v56.json > /dev/null
+          python3 -m json.tool release-governance-v57.json > /dev/null
+          python3 -m json.tool growth-solutions-v51.json > /dev/null
+          python3 -m json.tool cro-solutions-v52.json > /dev/null
+          python3 -m json.tool authority-v53.json > /dev/null
+          python3 -m json.tool measurement-contract-v53.json > /dev/null
+          python3 -m json.tool commercial-intake-v59.json > /dev/null
+          python3 -m json.tool conversion-close-v510.json > /dev/null
+          python3 -m json.tool recommendation-v514.json > /dev/null
+          python3 -m json.tool handoff-observability-v518.json > /dev/null
+          python3 -m json.tool offer-narrative-v522.json > /dev/null
+          python3 -m json.tool experience-system-v60.json > /dev/null
+          python3 -m json.tool experience-content-v60.json > /dev/null
+          for f in catalog-services-v42/*.json; do python3 -m json.tool "$f" > /dev/null; done
+          for f in catalog-products-v41/*.json; do python3 -m json.tool "$f" > /dev/null; done
       - name: Prove second-pass v6 idempotence
         run: |
           git diff -- index.html perspectivas.html firma.html experiencia.html demo.html aviso-legal.html privacidad.html terminos.html 404.html productos servicios soluciones sectores perspectivas > /tmp/canonical-pass-1.diff
