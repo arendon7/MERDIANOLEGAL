@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import AxeBuilder from '@axe-core/playwright';
-import { test, expect } from './helpers.mjs';
+import { test, expect, openHomeLegacy } from './helpers.mjs';
 
 const wcagTags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
 const blockingImpacts = new Set(['serious', 'critical']);
@@ -40,6 +40,12 @@ for (const [label, path] of publicSurfaces) {
     await page.goto(path);
 
     if (path === './') {
+      const v6Targets = page.locator('#v6-situations .v6-index-row');
+      await expect(v6Targets).toHaveCount(6);
+      const v6Heights = await v6Targets.evaluateAll((nodes) => nodes.map((node) => node.getBoundingClientRect().height));
+      expect(Math.min(...v6Heights)).toBeGreaterThanOrEqual(44);
+
+      await openHomeLegacy(page);
       const practiceTargets = page.locator('.perspectives-grid button[data-service]');
       await expect(practiceTargets).toHaveCount(3);
       const targetHeights = await practiceTargets.evaluateAll((nodes) => nodes.map((node) => node.getBoundingClientRect().height));
@@ -94,7 +100,7 @@ for (const [label, path] of publicSurfaces) {
       expect(menuBox?.width || 0).toBeGreaterThanOrEqual(44);
       expect(menuBox?.height || 0).toBeGreaterThanOrEqual(44);
 
-      const mobilePrimary = page.locator('.detail-mobile-cta-v46 > a:first-child');
+      const mobilePrimary = page.locator('a[data-experience-v60-cta="primary"]');
       await expect(mobilePrimary).toBeVisible();
       const primaryBox = await mobilePrimary.boundingBox();
       expect(primaryBox?.height || 0).toBeGreaterThanOrEqual(44);

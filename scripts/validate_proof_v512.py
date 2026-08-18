@@ -16,6 +16,8 @@ HOME_START = "<!-- PROOF-V512-HOME:START -->"
 HOME_END = "<!-- PROOF-V512-HOME:END -->"
 DETAIL_START = "<!-- PROOF-V512-DETAIL:START -->"
 DETAIL_END = "<!-- PROOF-V512-DETAIL:END -->"
+LEGACY_START = "<!-- EXPERIENCE-V60-LEGACY:START -->"
+LEGACY_END = "<!-- EXPERIENCE-V60-LEGACY:END -->"
 
 
 def require(condition: bool, message: str) -> None:
@@ -66,19 +68,22 @@ def route_keys(block: str) -> set[tuple[str, str]]:
 
 def validate_home() -> None:
     text = HOME.read_text(encoding="utf-8")
-    require(text.count(HOME_START) == 1 and text.count(HOME_END) == 1, "portada debe tener un bloque gestionado")
     require('<link rel="stylesheet" href="proof-v512.css">' in text, "falta CSS v5.12 en portada")
-    block = text[text.index(HOME_START):text.index(HOME_END)]
 
-    unified_v520 = version_at_least(5, 20) and 'data-home-decision-v520="true"' in block
-    if unified_v520:
-        require('data-engagement-router-v58="true"' in block, "v5.20 final debe conservar continuidad semántica con v5.8")
-        require("<!-- DECISION-V58-HOME:START -->" not in text and "<!-- DECISION-V58-HOME:END -->" not in text, "v5.20 final no debe reintroducir selector v5.8 separado")
-    else:
-        # Release Governance llega aquí inmediatamente después de aplicar v5.12,
-        # antes de que v5.15 materialice la compresión final de v5.20.
-        require("<!-- DECISION-V58-HOME:END -->" in text, "composición intermedia v5.12 debe conservar v5.8")
-        require(text.index("<!-- DECISION-V58-HOME:END -->") < text.index(HOME_START), "v5.12 debe seguir a v5.8")
+    if version_at_least(5, 20) and 'data-home-decision-v520="true"' in text:
+        require(text.count('data-home-decision-v520="true"') == 1, "v5.20 final debe conservar una única superficie unificada")
+        require(text.count('data-proof-router-v512="true"') == 1, "v5.20 final debe preservar selector de prueba v5.12")
+        require(text.count('data-proof-model-v512=') == 5, "v5.20 final debe preservar cinco modalidades")
+        for model in ("diagnostic", "audit", "product", "specialist", "recurring"):
+            require(f'data-proof-model-v512="{model}"' in text, f"falta modalidad final {model}")
+        require(text.count('data-proof-standard-v512="true"') == 1, "v5.20 final debe preservar estándar de prueba")
+        require("testimonio" not in text.lower() and "caso de éxito" not in text.lower(), "no deben aparecer pruebas sociales inventadas")
+        return
+
+    require(text.count(HOME_START) == 1 and text.count(HOME_END) == 1, "portada debe tener un bloque gestionado")
+    block = text[text.index(HOME_START):text.index(HOME_END)]
+    require("<!-- DECISION-V58-HOME:END -->" in text, "composición intermedia v5.12 debe conservar v5.8")
+    require(text.index("<!-- DECISION-V58-HOME:END -->") < text.index(HOME_START), "v5.12 debe seguir a v5.8")
 
     require(block.count('data-proof-model-v512=') == 5, "deben existir cinco modalidades")
     for model in ("diagnostic", "audit", "product", "specialist", "recurring"):
@@ -100,6 +105,14 @@ def validate_home() -> None:
     require("testimonio" not in block.lower() and "caso de éxito" not in block.lower(), "no deben aparecer pruebas sociales inventadas")
 
 
+def detail_composition(text: str, path: Path) -> tuple[str, bool]:
+    if 'data-experience-system="v6"' not in text:
+        return text, False
+    match = re.search(re.escape(LEGACY_START) + r'(.*?)' + re.escape(LEGACY_END), text, re.S)
+    require(bool(match), f"{path.name}: v6 debe preservar bloque legacy para validar v5.12")
+    return match.group(1), True
+
+
 def validate_detail(path: Path, catalog: dict[str, dict]) -> None:
     text = path.read_text(encoding="utf-8")
     require(text.count(DETAIL_START) == 1 and text.count(DETAIL_END) == 1, f"{path.name}: bloque gestionado inválido")
@@ -109,15 +122,18 @@ def validate_detail(path: Path, catalog: dict[str, dict]) -> None:
     catalog_id = match.group(1)
     require(catalog_id in catalog, f"{path.name}: fuente inexistente")
 
-    proof_start = text.index(DETAIL_START)
-    proof_end = text.index(DETAIL_END)
-    body_end = text.index("<!-- STATIC-CATALOG-BODY:END -->")
-    detail_start = text.index('<div id="detail-page" data-static-catalog="true">')
-    require(detail_start < proof_start < proof_end < body_end, f"{path.name}: orden de runtime incorrecto")
-    require(re.search(r'</div>\s*' + re.escape(DETAIL_START), text) is not None, f"{path.name}: prueba debe ser hermana posterior de #detail-page")
-    require(text.index(DETAIL_END) < text.index("</main>", proof_end), f"{path.name}: prueba debe permanecer dentro de main")
+    composition, is_v6 = detail_composition(text, path)
+    proof_start = composition.index(DETAIL_START)
+    proof_end = composition.index(DETAIL_END)
+    detail_start = composition.index('<div id="detail-page" data-static-catalog="true">')
+    require(detail_start < proof_start < proof_end, f"{path.name}: orden de runtime incorrecto")
+    require(re.search(r'</div>\s*' + re.escape(DETAIL_START), composition) is not None, f"{path.name}: prueba debe ser hermana posterior de #detail-page")
+    if not is_v6:
+        body_end = composition.index("<!-- STATIC-CATALOG-BODY:END -->")
+        require(proof_end < body_end, f"{path.name}: prueba debe preceder cierre estático")
+        require(composition.index(DETAIL_END) < composition.index("</main>", proof_end), f"{path.name}: prueba debe permanecer dentro de main")
 
-    block = text[proof_start:proof_end]
+    block = composition[proof_start:proof_end]
     require(block.count('data-proof-dimension-v512=') == 4, f"{path.name}: deben existir cuatro dimensiones")
     data = catalog[catalog_id]
     for field in ("method", "deliverables", "formats", "acceptance"):
@@ -140,7 +156,7 @@ def main() -> int:
     validate_home()
     for path in DETAIL_TARGETS:
         validate_detail(path, catalog)
-    print("PROOF V5.12 OK: cinco modalidades y 16 pruebas derivadas preservadas en composición intermedia/final.")
+    print("PROOF V5.12 OK: cinco modalidades y 16 pruebas derivadas preservadas en composición intermedia/final v6.")
     return 0
 
 

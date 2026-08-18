@@ -1,84 +1,102 @@
-import { test, expect, expectNoHorizontalOverflow } from './helpers.mjs';
+import { test, expect, expectNoHorizontalOverflow, openDetailLegacy, openSolutionLegacy } from './helpers.mjs';
 
-const deepPages = [
+const detailPaths = [
+  './productos/activos-intangibles-protegidos.html',
   './productos/diagnostico-juridico-empresarial.html',
   './productos/empresa-juridicamente-organizada.html',
-  './productos/activos-intangibles-protegidos.html',
   './productos/empresa-lista-para-inversion.html',
   './productos/programa-gobernanza-ia.html',
+  './productos/proteccion-datos-consumidor.html',
   './productos/proyecto-regulado-estructurado.html',
   './productos/sistema-contractual-empresarial.html',
-  './productos/proteccion-datos-consumidor.html',
+  './servicios/contratacion-estrategica.html',
   './servicios/diagnostico-juridico-empresarial.html',
   './servicios/direccion-juridica-externa.html',
-  './servicios/contratacion-estrategica.html',
-  './servicios/sociedades-gobierno-inversion.html',
-  './servicios/propiedad-intelectual.html',
-  './servicios/tecnologia-inteligencia-artificial.html',
-  './servicios/proyectos-regulados.html',
   './servicios/legal-operations.html',
+  './servicios/proyectos-regulados.html',
+  './servicios/propiedad-intelectual.html',
+  './servicios/sociedades-gobierno-inversion.html',
+  './servicios/tecnologia-inteligencia-artificial.html',
 ];
 
-const solutionPages = [
-  './soluciones/ordenar-riesgo-juridico-empresa.html',
+const solutionPaths = [
   './soluciones/direccion-juridica-externa-empresa.html',
-  './soluciones/gobernar-inteligencia-artificial-empresa.html',
-  './soluciones/preparar-empresa-para-inversion.html',
   './soluciones/estructurar-proyecto-regulado.html',
+  './soluciones/gobernar-inteligencia-artificial-empresa.html',
   './soluciones/ordenar-operacion-juridica.html',
+  './soluciones/ordenar-riesgo-juridico-empresa.html',
+  './soluciones/preparar-empresa-para-inversion.html',
 ];
 
-test('v5.31 reduce las fichas a dos grupos decisionales abiertos sin perder profundidad', async ({ page }) => {
-  for (const path of deepPages) {
+test('v6 mantiene v5.31 completo como profundidad nativa en 16 fichas', async ({ page }) => {
+  for (const path of detailPaths) {
     await page.goto(path);
-    await expect(page.locator('[data-buying-clarity-v58="true"]')).toBeVisible();
-    await expect(page.locator('[data-offer-commercial-v530]')).toBeVisible();
-    await expect(page.locator('[data-decision-compression-v531="decision-result"]')).toBeVisible();
-    const depth = page.locator('details[data-decision-compression-v531="offer-narrative"]');
-    await expect(depth).toHaveCount(1);
-    await expect(depth).not.toHaveAttribute('open', '');
-    await expect(page.locator('#alcance-title')).toHaveCount(1);
-    await expect(page.locator('#contacto')).toHaveCount(1);
-  }
-});
+    await expect(page.locator('body')).toHaveAttribute('data-experience-wave', 'deep-offers');
+    await expect(page.locator('.v6-detail-hero')).toBeVisible();
+    await expect(page.locator('#v6-detail-depth')).not.toHaveAttribute('open', '');
 
-test('v5.31 mantiene la narrativa secundaria accesible por teclado y conserva su contenido', async ({ page }) => {
-  await page.goto('./productos/programa-gobernanza-ia.html');
-  const depth = page.locator('details[data-decision-compression-v531="offer-narrative"]');
-  const summary = depth.locator(':scope > summary');
-  await expect(summary).toHaveCount(1);
-  await summary.focus();
-  await expect(summary).toBeFocused();
-  await summary.press('Enter');
-  await expect(depth).toHaveAttribute('open', '');
-  await expect(depth.getByText('CRITERIO DE CONTRATACIÓN')).toBeVisible();
-  await expect(depth.getByText('ALTERNATIVA CERCANA')).toBeVisible();
-  await expect(depth.getByText('LENTE JURÍDICA', { exact: true })).toBeVisible();
-});
+    const buying = page.locator('[data-buying-clarity-v58="true"]');
+    const commercial = page.locator('[data-offer-commercial-v530]');
+    const pair = page.locator('[data-decision-compression-v531="decision-result"]');
+    const narrative = page.locator('details[data-decision-compression-v531="offer-narrative"]');
 
-test('v5.31 deja abierta la ruta principal y pliega solo soporte secundario en las seis soluciones', async ({ page }) => {
-  for (const path of solutionPages) {
-    await page.goto(path);
-    await expect(page.locator('#ruta')).toBeVisible();
-    await expect(page.getByText('ALCANCE Y HONORARIOS')).toBeVisible();
-    await expect(page.getByText('RESULTADO ESPERADO')).toBeVisible();
-    await expect(page.getByText('LÍMITES')).toBeVisible();
-    await expect(page.locator('.growth-cta-v51')).toBeVisible();
-    for (const key of ['objections', 'faq', 'related', 'proof']) {
-      const details = page.locator(`details[data-decision-compression-v531="solution-${key}"]`);
-      await expect(details).toHaveCount(1);
-      await expect(details).not.toHaveAttribute('open', '');
-    }
-  }
-});
+    await expect(buying).toHaveCount(1);
+    await expect(commercial).toHaveCount(1);
+    await expect(pair).toHaveCount(1);
+    await expect(narrative).toHaveCount(1);
+    await expect(buying).not.toBeVisible();
+    await expect(pair).not.toBeVisible();
 
-test('v5.31 conserva foco nativo y contención móvil en ficha y ruta de necesidad', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  for (const path of ['./servicios/direccion-juridica-externa.html', './soluciones/gobernar-inteligencia-artificial-empresa.html']) {
-    await page.goto(path);
-    const summary = page.locator('details[data-decision-compression-v531] > summary').first();
+    await openDetailLegacy(page);
+    await expect(buying).toBeVisible();
+    await expect(commercial).toBeVisible();
+    await expect(pair).toBeVisible();
+    await expect(narrative).not.toHaveAttribute('open', '');
+    await expect(narrative).toContainText('CRITERIO DE CONTRATACIÓN');
+    await expect(narrative).toContainText('ALTERNATIVA CERCANA');
+    await expect(narrative).toContainText('LENTE JURÍDICA');
+
+    const summary = narrative.locator(':scope > summary');
     await summary.focus();
-    await expect(summary).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(narrative).toHaveAttribute('open', '');
+    await page.keyboard.press('Enter');
+    await expect(narrative).not.toHaveAttribute('open', '');
+    await expectNoHorizontalOverflow(page);
+  }
+});
+
+test('v6 mantiene las cuatro profundidades secundarias v5.31 en las 6 soluciones', async ({ page }) => {
+  for (const path of solutionPaths) {
+    await page.goto(path);
+    await expect(page.locator('body')).toHaveAttribute('data-experience-wave', 'solutions');
+    await expect(page.locator('#v6-solution-signals')).toBeVisible();
+    await expect(page.locator('#v6-solution-result')).toBeVisible();
+    await expect(page.locator('#v6-solution-pricing')).toBeVisible();
+    await expect(page.locator('#v6-solution-boundary')).toBeVisible();
+
+    const outer = page.locator('#v6-solution-depth');
+    await expect(outer).not.toHaveAttribute('open', '');
+    await expect(page.locator('#ruta')).not.toBeVisible();
+    await openSolutionLegacy(page);
+
+    await expect(page.locator('#ruta')).toBeVisible();
+    await expect(page.getByText('ALCANCE Y HONORARIOS', { exact: true })).toBeVisible();
+    await expect(page.getByText('RESULTADO ESPERADO', { exact: true })).toBeVisible();
+    await expect(page.getByText('LÍMITES', { exact: true }).first()).toBeVisible();
+    await expect(page.locator('.growth-cta-v51')).toBeVisible();
+
+    for (const key of ['objections', 'faq', 'related', 'proof']) {
+      const disclosure = page.locator(`details[data-decision-compression-v531="solution-${key}"]`);
+      await expect(disclosure).toHaveCount(1);
+      await expect(disclosure).not.toHaveAttribute('open', '');
+      const summary = disclosure.locator(':scope > summary');
+      await summary.focus();
+      await page.keyboard.press('Enter');
+      await expect(disclosure).toHaveAttribute('open', '');
+      await page.keyboard.press('Enter');
+      await expect(disclosure).not.toHaveAttribute('open', '');
+    }
     await expectNoHorizontalOverflow(page);
   }
 });

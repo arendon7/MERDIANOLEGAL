@@ -1,22 +1,17 @@
-import { test, expect, expectNoHorizontalOverflow } from './helpers.mjs';
+import { test, expect, expectNoHorizontalOverflow, openHomeLegacy } from './helpers.mjs';
 
-test('v5.28 acerca el contacto al cierre comercial sin eliminar profundidad', async ({ page }) => {
+test('v6 acerca el contacto después de oferta y contratación sin eliminar profundidad v5.28', async ({ page }) => {
   await page.goto('./');
 
-  const order = await page.locator('main > section').evaluateAll((sections) => sections.map((node) => node.id || node.getAttribute('data-integral-v526') || ''));
-  const contracting = order.indexOf('contratacion');
+  const order = await page.locator('main > :is(section,details)').evaluateAll((nodes) => nodes.map((node) => node.id || ''));
+  const offer = order.indexOf('v6-offer');
+  const contracting = order.indexOf('v6-commercial-depth');
   const contact = order.indexOf('contacto');
-  const sectors = order.indexOf('sectores');
-  const perspectives = order.indexOf('perspectivas');
-  const firm = order.indexOf('firma');
-  const faq = order.indexOf('preguntas');
-
-  expect(contracting).toBeGreaterThan(-1);
-  expect(contact).toBe(contracting + 1);
-  expect(sectors).toBeGreaterThan(contact);
-  expect(perspectives).toBeGreaterThan(sectors);
-  expect(firm).toBeGreaterThan(perspectives);
-  expect(faq).toBeGreaterThan(firm);
+  const legacy = order.indexOf('v6-depth');
+  expect(offer).toBeGreaterThan(-1);
+  expect(contracting).toBeGreaterThan(offer);
+  expect(contact).toBeGreaterThan(contracting);
+  expect(legacy).toBeGreaterThan(contact);
 
   const contactSection = page.locator('#contacto[data-conversion-path-v528="true"]');
   await expect(contactSection).toHaveCount(1);
@@ -42,18 +37,20 @@ test('v5.28 acerca el contacto al cierre comercial sin eliminar profundidad', as
     await expect(deck).toHaveAttribute('tabindex', '0');
     await expect(deck).toHaveAttribute('aria-label', label);
     await expect(deck).not.toHaveAttribute('role', 'region');
-    const tagName = await deck.evaluate((node) => node.tagName);
-    expect(tagName).toBe('DL');
+    expect(await deck.evaluate((node) => node.tagName)).toBe('DL');
     await deck.focus();
     await expect(deck).toBeFocused();
   }
 
-  const depth = page.locator('[data-conversion-depth-v528="true"]');
-  await expect(depth).toHaveCount(1);
-  await expect(depth.locator('a[href="#sectores"]')).toHaveCount(1);
-  await expect(depth.locator('a[href="#perspectivas"]')).toHaveCount(1);
-  await expect(depth.locator('a[href="#firma"]')).toHaveCount(1);
-  await expect(depth.locator('a[href="#preguntas"]')).toHaveCount(1);
+  const historicalDepth = page.locator('[data-conversion-depth-v528="true"]');
+  await expect(historicalDepth).toHaveCount(1);
+  await expect(historicalDepth).not.toBeVisible();
+  await openHomeLegacy(page);
+  await expect(historicalDepth).toBeVisible();
+  await expect(historicalDepth.locator('a[href="#sectores"]')).toHaveCount(1);
+  await expect(historicalDepth.locator('a[href="#perspectivas"]')).toHaveCount(1);
+  await expect(historicalDepth.locator('a[href="#firma"]')).toHaveCount(1);
+  await expect(historicalDepth.locator('a[href="#preguntas"]')).toHaveCount(1);
 
   await expectNoHorizontalOverflow(page);
 });

@@ -1,4 +1,4 @@
-import { test, expect, expectNoHorizontalOverflow, telemetrySnapshot, preventNavigationFor } from './helpers.mjs';
+import { test, expect, expectNoHorizontalOverflow, telemetrySnapshot, preventNavigationFor, openHomeLegacy, openDetailLegacy, openSolutionLegacy } from './helpers.mjs';
 
 const productRecommendationV514 = {
   fit: 'Encaja cuando el problema permite fijar desde el inicio cantidades, entregables, cronograma, supuestos y aceptación.',
@@ -6,13 +6,14 @@ const productRecommendationV514 = {
   alternative: 'Cambie a servicio especializado si el asunto exige adaptación profesional continua; a acompañamiento recurrente si la demanda se repite mes a mes.',
 };
 
-const expectCommercialRoute = async (locator, { intent, modality }) => {
+const expectCommercialRoute = async (locator, { intent, modality, experience = null }) => {
   const href = await locator.getAttribute('href');
   expect(href).toBeTruthy();
   const url = new URL(href, 'https://meridiano.invalid/');
   expect(url.searchParams.get('commercial_intent')).toBe(intent);
   expect(url.searchParams.get('modality')).toBe(modality);
   expect(url.searchParams.get('proof_standard')).toBe('source');
+  if (experience) expect(url.searchParams.get('experience')).toBe(experience);
   expect(url.hash).toBe('#contacto');
 };
 
@@ -27,10 +28,17 @@ const expectCurrentCommercialRoute = async (page, { intent, modality }) => {
 test('portada pública conserva rutas, profundidad y layout', async ({ page }) => {
   await page.goto('./');
   await expect(page).toHaveTitle(/Meridiano Legal/);
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('Dirección jurídica');
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Decisiones empresariales complejas');
+  await expect(page.locator('#v6-situations .v6-index-row')).toHaveCount(6);
   await expect(page.locator('.need-card')).toHaveCount(6);
   await expect(page.locator('.full-detail-link')).toHaveCount(16);
-  await expect(page.getByRole('link', { name: /Centro demo/i }).first()).toBeVisible();
+  await expect(page.getByRole('link', { name: /Ver experiencia demo/i })).toBeVisible();
+
+  const homeDepth = page.locator('#v6-depth.v6-legacy-home');
+  await expect(homeDepth).not.toHaveAttribute('open', '');
+  await expect(page.locator('[data-engagement-router-v58="true"]')).not.toBeVisible();
+  await openHomeLegacy(page);
+
   await expect(page.locator('[data-engagement-router-v58="true"]')).toBeVisible();
   await expect(page.locator('.engagement-router-card-v58')).toHaveCount(4);
   await expect(page.locator('[data-proof-router-v512="true"]')).toBeVisible();
@@ -52,11 +60,20 @@ test('portada pública conserva rutas, profundidad y layout', async ({ page }) =
   await expectNoHorizontalOverflow(page);
 
   await page.goto('./productos/programa-gobernanza-ia.html');
+  const visibleProductCta = page.locator('[data-experience-v60-cta="primary"]');
+  await expect(visibleProductCta).toBeVisible();
+  await expectCommercialRoute(visibleProductCta, { intent: 'proposal', modality: 'product', experience: 'v6' });
+  await expect(page.locator('[data-buying-clarity-v58="true"]')).not.toBeVisible();
+  await openDetailLegacy(page);
   await expect(page.locator('[data-buying-clarity-v58="true"]')).toBeVisible();
   await expect(page.locator('.buying-clarity-card-v58')).toHaveCount(5);
   const productCta = page.locator('[data-decision-v58-cta="true"]');
   await expect(productCta).toBeVisible();
   await expectCommercialRoute(productCta, { intent: 'proposal', modality: 'product' });
+  const legacyProposalCta = page.locator('[data-close-intent-v510="proposal"]');
+  await expect(legacyProposalCta).toHaveCount(1);
+  await expect(legacyProposalCta).toBeVisible();
+  await expectCommercialRoute(legacyProposalCta, { intent: 'proposal', modality: 'product' });
   await expect(page.locator('[data-proof-v512="true"]')).toBeVisible();
   await expect(page.locator('[data-proof-v512="true"]')).toHaveAttribute('data-commercial-modality-v513', 'product');
   await expect(page.locator('[data-proof-dimension-v512]')).toHaveCount(4);
@@ -64,6 +81,9 @@ test('portada pública conserva rutas, profundidad y layout', async ({ page }) =
   await expectNoHorizontalOverflow(page);
 
   await page.goto('./servicios/tecnologia-inteligencia-artificial.html');
+  const visibleServiceCta = page.locator('[data-experience-v60-cta="primary"]');
+  await expectCommercialRoute(visibleServiceCta, { intent: 'scope', modality: 'specialist', experience: 'v6' });
+  await openDetailLegacy(page);
   const serviceCta = page.locator('[data-decision-v58-cta="true"]');
   await expectCommercialRoute(serviceCta, { intent: 'scope', modality: 'specialist' });
   const serviceGeneral = page.getByRole('link', { name: 'Formulario general' });
@@ -77,7 +97,7 @@ test('portada pública conserva rutas, profundidad y layout', async ({ page }) =
 
 test('ruta de necesidad abre una solución indexable', async ({ page }) => {
   await page.goto('./');
-  const route = page.locator('.need-card').filter({ hasText: 'Gobernar el uso de IA' });
+  const route = page.locator('#v6-situations .v6-index-row[href*="gobernar-inteligencia-artificial-empresa"]');
   await expect(route).toBeVisible();
   await route.click();
   await expect(page).toHaveURL(/soluciones\/gobernar-inteligencia-artificial-empresa\.html$/);
@@ -92,6 +112,7 @@ test('solución registra vista y apertura de FAQ sin PII', async ({ page }) => {
     event.name === 'solution_view' && event.detail?.target === 'solution:gobernar-inteligencia-artificial-empresa'
   )).toBe(true);
 
+  await openSolutionLegacy(page);
   const faqDepth = page.locator('details[data-decision-compression-v531="solution-faq"]');
   await expect(faqDepth).toHaveCount(1);
   await expect(faqDepth).not.toHaveAttribute('open', '');
@@ -129,7 +150,7 @@ test('perspectiva y sector conectan autoridad con solución', async ({ page }) =
 
   await page.goto('./sectores/tecnologia-software-ia.html');
   await expect(page.locator('a[data-authority-solution]')).toHaveCount(2);
-  await expect(page.locator('a[data-authority-solution="gobernar-inteligencia-artificial-empresa"]')).toBeVisible();
+  await expect(page.locator('.v6-sector-routes a[href*="gobernar-inteligencia-artificial-empresa"]')).toBeVisible();
   await expectNoHorizontalOverflow(page);
 });
 
@@ -143,9 +164,9 @@ test('formulario prepara WhatsApp sin enviar ni salir de la web', async ({ page 
   });
 
   await page.goto('./productos/programa-gobernanza-ia.html');
-  const proposalCta = page.locator('[data-decision-v58-cta="true"][data-close-intent-v510="proposal"]');
+  const proposalCta = page.locator('[data-experience-v60-cta="primary"]');
   await expect(proposalCta).toBeVisible();
-  await expectCommercialRoute(proposalCta, { intent: 'proposal', modality: 'product' });
+  await expectCommercialRoute(proposalCta, { intent: 'proposal', modality: 'product', experience: 'v6' });
   await proposalCta.click();
   await expectCurrentCommercialRoute(page, { intent: 'proposal', modality: 'product' });
 

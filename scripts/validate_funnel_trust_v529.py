@@ -86,13 +86,13 @@ def main() -> int:
 
     for marker in ('window.MeridianoFunnelV529', "'funnel_checkpoint'", 'IntersectionObserver', 'telemetry.snapshot()', "window.addEventListener('meridiano:telemetry'", 'dataset.catalogId', "target: `offer:${catalogId}`", 'const CHECKPOINT_THRESHOLD = 0.05', 'threshold: [CHECKPOINT_THRESHOLD]'):
         require(marker in js, f'runtime carece de {marker}')
+    for marker in ('LEGACY_CHECKPOINTS', 'V6_CHECKPOINTS', "selector: '#v6-situations'", "selector: '#v6-offer'", "selector: '.v6-evidence'", "selector: '#v6-commercial-depth'", "dataset.experienceSystem === 'v6'"):
+        require(marker in js, f'runtime v5.29 no reconoce la ruta visible v6: {marker}')
     require('intersectionRatio < CHECKPOINT_THRESHOLD' in js, 'runtime debe aplicar el umbral contractual')
     require('intersectionRatio < 0.25' not in js and 'threshold: [0.25]' not in js, 'no debe reaparecer el umbral incompatible con secciones móviles altas')
     for forbidden in ('localStorage', 'sessionStorage', 'indexedDB', 'document.cookie', 'navigator.sendBeacon', 'XMLHttpRequest', 'crypto.randomUUID', 'crypto.getRandomValues'):
         require(forbidden not in js, f'runtime no puede usar {forbidden}')
     require(re.search(r'\bfetch\s*\(', js) is None, 'runtime v5.29 no puede introducir fetch')
-    # `contact-form` es una etiqueta semántica heredada de CTA v5.0 y se permite.
-    # Lo prohibido es inspeccionar controles o leer valores del formulario.
     for forbidden in ('FormData', 'textarea', 'HTMLInputElement', 'HTMLTextAreaElement', 'HTMLSelectElement', '.value', '.elements', 'querySelector(\'form', 'querySelector("form'):
         require(forbidden not in js, f'runtime v5.29 no puede leer contenido de formulario: {forbidden}')
 
@@ -101,7 +101,7 @@ def main() -> int:
     for forbidden in ('display:none', 'visibility:hidden', 'content-visibility:hidden'):
         require(forbidden not in css, f'v5.29 no puede ocultar evidencia con {forbidden}')
 
-    print('FUNNEL + TRUST V5.29 OK: funnel acotado en home + 16 fichas, umbral móvil observable, cero PII/persistencia propia y confianza trazable antes del contacto.')
+    print('FUNNEL + TRUST V5.29 OK: funnel acotado y v6-aware, umbral móvil observable, cero PII/persistencia propia y confianza trazable antes del contacto.')
     return 0
 
 

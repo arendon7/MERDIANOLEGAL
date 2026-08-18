@@ -1,4 +1,4 @@
-import { test, expect, expectNoHorizontalOverflow } from './helpers.mjs';
+import { test, expect, expectNoHorizontalOverflow, openDetailLegacy } from './helpers.mjs';
 
 const offers = [
   ['./productos/diagnostico-juridico-empresarial.html', 'product-diagnostic'],
@@ -36,6 +36,7 @@ test('v5.30 cubre exactamente las 16 ofertas con lógica de contratación verifi
 
 test('v5.30 explica honorarios sin publicar una cotización inventada', async ({ page }) => {
   await page.goto('./productos/diagnostico-juridico-empresarial.html');
+  await openDetailLegacy(page);
   const block = page.locator('[data-offer-commercial-v530="product-diagnostic"]');
   await expect(block).toBeVisible();
   await expect(block).toContainText('UNIDAD DE CONTRATACIÓN');
@@ -55,6 +56,7 @@ test('v5.30 explica honorarios sin publicar una cotización inventada', async ({
 
 test('v5.30 diferencia un servicio recurrente sin fingir tarifa fija', async ({ page }) => {
   await page.goto('./servicios/direccion-juridica-externa.html');
+  await openDetailLegacy(page);
   const block = page.locator('[data-offer-commercial-v530="service-direction"]');
   await expect(block).toContainText('Plan recurrente mensual o trimestral');
   await expect(block).toContainText('capacidad recurrente');
@@ -63,9 +65,10 @@ test('v5.30 diferencia un servicio recurrente sin fingir tarifa fija', async ({ 
   expect(text).not.toMatch(/\$|€|£|\bCOP\b|\bUSD\b|\bEUR\b/i);
 });
 
-test('v5.30 conserva contención móvil y foco navegable', async ({ page }) => {
+test('v5.30 conserva contención móvil y foco navegable al abrir profundidad', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('./productos/sistema-contractual-empresarial.html');
+  await openDetailLegacy(page);
   const block = page.locator('[data-offer-commercial-v530="product-contract-system"]');
   await expect(block).toBeVisible();
   const summary = block.locator('summary');

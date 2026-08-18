@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Valida v5.8 y su continuidad semántica en la portada compactada v5.20."""
+"""Valida v5.8 y su continuidad semántica en composiciones intermedias/finales."""
 
 from __future__ import annotations
 
@@ -13,6 +13,8 @@ ROOT = Path(__file__).resolve().parents[1]
 HOME = ROOT / 'index.html'
 VERSION = ROOT / 'version.json'
 TARGETS = sorted((ROOT / 'servicios').glob('*.html')) + sorted((ROOT / 'productos').glob('*.html'))
+LEGACY_START = '<!-- EXPERIENCE-V60-LEGACY:START -->'
+LEGACY_END = '<!-- EXPERIENCE-V60-LEGACY:END -->'
 
 
 def fail(message: str) -> None:
@@ -106,9 +108,6 @@ def validate_home() -> None:
     if '<link rel="stylesheet" href="decision-v58.css">' not in text:
         fail('falta decision-v58.css en portada')
 
-    # Release Governance valida v5.8 inmediatamente después de aplicar su capa,
-    # antes de que v5.15/v5.20 compacte la portada. Pages valida la salida final.
-    # Ambos estados deben conservar el contrato semántico real de v5.8.
     if version_at_least(5, 20) and 'data-home-decision-v520="true"' in text:
         validate_unified_home_v520(text)
     else:
@@ -116,6 +115,16 @@ def validate_home() -> None:
 
     if 'Objetivo, perímetro, entregables, cronograma, responsabilidades, supuestos, exclusiones y mecanismo de cierre.' not in text:
         fail('falta contrato mínimo de propuesta seria')
+
+
+def detail_composition(text: str, path: Path) -> str:
+    """Devuelve la composición que debe conservar la relación v5.8 → #detail-page."""
+    if 'data-experience-system="v6"' not in text:
+        return text
+    match = re.search(re.escape(LEGACY_START) + r'(.*?)' + re.escape(LEGACY_END), text, re.S)
+    if not match:
+        fail(f'{path}: v6 no conserva bloque legacy para validar v5.8')
+    return match.group(1)
 
 
 def validate_detail(path: Path, catalog: dict[str, dict]) -> None:
@@ -130,14 +139,14 @@ def validate_detail(path: Path, catalog: dict[str, dict]) -> None:
     if '<link rel="stylesheet" href="../decision-v58.css">' not in text:
         fail(f'{path}: falta decision-v58.css')
 
+    composition = detail_composition(text, path)
     runtime_safe = re.search(
-        r'<main id="contenido">\s*'
         r'<!-- DECISION-V58-DETAIL:START -->[\s\S]*?<!-- DECISION-V58-DETAIL:END -->\s*'
         r'<div id="detail-page" data-static-catalog="true">',
-        text,
+        composition,
     )
     if not runtime_safe:
-        fail(f'{path}: el bloque v5.8 debe ser hermano anterior de #detail-page para sobrevivir al render JavaScript')
+        fail(f'{path}: v5.8 debe seguir siendo hermano anterior de #detail-page en su composición histórica preservada')
 
     match = re.search(r'data-catalog-id="([^"]+)"', text)
     if not match:
@@ -176,7 +185,7 @@ def main() -> int:
     validate_home()
     for path in TARGETS:
         validate_detail(path, catalog)
-    print('DECISION V5.8 OK: fichas preservadas y continuidad semántica de compra verificada en composición intermedia/final.')
+    print('DECISION V5.8 OK: fichas preservadas y continuidad semántica de compra verificada en composición histórica/v6.')
     return 0
 
 

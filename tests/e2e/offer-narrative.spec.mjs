@@ -1,20 +1,24 @@
-import { test, expect, expectNoHorizontalOverflow } from './helpers.mjs';
+import { test, expect, expectNoHorizontalOverflow, openHomeLegacy, openDetailLegacy } from './helpers.mjs';
 
-test('portada v5.22 diferencia necesidad, modalidad, servicios y productos sin duplicar selector', async ({ page }) => {
+test('v6 Home conserva narrativa v5.22 completa bajo profundidad sin duplicar selector', async ({ page }) => {
   await page.goto('./');
-
+  await expect(page.locator('#v6-home-title')).toContainText('Decisiones empresariales complejas');
   await expect(page.locator('[data-home-narrative-v522="true"]')).toHaveCount(1);
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('decisiones que deben avanzar');
-  await expect(page.getByText('CÓMO SE VE EL CRITERIO SENIOR')).toBeVisible();
-  await expect(page.locator('[data-home-decision-v520="true"]')).toHaveCount(1);
-  await expect(page.locator('#elegir')).toHaveCount(0);
-  await expect(page.locator('#servicios h2')).toContainText('criterio adaptable');
-  await expect(page.locator('#productos h2')).toContainText('perímetro, entregables y cierre definidos');
+  await expect(page.locator('[data-home-narrative-v522="true"]')).not.toBeVisible();
+
+  await openHomeLegacy(page);
+  const legacy = page.locator('#v6-depth');
+  await expect(legacy.getByText('CÓMO SE VE EL CRITERIO SENIOR')).toBeVisible();
+  await expect(legacy.locator('[data-home-decision-v520="true"]')).toHaveCount(1);
+  await expect(legacy.locator('#elegir')).toHaveCount(0);
+  await expect(legacy.locator('#servicios h2')).toContainText('criterio adaptable');
+  await expect(legacy.locator('#productos h2')).toContainText('perímetro, entregables y cierre definidos');
   await expectNoHorizontalOverflow(page);
 });
 
-test('fichas v5.22 explican decisión, modalidad, lente jurídica y alternativa cercana', async ({ page }) => {
+test('fichas v5.22 explican decisión, modalidad, lente jurídica y alternativa cercana dentro de profundidad v6', async ({ page }) => {
   await page.goto('./productos/programa-gobernanza-ia.html');
+  await openDetailLegacy(page);
   const depth = page.locator('details[data-decision-compression-v531="offer-narrative"]');
   const ai = page.locator('[data-offer-narrative-v522="product-ai"]');
   await expect(depth).toHaveCount(1);
@@ -24,7 +28,6 @@ test('fichas v5.22 explican decisión, modalidad, lente jurídica y alternativa 
   await expect(ai).toContainText('CAPACIDAD QUE QUEDA INSTALADA');
 
   const depthSummary = depth.locator(':scope > summary');
-  await expect(depthSummary).toHaveCount(1);
   await depthSummary.focus();
   await expect(depthSummary).toBeFocused();
   await depthSummary.press('Enter');
@@ -41,6 +44,7 @@ test('fichas v5.22 explican decisión, modalidad, lente jurídica y alternativa 
   await expectNoHorizontalOverflow(page);
 
   await page.goto('./servicios/contratacion-estrategica.html');
+  await openDetailLegacy(page);
   const serviceDepth = page.locator('details[data-decision-compression-v531="offer-narrative"]');
   const contracts = page.locator('[data-offer-narrative-v522="service-contracts"]');
   await expect(serviceDepth).toHaveCount(1);
@@ -48,7 +52,6 @@ test('fichas v5.22 explican decisión, modalidad, lente jurídica y alternativa 
   await expect(contracts).toHaveCount(1);
   await expect(contracts).toContainText('Sistema Contractual Empresarial');
   const serviceDepthSummary = serviceDepth.locator(':scope > summary');
-  await expect(serviceDepthSummary).toHaveCount(1);
   await serviceDepthSummary.focus();
   await expect(serviceDepthSummary).toBeFocused();
   await serviceDepthSummary.press('Enter');

@@ -1,11 +1,19 @@
-import { test, expect, expectNoHorizontalOverflow } from './helpers.mjs';
+import { test, expect, expectNoHorizontalOverflow, openHomeLegacy } from './helpers.mjs';
 
-test('v5.26 consolida contexto superior en una sola superficie visual', async ({ page }) => {
+test('v6 muestra una primera capa coherente y conserva la señal visual v5.26 en profundidad', async ({ page }) => {
   await page.goto('./');
+  await expect(page.locator('.v6-hero')).toBeVisible();
+  await expect(page.locator('#v6-situations')).toBeVisible();
+  await expect(page.locator('.v6-home-method')).toBeVisible();
+  await expect(page.locator('.v6-evidence')).toBeVisible();
+
   const signal = page.locator('[data-integral-v526="signal"]');
   await expect(signal).toHaveCount(1);
+  await expect(signal).not.toBeVisible();
+  await openHomeLegacy(page);
   await expect(page.locator('section.principles')).toHaveCount(0);
   await expect(page.locator('section.audience-strip')).toHaveCount(0);
+  await expect(signal).toBeVisible();
   await expect(signal).toContainText('Menos capas. Más criterio aplicable.');
   await expect(signal).toContainText('16 fichas con alcance verificable');
   await expect(signal).toContainText('5 modalidades de contratación');
@@ -13,26 +21,31 @@ test('v5.26 consolida contexto superior en una sola superficie visual', async ({
   const map = signal.locator('img[src="assets/decision-map-v526.svg"]');
   await expect(map).toBeVisible();
   await expect(map).toHaveJSProperty('complete', true);
-  const loaded = await map.evaluate((node) => node.naturalWidth > 0 && node.naturalHeight > 0);
-  expect(loaded).toBeTruthy();
+  expect(await map.evaluate((node) => node.naturalWidth > 0 && node.naturalHeight > 0)).toBeTruthy();
   await expectNoHorizontalOverflow(page);
 });
 
-test('v5.26 conserva la secuencia necesidad y modalidad después de simplificar', async ({ page }) => {
+test('v6 ordena decisión antes de oferta y conserva secuencia v5.26 al abrir profundidad', async ({ page }) => {
   await page.goto('./');
-  const order = await page.locator('main > section').evaluateAll((sections) => sections.map((node) => ({
-    signal: node.matches('[data-integral-v526="signal"]'),
-    needs: node.id === 'necesidades',
-    decision: node.matches('[data-home-decision-v520="true"]'),
+  const v6Order = await page.locator('main > :is(section,details)').evaluateAll((nodes) => nodes.map((node) => ({
+    situations: node.id === 'v6-situations',
+    offer: node.id === 'v6-offer',
+    contact: node.id === 'contacto',
+    legacy: node.id === 'v6-depth',
   })));
-  const signalIndex = order.findIndex((item) => item.signal);
-  const needsIndex = order.findIndex((item) => item.needs);
-  const decisionIndex = order.findIndex((item) => item.decision);
-  expect(signalIndex).toBeGreaterThan(-1);
-  expect(needsIndex).toBeGreaterThan(signalIndex);
-  expect(decisionIndex).toBeGreaterThan(needsIndex);
-  await expect(page.locator('#necesidades .need-card')).toHaveCount(6);
-  await expect(page.locator('[data-home-decision-v520="true"] [data-proof-model-v512]')).toHaveCount(5);
-  await expect(page.locator('.visual-home-hero')).toBeVisible();
+  const situationsIndex = v6Order.findIndex((item) => item.situations);
+  const offerIndex = v6Order.findIndex((item) => item.offer);
+  const contactIndex = v6Order.findIndex((item) => item.contact);
+  const legacyIndex = v6Order.findIndex((item) => item.legacy);
+  expect(situationsIndex).toBeGreaterThan(-1);
+  expect(offerIndex).toBeGreaterThan(situationsIndex);
+  expect(contactIndex).toBeGreaterThan(offerIndex);
+  expect(legacyIndex).toBeGreaterThan(contactIndex);
+
+  await openHomeLegacy(page);
+  const depth = page.locator('#v6-depth');
+  await expect(depth.locator('#necesidades .need-card')).toHaveCount(6);
+  await expect(depth.locator('[data-home-decision-v520="true"] [data-proof-model-v512]')).toHaveCount(5);
+  await expect(depth.locator('.visual-home-hero')).toBeVisible();
   await expectNoHorizontalOverflow(page);
 });

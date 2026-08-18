@@ -131,6 +131,13 @@ def patch_detail(path: Path, catalog: dict[str, dict]) -> None:
     if catalog_id not in catalog:
         raise RuntimeError(f'{path.name}: ID {catalog_id} no existe en las fuentes')
 
+    if 'data-experience-system="v6"' in text:
+        if text.count(DETAIL_START) != 1 or text.count(DETAIL_END) != 1:
+            raise RuntimeError(f'{path.name}: v6 debe preservar exactamente un bloque v5.8')
+        text = ensure_style(text, DETAIL_STYLE)
+        path.write_text(text, encoding='utf-8')
+        return
+
     text = remove_managed_block(text, DETAIL_START, DETAIL_END)
     anchor = re.compile(r'<main id="contenido">\s*<div id="detail-page" data-static-catalog="true">')
     replacement = (
@@ -168,6 +175,17 @@ def home_block() -> str:
 
 def patch_home() -> None:
     text = HOME.read_text(encoding='utf-8')
+    if 'data-experience-system="v6"' in text:
+        if version_at_least(5, 20) and text.count('data-home-decision-v520="true"') == 1:
+            text = ensure_style(text, HOME_STYLE)
+            HOME.write_text(text, encoding='utf-8')
+            return
+        if text.count(HOME_START) == 1 and text.count(HOME_END) == 1:
+            text = ensure_style(text, HOME_STYLE)
+            HOME.write_text(text, encoding='utf-8')
+            return
+        raise RuntimeError('index.html: v6 debe preservar la reconciliación v5.20 o un bloque Home v5.8 único')
+
     text = remove_managed_block(text, HOME_START, HOME_END)
     if version_at_least(5, 20) and 'data-home-decision-v520="true"' in text:
         text = ensure_style(text, HOME_STYLE)

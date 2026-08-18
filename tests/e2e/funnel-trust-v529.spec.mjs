@@ -1,11 +1,11 @@
 import { test, expect, expectNoHorizontalOverflow } from './helpers.mjs';
 
-test('v5.29 coloca confianza verificable sin romper la secuencia v5.28', async ({ page }) => {
+test('v5.29 mantiene confianza verificable antes del contacto en la secuencia v6', async ({ page }) => {
   await page.goto('./');
 
   const trust = page.locator('aside[data-funnel-trust-v529="true"]');
   await expect(trust).toHaveCount(1);
-  await expect(page.locator('#contratacion + aside[data-funnel-trust-v529="true"]')).toHaveCount(1);
+  await expect(page.locator('#v6-commercial-depth + aside[data-funnel-trust-v529="true"]')).toHaveCount(1);
   await expect(page.locator('aside[data-funnel-trust-v529="true"] + #contacto')).toHaveCount(1);
   await expect(trust.getByText('Abogado · Universidad EAFIT')).toHaveCount(1);
   await expect(trust.getByText('Director Jurídico y Administrativo')).toHaveCount(1);
@@ -17,12 +17,14 @@ test('v5.29 coloca confianza verificable sin romper la secuencia v5.28', async (
   await evidence.focus();
   await expect(evidence).toBeFocused();
 
-  const sectionOrder = await page.locator('main > section').evaluateAll((sections) => sections.map((node) => node.id || ''));
-  expect(sectionOrder.indexOf('contacto')).toBe(sectionOrder.indexOf('contratacion') + 1);
+  const order = await page.locator('main > :is(section,details,aside)').evaluateAll((nodes) => nodes.map((node) => node.id || node.getAttribute('data-funnel-trust-v529') || ''));
+  expect(order.indexOf('v6-commercial-depth')).toBeGreaterThan(-1);
+  expect(order.indexOf('true')).toBe(order.indexOf('v6-commercial-depth') + 1);
+  expect(order.indexOf('contacto')).toBe(order.indexOf('true') + 1);
   await expectNoHorizontalOverflow(page);
 });
 
-test('v5.29 observa el funnel en memoria sin capturar contenido del formulario', async ({ page }) => {
+test('v5.29 observa el funnel visible v6 en memoria sin capturar contenido del formulario', async ({ page }) => {
   await page.goto('./');
   await expect.poll(() => page.evaluate(() => Boolean(window.MeridianoFunnelV529))).toBe(true);
 
@@ -40,9 +42,10 @@ test('v5.29 observa el funnel en memoria sin capturar contenido del formulario',
   expect(Object.values(api.limits).every((value) => value === false)).toBe(true);
 
   const checkpoints = [
-    ['#necesidades', 'need'],
-    ['#servicios', 'offer'],
-    ['#contratacion', 'decision'],
+    ['#v6-situations', 'need'],
+    ['#v6-offer', 'offer'],
+    ['.v6-evidence', 'evidence'],
+    ['#v6-commercial-depth', 'decision'],
     ['#contacto', 'contact'],
   ];
   for (const [selector, stage] of checkpoints) {
@@ -61,6 +64,7 @@ test('v5.29 observa el funnel en memoria sin capturar contenido del formulario',
   expect(stages).toContain('awareness');
   expect(stages).toContain('need');
   expect(stages).toContain('offer');
+  expect(stages).toContain('evidence');
   expect(stages).toContain('decision');
   expect(stages).toContain('contact');
   expect(snapshot.furthestStage).toBe('contact');
@@ -69,7 +73,7 @@ test('v5.29 observa el funnel en memoria sin capturar contenido del formulario',
   expect(JSON.stringify(snapshot)).not.toMatch(/name=|email=|phone=|message=/i);
 });
 
-test('v5.29 reconoce una ficha profunda como oferta sin afirmar conversión', async ({ page }) => {
+test('v5.29 reconoce una ficha profunda v6 como oferta sin afirmar conversión', async ({ page }) => {
   await page.goto('./servicios/diagnostico-juridico-empresarial.html');
   await expect.poll(() => page.evaluate(() => Boolean(window.MeridianoFunnelV529))).toBe(true);
   await expect.poll(() => page.evaluate(() => window.MeridianoFunnelV529.snapshot().milestones.some((item) => item.stage === 'offer'))).toBe(true);

@@ -1,7 +1,20 @@
-import { test, expect, expectNoHorizontalOverflow } from './helpers.mjs';
+import { test, expect, expectNoHorizontalOverflow, openDisclosure, openHomeLegacy } from './helpers.mjs';
 
-test('v5.27 compacta comparación comercial en móvil sin perder opciones', async ({ page }) => {
+test('v6 compacta la primera lectura móvil y conserva decks v5.27 bajo profundidad', async ({ page }) => {
   await page.goto('./');
+  const width = await page.evaluate(() => window.innerWidth);
+
+  await expect(page.locator('#v6-situations .v6-index-row')).toHaveCount(6);
+  await expect(page.locator('#v6-offer .v6-family')).toHaveCount(3);
+  await expectNoHorizontalOverflow(page);
+
+  if (width <= 620) {
+    const firstLayerHeight = await page.evaluate(() => document.documentElement.scrollHeight);
+    expect(firstLayerHeight).toBeLessThan(22000);
+  }
+
+  await openDisclosure(page.locator('#v6-commercial-depth'));
+  await openHomeLegacy(page);
 
   const decks = [
     { selector: '#servicios .service-grid', count: 8, maxHeight: 1200 },
@@ -10,7 +23,6 @@ test('v5.27 compacta comparación comercial en móvil sin perder opciones', asyn
     { selector: '#honorarios .pricing-grid-v43', count: 4, maxHeight: 2400 },
     { selector: '#sectores .sectors-grid', count: 8, maxHeight: 1100 },
   ];
-  const width = await page.evaluate(() => window.innerWidth);
 
   for (const deck of decks) {
     const node = page.locator(deck.selector);
@@ -28,11 +40,6 @@ test('v5.27 compacta comparación comercial en móvil sin perder opciones', asyn
       expect(metrics.firstWidth).toBeGreaterThan(280);
       expect(metrics.height).toBeLessThan(deck.maxHeight);
     }
-  }
-
-  if (width <= 620) {
-    const pageHeight = await page.evaluate(() => document.documentElement.scrollHeight);
-    expect(pageHeight).toBeLessThan(35000);
   }
 
   await expectNoHorizontalOverflow(page);
