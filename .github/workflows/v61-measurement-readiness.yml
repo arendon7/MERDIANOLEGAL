@@ -1,0 +1,107 @@
+name: V6.1 measurement readiness
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - assets/js/v6/analytics-adapter-v61.js
+      - assets/data/v6/measurement-readiness-v61.json
+      - telemetry-v50.js
+      - site-config.json
+      - runtime-config.js
+      - privacidad.html
+      - scripts/normalize_experience_compat_v60.py
+      - scripts/validate_measurement_readiness_v61.py
+      - tests/e2e/measurement-readiness-v61.spec.mjs
+      - playwright.config.mjs
+      - package.json
+      - package-lock.json
+      - .github/workflows/v61-measurement-readiness.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: meridiano-v61-measurement-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  readiness:
+    name: Privacy-first measurement / Browser E2E
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      MERIDIANO_BASE_URL: http://127.0.0.1:8000/
+    steps:
+      - name: Checkout candidate
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: "3.12"
+      - name: Setup Node.js with npm cache
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+      - name: Materialize canonical v6 with measurement readiness
+        run: |
+          python3 scripts/apply_experience_v60.py
+          python3 scripts/apply_experience_solutions_v60.py
+          python3 scripts/apply_experience_sectors_v60.py
+          python3 scripts/apply_experience_perspectives_v60.py
+          python3 scripts/apply_experience_final_v60.py
+          python3 scripts/apply_funnel_trust_v529.py
+          python3 scripts/normalize_experience_compat_v60.py
+      - name: Validate measurement privacy contract
+        run: |
+          python3 scripts/validate_measurement_readiness_v61.py
+          python3 scripts/validate_release_governance_v57.py
+          python3 scripts/validate_pages_trigger_v511.py
+          node --check assets/js/v6/analytics-adapter-v61.js
+          node --check tests/e2e/measurement-readiness-v61.spec.mjs
+          python3 -m json.tool assets/data/v6/measurement-readiness-v61.json > /dev/null
+      - name: Install locked QA dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Prefer official Ubuntu mirrors for browser dependencies
+        run: |
+          if [ -f /etc/apt/apt-mirrors.txt ]; then
+            printf 'https://archive.ubuntu.com/ubuntu/\tpriority:1\nhttps://security.ubuntu.com/ubuntu/\tpriority:2\n' \
+              | sudo tee /etc/apt/apt-mirrors.txt >/dev/null
+          fi
+          printf '%s\n' \
+            'Acquire::Retries "3";' \
+            'Acquire::http::Timeout "30";' \
+            'Acquire::https::Timeout "30";' \
+            | sudo tee /etc/apt/apt.conf.d/80meridiano-network >/dev/null
+      - name: Install Chromium and WebKit
+        run: timeout 900s npx playwright install --with-deps chromium webkit
+      - name: Start local candidate server
+        run: |
+          python3 -m http.server 8000 --bind 127.0.0.1 > /tmp/meridiano-v61-http.log 2>&1 &
+          echo $! > /tmp/meridiano-v61-http.pid
+          for i in {1..20}; do
+            if curl --fail --silent http://127.0.0.1:8000/version.json > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/meridiano-v61-http.log >&2 || true
+          exit 1
+      - name: Run full browser E2E suite
+        run: npm run test:e2e
+      - name: Upload measurement failure artifacts
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: v61-measurement-readiness-failure-artifacts
+          path: |
+            playwright-report
+            test-results
+            /tmp/meridiano-v61-http.log
+          if-no-files-found: ignore
+          retention-days: 7
