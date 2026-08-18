@@ -8,6 +8,7 @@ import re
 ROOT = Path(__file__).resolve().parents[1]
 PAGES = ROOT / ".github" / "workflows" / "pages.yml"
 BUILD = ROOT / ".github" / "workflows" / "build-canonical.yml"
+IGNORED_BUILD_MESSAGE = "build: sincroniza sitio público canónico"
 
 
 def trigger_block(text: str) -> str:
@@ -42,6 +43,26 @@ def main() -> int:
     if "github.event_name != 'push'" in pages or "github.event.head_commit.message" in pages:
         errors.append("pages.yml: conserva lógica residual del antiguo trigger directo por push")
 
+    if f"!startsWith(github.event.workflow_run.head_commit.message, '{IGNORED_BUILD_MESSAGE}')" not in pages:
+        errors.append("pages.yml: quality debe ignorar el workflow_run generado por el commit canónico build:")
+
+    concurrency_line = next(
+        (line.strip() for line in pages.splitlines() if line.strip().startswith("group: meridiano-pages-")),
+        "",
+    )
+    for fragment in (
+        "github.event_name == 'workflow_run'",
+        f"startsWith(github.event.workflow_run.head_commit.message, '{IGNORED_BUILD_MESSAGE}')",
+        "'ignored-build-output'",
+        "'main'",
+    ):
+        if fragment not in concurrency_line:
+            errors.append(f"pages.yml: concurrencia debe aislar workflow_run build:; falta {fragment!r}")
+    if re.search(r"(?m)^\s*group:\s*meridiano-pages-main\s*$", pages):
+        errors.append("pages.yml: un grupo fijo meridiano-pages-main permite que un run ignorado cancele una release válida")
+    if "cancel-in-progress: true" not in pages:
+        errors.append("pages.yml: releases válidas deben conservar cancel-in-progress para evitar despliegues obsoletos")
+
     if "Build canonical public site" not in build:
         errors.append("build-canonical.yml: nombre canónico del builder ausente")
     if "workflow_dispatch:" not in build or re.search(r"(?m)^\s{2}push:\s*$", build_triggers) is None:
@@ -57,7 +78,10 @@ def main() -> int:
             print(f"- {error}")
         return 1
 
-    print("PAGES TRIGGER V5.11 OK: Pages espera al builder canónico; cambios de validators también disparan release.")
+    print(
+        "PAGES TRIGGER V5.11 OK: Pages espera al builder canónico y aísla los workflow_run build: "
+        "para que no cancelen una release válida."
+    )
     return 0
 
 
