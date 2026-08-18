@@ -17,29 +17,55 @@ CONFIG_BASE = str(CONFIG["base_url"]).rstrip("/") + "/"
 BASE = os.environ.get("MERIDIANO_BASE_URL", CONFIG_BASE).rstrip("/") + "/"
 
 
-def get(path: str, attempts: int = 8) -> str:
-    url = BASE + path.lstrip("/")
+def get(path: str, attempts: int = 8, expected_version: str | None = None) -> str:
+    canonical_url = BASE + path.lstrip("/")
     last = None
     for attempt in range(attempts):
+        separator = "&" if "?" in canonical_url else "?"
+        url = f"{canonical_url}{separator}_meridiano_smoke={time.time_ns()}"
         try:
-            req = Request(url, headers={"User-Agent": "MeridianoLiveSmoke/5.0"})
+            req = Request(
+                url,
+                headers={
+                    "User-Agent": "MeridianoLiveSmoke/5.0",
+                    "Cache-Control": "no-cache",
+                    "Pragma": "no-cache",
+                },
+            )
             with urlopen(req, timeout=12) as response:
                 body = response.read().decode("utf-8", errors="replace")
                 if response.status == 200:
-                    return body
-                last = RuntimeError(f"{url}: HTTP {response.status}")
+                    if expected_version is None:
+                        return body
+                    try:
+                        remote_version = json.loads(body).get("version")
+                    except json.JSONDecodeError as exc:
+                        last = RuntimeError(f"{canonical_url}: JSON inválido durante propagación: {exc}")
+                    else:
+                        if remote_version == expected_version:
+                            return body
+                        last = RuntimeError(
+                            f"{canonical_url}: HTTP 200 todavía sirve versión {remote_version!r}; "
+                            f"esperada {expected_version!r}"
+                        )
+                        print(
+                            f"Esperando propagación de Pages: versión remota {remote_version!r}, "
+                            f"esperada {expected_version!r} (intento {attempt + 1}/{attempts})."
+                        )
+                else:
+                    last = RuntimeError(f"{canonical_url}: HTTP {response.status}")
         except (URLError, HTTPError, TimeoutError) as exc:
             last = exc
         if attempt + 1 < attempts:
             time.sleep(4)
-    raise RuntimeError(f"No se pudo validar {url}: {last}")
+    raise RuntimeError(f"No se pudo validar {canonical_url}: {last}")
 
 
 def main() -> int:
     errors: list[str] = []
 
     try:
-        status = json.loads(get("site-status.json"))
+        status = json.loads(get("site-status.json", attempts=16, expected_version=VERSION))
         for key, expected in (
             ("version", VERSION),
             ("base_url", CONFIG_BASE),
