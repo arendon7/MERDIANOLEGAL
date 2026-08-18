@@ -1,0 +1,146 @@
+{
+  "version": "7.0.0-draft",
+  "status": "prototype",
+  "public_release_unchanged": "6.3.0",
+  "brand": {
+    "master": "Meridiano Legal",
+    "family": "Meridiano Legal Intelligence",
+    "headline": "Derecho que no termina en una opinión. Se convierte en sistemas que funcionan.",
+    "promise": "Meridiano combina criterio jurídico, diseño de procesos, inteligencia artificial y tecnología aplicada para diagnosticar, transformar y operar trabajo jurídico con mayor control, trazabilidad y capacidad."
+  },
+  "principles": [
+    "La entrada sigue siendo el problema o decisión del cliente, no la tecnología.",
+    "Los 8 productos y 8 servicios canónicos continúan siendo la verdad jurídica y comercial del alcance.",
+    "La capa v7 explica recorridos y combinaciones; no duplica entregables ni crea obligaciones nuevas.",
+    "No se publica una capability tecnológica que no esté productivamente habilitada y verificable.",
+    "Diagnóstico, implementación y operación gestionada deben distinguirse claramente."
+  ],
+  "solutions": [
+    {
+      "id": "legal-ai-diagnostic",
+      "label": "Legal AI Diagnostic",
+      "category": "diagnostic",
+      "status": "sellable-service",
+      "problem": "La organización quiere usar IA o automatización en Jurídica, pero no sabe qué procesos intervenir, qué riesgos existen ni dónde la inversión puede producir valor real.",
+      "transformation": "Convertir demanda, procesos, tiempos, conocimiento y herramientas en un mapa priorizado de oportunidades, restricciones y quick wins.",
+      "canonical_sources": [
+        "catalog-services-v42/s01-diagnostico.json",
+        "catalog-services-v42/s08-legal-ops.json",
+        "catalog-services-v42/s06-tecnologia-ia.json"
+      ],
+      "next": ["legal-ai-transformation"],
+      "software_product_claim": false
+    },
+    {
+      "id": "legal-ai-transformation",
+      "label": "Legal AI Transformation",
+      "category": "implementation",
+      "status": "sellable-service",
+      "problem": "La operación jurídica tiene procesos repetitivos, múltiples canales, documentos dispersos o cuellos de botella que no se resuelven únicamente comprando una herramienta.",
+      "transformation": "Rediseñar procesos, reglas, roles, artefactos, métricas y tecnología y validar el nuevo modelo mediante uno o varios pilotos.",
+      "canonical_sources": [
+        "catalog-services-v42/s08-legal-ops.json",
+        "catalog-services-v42/s06-tecnologia-ia.json"
+      ],
+      "next": ["legal-desk", "legal-engineering-studio"],
+      "software_product_claim": false
+    },
+    {
+      "id": "legal-desk",
+      "label": "Meridiano Legal Desk",
+      "category": "managed-service",
+      "status": "sellable-managed-service",
+      "problem": "La empresa necesita capacidad jurídica recurrente y medible sin convertir cada asunto en una contratación aislada ni aumentar proporcionalmente su estructura interna.",
+      "transformation": "Recibir y operar trabajo jurídico bajo intake, triage, responsables, playbooks, QA, niveles de servicio y seguimiento acordados.",
+      "canonical_sources": [
+        "catalog-services-v42/s02-direccion.json",
+        "catalog-services-v42/s03-contratos.json",
+        "catalog-services-v42/s07-regulados.json",
+        "catalog-services-v42/s08-legal-ops.json"
+      ],
+      "next": ["contract-control", "regulatory-control"],
+      "software_product_claim": false,
+      "capability_limits": [
+        "No prometer portal productivo mientras el estado canónico lo mantenga deshabilitado.",
+        "SLA, capacidad, canales y materias se pactan por alcance."
+      ]
+    },
+    {
+      "id": "contract-control",
+      "label": "Contract Control",
+      "category": "managed-capability",
+      "status": "implementation-pattern",
+      "problem": "La empresa tiene contratos, pero no necesariamente control sobre riesgos, obligaciones, garantías, renovaciones, responsables y evidencia después de la firma.",
+      "transformation": "Convertir el portafolio contractual en información administrable y un sistema de seguimiento soportado por playbooks, responsables y herramientas acordadas.",
+      "canonical_sources": [
+        "catalog-products-v41/p07-contractual.json",
+        "catalog-services-v42/s03-contratos.json",
+        "catalog-services-v42/s08-legal-ops.json"
+      ],
+      "next": ["legal-desk"],
+      "software_product_claim": false,
+      "capability_limits": [
+        "No declarar CLM o SaaS autónomo disponible hasta certificación de capability productiva."
+      ]
+    },
+    {
+      "id": "regulatory-control",
+      "label": "Regulatory Control",
+      "category": "managed-capability",
+      "status": "implementation-pattern",
+      "problem": "La organización conoce normas y permisos, pero necesita convertir cambios y obligaciones en responsables, fechas, evidencia y decisiones de operación.",
+      "transformation": "Conectar régimen, autoridades, cambios, obligaciones, responsables, hitos y evidencia en un sistema de control regulatorio proporcional al sector y alcance.",
+      "canonical_sources": [
+        "catalog-products-v41/p06-regulado.json",
+        "catalog-services-v42/s07-regulados.json",
+        "catalog-services-v42/s08-legal-ops.json"
+      ],
+      "next": ["legal-desk"],
+      "software_product_claim": false,
+      "capability_limits": [
+        "No prometer monitoreo automático o cobertura universal de fuentes sin implementación verificable y perímetro definido."
+      ]
+    },
+    {
+      "id": "ai-governance-360",
+      "label": "AI Governance 360",
+      "category": "governance",
+      "status": "sellable-service-family",
+      "problem": "La adopción de IA puede avanzar sin inventario, clasificación de riesgo, responsabilidades, revisión de proveedores, supervisión y evidencia suficientes.",
+      "transformation": "Ordenar el ciclo de gobierno desde descubrimiento y clasificación hasta controles, incidentes y revisión periódica.",
+      "commercial_stages": ["Readiness", "Implementación", "Gobierno recurrente"],
+      "canonical_sources": [
+        "catalog-products-v41/p05-ia.json",
+        "catalog-services-v42/s06-tecnologia-ia.json"
+      ],
+      "next": ["legal-ai-transformation"],
+      "software_product_claim": false
+    },
+    {
+      "id": "legal-engineering-studio",
+      "label": "Legal Engineering Studio",
+      "category": "custom-engineering",
+      "status": "sellable-custom-service",
+      "problem": "Algunos problemas jurídicos operativos no encajan en una herramienta estándar y requieren convertir reglas, documentos, decisiones y excepciones en un sistema específico.",
+      "transformation": "Modelar el problema jurídico y construir un workflow, automatización, integración, agente o herramienta bajo alcance técnico y jurídico definido.",
+      "canonical_sources": [
+        "catalog-services-v42/s08-legal-ops.json",
+        "catalog-services-v42/s06-tecnologia-ia.json"
+      ],
+      "next": [],
+      "software_product_claim": false
+    },
+    {
+      "id": "meridiano-counsel",
+      "label": "Meridiano Counsel",
+      "category": "future-technology",
+      "status": "not-public-product",
+      "problem": "El conocimiento jurídico institucional puede quedar disperso entre contratos, conceptos, actas, políticas, precedentes y personas.",
+      "transformation": "Interfaz futura de consulta sobre fuentes autorizadas con permisos, evidencia y trazabilidad.",
+      "canonical_sources": [],
+      "next": [],
+      "software_product_claim": false,
+      "public_transactional_offer": false
+    }
+  ]
+}
