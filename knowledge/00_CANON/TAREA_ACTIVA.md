@@ -17,6 +17,7 @@ Actualizado: 2026-08-18.
 **v6.1 — Measurement Readiness / observabilidad privacy-first.**
 
 Rama: `feat/v61-measurement-readiness`.
+PR: `#154` (Draft hasta certificación same-SHA).
 
 ### Problema observable
 
@@ -37,8 +38,8 @@ Si Meridiano incorpora una capa de medición gobernada que transforme la telemet
 
 ### Alcance de readiness
 
-1. contrato `measurement-readiness-v61.json`;
-2. adapter `analytics-adapter-v61.js` compatible con el hook histórico `MeridianoAnalyticsAdapter`;
+1. contrato `assets/data/v6/measurement-readiness-v61.json`;
+2. adapter `assets/js/v6/analytics-adapter-v61.js` compatible con el hook histórico `MeridianoAnalyticsAdapter`;
 3. seis eventos externos de etapa: need, offer, evidence, decision, contact y handoff;
 4. payload externo limitado al **nombre del evento**; cero propiedades;
 5. Plausible como primer adapter preparado, pero deshabilitado y sin site token real;
@@ -46,20 +47,24 @@ Si Meridiano incorpora una capa de medición gobernada que transforme la telemet
 7. Cloudflare Web Analytics evaluado para RUM/pageviews, pero no elegido para el funnel porque no aporta custom events en el estado revisado;
 8. integración dentro del normalizador Experience v6 existente, sin crear un paso 31;
 9. validator estático fail-closed;
-10. E2E que demuestre cero red externa con producción apagada y descarte de payload contaminado.
+10. E2E que demuestre cero red externa con producción apagada y descarte de payload contaminado;
+11. topología exacta: **43 superficies instrumentadas + 3 deliberadamente sin telemetría (`404.html`, `demo.html`, `experiencia.html`)**;
+12. gate dedicado `.github/workflows/v61-measurement-readiness.yml` que ejecuta contrato, Governance y suite Browser completa;
+13. Builder y Canonical Equivalence cubren los assets v6.1 mediante su filtro existente `assets/**`.
 
 ## Criterios de éxito
 
 - `analytics.enabled` continúa `false` en producción;
 - no aparece ningún request a proveedor externo en E2E disabled;
-- adapter carga antes de `telemetry-v50.js` donde la telemetría ya existe;
-- no se añade adapter en superficies sin telemetría previa;
+- adapter carga antes de `telemetry-v50.js` en exactamente 43 superficies;
+- `404.html`, `demo.html` y `experiencia.html` permanecen sin adapter porque no tenían telemetría previa;
 - PII, nombre, empresa, correo, mensaje, referencia, presupuesto y urgencia no forman parte del payload externo;
 - eventos desconocidos se descartan;
 - solo seis etapas allowlisted pueden convertirse en eventos externos;
 - no se introducen `fetch`, `XMLHttpRequest`, `sendBeacon`, storage, cookies o fingerprinting propios;
 - 46 HTML, 16 fichas, 1 formulario y 30 pasos canónicos permanecen intactos;
-- Browser/axe, Lighthouse, Governance y equivalencia continúan sin relajación.
+- Browser/axe, Lighthouse, Governance y equivalencia continúan sin relajación;
+- cambios futuros en los assets de measurement vuelven a disparar Builder/Equivalence y el gate dedicado v6.1.
 
 ## Fuera de alcance de esta fase
 
