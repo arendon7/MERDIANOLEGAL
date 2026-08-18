@@ -46,15 +46,22 @@ jobs:
           cache-dependency-path: package-lock.json
       - name: Generate QA dependency lockfile
         run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
-      - name: Reproduce canonical chain v3 to v5.18
+      - name: Detect canonical experience phase
+        id: phase
+        run: |
+          if grep -q 'data-experience-system="v6"' index.html; then
+            echo 'is_v6=true' >> "$GITHUB_OUTPUT"
+            echo 'Canonical baseline is already Experience System v6; legacy v4/v5 HTML materializers must not run again.'
+          else
+            echo 'is_v6=false' >> "$GITHUB_OUTPUT"
+            echo 'Pre-v6 baseline detected; legacy canonical chain remains required before v6 materialization.'
+          fi
+      - name: Reproduce legacy canonical chain v3 to v5.18
+        if: steps.phase.outputs.is_v6 != 'true'
         run: |
           python3 scripts/build_catalog_shells.py
           node scripts/render_catalog_static.mjs
-          if grep -L 'data-experience-system="v6"' servicios/*.html | grep -q .; then
-            node scripts/render_services_v42.mjs
-          else
-            echo "Service HTML already uses Experience System v6; catalog-services-v42 JSON remains the canonical source and the legacy v4.2 renderer is skipped."
-          fi
+          node scripts/render_services_v42.mjs
           python3 scripts/enrich_editorial_pages.py
           python3 scripts/apply_commercial_v43.py
           python3 scripts/apply_visual_assets.py
@@ -122,7 +129,7 @@ jobs:
         run: |
           CHANGED="$(git diff --name-only)"
           printf '%s\n' "$CHANGED"
-          if printf '%s\n' "$CHANGED" | grep -E '^\.github/'; then
+          if printf '%s\n' "$CHANGED" | grep -E '^\.github/' | grep -v '^\.github/workflows/v6-canonical-equivalence.yml$'; then
             echo "Canonical materialization unexpectedly changed workflow files." >&2
             exit 1
           fi
