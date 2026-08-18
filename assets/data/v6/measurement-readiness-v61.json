@@ -1,0 +1,78 @@
+{
+  "version": "6.1.0",
+  "state": "readiness-disabled",
+  "purpose": "Preparar medición agregada del funnel sin transportar PII, contenido del formulario, referencias de handoff ni identificadores propios de usuario en el payload custom de Meridiano.",
+  "activation": {
+    "production_enabled": false,
+    "requires_explicit_provider": true,
+    "requires_real_site_id": true,
+    "requires_privacy_policy_update_before_enable": true,
+    "requires_provider_metadata_review_before_enable": true
+  },
+  "source": {
+    "event": "meridiano:funnel-v529",
+    "accepted_field": "stage",
+    "ignored_fields": ["event", "target"],
+    "raw_telemetry_adapter_track": "no-op",
+    "deduplication": "first-event-per-stage-per-page-lifetime"
+  },
+  "privacy": {
+    "pii_allowed_in_meridiano_custom_payload": false,
+    "form_content_allowed": false,
+    "handoff_reference_allowed": false,
+    "custom_event_properties_allowed": false,
+    "automatic_pageviews_allowed": false,
+    "persistent_storage_introduced": false,
+    "cross_session_identifier_introduced": false,
+    "fingerprinting_introduced": false,
+    "cookies_introduced_by_meridiano_adapter": false,
+    "provider_standard_request_metadata_possible_after_activation": true
+  },
+  "external_events": [
+    "meridiano_funnel_need",
+    "meridiano_funnel_offer",
+    "meridiano_funnel_evidence",
+    "meridiano_funnel_decision",
+    "meridiano_funnel_contact",
+    "meridiano_funnel_handoff"
+  ],
+  "stage_map": {
+    "need": "meridiano_funnel_need",
+    "offer": "meridiano_funnel_offer",
+    "evidence": "meridiano_funnel_evidence",
+    "decision": "meridiano_funnel_decision",
+    "contact": "meridiano_funnel_contact",
+    "handoff": "meridiano_funnel_handoff"
+  },
+  "provider_decision": {
+    "preferred_for_first_activation": "plausible",
+    "reason": "El funnel requiere eventos custom. La activación sigue pendiente de crear el sitio real, obtener su snippet único, revisar la metadata estándar procesada por el proveedor y actualizar la política pública antes de habilitar tráfico externo."
+  },
+  "providers": {
+    "plausible": {
+      "status": "adapter-ready-disabled",
+      "script_host": "plausible.io",
+      "script_path_prefix": "/js/pa-",
+      "site_id_format": "pa-<site-token>",
+      "automatic_pageviews": false,
+      "meridiano_custom_payload": "event-name-only-no-properties",
+      "provider_standard_context": "subject-to-pre-activation-review-and-policy-update",
+      "notes": "El adapter puede cargar el snippet único del sitio cuando analytics.enabled=true, provider=plausible y exista un site_id real válido. Plausible puede incorporar metadata estándar propia del request/analytics; esa capa no se considera parte del payload custom de Meridiano y debe revisarse antes de activar."
+    },
+    "umami": {
+      "status": "evaluated-not-wired",
+      "notes": "Es una alternativa privacy-first con eventos custom, pero requiere tracker URL/website-id e infraestructura o cuenta propia. No se declara soporte runtime en v6.1 readiness."
+    },
+    "cloudflare_web_analytics": {
+      "status": "evaluated-not-selected",
+      "notes": "Adecuado para pageviews/RUM privacy-first, pero no cubre el funnel custom requerido por Meridiano en el estado evaluado."
+    }
+  },
+  "semantic_limits": {
+    "event_count_is_not_unique_people": true,
+    "contact_is_not_message_sent": true,
+    "handoff_is_not_message_delivered": true,
+    "handoff_is_not_proposal_accepted": true,
+    "handoff_is_not_client_conversion": true
+  }
+}

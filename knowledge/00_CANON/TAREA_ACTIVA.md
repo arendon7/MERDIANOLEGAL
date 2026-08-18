@@ -2,69 +2,103 @@
 
 Actualizado: 2026-08-18.
 
-## Estado
+## Estado base certificado
 
-**Ciclo funcional activo: ninguno.**
+- Release certificada de partida: **v6.0.0 — Experience System**.
+- `main == stable == 65b45f43dad812474c065a1810ceb56bd602d835` al abrir este ciclo.
+- Canal base: `github-pages-production-experience-system-certified`.
+- GitHub Pages sirve v6.0.0 hasta que el ciclo v6.1 complete promoción automática.
+- Browser E2E/axe público v6.0: 122 PASS, 2 skipped, 0 failed.
+- Lighthouse público v6.0: 6/6 superficies PASS; performance y accesibilidad 1.00 en la muestra; LCP 906–1.626 ms; CLS 0; TBT 0.
+- No existe evidencia que justifique un ciclo de performance, accesibilidad o reparación funcional inmediata.
 
-Frente vigente: **cierre documental de v6.0.0 — Experience System**.
+## Ciclo funcional activo
 
-Rama de cierre: `docs/v600-release-closure`.
-SHA funcional certificado: `a7940696cb358fcd4ace50e32f4a1463b76fdaa5`.
-Al inicio de este cierre: `main == stable == a7940696cb358fcd4ace50e32f4a1463b76fdaa5`.
+**v6.1.0 — Measurement Readiness / observabilidad privacy-first.**
 
-No abrir una v6.1/v6.0.1 funcional por inercia. El siguiente ciclo debe partir de un problema observable y un criterio de éxito verificable.
+Rama: `feat/v61-measurement-readiness`.
+PR: `#154` (Draft hasta certificación same-SHA).
+Release candidate: `version.json = 6.1.0`, fecha `2026-08-18`, canal `github-pages-measurement-readiness-candidate`.
 
-## Qué falta para cerrar v6.0 definitivamente
+### Problema observable
 
-1. marcar `version.json` como canal certificado;
-2. actualizar README y memoria canónica v5.x→v6.0;
-3. crear `RELEASE-v6.0.md` con contrato, incidencias y evidencia;
-4. someter el commit documental a los gates vigentes;
-5. fusionar solo con certificación aplicable verde;
-6. dejar que Builder → Pages → smoke → Browser/axe → Lighthouse → snapshot promueva `stable` automáticamente;
-7. verificar al final `main == stable` y Graphify alineado al SHA de cierre.
+La web modela correctamente el funnel y sus etapas, pero la evidencia solo vive en memoria del navegador:
 
-## Resultado funcional ya certificado
+- `analytics.enabled=false`;
+- `provider=none`;
+- sin transporte de red;
+- sin persistencia;
+- sin identificador cross-session;
+- Search Console aún no está configurado.
 
-- 46/46 superficies públicas migradas a Experience System v6.
-- 16/16 fichas profundas preservan truth y profundidad.
-- 8 productos + 8 servicios.
-- 7 superficies de soluciones.
-- 8 sectores.
-- 6 perspectivas + hub editorial.
-- 1 formulario físico.
-- 30 pasos canónicos exactos.
-- Idempotencia: PASS.
-- Static validations: PASS.
-- GitHub Pages sirve v6.0.0.
-- Smoke público v5.0→v5.3: PASS.
-- Browser E2E + axe sobre la v6 pública: PASS.
-- Lighthouse: PASS sin relajar budgets.
-- `stable` promovido automáticamente al SHA funcional final.
-- Graphify funcional alineado: 1.007 nodos, 1.887 relaciones, 115 notas wiki, 17 specs E2E.
+Por tanto podemos certificar que el recorrido funciona, pero no responder con datos agregados reales preguntas como dónde abandonan visitantes, qué rutas llegan con mayor frecuencia a contacto o cuántas sesiones alcanzan handoff.
 
-## Invariantes para el cierre
+### Hipótesis
 
-- no tocar contenido público para “hacer coincidir” documentación;
-- no modificar catálogos jurídicos ni truth de ofertas;
-- no inventar métricas, clientes, precios, testimonios o capacidades;
-- no añadir backend/CRM/auth/pagos/firma/upload/agenda ficticios;
-- no mover `stable` manualmente;
-- no reducir tests, axe, Lighthouse ni budgets;
-- mantener un único formulario físico y WhatsApp manual;
-- mantener 46 HTML y 30 pasos canónicos;
-- `main` y `stable` solo vuelven a coincidir después de la certificación del cierre.
+Si Meridiano incorpora una capa de medición gobernada que transforme únicamente las etapas ya saneadas del funnel en eventos externos allowlisted —sin propiedades custom, PII del formulario, referencias, cookies propias, persistencia o fingerprinting— podremos habilitar medición agregada cuando exista un proveedor real y una política actualizada, sin reescribir el funnel ni degradar privacidad.
 
-## Próximo ciclo
+### Alcance de readiness
 
-**No definido todavía.**
+1. contrato `assets/data/v6/measurement-readiness-v61.json`;
+2. adapter `assets/js/v6/analytics-adapter-v61.js` compatible con el hook histórico `MeridianoAnalyticsAdapter`;
+3. fuente externa única: evento saneado `meridiano:funnel-v529`, aceptando exclusivamente `detail.stage`;
+4. raw `adapter.track(name,event)` conservado por compatibilidad pero deliberadamente `no-op`;
+5. seis eventos externos de etapa: need, offer, evidence, decision, contact y handoff;
+6. payload **custom aportado por Meridiano** limitado al nombre del evento; cero propiedades custom;
+7. deduplicación: primer evento por etapa durante la vida de la página;
+8. Plausible como primer adapter preparado, pero deshabilitado y sin site token real;
+9. pageviews automáticos de Plausible explícitamente deshabilitados (`autoCapturePageviews:false`);
+10. cualquier metadata estándar que el proveedor procese al transmitir un custom event queda sujeta a revisión y actualización previa de la política antes de activar;
+11. Umami evaluado como alternativa, no declarado como soporte runtime en esta fase;
+12. Cloudflare Web Analytics evaluado para RUM/pageviews, pero no elegido para el funnel porque no aporta custom events en el estado revisado;
+13. integración dentro del normalizador Experience v6 existente, sin crear un paso 31;
+14. validator estático fail-closed;
+15. E2E que demuestre cero red externa con producción apagada y descarte de payload contaminado;
+16. topología exacta: **43 superficies instrumentadas + 3 deliberadamente sin telemetría (`404.html`, `demo.html`, `experiencia.html`)**;
+17. gate dedicado `.github/workflows/v61-measurement-readiness.yml` que ejecuta contrato, Governance y suite Browser completa;
+18. Builder y Canonical Equivalence cubren los assets v6.1 mediante su filtro existente `assets/**`;
+19. `sync_public_version.py` sincroniza rótulo público, dos JS demostrativos, `runtime-config.js` y `site-status.json` desde `version.json + site-config.json` y expone `--check` fail-closed;
+20. Candidate, Browser, Measurement y Canonical Equivalence reproducen esa sincronización antes de validar una baseline v6;
+21. Canonical Equivalence distingue estrictamente wiring v6.1 (43 HTML), bump de release (4 superficies no-HTML adicionales, con `index.html` solapado) y baseline ya materializada.
 
-Antes de proponerlo:
+## Criterios de éxito
 
-1. revisar comportamiento real de v6 ya publicada;
-2. identificar una fricción observable de usuario, comercial, jurídica, responsive, accesibilidad, performance u operación;
-3. formular una hipótesis y criterio de éxito;
-4. evitar volver a sedimentar capas versionadas si el problema puede resolverse consolidando el Experience System existente;
-5. si el cambio afecta superficies públicas, aplicar el design orchestrator y validar una muestra representativa antes de propagar.
+- `analytics.enabled` continúa `false` en producción;
+- no aparece ningún request a proveedor externo en E2E disabled;
+- adapter carga antes de `telemetry-v50.js` en exactamente 43 superficies;
+- `404.html`, `demo.html` y `experiencia.html` permanecen sin adapter porque no tenían telemetría previa;
+- PII, nombre, empresa, correo, mensaje, referencia, presupuesto y urgencia no forman parte del payload custom de Meridiano;
+- `event` y `target` del funnel saneado no se exportan como propiedades;
+- eventos/etapas desconocidos se descartan;
+- solo seis etapas allowlisted pueden convertirse en eventos externos;
+- no se introducen pageviews automáticos, `fetch`, `XMLHttpRequest`, `sendBeacon`, storage, cookies o fingerprinting propios;
+- `version.json`, rótulo público, `runtime-config.js` y `site-status.json` quedan sincronizados en el mismo release;
+- 46 HTML, 16 fichas, 1 formulario y 30 pasos canónicos permanecen intactos;
+- Browser/axe, Lighthouse, Governance y equivalencia continúan sin relajación;
+- cambios futuros en los assets de measurement vuelven a disparar Builder/Equivalence y el gate dedicado v6.1;
+- `stable` solo se mueve por la cadena post-deploy después de Browser + Lighthouse verdes.
 
-Hasta completar el cierre documental, no iniciar trabajo funcional nuevo.
+## Fuera de alcance de esta fase
+
+- activar Plausible u otro tercero;
+- crear una cuenta/proyecto de analytics sin decisión explícita;
+- incluir un `pa-...` ficticio;
+- cambiar la política de privacidad como si ya existiera tratamiento por un tercero;
+- asumir que el request estándar del proveedor contiene únicamente el nombre del evento;
+- enviar propiedades custom, contenido de formulario o identificadores propios;
+- inferir mensaje enviado, propuesta aceptada, encargo iniciado o cliente convertido;
+- cambiar copy, layout, productos, servicios, precios o funnel público por intuición antes de tener datos.
+
+## Condición para futura activación
+
+Una activación real requerirá, como mínimo:
+
+1. proveedor seleccionado;
+2. identificador/snippet auténtico del sitio;
+3. revisión técnica de la metadata estándar que el proveedor transmite/procesa;
+4. revisión y actualización previa de la política pública y configuración;
+5. validación del tráfico saliente exacto con pageviews automáticos deshabilitados;
+6. confirmación de que Meridiano sigue aportando únicamente nombres de evento sin propiedades custom o aprobación expresa de cualquier ampliación;
+7. gates verdes y promoción automática de `stable`.
+
+Hasta entonces, v6.1 es **readiness**, no analítica activa.

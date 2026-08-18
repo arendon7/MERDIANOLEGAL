@@ -49,12 +49,38 @@ jobs:
       - name: Detect canonical experience phase
         id: phase
         run: |
+          IS_V6=false
           if grep -q 'data-experience-system="v6"' index.html; then
+            IS_V6=true
             echo 'is_v6=true' >> "$GITHUB_OUTPUT"
             echo 'Canonical baseline is already Experience System v6; legacy v4/v5 HTML materializers must not run again.'
           else
             echo 'is_v6=false' >> "$GITHUB_OUTPUT"
             echo 'Pre-v6 baseline detected; legacy canonical chain remains required before v6 materialization.'
+          fi
+          if [ -f assets/data/v6/measurement-readiness-v61.json ]; then
+            echo 'has_v61_contract=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'has_v61_contract=false' >> "$GITHUB_OUTPUT"
+          fi
+          if grep -q 'assets/js/v6/analytics-adapter-v61.js' index.html; then
+            echo 'is_v61_materialized=true' >> "$GITHUB_OUTPUT"
+            echo 'Measurement readiness v6.1 is already materialized in the canonical baseline.'
+          else
+            echo 'is_v61_materialized=false' >> "$GITHUB_OUTPUT"
+            echo 'Measurement readiness v6.1 is not yet materialized in the canonical baseline.'
+          fi
+          if python3 scripts/sync_public_version.py --check > /tmp/release-metadata-check.txt 2>&1; then
+            echo 'release_metadata_synced=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'release_metadata_synced=false' >> "$GITHUB_OUTPUT"
+          fi
+          cat /tmp/release-metadata-check.txt
+          sed -n 's/^- //p' /tmp/release-metadata-check.txt | sort -u > /tmp/release-metadata-pending.txt
+          if [ "$IS_V6" = "true" ]; then
+            grep -l 'telemetry-v50.js' *.html servicios/*.html productos/*.html soluciones/*.html sectores/*.html perspectivas/*.html | sort -u > /tmp/v61-measurement-expected.txt
+          else
+            : > /tmp/v61-measurement-expected.txt
           fi
       - name: Reproduce legacy canonical chain v3 to v5.18
         if: steps.phase.outputs.is_v6 != 'true'
@@ -91,6 +117,9 @@ jobs:
           python3 scripts/apply_handoff_observability_v518.py
       - name: Materialize certified Experience System v6
         run: |
+          if [ "${{ steps.phase.outputs.is_v6 }}" = "true" ]; then
+            python3 scripts/sync_public_version.py
+          fi
           python3 scripts/apply_experience_v60.py
           python3 scripts/apply_experience_solutions_v60.py
           python3 scripts/apply_experience_sectors_v60.py
@@ -98,9 +127,34 @@ jobs:
           python3 scripts/apply_experience_final_v60.py
           python3 scripts/apply_funnel_trust_v529.py
           python3 scripts/normalize_experience_compat_v60.py
-      - name: Prove first-pass Pages idempotence on v6 baseline
+      - name: Validate first-pass canonical boundary on v6 baseline
         if: steps.phase.outputs.is_v6 == 'true'
-        run: git diff --exit-code -- index.html catalog-home-v32.js decision-flow.js site-v3.js page-context.js sitemap.xml robots.txt runtime-config.js site-status.json servicios productos firma.html perspectivas perspectivas.html sectores soluciones experiencia.html demo.html 404.html aviso-legal.html privacidad.html terminos.html manifest.webmanifest CNAME scripts/build_catalog_shells.py
+        run: |
+          git diff --name-only | sort -u > /tmp/canonical-actual.txt
+          if [ "${{ steps.phase.outputs.has_v61_contract }}" = "true" ] && [ "${{ steps.phase.outputs.is_v61_materialized }}" != "true" ]; then
+            MEASUREMENT_COUNT="$(sed '/^$/d' /tmp/v61-measurement-expected.txt | wc -l | tr -d ' ')"
+            if [ "$MEASUREMENT_COUNT" -ne 43 ]; then
+              echo "La topología previa debe contener exactamente 43 superficies con telemetría; encontró $MEASUREMENT_COUNT." >&2
+              cat /tmp/v61-measurement-expected.txt >&2
+              exit 1
+            fi
+            if grep -Eq '^(404\.html|demo\.html|experiencia\.html)$' /tmp/v61-measurement-expected.txt; then
+              echo "404.html, demo.html y experiencia.html no pueden formar parte del conjunto measurement v6.1." >&2
+              exit 1
+            fi
+            cat /tmp/v61-measurement-expected.txt /tmp/release-metadata-pending.txt | sed '/^$/d' | sort -u > /tmp/canonical-expected.txt
+          else
+            sed '/^$/d' /tmp/release-metadata-pending.txt | sort -u > /tmp/canonical-expected.txt
+          fi
+          echo '--- expected canonical changes ---'
+          cat /tmp/canonical-expected.txt
+          echo '--- actual canonical changes ---'
+          cat /tmp/canonical-actual.txt
+          if ! diff -u /tmp/canonical-expected.txt /tmp/canonical-actual.txt; then
+            echo "Canonical v6 first-pass boundary diverge del conjunto exacto esperado." >&2
+            exit 1
+          fi
+          echo "First-pass canonical boundary OK: cambios exactos = measurement esperado ∪ drift de release declarado por sync --check."
       - name: Validate certified Experience System v6 and general site integrity
         run: |
           python3 scripts/validate_site.py
@@ -163,6 +217,7 @@ jobs:
           node --check runtime-config.js
           node --check telemetry-v50.js
           node --check measurement-v53.js
+          node --check assets/js/v6/analytics-adapter-v61.js
           node --check commercial-intake-v59.js
           node --check conversion-close-v510.js
           node --check commercial-brief-v513.js
@@ -177,6 +232,7 @@ jobs:
           node --check tests/e2e/accessibility.spec.mjs
           node --check tests/e2e/capability-truth.spec.mjs
           node --check tests/e2e/offer-narrative.spec.mjs
+          node --check tests/e2e/measurement-readiness-v61.spec.mjs
           node --check tests/e2e/ci-summary-reporter.mjs
           node --check scripts/run_quality_v55.mjs
           node --check scripts/render_catalog_static.mjs
@@ -194,6 +250,7 @@ jobs:
           python3 -m json.tool cro-solutions-v52.json > /dev/null
           python3 -m json.tool authority-v53.json > /dev/null
           python3 -m json.tool measurement-contract-v53.json > /dev/null
+          python3 -m json.tool assets/data/v6/measurement-readiness-v61.json > /dev/null
           python3 -m json.tool commercial-intake-v59.json > /dev/null
           python3 -m json.tool conversion-close-v510.json > /dev/null
           python3 -m json.tool recommendation-v514.json > /dev/null
@@ -205,7 +262,8 @@ jobs:
           for f in catalog-products-v41/*.json; do python3 -m json.tool "$f" > /dev/null; done
       - name: Prove second-pass v6 idempotence
         run: |
-          git diff -- index.html perspectivas.html firma.html experiencia.html demo.html aviso-legal.html privacidad.html terminos.html 404.html productos servicios soluciones sectores perspectivas > /tmp/canonical-pass-1.diff
+          git diff > /tmp/canonical-pass-1.diff
+          python3 scripts/sync_public_version.py
           python3 scripts/apply_experience_v60.py
           python3 scripts/apply_experience_solutions_v60.py
           python3 scripts/apply_experience_sectors_v60.py
@@ -213,12 +271,13 @@ jobs:
           python3 scripts/apply_experience_final_v60.py
           python3 scripts/apply_funnel_trust_v529.py
           python3 scripts/normalize_experience_compat_v60.py
-          git diff -- index.html perspectivas.html firma.html experiencia.html demo.html aviso-legal.html privacidad.html terminos.html 404.html productos servicios soluciones sectores perspectivas > /tmp/canonical-pass-2.diff
+          git diff > /tmp/canonical-pass-2.diff
           cmp --silent /tmp/canonical-pass-1.diff /tmp/canonical-pass-2.diff || {
             echo "Canonical v6 materialization is not idempotent." >&2
             diff -u /tmp/canonical-pass-1.diff /tmp/canonical-pass-2.diff || true
             exit 1
           }
+          python3 scripts/sync_public_version.py --check
       - name: Report canonical materialization boundary
         run: |
           CHANGED="$(git diff --name-only)"
