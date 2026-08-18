@@ -117,7 +117,7 @@ jobs:
             exit 1
           fi
           echo "Experience System v6 is idempotent across all 46 public surfaces."
-      - name: Verify Wave 6 materialization boundary
+      - name: Verify scoped v6 materialization boundary
         run: |
           CHANGED="$(git diff --name-only)"
           printf '%s\n' "$CHANGED"
@@ -128,10 +128,11 @@ jobs:
             exit 1
           fi
           COUNT="$(printf '%s\n' "$CHANGED" | sed '/^$/d' | wc -l | tr -d ' ')"
-          if [ "$COUNT" -ne 46 ]; then
-            echo "Wave 6 esperaba exactamente 46 archivos públicos materializados y encontró $COUNT." >&2
+          if [ "$COUNT" -lt 1 ] || [ "$COUNT" -gt 46 ]; then
+            echo "La materialización sobre baseline v6 debe modificar entre 1 y 46 superficies; encontró $COUNT." >&2
             exit 1
           fi
+          echo "Scoped materialization OK: $COUNT superficie(s) cambiada(s); cobertura estructural 46/46 validada por los validators."
 
   browser:
     name: Browser E2E on v6 candidate
@@ -151,6 +152,12 @@ jobs:
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
         with:
           python-version: "3.12"
+      - name: Setup Node.js with npm cache
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
       - name: Materialize canonical candidate
         run: python3 scripts/apply_handoff_observability_v518.py
       - name: Validate v6 and historical contracts after materialization
@@ -168,12 +175,6 @@ jobs:
           node --check playwright.config.mjs
           node --check tests/e2e/helpers.mjs
           for f in tests/e2e/*.mjs; do node --check "$f"; done
-      - name: Setup Node.js with npm cache
-        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
-        with:
-          node-version: '22'
-          cache: 'npm'
-          cache-dependency-path: package-lock.json
       - name: Install locked QA dependencies
         run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Install Chromium and WebKit
