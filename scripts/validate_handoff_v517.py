@@ -163,13 +163,15 @@ def main() -> int:
     pages = (ROOT / ".github/workflows/pages.yml").read_text(encoding="utf-8")
     v515_apply = "python3 scripts/apply_decision_action_v515.py"
     v517_apply = "python3 scripts/apply_handoff_v517.py"
-    diff_gate = "git diff --exit-code"
-    require(f"{v515_apply}\n          {v517_apply}" in pages,
-            "Pages debe preservar la composición v5.15→v5.17")
-    v517_pos = pages.find(v517_apply)
-    diff_pos = pages.find(diff_gate, v517_pos)
-    require(0 <= v517_pos < diff_pos, "Pages debe ejecutar v5.17 antes del gate de idempotencia")
     v518_apply = "python3 scripts/apply_handoff_observability_v518.py"
+    diff_gate = "git diff --exit-code"
+    for marker in (v515_apply, v517_apply, diff_gate):
+        require(marker in pages, f"Pages debe preservar composición histórica: falta {marker}")
+    v515_pos = pages.find(v515_apply)
+    v517_pos = pages.find(v517_apply, v515_pos)
+    diff_pos = pages.find(diff_gate, v517_pos)
+    require(0 <= v515_pos < v517_pos < diff_pos,
+            "Pages debe preservar el orden semántico v5.15→v5.17→idempotencia")
     if v518_apply in pages:
         v518_pos = pages.find(v518_apply, v517_pos)
         require(v517_pos < v518_pos < diff_pos,
