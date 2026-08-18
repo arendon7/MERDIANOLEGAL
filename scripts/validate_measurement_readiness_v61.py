@@ -47,7 +47,12 @@ for path in (
 contract = json.loads(CONTRACT_PATH.read_text(encoding="utf-8")) if CONTRACT_PATH.exists() else {}
 require(contract.get("version") == "6.1.0", "measurement readiness debe declarar 6.1.0")
 require(contract.get("state") == "readiness-disabled", "measurement readiness debe permanecer readiness-disabled")
-require(contract.get("activation", {}).get("production_enabled") is False, "measurement readiness no puede activar producción")
+activation = contract.get("activation", {})
+require(activation.get("production_enabled") is False, "measurement readiness no puede activar producción")
+require(activation.get("requires_explicit_provider") is True, "activación debe exigir proveedor explícito")
+require(activation.get("requires_real_site_id") is True, "activación debe exigir site id real")
+require(activation.get("requires_privacy_policy_update_before_enable") is True, "activación debe exigir actualización previa de privacidad")
+require(activation.get("requires_provider_metadata_review_before_enable") is True, "activación debe exigir revisión previa de metadata estándar del proveedor")
 require(contract.get("external_events") == EXPECTED_EVENTS, "eventos externos v6.1 deben ser seis etapas allowlisted")
 require(contract.get("stage_map") == {stage: f"meridiano_funnel_{stage}" for stage in EXPECTED_STAGES}, "stage_map v6.1 no coincide con allowlist")
 require(contract.get("source") == {
@@ -59,16 +64,26 @@ require(contract.get("source") == {
 }, "measurement readiness debe consumir solo la etapa saneada del funnel y deduplicarla por página")
 privacy_contract = contract.get("privacy", {})
 for key in (
-    "pii_allowed",
+    "pii_allowed_in_meridiano_custom_payload",
     "form_content_allowed",
     "handoff_reference_allowed",
-    "event_properties_allowed",
+    "custom_event_properties_allowed",
+    "automatic_pageviews_allowed",
     "persistent_storage_introduced",
     "cross_session_identifier_introduced",
     "fingerprinting_introduced",
     "cookies_introduced_by_meridiano_adapter",
 ):
     require(privacy_contract.get(key) is False, f"privacy.{key} debe ser false")
+require(
+    privacy_contract.get("provider_standard_request_metadata_possible_after_activation") is True,
+    "El contrato debe reconocer metadata estándar posible del proveedor después de activar",
+)
+plausible = contract.get("providers", {}).get("plausible", {})
+require(plausible.get("status") == "adapter-ready-disabled", "Plausible debe permanecer adapter-ready-disabled")
+require(plausible.get("automatic_pageviews") is False, "Plausible debe mantener pageviews automáticos deshabilitados")
+require(plausible.get("meridiano_custom_payload") == "event-name-only-no-properties", "Payload custom de Meridiano debe ser event-name-only-no-properties")
+require(plausible.get("provider_standard_context") == "subject-to-pre-activation-review-and-policy-update", "Metadata estándar de proveedor debe quedar sujeta a revisión/política previa")
 
 config = json.loads(CONFIG_PATH.read_text(encoding="utf-8")) if CONFIG_PATH.exists() else {}
 analytics = config.get("analytics", {})
@@ -90,6 +105,8 @@ for marker in (
     "const track = () => false;",
     "state.seenStages.has(stage)",
     "state.seenStages.add(stage)",
+    "autoCapturePageviews: false",
+    "automaticPageviewsAllowed: false",
     "eventPropertiesAllowed: false",
     "handoffReferenceAllowed: false",
 ):
@@ -113,10 +130,12 @@ for forbidden in (
     "cta_click",
     "detail?.event",
     "detail?.target",
+    "plausible('pageview'",
+    'plausible("pageview"',
 ):
     require(forbidden not in adapter, f"analytics-adapter-v61.js no debe contener ni consumir {forbidden!r}")
-require("window.plausible(safeEvent.name)" in adapter, "Plausible debe recibir solo el nombre externo saneado")
-require("window.plausible(name)" in adapter, "La cola Plausible debe contener solo nombres externos")
+require("window.plausible(safeEvent.name)" in adapter, "Plausible debe recibir solo el nombre custom saneado de Meridiano")
+require("window.plausible(name)" in adapter, "La cola Plausible debe contener solo nombres custom")
 
 telemetry = TELEMETRY_PATH.read_text(encoding="utf-8") if TELEMETRY_PATH.exists() else ""
 require("MeridianoAnalyticsAdapter" in telemetry and "adapter.track(event.name, event)" in telemetry, "telemetry-v50.js debe conservar el punto de extensión histórico, aunque v6.1 lo trate como no-op")
@@ -181,6 +200,6 @@ print(
     "MEASUREMENT READINESS V6.1 OK: "
     f"{len(instrumented_paths)} superficies instrumentadas, {len(without_telemetry_paths)} sin telemetría previa "
     f"({', '.join(sorted(without_telemetry_paths))}), 6 etapas allowlisted desde funnel saneado, "
-    "deduplicación por etapa/página, analítica externa deshabilitada, cero PII/propiedades/persistencia propias "
-    "y topología CI cubierta."
+    "deduplicación por etapa/página, pageviews automáticos deshabilitados, analítica externa deshabilitada, "
+    "cero PII/propiedades en el payload custom de Meridiano y topología CI cubierta."
 )
