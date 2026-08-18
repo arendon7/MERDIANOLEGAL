@@ -15,6 +15,9 @@ CONFIG_PATH = ROOT / "site-config.json"
 RUNTIME_PATH = ROOT / "runtime-config.js"
 PRIVACY_PATH = ROOT / "privacidad.html"
 TELEMETRY_PATH = ROOT / "telemetry-v50.js"
+BUILD_WORKFLOW = ROOT / ".github" / "workflows" / "build-canonical.yml"
+EQUIV_WORKFLOW = ROOT / ".github" / "workflows" / "v6-canonical-equivalence.yml"
+READINESS_WORKFLOW = ROOT / ".github" / "workflows" / "v61-measurement-readiness.yml"
 PUBLIC_DIRS = ("servicios", "productos", "soluciones", "sectores", "perspectivas")
 EXPECTED_STAGES = ["need", "offer", "evidence", "decision", "contact", "handoff"]
 EXPECTED_EVENTS = [f"meridiano_funnel_{stage}" for stage in EXPECTED_STAGES]
@@ -35,7 +38,10 @@ def require(condition: bool, message: str) -> None:
         errors.append(message)
 
 
-for path in (CONTRACT_PATH, ADAPTER_PATH, CONFIG_PATH, RUNTIME_PATH, PRIVACY_PATH, TELEMETRY_PATH):
+for path in (
+    CONTRACT_PATH, ADAPTER_PATH, CONFIG_PATH, RUNTIME_PATH, PRIVACY_PATH, TELEMETRY_PATH,
+    BUILD_WORKFLOW, EQUIV_WORKFLOW, READINESS_WORKFLOW,
+):
     require(path.exists() and path.stat().st_size > 20, f"Falta recurso de measurement readiness: {path.as_posix()}")
 
 contract = json.loads(CONTRACT_PATH.read_text(encoding="utf-8")) if CONTRACT_PATH.exists() else {}
@@ -107,6 +113,23 @@ for marker in (
 ):
     require(marker in privacy, f"privacidad.html debe conservar la promesa vigente: {marker!r}")
 
+builder = BUILD_WORKFLOW.read_text(encoding="utf-8") if BUILD_WORKFLOW.exists() else ""
+equivalence = EQUIV_WORKFLOW.read_text(encoding="utf-8") if EQUIV_WORKFLOW.exists() else ""
+readiness_workflow = READINESS_WORKFLOW.read_text(encoding="utf-8") if READINESS_WORKFLOW.exists() else ""
+require("- assets/**" in builder, "Build canonical debe seguir reaccionando a cambios en assets/**")
+require("- assets/**" in equivalence, "Canonical Equivalence debe seguir reaccionando a cambios en assets/**")
+for marker in (
+    "assets/js/v6/analytics-adapter-v61.js",
+    "assets/data/v6/measurement-readiness-v61.json",
+    "scripts/normalize_experience_compat_v60.py",
+    "scripts/validate_measurement_readiness_v61.py",
+    "tests/e2e/measurement-readiness-v61.spec.mjs",
+    "python3 scripts/validate_release_governance_v57.py",
+    "python3 scripts/validate_pages_trigger_v511.py",
+    "npm run test:e2e",
+):
+    require(marker in readiness_workflow, f"Gate v6.1 debe preservar cobertura: {marker}")
+
 instrumented_paths: set[str] = set()
 without_telemetry_paths: set[str] = set()
 for path in html_targets():
@@ -140,6 +163,6 @@ if errors:
 print(
     "MEASUREMENT READINESS V6.1 OK: "
     f"{len(instrumented_paths)} superficies instrumentadas, {len(without_telemetry_paths)} sin telemetría previa "
-    f"({', '.join(sorted(without_telemetry_paths))}), 6 etapas allowlisted, analítica externa deshabilitada y "
-    "cero PII/propiedades/persistencia propias."
+    f"({', '.join(sorted(without_telemetry_paths))}), 6 etapas allowlisted, analítica externa deshabilitada, "
+    "cero PII/propiedades/persistencia propias y topología CI cubierta."
 )
