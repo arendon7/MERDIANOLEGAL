@@ -16,20 +16,24 @@ on:
       - scripts/apply_experience_v60.py
       - scripts/apply_experience_solutions_v60.py
       - scripts/apply_experience_sectors_v60.py
+      - scripts/apply_experience_perspectives_v60.py
       - scripts/normalize_experience_compat_v60.py
       - scripts/apply_funnel_trust_v529.py
       - scripts/validate_experience_v60.py
       - scripts/validate_experience_solutions_v60.py
       - scripts/validate_experience_sectors_v60.py
+      - scripts/validate_experience_perspectives_v60.py
       - scripts/validate_funnel_trust_v529.py
       - scripts/validate_editorial_context.py
       - .github/workflows/build-canonical.yml
       - .github/workflows/v6-candidate-validation.yml
       - index.html
+      - perspectivas.html
       - productos/**
       - servicios/**
       - soluciones/**
       - sectores/**
+      - perspectivas/**
   workflow_dispatch:
 
 permissions:
@@ -54,48 +58,52 @@ jobs:
         with:
           python-version: "3.12"
       - name: Compile v6 renderers and validators
-        run: python3 -m py_compile scripts/apply_experience_v60.py scripts/apply_experience_solutions_v60.py scripts/apply_experience_sectors_v60.py scripts/normalize_experience_compat_v60.py scripts/validate_experience_v60.py scripts/validate_experience_solutions_v60.py scripts/validate_experience_sectors_v60.py
+        run: python3 -m py_compile scripts/apply_experience_v60.py scripts/apply_experience_solutions_v60.py scripts/apply_experience_sectors_v60.py scripts/apply_experience_perspectives_v60.py scripts/normalize_experience_compat_v60.py scripts/validate_experience_v60.py scripts/validate_experience_solutions_v60.py scripts/validate_experience_sectors_v60.py scripts/validate_experience_perspectives_v60.py
       - name: Materialize first pass and validate contracts
         run: |
           python3 scripts/apply_experience_v60.py
           python3 scripts/apply_experience_solutions_v60.py
           python3 scripts/apply_experience_sectors_v60.py
+          python3 scripts/apply_experience_perspectives_v60.py
           python3 scripts/apply_funnel_trust_v529.py
           python3 scripts/normalize_experience_compat_v60.py
           python3 scripts/validate_experience_v60.py
           python3 scripts/validate_experience_solutions_v60.py
           python3 scripts/validate_experience_sectors_v60.py
+          python3 scripts/validate_experience_perspectives_v60.py
           python3 scripts/validate_funnel_trust_v529.py
           python3 scripts/validate_editorial_context.py
-          git diff -- index.html productos servicios soluciones sectores > /tmp/v6-pass-1.diff
+          git diff -- index.html perspectivas.html productos servicios soluciones sectores perspectivas > /tmp/v6-pass-1.diff
           test -s /tmp/v6-pass-1.diff
       - name: Prove second-pass idempotence
         run: |
           python3 scripts/apply_experience_v60.py
           python3 scripts/apply_experience_solutions_v60.py
           python3 scripts/apply_experience_sectors_v60.py
+          python3 scripts/apply_experience_perspectives_v60.py
           python3 scripts/apply_funnel_trust_v529.py
           python3 scripts/normalize_experience_compat_v60.py
           python3 scripts/validate_experience_v60.py
           python3 scripts/validate_experience_solutions_v60.py
           python3 scripts/validate_experience_sectors_v60.py
+          python3 scripts/validate_experience_perspectives_v60.py
           python3 scripts/validate_funnel_trust_v529.py
           python3 scripts/validate_editorial_context.py
-          git diff -- index.html productos servicios soluciones sectores > /tmp/v6-pass-2.diff
+          git diff -- index.html perspectivas.html productos servicios soluciones sectores perspectivas > /tmp/v6-pass-2.diff
           cmp --silent /tmp/v6-pass-1.diff /tmp/v6-pass-2.diff
-          echo "Experience System v6 Waves 2-4 are idempotent across two passes."
-      - name: Verify Wave 4 materialization boundary
+          echo "Experience System v6 Waves 2-5 are idempotent across two passes."
+      - name: Verify Wave 5 materialization boundary
         run: |
           CHANGED="$(git diff --name-only)"
           printf '%s\n' "$CHANGED"
-          UNEXPECTED="$(printf '%s\n' "$CHANGED" | grep -Ev '^(index\.html|productos/[^/]+\.html|servicios/[^/]+\.html|soluciones/[^/]+\.html|sectores/[^/]+\.html)$' || true)"
+          UNEXPECTED="$(printf '%s\n' "$CHANGED" | grep -Ev '^(index\.html|perspectivas\.html|productos/[^/]+\.html|servicios/[^/]+\.html|soluciones/[^/]+\.html|sectores/[^/]+\.html|perspectivas/[^/]+\.html)$' || true)"
           if [ -n "$UNEXPECTED" ]; then
-            echo "El renderer v6 modificó archivos públicos fuera de Home + fichas + soluciones + sectores:" >&2
+            echo "El renderer v6 modificó archivos públicos fuera de Waves 2-5:" >&2
             printf '%s\n' "$UNEXPECTED" >&2
             exit 1
           fi
           COUNT="$(printf '%s\n' "$CHANGED" | sed '/^$/d' | wc -l | tr -d ' ')"
-          if [ "$COUNT" -ne 32 ]; then
-            echo "Wave 4 esperaba exactamente 32 archivos públicos materializados y encontró $COUNT." >&2
+          if [ "$COUNT" -ne 39 ]; then
+            echo "Wave 5 esperaba exactamente 39 archivos públicos materializados y encontró $COUNT." >&2
             exit 1
           fi
