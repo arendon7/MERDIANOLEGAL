@@ -197,12 +197,19 @@ def detail_header(text: str, contact_href: str) -> str:
 
 
 def detail_journey(text: str, contact_href: str) -> str:
-    pattern = r'(<div class="journey-bar"[^>]*>.*?<a )href="[^"]+"(>Presentar esta necesidad →</a>)'
-    replacement = rf'\1data-experience-v60-cta="journey" href="{e(contact_href)}"\2'
-    text, count = re.subn(pattern, replacement, text, count=1, flags=re.S)
-    if count != 1:
+    journey = re.search(r'<div class="journey-bar"[^>]*>.*?</div>', text, flags=re.S)
+    if not journey:
+        raise RuntimeError("Ficha v6: no se localizó journey-bar")
+    fragment = journey.group(0)
+    anchor = re.search(r'<a\b([^>]*)>Presentar esta necesidad →</a>', fragment, flags=re.S)
+    if not anchor:
         raise RuntimeError("Ficha v6: no se localizó CTA de journey-bar")
-    return text
+    attrs = anchor.group(1)
+    attrs = re.sub(r'\s+href="[^"]*"', "", attrs)
+    attrs = re.sub(r'\s+data-experience-v60-cta="[^"]*"', "", attrs)
+    replacement = f'<a{attrs} data-experience-v60-cta="journey" href="{e(contact_href)}">Presentar esta necesidad →</a>'
+    fragment = fragment[:anchor.start()] + replacement + fragment[anchor.end():]
+    return text[:journey.start()] + fragment + text[journey.end():]
 
 
 def render_method_artifact(method: list[list[str]]) -> str:
