@@ -7,7 +7,7 @@ on:
     types: [completed]
 
 concurrency:
-  group: meridiano-pages-${{ github.event_name == 'workflow_run' && startsWith(github.event.workflow_run.head_commit.message, 'build: sincroniza sitio público canónico') && 'ignored-build-output' || 'main' }}
+  group: "meridiano-pages-${{ github.event_name == 'workflow_run' && startsWith(github.event.workflow_run.head_commit.message, 'build: sincroniza sitio público canónico') && 'ignored-build-output' || 'main' }}"
   cancel-in-progress: true
 
 jobs:
