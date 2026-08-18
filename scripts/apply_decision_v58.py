@@ -131,9 +131,6 @@ def patch_detail(path: Path, catalog: dict[str, dict]) -> None:
     if catalog_id not in catalog:
         raise RuntimeError(f'{path.name}: ID {catalog_id} no existe en las fuentes')
 
-    # Una composición futura puede conservar v5.8 dentro de profundidad progresiva.
-    # En ese caso v5.8 ya está materializado y no debe intentar volver a insertarse
-    # sobre el wrapper futuro; el validator histórico sigue comprobando el bloque.
     if 'data-experience-system="v6"' in text:
         if text.count(DETAIL_START) != 1 or text.count(DETAIL_END) != 1:
             raise RuntimeError(f'{path.name}: v6 debe preservar exactamente un bloque v5.8')
@@ -178,13 +175,16 @@ def home_block() -> str:
 
 def patch_home() -> None:
     text = HOME.read_text(encoding='utf-8')
-    # En v6 el bloque v5.8 vive dentro de la profundidad legacy. No lo removemos.
     if 'data-experience-system="v6"' in text:
-        if text.count(HOME_START) != 1 or text.count(HOME_END) != 1:
-            raise RuntimeError('index.html: v6 debe preservar exactamente un bloque Home v5.8')
-        text = ensure_style(text, HOME_STYLE)
-        HOME.write_text(text, encoding='utf-8')
-        return
+        if version_at_least(5, 20) and text.count('data-home-decision-v520="true"') == 1:
+            text = ensure_style(text, HOME_STYLE)
+            HOME.write_text(text, encoding='utf-8')
+            return
+        if text.count(HOME_START) == 1 and text.count(HOME_END) == 1:
+            text = ensure_style(text, HOME_STYLE)
+            HOME.write_text(text, encoding='utf-8')
+            return
+        raise RuntimeError('index.html: v6 debe preservar la reconciliación v5.20 o un bloque Home v5.8 único')
 
     text = remove_managed_block(text, HOME_START, HOME_END)
     if version_at_least(5, 20) and 'data-home-decision-v520="true"' in text:
