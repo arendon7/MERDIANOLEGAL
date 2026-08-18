@@ -1,8 +1,8 @@
 {
   "name": "Meridiano Legal Web",
-  "version": "6.0.0",
-  "release_date": "2026-08-17",
-  "channel": "github-pages-production-experience-system-certified",
-  "commit_scope": "experience-system-consolidation",
+  "version": "6.1.0",
+  "release_date": "2026-08-18",
+  "channel": "github-pages-measurement-readiness-candidate",
+  "commit_scope": "privacy-first-measurement-readiness",
   "source_baseline": "main"
 }
