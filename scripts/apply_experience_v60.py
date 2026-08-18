@@ -7,13 +7,13 @@ solo aporta Home y overrides editoriales explícitos para superficies piloto.
 """
 from __future__ import annotations
 
-from html import escape
+from html import escape, unescape
 import json
 from pathlib import Path
 import re
 import subprocess
 import sys
-from urllib.parse import urlencode
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 VERSION = ROOT / "version.json"
@@ -189,10 +189,19 @@ def detail_header(text: str, contact_href: str) -> str:
     text, count = re.subn(r'<nav class="detail-nav" id="detail-nav" aria-label="Navegación principal">.*?</nav>', nav, text, count=1, flags=re.S)
     if count != 1:
         raise RuntimeError("Ficha v6: no se localizó detail-nav")
-    actions = f'<div class="detail-header-actions"><a class="btn btn-navy" href="{e(contact_href)}">Presentar necesidad</a></div>'
+    actions = f'<div class="detail-header-actions"><a class="btn btn-navy" data-experience-v60-cta="header" href="{e(contact_href)}">Presentar necesidad</a></div>'
     text, count = re.subn(r'<div class="detail-header-actions">.*?</div>', actions, text, count=1, flags=re.S)
     if count != 1:
         raise RuntimeError("Ficha v6: no se localizaron detail-header-actions")
+    return text
+
+
+def detail_journey(text: str, contact_href: str) -> str:
+    pattern = r'(<div class="journey-bar"[^>]*>.*?<a )href="[^"]+"(>Presentar esta necesidad →</a>)'
+    replacement = rf'\1data-experience-v60-cta="journey" href="{e(contact_href)}"\2'
+    text, count = re.subn(pattern, replacement, text, count=1, flags=re.S)
+    if count != 1:
+        raise RuntimeError("Ficha v6: no se localizó CTA de journey-bar")
     return text
 
 
@@ -227,7 +236,7 @@ def render_detail_hero(data: dict, contact_href: str) -> str:
     meta = "".join(f'<div><span>{e(label)}</span><strong>{e(value)}</strong></div>' for label, value in data["meta"])
     secondary_target = "#v6-boundary" if data["kind"] == "service" else "#v6-perimeter"
     secondary = "Ver qué cubre y qué no cubre" if data["kind"] == "service" else "Ver perímetro exacto"
-    return f'<section class="v6-hero v6-detail-hero" aria-labelledby="v6-detail-title"><div class="v6-container v6-hero-grid"><div class="v6-hero-copy"><p class="v6-eyebrow">{e(data["eyebrow"])}</p><h1 class="v6-display" id="v6-detail-title">{e(data["title"])}</h1><p class="v6-lead">{e(data["lead"])}</p><div class="v6-actions"><a class="v6-btn" href="{e(contact_href)}">{e(data["primary_cta"])} →</a><a class="v6-btn v6-btn-secondary" href="{secondary_target}">{secondary}</a></div><div class="v6-detail-meta">{meta}</div></div></div></section>'
+    return f'<section class="v6-hero v6-detail-hero" aria-labelledby="v6-detail-title"><div class="v6-container v6-hero-grid"><div class="v6-hero-copy"><p class="v6-eyebrow">{e(data["eyebrow"])}</p><h1 class="v6-display" id="v6-detail-title">{e(data["title"])}</h1><p class="v6-lead">{e(data["lead"])}</p><div class="v6-actions"><a class="v6-btn" data-experience-v60-cta="primary" href="{e(contact_href)}">{e(data["primary_cta"])} →</a><a class="v6-btn v6-btn-secondary" href="{secondary_target}">{secondary}</a></div><div class="v6-detail-meta">{meta}</div></div></div></section>'
 
 
 def render_detail_nav(data: dict) -> str:
@@ -266,7 +275,7 @@ def render_boundary(data: dict) -> str:
 
 
 def render_close(data: dict, contact_href: str) -> str:
-    return f'<section class="v6-section v6-detail-close"><div class="v6-container"><div class="v6-close"><div><strong>{e(data["close"])}</strong><p>{e(data["scope_change"])}</p></div><a class="v6-btn" href="{e(contact_href)}">{e(data["primary_cta"])} →</a></div></div></section>'
+    return f'<section class="v6-section v6-detail-close"><div class="v6-container"><div class="v6-close"><div><strong>{e(data["close"])}</strong><p>{e(data["scope_change"])}</p></div><a class="v6-btn" data-experience-v60-cta="close" href="{e(contact_href)}">{e(data["primary_cta"])} →</a></div></div></section>'
 
 
 def render_detail(data: dict, legacy: str, contact_href: str) -> str:
@@ -327,12 +336,24 @@ def patch_home(data: dict) -> None:
     HOME.write_text(text, encoding="utf-8")
 
 
+def canonical_contact_href(text: str) -> str:
+    candidates = [tag for tag in re.findall(r'<a\b[^>]*>', text, flags=re.S) if 'data-decision-v58-cta="true"' in tag]
+    if len(candidates) != 1:
+        raise RuntimeError(f"Ficha v6: esperaba una CTA comercial canónica v5.8; encontró {len(candidates)}")
+    href_match = re.search(r'href="([^"]+)"', candidates[0])
+    if not href_match:
+        raise RuntimeError("Ficha v6: CTA comercial canónica sin href")
+    href = unescape(href_match.group(1))
+    parts = urlsplit(href)
+    pairs = [(key, value) for key, value in parse_qsl(parts.query, keep_blank_values=True) if key != "experience"]
+    pairs.append(("experience", "v6"))
+    return urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(pairs), parts.fragment or "contacto"))
+
+
 def contact_href_for(text: str, data: dict) -> str:
-    page_title = body_attr(text, "data-page-title") or data["title"]
-    need = body_attr(text, "data-page-need") or page_title
-    label = "Producto jurídico" if data["kind"] == "product" else "Servicio profesional"
-    query = urlencode({"context": f"{label}: {page_title}", "need": need, "experience": "v6"})
-    return f"../index.html?{query}#contacto"
+    # La CTA visible v6 hereda la ruta comercial canónica ya materializada por v5.8/v5.10.
+    # v6 solo añade contexto de experiencia; no reconstruye modalidad, intención ni estándar.
+    return canonical_contact_href(text)
 
 
 def replace_detail_hero(text: str, new_hero: str, path: Path) -> str:
@@ -359,6 +380,7 @@ def patch_detail(catalog_id: str, path: Path, data: dict) -> None:
     text = ensure_styles(text, "../")
     text = mark_body(text, catalog_id)
     text = detail_header(text, contact_href)
+    text = detail_journey(text, contact_href)
     text = replace_detail_hero(text, render_detail_hero(data, contact_href), path)
     text = replace_detail_nav(text, render_detail_nav(data), path)
     main_match, current_main = extract_main(text)
