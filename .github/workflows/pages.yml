@@ -31,36 +31,63 @@ jobs:
           persist-credentials: false
       - name: Check canonical generators are idempotent
         run: |
-          python3 scripts/build_catalog_shells.py
-          node scripts/render_catalog_static.mjs
-          node scripts/render_services_v42.mjs
-          python3 scripts/enrich_editorial_pages.py
-          python3 scripts/apply_commercial_v43.py
-          python3 scripts/apply_visual_assets.py
-          python3 scripts/apply_ux_v45.py
-          python3 scripts/apply_detail_ux_v46.py
-          python3 scripts/apply_editorial_ux_v47.py
-          python3 scripts/normalize_editorial_v47.py
-          python3 scripts/normalize_growth_compat_v51.py
-          python3 scripts/apply_quality_v48.py
-          python3 scripts/normalize_quality_v48.py
-          python3 scripts/apply_operations_v49.py
+          if grep -q 'data-experience-system="v6"' index.html; then
+            MERIDIANO_CANONICAL_V6=true
+            echo "Experience System v6 baseline detected; legacy HTML materializers are skipped."
+          else
+            MERIDIANO_CANONICAL_V6=false
+            echo "Pre-v6 baseline detected; legacy canonical chain remains active."
+          fi
+          if [ "$MERIDIANO_CANONICAL_V6" != "true" ]; then
+            python3 scripts/build_catalog_shells.py
+            node scripts/render_catalog_static.mjs
+            node scripts/render_services_v42.mjs
+            python3 scripts/enrich_editorial_pages.py
+            python3 scripts/apply_commercial_v43.py
+            python3 scripts/apply_visual_assets.py
+            python3 scripts/apply_ux_v45.py
+            python3 scripts/apply_detail_ux_v46.py
+            python3 scripts/apply_editorial_ux_v47.py
+            python3 scripts/normalize_editorial_v47.py
+            python3 scripts/normalize_growth_compat_v51.py
+            python3 scripts/apply_quality_v48.py
+            python3 scripts/normalize_quality_v48.py
+            python3 scripts/apply_operations_v49.py
+          fi
           python3 scripts/sync_public_version.py
-          python3 scripts/apply_production_v50.py
-          python3 scripts/apply_growth_v51.py
-          python3 scripts/finalize_growth_v51.py
-          python3 scripts/apply_cro_v52.py
-          python3 scripts/apply_authority_v53.py
-          python3 scripts/apply_decision_v58.py
-          python3 scripts/apply_commercial_v59.py
-          python3 scripts/apply_conversion_v510.py
-          python3 scripts/apply_engagement_v511.py
-          python3 scripts/apply_proof_v512.py
-          python3 scripts/apply_commercial_brief_v513.py
-          python3 scripts/apply_recommendation_v514.py
-          python3 scripts/apply_decision_action_v515.py
-          python3 scripts/apply_handoff_v517.py
-          python3 scripts/apply_handoff_observability_v518.py
+          if [ "$MERIDIANO_CANONICAL_V6" != "true" ]; then
+            python3 scripts/apply_production_v50.py
+            python3 scripts/apply_growth_v51.py
+            python3 scripts/finalize_growth_v51.py
+            python3 scripts/apply_cro_v52.py
+            python3 scripts/apply_authority_v53.py
+            python3 scripts/apply_decision_v58.py
+            python3 scripts/apply_commercial_v59.py
+            python3 scripts/apply_conversion_v510.py
+            python3 scripts/apply_engagement_v511.py
+            python3 scripts/apply_proof_v512.py
+            python3 scripts/apply_commercial_brief_v513.py
+            python3 scripts/apply_recommendation_v514.py
+            python3 scripts/apply_decision_action_v515.py
+            python3 scripts/apply_handoff_v517.py
+            python3 scripts/apply_handoff_observability_v518.py
+          fi
+          python3 scripts/apply_experience_v60.py
+          python3 scripts/apply_experience_solutions_v60.py
+          python3 scripts/apply_experience_sectors_v60.py
+          python3 scripts/apply_experience_perspectives_v60.py
+          python3 scripts/apply_experience_final_v60.py
+          python3 scripts/apply_funnel_trust_v529.py
+          python3 scripts/normalize_experience_compat_v60.py
+          python3 scripts/validate_experience_v60.py
+          python3 scripts/validate_experience_solutions_v60.py
+          python3 scripts/validate_experience_sectors_v60.py
+          python3 scripts/validate_experience_perspectives_v60.py
+          python3 scripts/validate_experience_final_v60.py
+          python3 scripts/validate_funnel_trust_v529.py
+          python3 scripts/validate_proof_v512.py
+          python3 scripts/validate_capability_truth_v521.py
+          python3 scripts/validate_editorial_context.py
           git diff --exit-code -- index.html catalog-home-v32.js decision-flow.js site-v3.js page-context.js sitemap.xml robots.txt runtime-config.js site-status.json servicios productos firma.html perspectivas perspectivas.html sectores soluciones experiencia.html demo.html 404.html aviso-legal.html privacidad.html terminos.html manifest.webmanifest CNAME scripts/build_catalog_shells.py
       - name: Validate HTML and local resources
         run: python3 scripts/validate_site.py
@@ -181,6 +208,8 @@ jobs:
           python3 -m json.tool recommendation-v514.json > /dev/null
           python3 -m json.tool handoff-observability-v518.json > /dev/null
           python3 -m json.tool offer-narrative-v522.json > /dev/null
+          python3 -m json.tool experience-system-v60.json > /dev/null
+          python3 -m json.tool experience-content-v60.json > /dev/null
           for f in catalog-services-v42/*.json; do python3 -m json.tool "$f" > /dev/null; done
           for f in catalog-products-v41/*.json; do python3 -m json.tool "$f" > /dev/null; done
 
@@ -236,7 +265,7 @@ jobs:
     name: Browser E2E on deployed Pages
     needs: [deploy, live_smoke]
     runs-on: ubuntu-latest
-    timeout-minutes: 14
+    timeout-minutes: 18
     permissions:
       contents: read
     env:
@@ -255,8 +284,19 @@ jobs:
           cache-dependency-path: package-lock.json
       - name: Install locked QA dependencies
         run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Prefer official Ubuntu mirrors for browser dependencies
+        run: |
+          if [ -f /etc/apt/apt-mirrors.txt ]; then
+            printf 'https://archive.ubuntu.com/ubuntu/\tpriority:1\nhttps://security.ubuntu.com/ubuntu/\tpriority:2\n' \
+              | sudo tee /etc/apt/apt-mirrors.txt >/dev/null
+          fi
+          printf '%s\n' \
+            'Acquire::Retries "3";' \
+            'Acquire::http::Timeout "30";' \
+            'Acquire::https::Timeout "30";' \
+            | sudo tee /etc/apt/apt.conf.d/80meridiano-network >/dev/null
       - name: Install Chromium and WebKit
-        run: timeout 360s npx playwright install --with-deps chromium webkit
+        run: timeout 900s npx playwright install --with-deps chromium webkit
       - name: Run deployed browser E2E suite
         run: npm run test:e2e
       - name: Upload browser failure artifacts
