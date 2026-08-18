@@ -27,7 +27,7 @@ body[data-experience-system="v6"] .v6-eyebrow {
 body[data-experience-system="v6"] .v6-display,
 body[data-experience-system="v6"] .v6-heading {
   margin: 0;
-  color: var(--v6-navy);
+  color: var(--v6-heading-color, var(--v6-navy));
   font-family: var(--v6-serif);
   font-weight: 700;
   letter-spacing: -.035em;
@@ -92,23 +92,31 @@ body[data-experience-system="v6"] .v6-text-link {
   letter-spacing: .03em;
 }
 
-/* WCAG 2.1 AA: el dorado de marca se conserva en superficies oscuras y
-   usa una variante tipográfica más profunda sobre fondos claros. */
+/* WCAG 2.1 AA: los tokens semánticos cambian por superficie. El dorado de
+   marca se conserva en fondos oscuros y usa una variante tipográfica profunda
+   sobre fondos claros. */
 body[data-experience-system="v6"] {
   --v6-gold-text: #7b5b32;
   --v6-muted: #606b73;
+  --v6-heading-color: var(--v6-navy);
 }
 
-body[data-experience-system="v6"] :is(.v6-section, .v6-artifact, .v6-depth, .v6-perspective-hero, .v6-hub-hero) {
+body[data-experience-system="v6"] :is(.v6-section, .v6-artifact, .v6-depth, .v6-perspective-hero, .v6-hub-hero, .v6-sector-brief) {
   --v6-gold: var(--v6-gold-text);
+  --v6-muted: #606b73;
+  --v6-heading-color: var(--v6-navy);
 }
 
 body[data-experience-system="v6"] :is(.v6-hero, .v6-evidence, .v6-boundary, .v6-solution-decisions, .v6-sector-map, .v6-sector-cta, .v6-reading-guide, .v6-library-hero) {
   --v6-gold: var(--v6-gold-light);
+  --v6-muted: #cbd5db;
+  --v6-heading-color: var(--v6-white);
 }
 
-body[data-experience-system="v6"] :is(.v6-perspective-hero, .v6-hub-hero, .v6-artifact) {
+body[data-experience-system="v6"] :is(.v6-perspective-hero, .v6-hub-hero, .v6-artifact, .v6-sector-brief) {
   --v6-gold: var(--v6-gold-text);
+  --v6-muted: #606b73;
+  --v6-heading-color: var(--v6-navy);
 }
 
 body[data-experience-system="v6"] .article-meta strong {
