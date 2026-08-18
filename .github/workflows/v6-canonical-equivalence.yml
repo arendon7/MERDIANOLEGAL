@@ -110,6 +110,39 @@ jobs:
           python3 scripts/validate_proof_v512.py
           python3 scripts/validate_capability_truth_v521.py
           python3 scripts/validate_editorial_context.py
+      - name: Validate Pages static quality contract before merge
+        run: |
+          python3 scripts/validate_static_catalog.py
+          python3 scripts/validate_commercial_v44.py
+          python3 scripts/validate_ux_v45.py
+          python3 scripts/validate_detail_ux_v46.py
+          python3 scripts/validate_editorial_ux_v47.py
+          python3 scripts/validate_quality_v48.py
+          python3 scripts/validate_operations_v49.py
+          python3 scripts/validate_production_v50.py
+          python3 scripts/validate_growth_v51.py
+          python3 scripts/validate_cro_v52.py
+          python3 scripts/validate_authority_v53.py
+          python3 scripts/validate_browser_v54.py
+          python3 scripts/validate_quality_v55.py
+          python3 scripts/validate_ci_v56.py
+          python3 scripts/validate_release_governance_v57.py
+          python3 scripts/validate_pages_trigger_v511.py
+          python3 scripts/validate_decision_v58.py
+          python3 scripts/validate_commercial_v59.py
+          python3 scripts/validate_conversion_v510.py
+          python3 scripts/validate_engagement_v511.py
+          python3 scripts/validate_proof_v512.py
+          python3 scripts/validate_commercial_brief_v513.py
+          python3 scripts/validate_recommendation_v514.py
+          python3 scripts/validate_decision_action_v515.py
+          python3 scripts/validate_handoff_v517.py
+          python3 scripts/validate_handoff_observability_v518.py
+          python3 scripts/validate_offer_narrative_v522.py
+          python3 scripts/validate_decision_flow.py
+          python3 scripts/validate_page_context.py
+          python3 scripts/validate_editorial_context.py
+          python3 scripts/validate_visual_assets.py
       - name: Prove second-pass v6 idempotence
         run: |
           git diff -- index.html perspectivas.html firma.html experiencia.html demo.html aviso-legal.html privacidad.html terminos.html 404.html productos servicios soluciones sectores perspectivas > /tmp/canonical-pass-1.diff
