@@ -8,8 +8,9 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-CONTRACT_PATH = ROOT / "measurement-readiness-v61.json"
-ADAPTER_PATH = ROOT / "analytics-adapter-v61.js"
+CONTRACT_PATH = ROOT / "assets" / "data" / "v6" / "measurement-readiness-v61.json"
+ADAPTER_PATH = ROOT / "assets" / "js" / "v6" / "analytics-adapter-v61.js"
+ADAPTER_PUBLIC_PATH = "assets/js/v6/analytics-adapter-v61.js"
 CONFIG_PATH = ROOT / "site-config.json"
 RUNTIME_PATH = ROOT / "runtime-config.js"
 PRIVACY_PATH = ROOT / "privacidad.html"
@@ -35,10 +36,10 @@ def require(condition: bool, message: str) -> None:
 
 
 for path in (CONTRACT_PATH, ADAPTER_PATH, CONFIG_PATH, RUNTIME_PATH, PRIVACY_PATH, TELEMETRY_PATH):
-    require(path.exists() and path.stat().st_size > 20, f"Falta recurso de measurement readiness: {path.name}")
+    require(path.exists() and path.stat().st_size > 20, f"Falta recurso de measurement readiness: {path.as_posix()}")
 
 contract = json.loads(CONTRACT_PATH.read_text(encoding="utf-8")) if CONTRACT_PATH.exists() else {}
-require(contract.get("version") == "6.1.0", "measurement-readiness-v61.json debe declarar 6.1.0")
+require(contract.get("version") == "6.1.0", "measurement readiness debe declarar 6.1.0")
 require(contract.get("state") == "readiness-disabled", "measurement readiness debe permanecer readiness-disabled")
 require(contract.get("activation", {}).get("production_enabled") is False, "measurement readiness no puede activar producción")
 require(contract.get("external_events") == EXPECTED_EVENTS, "eventos externos v6.1 deben ser seis etapas allowlisted")
@@ -111,13 +112,13 @@ without_telemetry_paths: set[str] = set()
 for path in html_targets():
     text = path.read_text(encoding="utf-8")
     telemetry_count = text.count("telemetry-v50.js")
-    adapter_count = text.count("analytics-adapter-v61.js")
+    adapter_count = text.count(ADAPTER_PUBLIC_PATH)
     relative = path.relative_to(ROOT).as_posix()
     if telemetry_count:
         require(telemetry_count == 1, f"{relative}: telemetría v5.0 debe ser única")
         require(adapter_count == 1, f"{relative}: adapter v6.1 debe ser único donde existe telemetría")
         if telemetry_count == 1 and adapter_count == 1:
-            require(text.find("analytics-adapter-v61.js") < text.find("telemetry-v50.js"), f"{relative}: adapter debe cargar antes de telemetría")
+            require(text.find(ADAPTER_PUBLIC_PATH) < text.find("telemetry-v50.js"), f"{relative}: adapter debe cargar antes de telemetría")
         instrumented_paths.add(relative)
     else:
         require(adapter_count == 0, f"{relative}: no debe añadirse adapter sin telemetría previa")
