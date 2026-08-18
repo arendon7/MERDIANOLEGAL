@@ -1,0 +1,137 @@
+name: V6.4 fit and scope clarity
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - version.json
+      - catalog-products-v41/**
+      - catalog-services-v42/**
+      - productos/**
+      - servicios/**
+      - assets/data/v6/fit-scope-clarity-v64.json
+      - assets/css/v6/fit-scope-clarity-v64.css
+      - scripts/sync_public_version.py
+      - scripts/apply_fit_scope_clarity_v64.py
+      - scripts/validate_fit_scope_clarity_v64.py
+      - scripts/apply_experience_v60.py
+      - scripts/normalize_experience_compat_v60.py
+      - tests/e2e/fit-scope-clarity-v64.spec.mjs
+      - .github/workflows/v64-fit-scope-clarity.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: meridiano-v64-fit-scope-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  fit_scope:
+    name: Fit and scope clarity / canonical truth
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout candidate
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: "3.12"
+      - name: Compile v6.4 scripts
+        run: python3 -m py_compile scripts/sync_public_version.py scripts/apply_fit_scope_clarity_v64.py scripts/validate_fit_scope_clarity_v64.py scripts/apply_experience_v60.py scripts/normalize_experience_compat_v60.py
+      - name: Detect fit and scope materialization phase
+        run: |
+          MATERIALIZED_COUNT="$(grep -l 'data-fit-scope-clarity-v64="true"' productos/*.html servicios/*.html 2>/dev/null | wc -l | tr -d ' ')"
+          case "$MATERIALIZED_COUNT" in
+            0)
+              echo 'V64_EXPECTED_FIT_SCOPE_DRIFT=16' >> "$GITHUB_ENV"
+              echo 'Pre-v6.4 baseline detected: exactly 16 fit/scope pages must materialize.'
+              ;;
+            16)
+              echo 'V64_EXPECTED_FIT_SCOPE_DRIFT=0' >> "$GITHUB_ENV"
+              echo 'Already-materialized v6.4 baseline detected: fit/scope drift must be zero.'
+              ;;
+            *)
+              echo "Partial Fit & Scope Clarity materialization is invalid: found $MATERIALIZED_COUNT of 16 pages." >&2
+              exit 1
+              ;;
+          esac
+      - name: Capture declared release and v6.4 drift
+        run: |
+          python3 scripts/sync_public_version.py --check > /tmp/release-before.txt 2>&1 || true
+          cat /tmp/release-before.txt
+          sed -n 's/^- //p' /tmp/release-before.txt | sort -u > /tmp/release-expected.txt
+
+          python3 scripts/apply_fit_scope_clarity_v64.py --check > /tmp/v64-before.txt 2>&1 || true
+          cat /tmp/v64-before.txt
+          sed -n 's/^- //p' /tmp/v64-before.txt | sort -u > /tmp/v64-expected.txt
+          COUNT="$(sed '/^$/d' /tmp/v64-expected.txt | wc -l | tr -d ' ')"
+          if [ "$COUNT" -ne "$V64_EXPECTED_FIT_SCOPE_DRIFT" ]; then
+            echo "Fit & Scope Clarity declaró $COUNT fichas pendientes; esta fase exige exactamente $V64_EXPECTED_FIT_SCOPE_DRIFT." >&2
+            cat /tmp/v64-expected.txt >&2
+            exit 1
+          fi
+          if [ "$COUNT" -gt 0 ] && grep -Ev '^(productos|servicios)/[^/]+\.html$' /tmp/v64-expected.txt; then
+            echo "Fit & Scope Clarity declaró drift fuera de productos/servicios." >&2
+            exit 1
+          fi
+          cat /tmp/release-expected.txt /tmp/v64-expected.txt | sed '/^$/d' | sort -u > /tmp/v64-total-expected.txt
+      - name: Materialize canonical v6 with fit and scope clarity
+        run: |
+          python3 scripts/sync_public_version.py
+          python3 scripts/apply_experience_v60.py
+          python3 scripts/apply_experience_solutions_v60.py
+          python3 scripts/apply_experience_sectors_v60.py
+          python3 scripts/apply_experience_perspectives_v60.py
+          python3 scripts/apply_experience_final_v60.py
+          python3 scripts/apply_funnel_trust_v529.py
+          python3 scripts/normalize_experience_compat_v60.py
+          python3 scripts/apply_fit_scope_clarity_v64.py
+      - name: Validate canonical truth and preserved v6 surface
+        run: |
+          python3 scripts/validate_fit_scope_clarity_v64.py
+          python3 scripts/apply_fit_scope_clarity_v64.py --check
+          python3 scripts/sync_public_version.py --check
+          python3 scripts/validate_experience_v60.py
+          python3 scripts/validate_engagement_clarity_v63.py
+          python3 scripts/validate_capability_truth_v521.py
+      - name: Prove exact first-pass boundary
+        run: |
+          git diff --name-only | sort -u > /tmp/v64-actual.txt
+          echo '--- expected release drift ---'
+          cat /tmp/release-expected.txt
+          echo '--- expected fit/scope drift ---'
+          cat /tmp/v64-expected.txt
+          echo '--- expected total drift ---'
+          cat /tmp/v64-total-expected.txt
+          echo '--- actual first-pass drift ---'
+          cat /tmp/v64-actual.txt
+          if ! diff -u /tmp/v64-total-expected.txt /tmp/v64-actual.txt; then
+            echo 'Fit & Scope Clarity first-pass boundary diverged from release drift ∪ phase-exact fit/scope drift.' >&2
+            exit 1
+          fi
+      - name: Prove second-pass idempotence
+        run: |
+          git diff > /tmp/v64-pass-1.diff
+          python3 scripts/sync_public_version.py
+          python3 scripts/apply_experience_v60.py
+          python3 scripts/apply_experience_solutions_v60.py
+          python3 scripts/apply_experience_sectors_v60.py
+          python3 scripts/apply_experience_perspectives_v60.py
+          python3 scripts/apply_experience_final_v60.py
+          python3 scripts/apply_funnel_trust_v529.py
+          python3 scripts/normalize_experience_compat_v60.py
+          python3 scripts/apply_fit_scope_clarity_v64.py
+          git diff > /tmp/v64-pass-2.diff
+          cmp --silent /tmp/v64-pass-1.diff /tmp/v64-pass-2.diff || {
+            echo 'Fit & Scope Clarity materialization is not idempotent.' >&2
+            diff -u /tmp/v64-pass-1.diff /tmp/v64-pass-2.diff || true
+            exit 1
+          }
+          python3 scripts/sync_public_version.py --check
+          python3 scripts/validate_fit_scope_clarity_v64.py
+          python3 scripts/apply_fit_scope_clarity_v64.py --check
