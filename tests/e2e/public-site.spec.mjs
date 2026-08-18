@@ -70,6 +70,10 @@ test('portada pública conserva rutas, profundidad y layout', async ({ page }) =
   const productCta = page.locator('[data-decision-v58-cta="true"]');
   await expect(productCta).toBeVisible();
   await expectCommercialRoute(productCta, { intent: 'proposal', modality: 'product' });
+  const legacyProposalCta = page.locator('[data-close-intent-v510="proposal"]');
+  await expect(legacyProposalCta).toHaveCount(1);
+  await expect(legacyProposalCta).toBeVisible();
+  await expectCommercialRoute(legacyProposalCta, { intent: 'proposal', modality: 'product' });
   await expect(page.locator('[data-proof-v512="true"]')).toBeVisible();
   await expect(page.locator('[data-proof-v512="true"]')).toHaveAttribute('data-commercial-modality-v513', 'product');
   await expect(page.locator('[data-proof-dimension-v512]')).toHaveCount(4);
