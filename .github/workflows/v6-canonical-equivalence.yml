@@ -143,10 +143,7 @@ jobs:
                 exit 1
               fi
             else
-              EXPECTED_EXTRA="catalog-home-v32.js
-decision-flow.js
-runtime-config.js
-site-status.json"
+              EXPECTED_EXTRA="$(printf '%s\n' catalog-home-v32.js decision-flow.js runtime-config.js site-status.json)"
               if [ "$(printf '%s\n' "$EXTRA" | sort)" != "$(printf '%s\n' "$EXPECTED_EXTRA" | sort)" ]; then
                 echo "La transición v6.1 con bump de release debe añadir solo las cuatro superficies de metadata no-HTML:" >&2
                 printf '%s\n' "$EXTRA" >&2
@@ -155,11 +152,7 @@ site-status.json"
             fi
             echo "First-pass v6.1 boundary OK: 43 superficies instrumentadas, 3 exclusiones preservadas y metadata de release acotada."
           elif [ "${{ steps.phase.outputs.release_metadata_synced }}" != "true" ]; then
-            EXPECTED_RELEASE="catalog-home-v32.js
-decision-flow.js
-index.html
-runtime-config.js
-site-status.json"
+            EXPECTED_RELEASE="$(printf '%s\n' catalog-home-v32.js decision-flow.js index.html runtime-config.js site-status.json)"
             if [ "$(printf '%s\n' "$CHANGED" | sort)" != "$(printf '%s\n' "$EXPECTED_RELEASE" | sort)" ]; then
               echo "Una baseline v6 ya materializada solo puede cambiar las cinco superficies de metadata durante un bump de versión:" >&2
               printf '%s\n' "$CHANGED" >&2
