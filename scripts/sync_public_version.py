@@ -5,10 +5,14 @@ Este paso corre tanto en baselines legacy como en Experience v6. En una baseline
 v6, donde apply_production_v50.py no vuelve a ejecutarse, debe mantener alineados el
 rótulo visible, runtime-config.js y site-status.json con version.json sin alterar
 capabilities ni configuración productiva.
+
+`--check` no escribe: retorna 0 solo cuando las cinco superficies de metadata ya
+coinciden exactamente con version.json + site-config.json.
 """
 from pathlib import Path
 import json
 import re
+import sys
 
 from site_config import load_site_config
 
@@ -58,46 +62,72 @@ def render_status(config: dict, version_data: dict) -> str:
     return json.dumps(status, ensure_ascii=False, indent=2) + "\n"
 
 
-def write_if_changed(path: Path, content: str, changed: list[str]) -> None:
-    before = path.read_text(encoding="utf-8") if path.exists() else ""
-    if before != content:
-        path.write_text(content, encoding="utf-8")
-        changed.append(path.relative_to(ROOT).as_posix())
-
-
-def main() -> int:
-    version_data = json.loads(VERSION_PATH.read_text(encoding="utf-8"))
-    version = str(version_data["version"])
-    release_date = str(version_data["release_date"])
+def version_data() -> dict:
+    data = json.loads(VERSION_PATH.read_text(encoding="utf-8"))
+    version = str(data["version"])
+    release_date = str(data["release_date"])
     if not re.fullmatch(r"\d+\.\d+\.\d+", version):
         raise SystemExit(f"version.json contiene semver inválido: {version!r}")
     if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", release_date):
         raise SystemExit(f"version.json contiene release_date inválida: {release_date!r}")
+    return data
 
-    config = load_site_config()
-    changed: list[str] = []
 
-    # index.html es siempre la superficie pública, incluso cuando la release está
-    # en canal candidate. El canal describe estado de certificación, no capability.
-    replacements = {
+def expected_texts(config: dict, data: dict) -> dict[str, str]:
+    version = str(data["version"])
+    expected: dict[str, str] = {}
+    for relative, replacement in {
         "index.html": f"Web pública v{version}",
         "catalog-home-v32.js": f"Web demostrativa v{version}",
         "decision-flow.js": f"Web demostrativa v{version}",
-    }
-    for relative, replacement in replacements.items():
+    }.items():
         path = ROOT / relative
         if not path.exists():
             continue
         text = path.read_text(encoding="utf-8")
-        updated, count = PATTERN.subn(replacement, text)
-        if count and updated != text:
-            path.write_text(updated, encoding="utf-8")
-            changed.append(relative)
+        expected[relative] = PATTERN.sub(replacement, text)
+    expected["runtime-config.js"] = render_runtime(config, data)
+    expected["site-status.json"] = render_status(config, data)
+    return expected
 
-    write_if_changed(ROOT / "runtime-config.js", render_runtime(config, version_data), changed)
-    write_if_changed(ROOT / "site-status.json", render_status(config, version_data), changed)
 
-    print(f"Release pública sincronizada: {version} ({release_date})")
+def pending_changes(config: dict, data: dict) -> list[str]:
+    pending: list[str] = []
+    for relative, expected in expected_texts(config, data).items():
+        path = ROOT / relative
+        current = path.read_text(encoding="utf-8") if path.exists() else ""
+        if current != expected:
+            pending.append(relative)
+    return pending
+
+
+def apply(config: dict, data: dict) -> list[str]:
+    changed = pending_changes(config, data)
+    expected = expected_texts(config, data)
+    for relative in changed:
+        (ROOT / relative).write_text(expected[relative], encoding="utf-8")
+    return changed
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = list(sys.argv[1:] if argv is None else argv)
+    data = version_data()
+    config = load_site_config()
+    pending = pending_changes(config, data)
+
+    if args == ["--check"]:
+        if pending:
+            print("RELEASE METADATA DRIFT")
+            for relative in pending:
+                print(f"- {relative}")
+            return 1
+        print(f"RELEASE METADATA SYNC OK: {data['version']} ({data['release_date']})")
+        return 0
+    if args:
+        raise SystemExit(f"uso: {Path(sys.argv[0]).name} [--check]")
+
+    changed = apply(config, data)
+    print(f"Release pública sincronizada: {data['version']} ({data['release_date']})")
     for relative in changed:
         print(f"- {relative}")
     return 0
