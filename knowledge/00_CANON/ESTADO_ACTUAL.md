@@ -7,86 +7,89 @@
 - Repositorio: `arendon7/MERDIANOLEGAL`.
 - Fuente técnica/documental: `main`.
 - Snapshot certificado: `stable`.
-- Release funcional certificada: **6.1.0 — Measurement Readiness / observabilidad privacy-first**.
-- SHA funcional certificado: `8ffe0e923fc626281870ca2bd38d6c55a665b31b`.
-- Canal de cierre: `github-pages-production-measurement-readiness-certified`.
-- La referencia documental definitiva se verifica por los refs vigentes `main` y `stable`, que deben coincidir tras la certificación de este cierre.
-- No existe un ciclo funcional posterior activo; el frente vigente es únicamente cerrar documentalmente v6.1.0.
+- Release funcional certificada: **6.2.0 — Search Discovery Readiness / indexación verificable**.
+- SHA funcional certificado: `4027b6a5425a13cdd0134799c88081e08ac80b6f`.
+- Canal de cierre: `github-pages-production-search-discovery-readiness-certified`.
+- La referencia documental definitiva se obtiene por los refs vigentes `main` y `stable`, que deben coincidir tras este cierre.
 
-## Resultado v6.1
+## Resultado v6.2
 
-v6.1 convierte la observabilidad local ya existente en una arquitectura de **measurement readiness** gobernada, sin activar analítica externa.
+v6.2 convierte las señales de discovery en un contrato determinista sin afirmar Search Console activa ni resultados de posicionamiento.
 
-La release preserva Experience System v6 y añade un firewall de medición:
+### Frontera de indexación
 
-- fuente externa única: `meridiano:funnel-v529`;
-- campo aceptado: `stage`;
-- `event` y `target` ignorados;
-- raw `adapter.track(name,event)` conservado por compatibilidad pero `no-op`;
-- seis etapas allowlisted: need, offer, evidence, decision, contact y handoff;
-- payload custom de Meridiano limitado al nombre del evento, sin propiedades custom;
-- deduplicación por primera etapa/página;
-- Plausible preparado, pero deshabilitado y sin identificador real;
-- pageviews automáticos deshabilitados;
-- revisión de metadata estándar del proveedor y actualización de política/configuración obligatorias antes de activar.
+- 46/46 HTML públicos clasificados.
+- 43/43 páginas indexables con exactamente un canonical autorreferencial.
+- 3/3 superficies `noindex`: `404.html`, `demo.html`, `experiencia.html`.
+- Las tres superficies `noindex` están fuera del sitemap.
+- Sitemap canónico con exactamente 43 `<loc>`.
+- Sin `priority` ni `changefreq`.
+- Sin `lastmod` global derivado simplemente de `version.json.release_date`.
+- `robots.txt` conserva una única referencia al sitemap canónico y la exclusión explícita de demo.
 
-## Superficies y truth preservados
+### Search Console
 
-- 46/46 HTML públicos.
-- 8/8 productos.
-- 8/8 servicios.
-- 7/7 superficies de soluciones.
-- 8/8 sectores.
-- 6/6 perspectivas internas + hub editorial.
-- 16/16 fichas profundas con truth visible y profundidad histórica preservada.
+- Estado: **readiness-not-verified**.
+- Método preparado: meta HTML para propiedad URL-prefix.
+- Fuente gobernada: `site-config.json.search_console_verification`.
+- Token actual: vacío.
+- Meta `google-site-verification`: ausente mientras el token esté vacío.
+- Runtime: `searchConsoleConfigured=false`.
+- No existe afirmación de propiedad verificada ni envío autenticado de sitemap desde Search Console.
+
+### Measurement/capability truth preservado
+
+- `analytics.enabled=false`.
+- `provider=none`.
+- `site_id=""`.
+- 43 superficies continúan con measurement adapter v6.1; `404`, `demo` y `experiencia` continúan fuera de esa instrumentación.
+- 16/16 fichas profundas.
 - 1/1 formulario físico canónico.
-- 30/30 pasos exactos del builder.
-- 43 superficies con telemetría previa reciben el adapter v6.1.
-- `404.html`, `demo.html` y `experiencia.html` permanecen sin adapter.
-- WhatsApp sigue siendo handoff manual.
+- WhatsApp manual.
 - Portal real, auth, CRM, pagos, firma, agenda y upload: deshabilitados/no implementados.
-- `analytics.enabled=false`, `provider=none`, `site_id=""`.
+- 30/30 pasos históricos exactos del builder.
 
 ## Evidencia funcional
 
-- SHA funcional certificado: `8ffe0e923fc626281870ca2bd38d6c55a665b31b`.
-- `stable` fue promovido automáticamente a ese SHA después de la cadena post-deploy.
-- GitHub Pages sirve v6.1.0 con measurement adapter materializado y analytics externa deshabilitada.
-- Browser E2E + axe: PASS.
-- Lighthouse: PASS con budgets existentes.
-- V6 Candidate: PASS.
-- Measurement Readiness gate: PASS.
-- Canonical Equivalence: PASS.
-- Release Governance: PASS.
-- Graphify: PASS en los SHAs de candidato/hotfix aplicables.
-- Primera materialización v6.1: 43 superficies exactas; 3 exclusiones preservadas.
-- Segunda pasada canónica: idempotente.
+- Candidate v6.2 same-SHA: `d14b0356aa2733645061f7230b7cc044f09cd42f`.
+- Siete gates pre-merge sobre ese SHA: PASS:
+  - V6.2 Search Discovery Readiness;
+  - V6 Candidate Validation;
+  - V6 Canonical Builder Equivalence;
+  - Release Governance;
+  - Graphify;
+  - V6 Browser Candidate / axe;
+  - V6.1 Measurement Readiness / Browser E2E.
+- PR #158 fusionado sin incluir HTML generado ni sitemap materializado en el diff fuente.
+- Builder post-merge materializó el snapshot `4027b6a5425a13cdd0134799c88081e08ac80b6f`.
+- `stable` fue promovido automáticamente a `4027b6a5…` tras la cadena post-deploy.
+- Browser/axe y Lighthouse productivos son prerequisitos del job que mueve `stable`; no se hizo promoción manual.
 - Cobertura reducida: no.
 - Budgets relajados: no.
-- Tests eliminados para hacer pasar la release: no.
+- Tests eliminados para aprobar la release: no.
 
-## Release engineering endurecido durante v6.1
+## Release engineering endurecido durante v6.2
 
-1. **Measurement como migración determinista.** Canonical Equivalence pasó a distinguir una baseline v6.0 de una baseline v6.1 ya materializada y a comprobar el conjunto exacto de superficies esperado.
-2. **Sincronización completa de release.** `sync_public_version.py` evolucionó a una fuente única para etiquetas de versión, `runtime-config.js`, `site-status.json`, sitemap y metadata editorial de modificación; `--check` detecta drift sin escribir.
-3. **Paridad de versión en gates.** Candidate, Browser, Measurement y Equivalence reproducen la sincronización antes de validar una baseline v6.
-4. **Sitemap.** Todos los `lastmod` se sincronizan con `version.json.release_date`, preservando el contrato v4.8.
-5. **Perspectivas.** `article:modified_time` y `dateModified` se sincronizan con la fecha de release, sin alterar `datePublished`, preservando v5.3.
-6. **Payload de privacidad.** La telemetría raw no se exporta; el adapter escucha solo la etapa saneada y el payload custom queda sin propiedades.
-7. **Pageviews automáticos.** Plausible queda preparado con `autoCapturePageviews:false`; cualquier metadata estándar del proveedor queda sujeta a revisión previa.
-8. **Carrera de concurrencia de Pages.** Los workflow_run originados por el commit canónico `build:` quedan aislados en `ignored-build-output` para no cancelar una release válida.
-9. **YAML de concurrencia.** La primera corrección de concurrencia introdujo un scalar YAML ambiguo por el literal `build:`; se detectó y corrigió envolviendo el valor dinámico completo entre comillas dobles. El validator exige esa forma para impedir regresión.
+1. **Sitemap derivado del canonical.** El sitemap deja de ser una lista mantenida de forma independiente y se genera desde las páginas realmente indexables y sus canonicals autorreferenciales.
+2. **Señales temporales honestas.** `sync_public_version.py` conserva `lastmod` histórico en baselines anteriores, pero cede el gobierno del sitemap a v6.2. Una fecha global de release ya no se presenta como prueba de modificación material de cada URL.
+3. **Verification fail-closed.** El token vacío conserva Home byte-stable y prohíbe publicar una meta Google o runtime `true`. Un token futuro debe producir exactamente una meta no vacía.
+4. **Boundary real 43/3.** El primer gate reveló que `experiencia.html` también es `noindex`; el contrato se corrigió para reflejar la verdad existente, no para forzar una página al índice.
+5. **No drift cosmético.** El normalizador dejó de reescribir espacios/saltos de Home cuando no existe token.
+6. **v4.8 phase-aware.** Legacy conserva su contrato de `lastmod`; v6.2 exige sitemap mínimo sin `lastmod`, `priority` ni `changefreq`.
+7. **v5.1 phase-aware.** Las siete URLs de soluciones siguen siendo obligatorias, pero el output v6.2 ya no depende del antiguo comentario gestionado `GROWTH-V51-SITEMAP`.
+8. **Source vs output.** Governance puede validar una fuente pre-materialización que aún contiene el marcador histórico; el normalizador/validator v6.2 son quienes exigen su eliminación en el output canónico.
+9. **Equivalencia exacta.** El conjunto de cambios esperado es measurement aplicable ∪ release drift ∪ discovery drift declarado; cualquier archivo extra falla.
+10. **Trigger coverage.** Builder vigila el materializador discovery; Candidate y Browser vigilan configuración, sitemap, robots y scripts v6.2.
+11. **E2E dinámico.** La suite no codifica un token: infiere la expectativa desde runtime y comprueba meta Search Console + sitemap servido 43/3.
 
-## PRs principales
+## PR principal
 
-- #154 — Measurement Readiness v6.1, privacy firewall, release metadata parity y gates.
-- #155 — aislamiento de la carrera de concurrencia Pages/build-output.
-- #156 — corrección YAML quoted del `concurrency.group` y guard correspondiente.
+- #158 — Search Discovery Readiness v6.2: contrato, normalizador, validator, sitemap/canonical topology, Search Console fail-closed, gates y E2E.
 
 ## Invariantes preservadas
 
-46 HTML; 16 fichas profundas; un único formulario físico; WhatsApp manual; portal real deshabilitado; analytics externa deshabilitada; no PII ni propiedades custom exportadas; no inferir conversión; no tarifas inventadas; no ocultar profundidad material; exactamente 30 pasos canónicos; axe/Lighthouse sin relajación; `stable` solo después de gates verdes.
+46 HTML; 16 fichas profundas; 1 formulario físico; WhatsApp manual; portal real deshabilitado; analytics externa deshabilitada; Search Console no verificada sin token real; no PII; no inferir conversión; no inventar rankings ni tráfico; no tarifas inventadas; exactamente 30 pasos históricos; Browser/axe/Lighthouse sin relajación; `stable` solo después de gates verdes.
 
 ## Estado del ciclo
 
-**v6.1.0 está implementada, publicada y certificada funcionalmente. No hay una release funcional posterior activa. El cierre documental queda definitivo cuando el commit que actualiza esta memoria y marca el canal como `certified` atraviese nuevamente Builder, Pages, smoke, Browser/axe, Lighthouse, release-health y termine con `main == stable`.**
+**v6.2.0 está implementada, materializada, publicada y certificada funcionalmente. No hay una release funcional posterior activa. El cierre documental queda definitivo cuando el commit que actualiza esta memoria y marca el canal como `certified` atraviese nuevamente Builder, Pages, smoke, Browser/axe, Lighthouse y termine con `main == stable`.**
