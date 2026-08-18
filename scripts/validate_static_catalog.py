@@ -102,8 +102,9 @@ def validate() -> list[str]:
         parser.feed(text)
         words = re.findall(r"\b[\wáéíóúüñÁÉÍÓÚÜÑ]+\b", " ".join(parser.text), flags=re.UNICODE)
 
+        hero_marker = "v6-detail-hero" if 'data-experience-system="v6"' in text else "STATIC-CATALOG-HERO:START"
         required = {
-            "STATIC-CATALOG-HERO:START",
+            hero_marker,
             "STATIC-CATALOG-BODY:START",
             'data-static-catalog="true"',
             'id="pregunta-title"',
