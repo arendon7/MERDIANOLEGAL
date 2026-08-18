@@ -10,11 +10,18 @@ ROOT = Path(__file__).resolve().parents[1]
 VERSION = json.loads((ROOT / 'version.json').read_text(encoding='utf-8'))['version']
 TARGETS = sorted((ROOT / 'servicios').glob('*.html')) + sorted((ROOT / 'productos').glob('*.html'))
 
-REQUIRED_PAGE_MARKERS = {
+COMMON_PAGE_MARKERS = {
     '../detail-v46.css',
     '../detail-v46.js',
-    'DETAIL-V46-NAV:START',
     'DETAIL-V46-MOBILE:START',
+    '../firma.html',
+    '>Centro demo<',
+    'href="#contacto">Presentar necesidad</a>',
+    'class="detail-mobile-cta-v46"',
+}
+
+LEGACY_NAV_MARKERS = {
+    'DETAIL-V46-NAV:START',
     'class="detail-toc-v46"',
     'href="#pregunta-title"',
     'href="#alcance-title"',
@@ -23,10 +30,17 @@ REQUIRED_PAGE_MARKERS = {
     'href="#limites-title"',
     'href="#contacto-title"',
     '>Planes y precios<',
-    '../firma.html',
-    '>Centro demo<',
-    'href="#contacto">Presentar necesidad</a>',
-    'class="detail-mobile-cta-v46"',
+}
+
+V6_NAV_MARKERS = {
+    'class="v6-detail-nav"',
+    'href="#v6-question"',
+    'href="#v6-deliverables"',
+    'href="#v6-perimeter"',
+    'href="#v6-process"',
+    'href="#v6-boundary"',
+    'href="#v6-detail-depth"',
+    '../index.html#v6-commercial-depth',
 }
 
 FORBIDDEN_HEADER_MARKERS = {
@@ -53,7 +67,9 @@ def validate() -> list[str]:
 
     for path in TARGETS:
         text = path.read_text(encoding='utf-8')
-        for marker in sorted(REQUIRED_PAGE_MARKERS):
+        experience_v6 = 'data-experience-system="v6"' in text
+        required = COMMON_PAGE_MARKERS | (V6_NAV_MARKERS if experience_v6 else LEGACY_NAV_MARKERS)
+        for marker in sorted(required):
             if marker not in text:
                 errors.append(f'{path.relative_to(ROOT)}: falta {marker!r}')
         for marker in FORBIDDEN_HEADER_MARKERS:
@@ -63,15 +79,20 @@ def validate() -> list[str]:
             errors.append(f'{path.relative_to(ROOT)}: detail-v46.css debe cargarse exactamente una vez')
         if text.count('../detail-v46.js') != 1:
             errors.append(f'{path.relative_to(ROOT)}: detail-v46.js debe cargarse exactamente una vez')
-        if text.count('DETAIL-V46-NAV:START') != 1 or text.count('DETAIL-V46-NAV:END') != 1:
+        if not experience_v6 and (text.count('DETAIL-V46-NAV:START') != 1 or text.count('DETAIL-V46-NAV:END') != 1):
             errors.append(f'{path.relative_to(ROOT)}: navegación v4.6 duplicada o incompleta')
         if text.count('DETAIL-V46-MOBILE:START') != 1 or text.count('DETAIL-V46-MOBILE:END') != 1:
             errors.append(f'{path.relative_to(ROOT)}: CTA móvil v4.6 duplicado o incompleto')
         if f'Ficha v{VERSION}' not in text:
             errors.append(f'{path.relative_to(ROOT)}: no refleja la versión pública {VERSION}')
-        toc_match = re.search(r'<nav class="detail-toc-v46"[\s\S]*?</nav>', text)
-        if not toc_match or toc_match.group(0).count('<a ') != 7:
-            errors.append(f'{path.relative_to(ROOT)}: el índice ejecutivo debe contener seis hitos y un CTA')
+        if experience_v6:
+            nav_match = re.search(r'<nav class="v6-detail-nav"[\s\S]*?</nav>', text)
+            if not nav_match or nav_match.group(0).count('<a ') != 6:
+                errors.append(f'{path.relative_to(ROOT)}: la navegación ejecutiva v6 debe contener seis hitos')
+        else:
+            toc_match = re.search(r'<nav class="detail-toc-v46"[\s\S]*?</nav>', text)
+            if not toc_match or toc_match.group(0).count('<a ') != 7:
+                errors.append(f'{path.relative_to(ROOT)}: el índice ejecutivo debe contener seis hitos y un CTA')
 
     css = (ROOT / 'detail-v46.css').read_text(encoding='utf-8') if (ROOT / 'detail-v46.css').exists() else ''
     for marker in (
@@ -96,7 +117,7 @@ def main() -> int:
         for error in errors:
             print(f'- {error}')
         return 1
-    print(f'VALIDACIÓN UX/UI PROFUNDA OK: 16 fichas con navegación ejecutiva, CTA contextual, responsive y versión {VERSION}.')
+    print(f'VALIDACIÓN UX/UI PROFUNDA OK: 16 fichas con navegación ejecutiva, CTA contextual, responsive y versión {VERSION}; Experience v6 compatible cuando aplica.')
     return 0
 
 
