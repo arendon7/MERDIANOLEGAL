@@ -1,0 +1,49 @@
+name: V7 Legal Intelligence architecture
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - assets/data/v7/**
+      - scripts/validate_legal_intelligence_v70.py
+      - knowledge/10_DECISIONES/ADR-007-legal-intelligence-architecture-v7.md
+      - knowledge/20_ARQUITECTURA/LEGAL-INTELLIGENCE-*.md
+      - knowledge/20_DESIGN/LEGAL-INTELLIGENCE-v7-BRIEF.md
+      - .github/workflows/v70-legal-intelligence-architecture.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: meridiano-v7-legal-intelligence-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  architecture:
+    name: Validate v7 architecture and capability truth
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout candidate
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: "3.12"
+      - name: Compile validator
+        run: python3 -m py_compile scripts/validate_legal_intelligence_v70.py
+      - name: Validate Legal Intelligence contract
+        run: python3 scripts/validate_legal_intelligence_v70.py
+      - name: Preserve certified public baseline
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          version = json.loads(Path('version.json').read_text())
+          if version.get('version') != '6.3.0':
+              raise SystemExit(f"Prototype v7 must not change public version yet: {version.get('version')}")
+          print('Public release remains 6.3.0: PASS')
+          PY
