@@ -118,6 +118,7 @@ def render_section(catalog_id: str, source: dict, contract: dict) -> str:
 
 
 def ensure_stylesheet(text: str) -> str:
+    # No consumir saltos vecinos: la posición debe ser estable frente a v6.0/v6.3.
     text = re.sub(
         rf'(?m)^[ \t]*<link rel="stylesheet" href="{re.escape(CSS_HREF)}">[ \t]*(?:\r?\n)?',
         "",
@@ -131,9 +132,6 @@ def ensure_stylesheet(text: str) -> str:
     if len(matches) != 1:
         raise RuntimeError(f"ficha debe cargar exactamente una hoja ancla {anchor_href}; encontró {len(matches)}")
     match = matches[0]
-    if anchor_href == V63_CSS_HREF:
-        insert_at = match.end()
-        return text[:insert_at] + f'\n{match.group("indent")}<link rel="stylesheet" href="{CSS_HREF}">' + text[insert_at:]
     link = f'{match.group("indent")}<link rel="stylesheet" href="{CSS_HREF}">\n'
     return text[:match.start()] + link + text[match.start():]
 
