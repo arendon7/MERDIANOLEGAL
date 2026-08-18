@@ -171,15 +171,11 @@ sitemap = (R / "sitemap.xml").read_text(encoding="utf-8")
 for relative in ["soluciones/", *(f"soluciones/{slug}.html" for slug in slugs)]:
     if f"<loc>{BASE_URL}{relative}</loc>" not in sitemap:
         errors.append(f"sitemap.xml no incluye {relative}")
-if DISCOVERY_V62.exists():
-    # v6.2 reemplaza el bloque comentado gestionado por una representación
-    # determinista derivada de canonicals indexables. Las siete URLs v5.1 siguen
-    # siendo obligatorias arriba; el marcador físico deja de ser parte del contrato.
-    if "GROWTH-V51-SITEMAP:START" in sitemap or "GROWTH-V51-SITEMAP:END" in sitemap:
-        errors.append("sitemap.xml v6.2 no debe conservar marcadores gestionados v5.1")
-else:
-    if sitemap.count("GROWTH-V51-SITEMAP:START") != 1:
-        errors.append("sitemap.xml legacy debe contener un único bloque v5.1")
+# El marcador físico v5.1 solo es obligatorio en baselines legacy. En una fuente
+# v6.2 aún no materializada puede existir transitoriamente; el normalizador y el
+# validator Search Discovery son quienes exigen eliminarlo del output canónico.
+if not DISCOVERY_V62.exists() and sitemap.count("GROWTH-V51-SITEMAP:START") != 1:
+    errors.append("sitemap.xml legacy debe contener un único bloque v5.1")
 
 combined = index + "\n" + "\n".join(path.read_text(encoding="utf-8") for path in folder.glob("*.html")) if folder.exists() else index
 for forbidden in ("casos de éxito", "nuestros clientes confían", "tasa de éxito", "testimonio de cliente"):
