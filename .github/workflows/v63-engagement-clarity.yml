@@ -4,12 +4,14 @@ on:
   pull_request:
     branches: [main]
     paths:
+      - version.json
       - catalog-products-v41/**
       - catalog-services-v42/**
       - productos/**
       - servicios/**
       - assets/data/v6/engagement-clarity-v63.json
       - assets/css/v6/engagement-clarity-v63.css
+      - scripts/sync_public_version.py
       - scripts/apply_engagement_clarity_v63.py
       - scripts/validate_engagement_clarity_v63.py
       - scripts/normalize_experience_compat_v60.py
@@ -39,9 +41,13 @@ jobs:
         with:
           python-version: "3.12"
       - name: Compile v6.3 scripts
-        run: python3 -m py_compile scripts/apply_engagement_clarity_v63.py scripts/validate_engagement_clarity_v63.py scripts/normalize_experience_compat_v60.py
-      - name: Capture declared v6.3 drift
+        run: python3 -m py_compile scripts/sync_public_version.py scripts/apply_engagement_clarity_v63.py scripts/validate_engagement_clarity_v63.py scripts/normalize_experience_compat_v60.py
+      - name: Capture declared release and v6.3 drift
         run: |
+          python3 scripts/sync_public_version.py --check > /tmp/release-before.txt 2>&1 || true
+          cat /tmp/release-before.txt
+          sed -n 's/^- //p' /tmp/release-before.txt | sort -u > /tmp/release-expected.txt
+
           python3 scripts/apply_engagement_clarity_v63.py --check > /tmp/v63-before.txt 2>&1 || true
           cat /tmp/v63-before.txt
           sed -n 's/^- //p' /tmp/v63-before.txt | sort -u > /tmp/v63-expected.txt
@@ -55,6 +61,7 @@ jobs:
             echo "Engagement Clarity declaró drift fuera de productos/servicios." >&2
             exit 1
           fi
+          cat /tmp/release-expected.txt /tmp/v63-expected.txt | sed '/^$/d' | sort -u > /tmp/v63-total-expected.txt
       - name: Materialize canonical v6 with engagement clarity
         run: |
           python3 scripts/sync_public_version.py
@@ -69,17 +76,22 @@ jobs:
         run: |
           python3 scripts/validate_engagement_clarity_v63.py
           python3 scripts/apply_engagement_clarity_v63.py --check
+          python3 scripts/sync_public_version.py --check
           python3 scripts/validate_experience_v60.py
           python3 scripts/validate_capability_truth_v521.py
       - name: Prove exact first-pass boundary
         run: |
           git diff --name-only | sort -u > /tmp/v63-actual.txt
-          echo '--- expected v6.3 drift ---'
+          echo '--- expected release drift ---'
+          cat /tmp/release-expected.txt
+          echo '--- expected engagement drift ---'
           cat /tmp/v63-expected.txt
-          echo '--- actual v6.3 drift ---'
+          echo '--- expected total drift ---'
+          cat /tmp/v63-total-expected.txt
+          echo '--- actual first-pass drift ---'
           cat /tmp/v63-actual.txt
-          if ! diff -u /tmp/v63-expected.txt /tmp/v63-actual.txt; then
-            echo 'Engagement Clarity first-pass boundary diverged from the exact 16-page contract.' >&2
+          if ! diff -u /tmp/v63-total-expected.txt /tmp/v63-actual.txt; then
+            echo 'Engagement Clarity first-pass boundary diverged from release drift ∪ exact 16-page engagement drift.' >&2
             exit 1
           fi
       - name: Prove second-pass idempotence
@@ -99,4 +111,6 @@ jobs:
             diff -u /tmp/v63-pass-1.diff /tmp/v63-pass-2.diff || true
             exit 1
           }
+          python3 scripts/sync_public_version.py --check
           python3 scripts/validate_engagement_clarity_v63.py
+          python3 scripts/apply_engagement_clarity_v63.py --check
