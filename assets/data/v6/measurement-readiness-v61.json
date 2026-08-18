@@ -8,6 +8,13 @@
     "requires_real_site_id": true,
     "requires_privacy_policy_update_before_enable": true
   },
+  "source": {
+    "event": "meridiano:funnel-v529",
+    "accepted_field": "stage",
+    "ignored_fields": ["event", "target"],
+    "raw_telemetry_adapter_track": "no-op",
+    "deduplication": "first-event-per-stage-per-page-lifetime"
+  },
   "privacy": {
     "pii_allowed": false,
     "form_content_allowed": false,
