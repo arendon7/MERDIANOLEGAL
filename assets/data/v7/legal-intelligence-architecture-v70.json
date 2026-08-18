@@ -2,6 +2,7 @@
   "version": "7.0.0-draft",
   "status": "prototype",
   "public_release_unchanged": "6.3.0",
+  "prototype_surface": "soluciones/ordenar-operacion-juridica.html",
   "brand": {
     "master": "Meridiano Legal",
     "family": "Meridiano Legal Intelligence",
