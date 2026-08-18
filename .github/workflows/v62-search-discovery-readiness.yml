@@ -1,0 +1,80 @@
+name: V6.2 search discovery readiness
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - site-config.json
+      - sitemap.xml
+      - robots.txt
+      - index.html
+      - assets/data/v6/search-discovery-readiness-v62.json
+      - scripts/apply_search_discovery_v62.py
+      - scripts/validate_search_discovery_v62.py
+      - scripts/sync_public_version.py
+      - scripts/validate_quality_v48.py
+      - .github/workflows/v62-search-discovery-readiness.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: meridiano-v62-search-discovery-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  discovery:
+    name: Search discovery / canonical and sitemap
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout candidate
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: "3.12"
+      - name: Compile discovery scripts
+        run: python3 -m py_compile scripts/site_config.py scripts/sync_public_version.py scripts/apply_search_discovery_v62.py scripts/validate_search_discovery_v62.py scripts/validate_quality_v48.py
+      - name: Capture declared discovery drift
+        run: |
+          python3 scripts/sync_public_version.py --check || true
+          python3 scripts/apply_search_discovery_v62.py --check > /tmp/discovery-before.txt 2>&1 || true
+          cat /tmp/discovery-before.txt
+          sed -n 's/^- //p' /tmp/discovery-before.txt | sort -u > /tmp/discovery-expected.txt
+      - name: Materialize search discovery readiness
+        run: |
+          python3 scripts/sync_public_version.py
+          python3 scripts/apply_search_discovery_v62.py
+      - name: Validate discovery and preserved v4.8 quality
+        run: |
+          python3 scripts/validate_search_discovery_v62.py
+          python3 scripts/validate_quality_v48.py
+          python3 scripts/sync_public_version.py --check
+          python3 scripts/apply_search_discovery_v62.py --check
+      - name: Prove exact first-pass boundary
+        run: |
+          git diff --name-only | sort -u > /tmp/discovery-actual.txt
+          echo '--- expected discovery drift ---'
+          cat /tmp/discovery-expected.txt
+          echo '--- actual first-pass drift ---'
+          cat /tmp/discovery-actual.txt
+          if ! diff -u /tmp/discovery-expected.txt /tmp/discovery-actual.txt; then
+            echo 'Search discovery first-pass boundary diverged from the exact declared drift.' >&2
+            exit 1
+          fi
+      - name: Prove second-pass idempotence
+        run: |
+          git diff > /tmp/discovery-pass-1.diff
+          python3 scripts/sync_public_version.py
+          python3 scripts/apply_search_discovery_v62.py
+          git diff > /tmp/discovery-pass-2.diff
+          cmp --silent /tmp/discovery-pass-1.diff /tmp/discovery-pass-2.diff || {
+            echo 'Search discovery materialization is not idempotent.' >&2
+            diff -u /tmp/discovery-pass-1.diff /tmp/discovery-pass-2.diff || true
+            exit 1
+          }
+          python3 scripts/validate_search_discovery_v62.py
