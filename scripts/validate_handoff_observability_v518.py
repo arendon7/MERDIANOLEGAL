@@ -150,8 +150,32 @@ def main() -> int:
         "Apply handoff observability v5.18",
     ):
         require(marker in build, f"builder no gobierna {marker}")
-    require("python3 scripts/apply_handoff_v517.py\n          python3 scripts/apply_handoff_observability_v518.py\n          git diff --exit-code" in pages,
-            "Pages debe terminar idempotencia en v5.18")
+
+    # v5.18 sigue siendo el cierre de la cadena histórica. Desde v6, Pages debe
+    # preservar esa ruta bootstrap, detectar fase y continuar con la misma
+    # materialización/validación v6 antes de afirmar idempotencia.
+    for marker in (
+        'data-experience-system="v6"',
+        "MERIDIANO_CANONICAL_V6",
+        "python3 scripts/apply_handoff_v517.py",
+        "python3 scripts/apply_handoff_observability_v518.py",
+        "python3 scripts/apply_experience_v60.py",
+        "python3 scripts/normalize_experience_compat_v60.py",
+        "python3 scripts/validate_experience_v60.py",
+        "python3 scripts/validate_capability_truth_v521.py",
+        "git diff --exit-code",
+    ):
+        require(marker in pages, f"Pages no preserva cadena histórica→v6: falta {marker}")
+    order = [
+        pages.find("python3 scripts/apply_handoff_v517.py"),
+        pages.find("python3 scripts/apply_handoff_observability_v518.py"),
+        pages.find("python3 scripts/apply_experience_v60.py"),
+        pages.find("python3 scripts/normalize_experience_compat_v60.py"),
+        pages.find("python3 scripts/validate_experience_v60.py"),
+        pages.find("git diff --exit-code"),
+    ]
+    require(all(pos >= 0 for pos in order) and order == sorted(order),
+            "Pages debe ordenar handoff v5.17→v5.18→Experience v6→validators→idempotencia")
     require("Validate handoff observability v5.18" in pages and "node --check handoff-observability-v518.js" in pages,
             "Pages debe validar contrato y sintaxis v5.18")
     require(pages.count("python3 scripts/validate_handoff_observability_v518.py") >= 2,
@@ -159,7 +183,7 @@ def main() -> int:
     require("Validate handoff observability v5.18" in governance,
             "Governance debe ejecutar validator v5.18")
 
-    print("HANDOFF OBSERVABILITY V5.18 OK: 6 hechos observables, analítica externa apagada, cero PII/storage/red nueva y cero inferencias de envío/conversión.")
+    print("HANDOFF OBSERVABILITY V5.18/V6 OK: hechos observables preservados y release phase-aware sin PII/storage/red nueva.")
     return 0
 
 

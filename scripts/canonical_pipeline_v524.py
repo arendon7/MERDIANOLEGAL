@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""v5.24: fuente de verdad verificable para el orden de composición canónica pública."""
+"""v5.24+: fuente de verdad verificable para el orden de composición canónica pública.
+
+El manifiesto preserva la cadena histórica de 30 pasos para baselines pre-v6 y
+registra explícitamente la extensión v6 que builder y Pages deben compartir.
+"""
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -13,6 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 VERSION_FILE = ROOT / "version.json"
 BUILD_WORKFLOW = ROOT / ".github/workflows/build-canonical.yml"
 PAGES_WORKFLOW = ROOT / ".github/workflows/pages.yml"
+HOME = ROOT / "index.html"
 
 
 @dataclass(frozen=True)
@@ -30,6 +35,8 @@ def node(script: str) -> tuple[str, ...]:
     return ("node", str(ROOT / "scripts" / script))
 
 
+# Cadena histórica/bootstrap. Se conserva intacta para poder materializar una
+# baseline anterior a v6 y para mantener trazabilidad de todas las capas previas.
 CANONICAL_STEPS: tuple[Step, ...] = (
     Step("catalog-shells", "Generate catalog shells", py("build_catalog_shells.py")),
     Step("products-static", "Pre-render product catalog", node("render_catalog_static.mjs")),
@@ -63,6 +70,28 @@ CANONICAL_STEPS: tuple[Step, ...] = (
     Step("handoff-observability-v518-plus", "Apply handoff observability and canonical extensions v5.18+", py("apply_handoff_observability_v518.py")),
 )
 
+# Sobre una baseline que ya es v6 no se vuelven a ejecutar materializadores HTML
+# v4/v5. Builder y Pages deben ejecutar esta misma extensión desde fuentes
+# canónicas y cerrar con los mismos validators.
+V6_EXTENSION_COMMANDS: tuple[str, ...] = (
+    "python3 scripts/apply_experience_v60.py",
+    "python3 scripts/apply_experience_solutions_v60.py",
+    "python3 scripts/apply_experience_sectors_v60.py",
+    "python3 scripts/apply_experience_perspectives_v60.py",
+    "python3 scripts/apply_experience_final_v60.py",
+    "python3 scripts/apply_funnel_trust_v529.py",
+    "python3 scripts/normalize_experience_compat_v60.py",
+    "python3 scripts/validate_experience_v60.py",
+    "python3 scripts/validate_experience_solutions_v60.py",
+    "python3 scripts/validate_experience_sectors_v60.py",
+    "python3 scripts/validate_experience_perspectives_v60.py",
+    "python3 scripts/validate_experience_final_v60.py",
+    "python3 scripts/validate_funnel_trust_v529.py",
+    "python3 scripts/validate_proof_v512.py",
+    "python3 scripts/validate_capability_truth_v521.py",
+    "python3 scripts/validate_editorial_context.py",
+)
+
 
 def semver(value: str) -> tuple[int, int, int]:
     match = re.fullmatch(r"(\d+)\.(\d+)\.(\d+)", str(value))
@@ -90,8 +119,12 @@ def extract_commands(text: str, start: str, end: str, label: str) -> list[str]:
     return commands
 
 
+def expected_workflow_commands() -> list[str]:
+    return [workflow_command(step) for step in CANONICAL_STEPS] + list(V6_EXTENSION_COMMANDS)
+
+
 def validate_workflow_contracts() -> None:
-    expected = [workflow_command(step) for step in CANONICAL_STEPS]
+    expected = expected_workflow_commands()
     build = BUILD_WORKFLOW.read_text(encoding="utf-8")
     pages = PAGES_WORKFLOW.read_text(encoding="utf-8")
     build_commands = extract_commands(build, "- name: Generate catalog shells", "- name: Commit canonical outputs", "builder")
@@ -102,6 +135,9 @@ def validate_workflow_contracts() -> None:
         raise SystemExit(f"CANONICAL PIPELINE V5.24 FAIL: Pages diverge del manifiesto: {pages_commands}")
     if build_commands != pages_commands:
         raise SystemExit("CANONICAL PIPELINE V5.24 FAIL: builder y Pages no ejecutan la misma secuencia")
+    for workflow_name, text in (("builder", build), ("Pages", pages)):
+        if 'data-experience-system="v6"' not in text or "MERIDIANO_CANONICAL_V6" not in text:
+            raise SystemExit(f"CANONICAL PIPELINE V5.24 FAIL: {workflow_name} no declara detección de fase v6")
 
 
 def validate_manifest() -> None:
@@ -112,24 +148,40 @@ def validate_manifest() -> None:
     if len(keys) != len(set(keys)):
         raise SystemExit("CANONICAL PIPELINE V5.24 FAIL: existen claves de paso duplicadas")
     if len(CANONICAL_STEPS) != 30:
-        raise SystemExit(f"CANONICAL PIPELINE V5.24 FAIL: se esperaban 30 pasos y hay {len(CANONICAL_STEPS)}")
+        raise SystemExit(f"CANONICAL PIPELINE V5.24 FAIL: la cadena histórica debe conservar 30 pasos y hay {len(CANONICAL_STEPS)}")
     if CANONICAL_STEPS[-1].key != "handoff-observability-v518-plus":
-        raise SystemExit("CANONICAL PIPELINE V5.24 FAIL: la extensión final debe permanecer en v5.18+")
+        raise SystemExit("CANONICAL PIPELINE V5.24 FAIL: la extensión histórica final debe permanecer en v5.18+")
+    if len(V6_EXTENSION_COMMANDS) != len(set(V6_EXTENSION_COMMANDS)):
+        raise SystemExit("CANONICAL PIPELINE V5.24 FAIL: extensión v6 contiene comandos duplicados")
     for step in CANONICAL_STEPS:
         target = step.command[-1]
         if target.endswith((".py", ".mjs")) and not Path(target).exists():
+            raise SystemExit(f"CANONICAL PIPELINE V5.24 FAIL: falta {target}")
+    for command in V6_EXTENSION_COMMANDS:
+        target = ROOT / command.split()[-1]
+        if not target.exists():
             raise SystemExit(f"CANONICAL PIPELINE V5.24 FAIL: falta {target}")
     validate_workflow_contracts()
 
 
 def run_pipeline() -> int:
     validate_manifest()
-    for index, step in enumerate(CANONICAL_STEPS, start=1):
-        print(f"[{index:02d}/{len(CANONICAL_STEPS)}] {step.key} · {step.title}", flush=True)
-        completed = subprocess.run(step.command, cwd=ROOT)
-        if completed.returncode:
-            raise SystemExit(f"CANONICAL PIPELINE V5.24 FAIL: paso {index} ({step.key}) terminó con {completed.returncode}")
-    print("CANONICAL PIPELINE V5.24 OK")
+    already_v6 = 'data-experience-system="v6"' in HOME.read_text(encoding="utf-8")
+    if already_v6:
+        print("CANONICAL PIPELINE: baseline v6 detectada; se omiten materializadores HTML históricos.", flush=True)
+        subprocess.run(py("sync_public_version.py"), cwd=ROOT, check=True)
+        for index, command in enumerate(V6_EXTENSION_COMMANDS, start=1):
+            print(f"[v6 {index:02d}/{len(V6_EXTENSION_COMMANDS)}] {command}", flush=True)
+            completed = subprocess.run(command.split(), cwd=ROOT)
+            if completed.returncode:
+                raise SystemExit(f"CANONICAL PIPELINE V5.24 FAIL: extensión v6 {index} terminó con {completed.returncode}")
+    else:
+        for index, step in enumerate(CANONICAL_STEPS, start=1):
+            print(f"[{index:02d}/{len(CANONICAL_STEPS)}] {step.key} · {step.title}", flush=True)
+            completed = subprocess.run(step.command, cwd=ROOT)
+            if completed.returncode:
+                raise SystemExit(f"CANONICAL PIPELINE V5.24 FAIL: paso {index} ({step.key}) terminó con {completed.returncode}")
+    print("CANONICAL PIPELINE V5.24+ OK")
     return 0
 
 
@@ -140,11 +192,13 @@ def main(argv: list[str] | None = None) -> int:
         return run_pipeline()
     if mode == "validate":
         validate_manifest()
-        print("CANONICAL PIPELINE V5.24 MANIFEST OK: 30 pasos; builder == Pages == manifiesto.")
+        print("CANONICAL PIPELINE V5.24+ MANIFEST OK: 30 pasos históricos + extensión v6; builder == Pages == manifiesto.")
         return 0
     if mode == "list":
         for index, step in enumerate(CANONICAL_STEPS, start=1):
             print(f"{index:02d}\t{step.key}\t{step.title}\t{workflow_command(step)}")
+        for index, command in enumerate(V6_EXTENSION_COMMANDS, start=1):
+            print(f"v6-{index:02d}\t{command}")
         return 0
     raise SystemExit(f"uso: {Path(sys.argv[0]).name} [apply|validate|list]")
 
