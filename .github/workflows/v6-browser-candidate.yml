@@ -5,6 +5,9 @@ on:
     branches: [main]
     paths:
       - version.json
+      - site-config.json
+      - sitemap.xml
+      - robots.txt
       - experience-system-v60.json
       - experience-content-v60.json
       - growth-solutions-v51.json
@@ -18,6 +21,8 @@ on:
       - package.json
       - package-lock.json
       - scripts/sync_public_version.py
+      - scripts/apply_search_discovery_v62.py
+      - scripts/validate_search_discovery_v62.py
       - scripts/validate_production_v50.py
       - scripts/apply_experience_v60.py
       - scripts/apply_experience_solutions_v60.py
@@ -87,6 +92,10 @@ jobs:
           python3 scripts/validate_proof_v512.py
           python3 scripts/validate_capability_truth_v521.py
           python3 scripts/validate_decision_compression_v531.py
+          if [ -f assets/data/v6/search-discovery-readiness-v62.json ]; then
+            python3 scripts/validate_search_discovery_v62.py
+            python3 scripts/apply_search_discovery_v62.py --check
+          fi
       - name: Validate E2E JavaScript syntax
         run: |
           node --check playwright.config.mjs
