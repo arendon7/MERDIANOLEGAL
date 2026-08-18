@@ -143,8 +143,47 @@ def normalize_layout_whitespace(text: str) -> str:
     return text
 
 
+def validate_materialized_contract() -> None:
+    result = subprocess.run(
+        [sys.executable, str(ROOT / "scripts/validate_conversion_path_v528.py")],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        detail = (result.stderr or result.stdout).strip()
+        raise RuntimeError(f"v5.28 no supera validator de ruta de conversión: {detail}")
+    if result.stdout.strip():
+        print(result.stdout.strip())
+
+
+def preserve_future_composition(text: str) -> bool:
+    """En v6, v5.28 ya está materializado: se valida y no se reordena el DOM futuro."""
+    if 'data-experience-system="v6"' not in text:
+        return False
+    expected = {
+        'data-conversion-path-v528="true"': "sección de contacto",
+        'data-conversion-readiness-v528="true"': "franja de preparación",
+        'data-conversion-depth-v528="true"': "navegación de profundidad",
+        '<form class="contact-form" id="contact-form"': "formulario canónico",
+        'data-contact-synthesis-v523="true"': "síntesis v5.23",
+        'data-contact-process-v523="true"': "proceso v5.23",
+    }
+    for marker, label in expected.items():
+        count = text.count(marker)
+        if count != 1:
+            raise RuntimeError(f"index.html: v6 debe preservar exactamente una {label} v5.28/v5.23; encontró {count}")
+    if text.count(CSS_LINK) != 1:
+        raise RuntimeError("index.html: v6 debe preservar exactamente un CSS v5.28")
+    validate_materialized_contract()
+    print("CONVERSION PATH V5.28 OK: contrato existente preservado dentro de composición v6; sin reordenar DOM futuro.")
+    return True
+
+
 def patch_home() -> None:
     text = HOME.read_text(encoding="utf-8")
+    if preserve_future_composition(text):
+        return
     text = remove_managed(text, DEPTH_START, DEPTH_END)
     start, end, contact = extract_contact_section(text)
     contact = normalize_contact_block(contact)
@@ -165,27 +204,14 @@ def patch_home() -> None:
     HOME.write_text(text, encoding="utf-8")
 
 
-def validate_materialized_contract() -> None:
-    result = subprocess.run(
-        [sys.executable, str(ROOT / "scripts/validate_conversion_path_v528.py")],
-        cwd=ROOT,
-        capture_output=True,
-        text=True,
-    )
-    if result.returncode != 0:
-        detail = (result.stderr or result.stdout).strip()
-        raise RuntimeError(f"v5.28 no supera validator de ruta de conversión: {detail}")
-    if result.stdout.strip():
-        print(result.stdout.strip())
-
-
 def main() -> int:
     version = json.loads(VERSION_PATH.read_text(encoding="utf-8")).get("version", "0.0.0")
     if semver(version) < (5, 28, 0):
         return 0
     patch_home()
-    validate_materialized_contract()
-    print("CONVERSION PATH V5.28 OK: contacto adelantado, preparación compacta, decks accesibles y semántica nativa preservada.")
+    if 'data-experience-system="v6"' not in HOME.read_text(encoding="utf-8"):
+        validate_materialized_contract()
+        print("CONVERSION PATH V5.28 OK: contacto adelantado, preparación compacta, decks accesibles y semántica nativa preservada.")
     return 0
 
 
