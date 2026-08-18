@@ -50,6 +50,13 @@ require(contract.get("state") == "readiness-disabled", "measurement readiness de
 require(contract.get("activation", {}).get("production_enabled") is False, "measurement readiness no puede activar producción")
 require(contract.get("external_events") == EXPECTED_EVENTS, "eventos externos v6.1 deben ser seis etapas allowlisted")
 require(contract.get("stage_map") == {stage: f"meridiano_funnel_{stage}" for stage in EXPECTED_STAGES}, "stage_map v6.1 no coincide con allowlist")
+require(contract.get("source") == {
+    "event": "meridiano:funnel-v529",
+    "accepted_field": "stage",
+    "ignored_fields": ["event", "target"],
+    "raw_telemetry_adapter_track": "no-op",
+    "deduplication": "first-event-per-stage-per-page-lifetime",
+}, "measurement readiness debe consumir solo la etapa saneada del funnel y deduplicarla por página")
 privacy_contract = contract.get("privacy", {})
 for key in (
     "pii_allowed",
@@ -77,7 +84,12 @@ for marker in (
     "window.MeridianoAnalyticsAdapter",
     "meridiano_funnel_",
     "invalid-plausible-site-id",
+    "unsupported-provider",
     "https://plausible.io/js/",
+    "window.addEventListener('meridiano:funnel-v529'",
+    "const track = () => false;",
+    "state.seenStages.has(stage)",
+    "state.seenStages.add(stage)",
     "eventPropertiesAllowed: false",
     "handoffReferenceAllowed: false",
 ):
@@ -96,13 +108,18 @@ for forbidden in (
     "reference",
     "budget",
     "urgency",
+    "lead_prepared",
+    "solution_view",
+    "cta_click",
+    "detail?.event",
+    "detail?.target",
 ):
-    require(forbidden not in adapter, f"analytics-adapter-v61.js no debe contener {forbidden!r}")
+    require(forbidden not in adapter, f"analytics-adapter-v61.js no debe contener ni consumir {forbidden!r}")
 require("window.plausible(safeEvent.name)" in adapter, "Plausible debe recibir solo el nombre externo saneado")
 require("window.plausible(name)" in adapter, "La cola Plausible debe contener solo nombres externos")
 
 telemetry = TELEMETRY_PATH.read_text(encoding="utf-8") if TELEMETRY_PATH.exists() else ""
-require("MeridianoAnalyticsAdapter" in telemetry and "adapter.track(event.name, event)" in telemetry, "telemetry-v50.js debe conservar el punto de extensión gobernado")
+require("MeridianoAnalyticsAdapter" in telemetry and "adapter.track(event.name, event)" in telemetry, "telemetry-v50.js debe conservar el punto de extensión histórico, aunque v6.1 lo trate como no-op")
 
 privacy = PRIVACY_PATH.read_text(encoding="utf-8") if PRIVACY_PATH.exists() else ""
 for marker in (
@@ -163,6 +180,7 @@ if errors:
 print(
     "MEASUREMENT READINESS V6.1 OK: "
     f"{len(instrumented_paths)} superficies instrumentadas, {len(without_telemetry_paths)} sin telemetría previa "
-    f"({', '.join(sorted(without_telemetry_paths))}), 6 etapas allowlisted, analítica externa deshabilitada, "
-    "cero PII/propiedades/persistencia propias y topología CI cubierta."
+    f"({', '.join(sorted(without_telemetry_paths))}), 6 etapas allowlisted desde funnel saneado, "
+    "deduplicación por etapa/página, analítica externa deshabilitada, cero PII/propiedades/persistencia propias "
+    "y topología CI cubierta."
 )
