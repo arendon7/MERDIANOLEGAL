@@ -6,7 +6,6 @@
     "production_enabled": false,
     "requires_explicit_provider": true,
     "requires_real_site_id": true,
-    "requires_real_script_url": true,
     "requires_privacy_policy_update_before_enable": true
   },
   "privacy": {
@@ -35,19 +34,26 @@
     "contact": "meridiano_funnel_contact",
     "handoff": "meridiano_funnel_handoff"
   },
+  "provider_decision": {
+    "preferred_for_first_activation": "plausible",
+    "reason": "El funnel requiere eventos custom. La activación sigue pendiente de crear el sitio real, obtener su snippet único y actualizar la política pública antes de habilitar tráfico externo."
+  },
   "providers": {
     "plausible": {
-      "status": "supported-not-configured",
+      "status": "adapter-ready-disabled",
       "script_host": "plausible.io",
       "script_path_prefix": "/js/pa-",
-      "custom_event_call": "plausible(eventName)",
-      "notes": "Requiere el snippet único del sitio suministrado por Plausible. No se activa sin URL real."
+      "site_id_format": "pa-<site-token>",
+      "external_payload": "event-name-only",
+      "notes": "El adapter puede cargar el snippet único del sitio cuando analytics.enabled=true, provider=plausible y exista un site_id real válido."
     },
     "umami": {
-      "status": "supported-not-configured",
-      "script_host_policy": "explicit-https-host",
-      "custom_event_call": "umami.track(eventName)",
-      "notes": "Requiere URL HTTPS del tracker y website-id real. No se activa sin ambos."
+      "status": "evaluated-not-wired",
+      "notes": "Es una alternativa privacy-first con eventos custom, pero requiere tracker URL/website-id e infraestructura o cuenta propia. No se declara soporte runtime en v6.1 readiness."
+    },
+    "cloudflare_web_analytics": {
+      "status": "evaluated-not-selected",
+      "notes": "Adecuado para pageviews/RUM privacy-first, pero no cubre el funnel custom requerido por Meridiano en el estado evaluado."
     }
   },
   "semantic_limits": {
