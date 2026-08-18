@@ -13,6 +13,17 @@ on:
       - release-governance-v57.json
       - experience-system-v60.json
       - experience-content-v60.json
+      - index.html
+      - firma.html
+      - perspectivas.html
+      - experiencia.html
+      - demo.html
+      - aviso-legal.html
+      - privacidad.html
+      - terminos.html
+      - 404.html
+      - sectores/**
+      - perspectivas/**
       - .gitignore
       - playwright.config.mjs
       - tests/e2e/**
@@ -137,6 +148,15 @@ on:
       - scripts/validate_decision_compression_v531.py
       - scripts/apply_experience_v60.py
       - scripts/validate_experience_v60.py
+      - scripts/apply_experience_solutions_v60.py
+      - scripts/validate_experience_solutions_v60.py
+      - scripts/apply_experience_sectors_v60.py
+      - scripts/validate_experience_sectors_v60.py
+      - scripts/apply_experience_perspectives_v60.py
+      - scripts/validate_experience_perspectives_v60.py
+      - scripts/apply_experience_final_v60.py
+      - scripts/validate_experience_final_v60.py
+      - scripts/normalize_experience_compat_v60.py
       - scripts/validate_browser_v54.py
       - scripts/run_quality_v55.mjs
       - scripts/validate_quality_v55.py
@@ -147,6 +167,7 @@ on:
       - scripts/sync_public_version.py
       - .github/workflows/build-canonical.yml
       - .github/workflows/pages.yml
+      - .github/workflows/v6-candidate-validation.yml
   workflow_dispatch:
 
 concurrency:
