@@ -93,7 +93,11 @@ def main() -> int:
 
         if current >= (6, 0, 0):
             from apply_experience_v60 import main as apply_experience_v60
+            from normalize_experience_compat_v60 import main as normalize_experience_compat_v60
             result = apply_experience_v60()
+            if result:
+                return result
+            result = normalize_experience_compat_v60()
             if result:
                 return result
 
