@@ -98,6 +98,9 @@ jobs:
           python3 scripts/apply_experience_final_v60.py
           python3 scripts/apply_funnel_trust_v529.py
           python3 scripts/normalize_experience_compat_v60.py
+      - name: Prove first-pass Pages idempotence on v6 baseline
+        if: steps.phase.outputs.is_v6 == 'true'
+        run: git diff --exit-code -- index.html catalog-home-v32.js decision-flow.js site-v3.js page-context.js sitemap.xml robots.txt runtime-config.js site-status.json servicios productos firma.html perspectivas perspectivas.html sectores soluciones experiencia.html demo.html 404.html aviso-legal.html privacidad.html terminos.html manifest.webmanifest CNAME scripts/build_catalog_shells.py
       - name: Validate certified Experience System v6 and general site integrity
         run: |
           python3 scripts/validate_site.py
