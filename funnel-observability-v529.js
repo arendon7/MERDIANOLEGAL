@@ -27,7 +27,7 @@
     'contact-form': 'contact',
     whatsapp: 'contact',
   });
-  const CHECKPOINTS = Object.freeze([
+  const LEGACY_CHECKPOINTS = Object.freeze([
     Object.freeze({ selector: '#necesidades', stage: 'need', target: 'home:needs' }),
     Object.freeze({ selector: '#servicios', stage: 'offer', target: 'home:services' }),
     Object.freeze({ selector: '#productos', stage: 'offer', target: 'home:products' }),
@@ -35,6 +35,14 @@
     Object.freeze({ selector: '#contratacion', stage: 'decision', target: 'home:contracting' }),
     Object.freeze({ selector: '#contacto', stage: 'contact', target: 'home:contact' }),
   ]);
+  const V6_CHECKPOINTS = Object.freeze([
+    Object.freeze({ selector: '#v6-situations', stage: 'need', target: 'home:needs' }),
+    Object.freeze({ selector: '#v6-offer', stage: 'offer', target: 'home:offer' }),
+    Object.freeze({ selector: '.v6-evidence', stage: 'evidence', target: 'home:evidence' }),
+    Object.freeze({ selector: '#v6-commercial-depth', stage: 'decision', target: 'home:commercial-depth' }),
+    Object.freeze({ selector: '#contacto', stage: 'contact', target: 'home:contact' }),
+  ]);
+  const CHECKPOINTS = document.body?.dataset.experienceSystem === 'v6' ? V6_CHECKPOINTS : LEGACY_CHECKPOINTS;
 
   const safe = (value, max = 80) => String(value || '')
     .trim()
