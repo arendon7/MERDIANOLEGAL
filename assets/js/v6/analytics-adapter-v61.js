@@ -86,7 +86,7 @@
     window.plausible.init = window.plausible.init || function plausibleInit(options) {
       window.plausible.o = options || {};
     };
-    window.plausible.init();
+    window.plausible.init({ autoCapturePageviews: false });
 
     const script = document.createElement('script');
     script.async = true;
@@ -129,6 +129,7 @@
         formContentAllowed: false,
         handoffReferenceAllowed: false,
         eventPropertiesAllowed: false,
+        automaticPageviewsAllowed: false,
         persistentStorageIntroduced: false,
         crossSessionIdentifierIntroduced: false,
         fingerprintingIntroduced: false,
