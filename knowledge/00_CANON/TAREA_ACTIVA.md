@@ -14,40 +14,57 @@ Actualizado: 2026-08-18.
 
 ## Ciclo funcional activo
 
-**v6.4 — Fit & Scope Clarity / encaje y cambio de alcance.**
+**v6.4.0 — Fit & Scope Clarity / encaje y cambio de alcance.**
 
 Rama: `feat/v64-fit-scope-clarity`.
-Estado: **fase técnica pre-bump**. `version.json` continúa en v6.3.0 certified hasta que el cambio técnico demuestre same-SHA verde.
+PR: `#162` (Draft hasta certificación same-SHA).
+Release candidate: `version.json = 6.4.0`, fecha `2026-08-18`, canal `github-pages-fit-scope-clarity-candidate`.
 
 ### Problema observable
 
-Las 16 fichas profundas ya elevan a primer nivel resultado/aceptación, entregables, perímetro, proceso, límites y, desde v6.3, requisitos y responsabilidades. Sin embargo, dos piezas de truth comercial siguen incompletamente expuestas:
+Las 16 fichas profundas ya elevan a primer nivel resultado/aceptación, entregables, perímetro, proceso, límites y, desde v6.3, requisitos y responsabilidades. Sin embargo, dos piezas de truth comercial seguían incompletamente expuestas:
 
-- `situations`: describe las situaciones empresariales concretas en las que una modalidad encaja, pero permanece en la profundidad histórica;
-- `supplements`: v6 muestra sus títulos como una frase resumida, pero no expone la explicación canónica de qué ampliación representa cada suplemento.
+- `situations`: describe las situaciones empresariales concretas en las que una modalidad encaja, pero permanecía en la profundidad histórica;
+- `supplements`: v6 mostraba sus títulos como una frase resumida, pero no la explicación canónica de qué ampliación representa cada suplemento.
 
-La consecuencia es una fricción de autocalificación: el comprador entiende qué hace Meridiano, pero todavía debe inferir si esa modalidad corresponde a su situación y qué circunstancias hacen crecer el perímetro base.
+La consecuencia era una fricción de autocalificación: el comprador podía entender qué hace Meridiano, pero todavía debía inferir si esa modalidad correspondía a su situación y qué circunstancias hacían crecer el perímetro base.
 
 v6.4 corrige esa fricción **sin crear contenido jurídico nuevo**. La representación visible se deriva literalmente de `catalog-products-v41/*.json` y `catalog-services-v42/*.json`.
 
-## Alcance técnico v6.4
+## Alcance v6.4
 
 1. contrato `assets/data/v6/fit-scope-clarity-v64.json`;
 2. exactamente 16 fichas gobernadas = 8 productos + 8 servicios;
-3. nueva sección `#v6-fit-scope` inmediatamente después de Resultado y antes de Entregables;
+3. sección `#v6-fit-scope` inmediatamente después de Resultado y antes de Entregables;
 4. panel **Señales de que esta modalidad encaja**, derivado fila por fila de `situations`;
 5. panel **Situaciones que amplían el alcance**, derivado fila por fila de `supplements`;
-6. **sin añadir un octavo hito al TOC**: la navegación ejecutiva v6.3 permanece con sus siete hitos;
+6. **sin añadir un octavo hito al TOC**: la navegación ejecutiva v6.3 permanece con siete hitos;
 7. estilos responsivos aislados en `assets/css/v6/fit-scope-clarity-v64.css`;
 8. materializador `scripts/apply_fit_scope_clarity_v64.py` fail-closed, con `--check` e inserción CSS estable frente a v6.0/v6.3;
 9. validator `scripts/validate_fit_scope_clarity_v64.py` que compara las matrices visibles contra los catálogos y exige orden Resultado → Fit/Scope → Entregables;
 10. E2E sobre las 16 fichas, sin ampliar el TOC, con verificación de orden DOM en producto y servicio representativos;
-11. gate dedicado v6.4 phase-aware: 0/16 exige exactamente 16 drift; 16/16 exige 0; cualquier estado parcial falla;
+11. gate v6.4 phase-aware: 0/16 exige exactamente 16 drift; 16/16 exige 0; cualquier estado parcial falla;
 12. primera pasada exacta `release drift ∪ fit/scope drift`;
 13. Canonical Equivalence incorpora explícitamente `fit/scope drift` al conjunto exacto esperado;
-14. Builder, Candidate y Browser observan/materializan/validan v6.4;
-15. `validate_pages_trigger_v511.py` exige cobertura del nuevo materializador en Builder;
-16. no se crea un paso histórico 31: v6.4 se ejecuta dentro de las extensiones canónicas existentes.
+14. Builder, Pages y `canonical_pipeline_v524.py` comparten exactamente la misma extensión v6, con 30 pasos históricos intactos;
+15. Builder, Candidate y Browser observan/materializan/validan v6.4;
+16. `validate_pages_trigger_v511.py` exige cobertura del nuevo materializador;
+17. no se crea un paso histórico 31: v6.4 se ejecuta dentro de las extensiones canónicas existentes.
+
+## Evidencia técnica previa al bump
+
+SHA técnico certificado: `ecc90b17f0784f53fb4a035c3d91d2ff2938e627`.
+
+Sobre ese SHA quedaron verdes los **6/6 gates aplicables** de la fase técnica:
+
+- V6.4 Fit & Scope Clarity;
+- V6 Candidate Validation;
+- V6 Canonical Builder Equivalence;
+- Release Governance;
+- Graphify;
+- V6 Browser Candidate / axe.
+
+El gate v6.4 demostró boundary exacto de 16 fichas y segunda pasada byte-equivalent. Equivalence aceptó el conjunto exacto `measurement ∪ release ∪ discovery ∪ engagement ∪ fit/scope`. Governance confirmó Builder == Pages == manifiesto con los 30 pasos históricos intactos. Browser/axe ejecutó la nueva spec sobre las 16 fichas.
 
 ## Invariantes
 
@@ -61,16 +78,31 @@ v6.4 corrige esa fricción **sin crear contenido jurídico nuevo**. La represent
 - no reducir cobertura E2E/axe ni relajar Lighthouse;
 - `stable` solo después de gates productivos verdes.
 
-## Criterio para autorizar el bump 6.4.0
+## Criterios de éxito del candidate 6.4.0
 
-Antes de cambiar `version.json`, el SHA técnico debe demostrar:
+El HEAD final con `version.json = 6.4.0` debe demostrar nuevamente:
 
-- exactamente 16 fichas pendientes desde la base v6.3;
-- truth visible `situations + supplements` idéntico a los catálogos;
-- cero páginas fuera de productos/servicios afectadas por v6.4;
-- TOC v6.3 preservado sin `#v6-fit-scope`;
-- segunda pasada byte-equivalent;
-- contratos históricos v4/v5/v6 preservados;
-- Candidate, Fit & Scope Clarity, Canonical Equivalence, Governance, Graphify y suites Browser/axe/Measurement aplicables verdes sobre el mismo SHA.
+- 16/16 fichas reproducen literalmente `situations` y `supplements` canónicos;
+- ninguna ficha fuera de productos/servicios recibe la sección;
+- el TOC permanece en siete hitos y no contiene `#v6-fit-scope`;
+- primera materialización = release drift + fit/scope drift declarado, sin rutas inesperadas;
+- segunda pasada idempotente;
+- 46 HTML, 16 fichas, 1 formulario y 30 pasos históricos intactos;
+- Search Console continúa sin afirmaciones ficticias;
+- analytics externa continúa deshabilitada;
+- Fit & Scope Clarity, Search Discovery, Candidate, Equivalence, Governance, Graphify, Browser/axe y Measurement deben quedar verdes sobre el **mismo SHA 6.4.0** cuando resulten aplicables;
+- después del merge: Builder → Pages → smoke → Browser/axe → Lighthouse → snapshot debe promover `stable` automáticamente.
 
-Solo después de esa evidencia se crea el candidate formal **6.4.0** y se repite la matriz completa antes del merge.
+## Fuera de alcance
+
+- reescribir `situations` o `supplements` por intuición;
+- cambiar entregables, perímetro, método, límites u honorarios;
+- añadir precios o cronogramas no aprobados;
+- activar Search Console o analytics;
+- alterar el formulario o el handoff manual por WhatsApp;
+- crear un paso canónico 31;
+- reducir cobertura E2E/axe o relajar Lighthouse.
+
+## Condición de cierre
+
+v6.4.0 queda funcionalmente cerrada únicamente cuando el candidate same-SHA sea verde, #162 se fusione, Builder materialice la versión y las 16 fichas, Pages complete smoke + Browser/axe + Lighthouse + snapshot y `stable` alcance automáticamente el snapshot canónico de v6.4. Después se realiza el cierre documental `candidate → certified` y se exige nuevamente `main == stable`.
