@@ -2,12 +2,12 @@
 """Sincroniza versión y metadatos públicos de release en cualquier baseline canónica.
 
 Este paso corre tanto en baselines legacy como en Experience v6. En una baseline ya
-v6, donde apply_production_v50.py no vuelve a ejecutarse, debe mantener alineados el
-rótulo visible, runtime-config.js y site-status.json con version.json sin alterar
-capabilities ni configuración productiva.
+v6, donde apply_production_v50.py no vuelve a ejecutarse, debe mantener alineadas
+todas las etiquetas públicas ya versionadas, runtime-config.js y site-status.json
+con version.json sin alterar capabilities ni configuración productiva.
 
-`--check` no escribe: retorna 0 solo cuando las cinco superficies de metadata ya
-coinciden exactamente con version.json + site-config.json.
+`--check` no escribe: retorna 0 solo cuando todas las superficies versionadas y los
+metadatos runtime/status coinciden exactamente con version.json + site-config.json.
 """
 from pathlib import Path
 import json
@@ -18,7 +18,10 @@ from site_config import load_site_config
 
 ROOT = Path(__file__).resolve().parents[1]
 VERSION_PATH = ROOT / "version.json"
-PATTERN = re.compile(r"Web (?:demostrativa|pública) v\d+\.\d+\.\d+")
+WEB_PUBLIC_PATTERN = re.compile(r"Web pública v\d+\.\d+\.\d+")
+WEB_DEMO_PATTERN = re.compile(r"Web demostrativa v\d+\.\d+\.\d+")
+DETAIL_PATTERN = re.compile(r"Ficha v\d+\.\d+\.\d+")
+PUBLIC_DIRS = ("servicios", "productos", "soluciones", "sectores", "perspectivas")
 
 
 def render_runtime(config: dict, version_data: dict) -> str:
@@ -73,19 +76,40 @@ def version_data() -> dict:
     return data
 
 
+def public_html_targets() -> list[Path]:
+    targets = list(ROOT.glob("*.html"))
+    for folder in PUBLIC_DIRS:
+        targets.extend((ROOT / folder).glob("*.html"))
+    return sorted(set(targets))
+
+
+def synchronize_labels(text: str, version: str) -> str:
+    text = WEB_PUBLIC_PATTERN.sub(f"Web pública v{version}", text)
+    text = WEB_DEMO_PATTERN.sub(f"Web demostrativa v{version}", text)
+    text = DETAIL_PATTERN.sub(f"Ficha v{version}", text)
+    return text
+
+
 def expected_texts(config: dict, data: dict) -> dict[str, str]:
     version = str(data["version"])
     expected: dict[str, str] = {}
-    for relative, replacement in {
-        "index.html": f"Web pública v{version}",
-        "catalog-home-v32.js": f"Web demostrativa v{version}",
-        "decision-flow.js": f"Web demostrativa v{version}",
-    }.items():
+
+    for path in public_html_targets():
+        relative = path.relative_to(ROOT).as_posix()
+        text = path.read_text(encoding="utf-8")
+        updated = synchronize_labels(text, version)
+        if updated != text:
+            expected[relative] = updated
+
+    for relative in ("catalog-home-v32.js", "decision-flow.js"):
         path = ROOT / relative
         if not path.exists():
             continue
         text = path.read_text(encoding="utf-8")
-        expected[relative] = PATTERN.sub(replacement, text)
+        updated = synchronize_labels(text, version)
+        if updated != text:
+            expected[relative] = updated
+
     expected["runtime-config.js"] = render_runtime(config, data)
     expected["site-status.json"] = render_status(config, data)
     return expected
@@ -98,12 +122,12 @@ def pending_changes(config: dict, data: dict) -> list[str]:
         current = path.read_text(encoding="utf-8") if path.exists() else ""
         if current != expected:
             pending.append(relative)
-    return pending
+    return sorted(pending)
 
 
 def apply(config: dict, data: dict) -> list[str]:
-    changed = pending_changes(config, data)
     expected = expected_texts(config, data)
+    changed = pending_changes(config, data)
     for relative in changed:
         (ROOT / relative).write_text(expected[relative], encoding="utf-8")
     return changed
