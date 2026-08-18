@@ -226,7 +226,7 @@ jobs:
         run: python3 scripts/apply_decision_action_v515.py
       - name: Apply manual handoff continuity v5.17
         run: python3 scripts/apply_handoff_v517.py
-      - name: Apply handoff observability and canonical extensions v5.18+
+      - name: Apply handoff observability v5.18 + canonical extensions
         run: python3 scripts/apply_handoff_observability_v518.py
       - name: Commit canonical outputs
         run: |
