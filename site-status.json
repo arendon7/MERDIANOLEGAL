@@ -1,7 +1,7 @@
 {
   "name": "Meridiano Legal",
-  "version": "6.0.0",
-  "release_date": "2026-08-17",
+  "version": "6.1.0",
+  "release_date": "2026-08-18",
   "environment": "public",
   "deployment": "github-pages",
   "base_url": "https://arendon7.github.io/MERDIANOLEGAL/",
