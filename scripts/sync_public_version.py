@@ -3,11 +3,13 @@
 
 Este paso corre tanto en baselines legacy como en Experience v6. En una baseline ya
 v6, donde apply_production_v50.py no vuelve a ejecutarse, debe mantener alineadas
-todas las etiquetas públicas ya versionadas, runtime-config.js y site-status.json
-con version.json sin alterar capabilities ni configuración productiva.
+todas las etiquetas públicas ya versionadas, runtime-config.js, site-status.json y
+los lastmod del sitemap con version.json sin alterar capabilities ni configuración
+productiva.
 
 `--check` no escribe: retorna 0 solo cuando todas las superficies versionadas y los
-metadatos runtime/status coinciden exactamente con version.json + site-config.json.
+metadatos runtime/status/sitemap coinciden exactamente con version.json +
+site-config.json.
 """
 from pathlib import Path
 import json
@@ -21,6 +23,7 @@ VERSION_PATH = ROOT / "version.json"
 WEB_PUBLIC_PATTERN = re.compile(r"Web pública v\d+\.\d+\.\d+")
 WEB_DEMO_PATTERN = re.compile(r"Web demostrativa v\d+\.\d+\.\d+")
 DETAIL_PATTERN = re.compile(r"Ficha v\d+\.\d+\.\d+")
+LASTMOD_PATTERN = re.compile(r"<lastmod>\d{4}-\d{2}-\d{2}</lastmod>")
 PUBLIC_DIRS = ("servicios", "productos", "soluciones", "sectores", "perspectivas")
 
 
@@ -90,8 +93,15 @@ def synchronize_labels(text: str, version: str) -> str:
     return text
 
 
+def synchronize_sitemap(text: str, release_date: str) -> str:
+    if not LASTMOD_PATTERN.search(text):
+        raise SystemExit("sitemap.xml no contiene lastmod versionables")
+    return LASTMOD_PATTERN.sub(f"<lastmod>{release_date}</lastmod>", text)
+
+
 def expected_texts(config: dict, data: dict) -> dict[str, str]:
     version = str(data["version"])
+    release_date = str(data["release_date"])
     expected: dict[str, str] = {}
 
     for path in public_html_targets():
@@ -109,6 +119,13 @@ def expected_texts(config: dict, data: dict) -> dict[str, str]:
         updated = synchronize_labels(text, version)
         if updated != text:
             expected[relative] = updated
+
+    sitemap = ROOT / "sitemap.xml"
+    if sitemap.exists():
+        current_sitemap = sitemap.read_text(encoding="utf-8")
+        updated_sitemap = synchronize_sitemap(current_sitemap, release_date)
+        if updated_sitemap != current_sitemap:
+            expected["sitemap.xml"] = updated_sitemap
 
     expected["runtime-config.js"] = render_runtime(config, data)
     expected["site-status.json"] = render_status(config, data)
