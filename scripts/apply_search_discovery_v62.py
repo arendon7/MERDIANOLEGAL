@@ -79,9 +79,6 @@ def indexable_canonicals(base_url: str) -> list[tuple[Path, str]]:
         relative = path.relative_to(ROOT).as_posix()
         noindex = any("noindex" in {part.strip() for part in value.split(",")} for value in signals.robots)
         if noindex:
-            if signals.canonicals:
-                # Un canonical en una página noindex no la hace indexable; simplemente no entra al sitemap.
-                pass
             continue
         if len(signals.canonicals) != 1:
             errors.append(f"{relative}: página indexable debe declarar exactamente un canonical y tiene {len(signals.canonicals)}")
@@ -112,8 +109,10 @@ def render_sitemap(base_url: str) -> str:
 
 
 def render_home(current: str, token: str) -> str:
-    cleaned = VERIFICATION_META.sub("\n", current)
-    cleaned = re.sub(r"\n{3,}", "\n\n", cleaned)
+    has_verification = VERIFICATION_META.search(current) is not None
+    if not token and not has_verification:
+        return current
+    cleaned = VERIFICATION_META.sub("", current)
     if not token:
         return cleaned
     marker = '<meta name="google-site-verification" content="{}">'.format(token)
@@ -130,14 +129,13 @@ def expected_texts() -> dict[str, str]:
     if not CONTRACT.exists():
         return {}
     config = load_site_config()
-    expected = {
+    return {
         "sitemap.xml": render_sitemap(config["base_url"]),
         "index.html": render_home(
             (ROOT / "index.html").read_text(encoding="utf-8"),
             config["search_console_verification"],
         ),
     }
-    return expected
 
 
 def pending_changes() -> list[str]:
