@@ -2,7 +2,7 @@
   "name": "Meridiano Legal Web",
   "version": "6.1.0",
   "release_date": "2026-08-18",
-  "channel": "github-pages-measurement-readiness-candidate",
+  "channel": "github-pages-production-measurement-readiness-certified",
   "commit_scope": "privacy-first-measurement-readiness",
   "source_baseline": "main"
 }
