@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Normaliza compatibilidad de contratos históricos después de materializar Experience v6.
 
-No crea truth nuevo. Reubica confianza v5.29 y evita que etiquetas editoriales v6
-interfieran con anclas textuales históricas usadas por validators certificados.
+No crea truth nuevo. Reubica confianza v5.29, preserva el contrato de contacto v5.28
+y evita que etiquetas editoriales v6 interfieran con anclas históricas certificadas.
 """
 from __future__ import annotations
 
@@ -14,8 +14,52 @@ HOME = ROOT / "index.html"
 SOLUTIONS = ROOT / "soluciones"
 TRUST_START = "<!-- FUNNEL-TRUST-V529:START -->"
 TRUST_END = "<!-- FUNNEL-TRUST-V529:END -->"
+READINESS_START = "<!-- CONVERSION-READINESS-V528:START -->"
+READINESS_END = "<!-- CONVERSION-READINESS-V528:END -->"
 SOLUTION_LEGACY_START = "<!-- EXPERIENCE-V60-SOLUTION-LEGACY:START -->"
 CONTACT_PATTERN = re.compile(r'<section class="v6-section v6-contact" id="contacto" data-conversion-path-v528="true"')
+READINESS_MARKUP = f'''{READINESS_START}
+<div class="contact-readiness-v528" data-conversion-readiness-v528="true" role="region" aria-label="Información mínima para presentar una necesidad">
+  <div class="contact-readiness-copy-v528">
+    <span>PARA AVANZAR</span>
+    <strong>Cuéntenos tres cosas. El alcance profesional se define después.</strong>
+    <p>No envíe documentos ni información confidencial en esta etapa. Primero validamos contexto, conflicto, disponibilidad y el alcance a cotizar.</p>
+  </div>
+  <div class="contact-readiness-items-v528" tabindex="0" role="region" aria-label="Datos mínimos de la solicitud">
+    <span><b>1</b><small>Decisión o problema</small></span>
+    <span><b>2</b><small>Plazo o urgencia</small></span>
+    <span><b>3</b><small>Resultado esperado</small></span>
+  </div>
+</div>
+{READINESS_END}'''
+
+
+def normalize_home_contact_contract(text: str) -> str:
+    if not CONTACT_PATTERN.search(text):
+        raise RuntimeError("Experience v6: falta contacto canónico v6 para preservar v5.28")
+
+    readiness_count = text.count('data-conversion-readiness-v528="true"')
+    if readiness_count == 0:
+        pattern = re.compile(r'(<div class="v6-contact-copy">.*?)(</div><div class="v6-contact-form">)', re.S)
+        text, count = pattern.subn(lambda match: match.group(1) + READINESS_MARKUP + match.group(2), text, count=1)
+        if count != 1:
+            raise RuntimeError("Experience v6: no fue posible insertar preparación v5.28 dentro del contacto")
+    elif readiness_count != 1:
+        raise RuntimeError(f"Experience v6: preparación v5.28 debe ser única; encontró {readiness_count}")
+
+    if text.count(READINESS_START) != 1 or text.count(READINESS_END) != 1:
+        raise RuntimeError("Experience v6: marcadores de preparación v5.28 deben permanecer únicos")
+
+    # El portal real continúa deshabilitado. En el shell v6 se evita la etiqueta
+    # heredada 'Demo de cliente' y se conserva una frontera demostrativa explícita.
+    text = re.sub(
+        r'(<a\b[^>]*\bhref="demo\.html(?:#[^"]*)?"[^>]*>)\s*Demo de cliente\s*(</a>)',
+        r'\1Centro demo\2',
+        text,
+    )
+    if re.search(r'>\s*Demo de cliente\s*<', text, re.I):
+        raise RuntimeError("Experience v6: el shell público no debe presentar la demo como 'Demo de cliente'")
+    return text
 
 
 def normalize_home_trust() -> None:
@@ -37,6 +81,7 @@ def normalize_home_trust() -> None:
     sectors = text.find('id="sectores"')
     if min(commercial, trust_pos, contact_pos, sectors) < 0 or not (commercial < trust_pos < contact_pos < sectors):
         raise RuntimeError("Experience v6: secuencia contratación → confianza → contacto → profundidad inválida")
+    text = normalize_home_contact_contract(text)
     HOME.write_text(text, encoding="utf-8")
 
 
@@ -62,7 +107,7 @@ def normalize_solution_labels() -> None:
 def main() -> int:
     normalize_home_trust()
     normalize_solution_labels()
-    print("EXPERIENCE V6 COMPAT OK: confianza v5.29 y anclas históricas v5.31 preservadas.")
+    print("EXPERIENCE V6 COMPAT OK: confianza v5.29, contacto v5.28, capability truth y anclas v5.31 preservados.")
     return 0
 
 
