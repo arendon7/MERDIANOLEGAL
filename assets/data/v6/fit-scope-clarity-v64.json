@@ -1,0 +1,30 @@
+{
+  "version": "6.4.0",
+  "name": "Fit & Scope Clarity",
+  "purpose": "Hacer visible cuándo encaja cada oferta y qué situaciones amplían su alcance, sin crear contenido jurídico nuevo.",
+  "truth": {
+    "catalog_fields": ["situations", "supplements"],
+    "catalog_sources": ["catalog-products-v41", "catalog-services-v42"],
+    "copy_policy": "literal"
+  },
+  "scope": {
+    "detail_pages": 16,
+    "products": 8,
+    "services": 8
+  },
+  "presentation": {
+    "section_id": "v6-fit-scope",
+    "eyebrow": "ENCAJE Y CAMBIO DE ALCANCE",
+    "title": "Cuándo encaja esta modalidad y cuándo debe ampliarse.",
+    "situations_title": "Señales de que esta modalidad encaja",
+    "supplements_title": "Situaciones que amplían el alcance",
+    "intro": "La propuesta debe partir de una necesidad reconocible y de un perímetro explícito. Estas señales y ampliaciones provienen de la ficha canónica; no sustituyen la definición final del alcance."
+  },
+  "invariants": [
+    "No modificar situations ni supplements de los catálogos.",
+    "No inventar supuestos de encaje, exclusiones, precios o plazos.",
+    "No sustituir perimeter ni limits.",
+    "No crear un paso histórico 31.",
+    "No alterar analytics, Search Console, formulario, WhatsApp o capability truth."
+  ]
+}
