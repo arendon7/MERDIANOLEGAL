@@ -34,7 +34,6 @@ LEGACY_NAV_MARKERS = {
 
 V6_NAV_MARKERS = {
     'class="v6-detail-nav"',
-    'href="#v6-question"',
     'href="#v6-deliverables"',
     'href="#v6-perimeter"',
     'href="#v6-process"',
@@ -68,7 +67,12 @@ def validate() -> list[str]:
     for path in TARGETS:
         text = path.read_text(encoding='utf-8')
         experience_v6 = 'data-experience-system="v6"' in text
-        required = COMMON_PAGE_MARKERS | (V6_NAV_MARKERS if experience_v6 else LEGACY_NAV_MARKERS)
+        required = set(COMMON_PAGE_MARKERS)
+        if experience_v6:
+            required |= V6_NAV_MARKERS
+            required.add('href="#v6-result"' if path.parent.name == 'productos' else 'href="#v6-question"')
+        else:
+            required |= LEGACY_NAV_MARKERS
         for marker in sorted(required):
             if marker not in text:
                 errors.append(f'{path.relative_to(ROOT)}: falta {marker!r}')
