@@ -4,22 +4,137 @@ on:
   pull_request:
     branches: [main]
     paths:
+      - version.json
+      - experience-system-v60.json
+      - experience-content-v60.json
+      - growth-solutions-v51.json
+      - cro-solutions-v52.json
+      - catalog-products-v41/**
+      - catalog-services-v42/**
+      - assets/css/v6/**
+      - funnel-observability-v529.js
+      - scripts/enrich_editorial_pages.py
+      - scripts/apply_experience_v60.py
+      - scripts/apply_experience_solutions_v60.py
+      - scripts/apply_experience_sectors_v60.py
+      - scripts/apply_experience_perspectives_v60.py
+      - scripts/apply_experience_final_v60.py
+      - scripts/normalize_experience_compat_v60.py
+      - scripts/apply_funnel_trust_v529.py
+      - scripts/validate_experience_v60.py
+      - scripts/validate_experience_solutions_v60.py
+      - scripts/validate_experience_sectors_v60.py
+      - scripts/validate_experience_perspectives_v60.py
+      - scripts/validate_experience_final_v60.py
+      - scripts/validate_funnel_trust_v529.py
+      - scripts/validate_proof_v512.py
+      - scripts/validate_capability_truth_v521.py
+      - scripts/validate_editorial_context.py
+      - .github/workflows/build-canonical.yml
       - .github/workflows/v6-candidate-validation.yml
-      - .github/workflows/v6-live-release-diagnostic.yml
+      - index.html
+      - perspectivas.html
+      - firma.html
+      - experiencia.html
+      - demo.html
+      - aviso-legal.html
+      - privacidad.html
+      - terminos.html
+      - 404.html
+      - productos/**
+      - servicios/**
+      - soluciones/**
+      - sectores/**
+      - perspectivas/**
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: meridiano-v6-candidate-diag-${{ github.event_name }}-${{ github.ref }}
+  group: meridiano-v6-candidate-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  diagnostic_marker:
-    name: Diagnostic branch marker
+  validate:
+    name: Materialize and validate v6 candidate
     runs-on: ubuntu-latest
-    timeout-minutes: 2
+    timeout-minutes: 8
     steps:
-      - name: Confirm isolated diagnostic branch
-        run: echo "Temporary diagnostic branch; canonical candidate workflow remains unchanged on main."
+      - name: Checkout candidate
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: "3.12"
+      - name: Compile v6 renderers and validators
+        run: python3 -m py_compile scripts/apply_experience_v60.py scripts/apply_experience_solutions_v60.py scripts/apply_experience_sectors_v60.py scripts/apply_experience_perspectives_v60.py scripts/apply_experience_final_v60.py scripts/normalize_experience_compat_v60.py scripts/validate_experience_v60.py scripts/validate_experience_solutions_v60.py scripts/validate_experience_sectors_v60.py scripts/validate_experience_perspectives_v60.py scripts/validate_experience_final_v60.py scripts/validate_proof_v512.py
+      - name: Materialize first v6 pass
+        run: |
+          python3 scripts/apply_experience_v60.py
+          python3 scripts/apply_experience_solutions_v60.py
+          python3 scripts/apply_experience_sectors_v60.py
+          python3 scripts/apply_experience_perspectives_v60.py
+          python3 scripts/apply_experience_final_v60.py
+          python3 scripts/apply_funnel_trust_v529.py
+          python3 scripts/normalize_experience_compat_v60.py
+      - name: Validate v6 surface contracts
+        run: |
+          python3 scripts/validate_experience_v60.py
+          python3 scripts/validate_experience_solutions_v60.py
+          python3 scripts/validate_experience_sectors_v60.py
+          python3 scripts/validate_experience_perspectives_v60.py
+          python3 scripts/validate_experience_final_v60.py
+      - name: Validate preserved historical contracts
+        run: |
+          python3 scripts/validate_funnel_trust_v529.py
+          python3 scripts/validate_proof_v512.py
+          python3 scripts/validate_capability_truth_v521.py
+          python3 scripts/validate_editorial_context.py
+      - name: Capture first materialized diff
+        run: |
+          git diff -- index.html perspectivas.html firma.html experiencia.html demo.html aviso-legal.html privacidad.html terminos.html 404.html productos servicios soluciones sectores perspectivas > /tmp/v6-pass-1.diff
+          test -s /tmp/v6-pass-1.diff
+      - name: Prove second-pass idempotence
+        run: |
+          python3 scripts/apply_experience_v60.py
+          python3 scripts/apply_experience_solutions_v60.py
+          python3 scripts/apply_experience_sectors_v60.py
+          python3 scripts/apply_experience_perspectives_v60.py
+          python3 scripts/apply_experience_final_v60.py
+          python3 scripts/apply_funnel_trust_v529.py
+          python3 scripts/normalize_experience_compat_v60.py
+          python3 scripts/validate_experience_v60.py
+          python3 scripts/validate_experience_solutions_v60.py
+          python3 scripts/validate_experience_sectors_v60.py
+          python3 scripts/validate_experience_perspectives_v60.py
+          python3 scripts/validate_experience_final_v60.py
+          python3 scripts/validate_funnel_trust_v529.py
+          python3 scripts/validate_proof_v512.py
+          python3 scripts/validate_capability_truth_v521.py
+          python3 scripts/validate_editorial_context.py
+          git diff -- index.html perspectivas.html firma.html experiencia.html demo.html aviso-legal.html privacidad.html terminos.html 404.html productos servicios soluciones sectores perspectivas > /tmp/v6-pass-2.diff
+          if ! cmp --silent /tmp/v6-pass-1.diff /tmp/v6-pass-2.diff; then
+            echo "Experience System v6 dejó de ser idempotente:" >&2
+            diff -u /tmp/v6-pass-1.diff /tmp/v6-pass-2.diff || true
+            exit 1
+          fi
+          echo "Experience System v6 is idempotent across all 46 public surfaces."
+      - name: Verify scoped v6 materialization boundary
+        run: |
+          CHANGED="$(git diff --name-only)"
+          printf '%s\n' "$CHANGED"
+          UNEXPECTED="$(printf '%s\n' "$CHANGED" | grep -Ev '^(index\.html|perspectivas\.html|firma\.html|experiencia\.html|demo\.html|aviso-legal\.html|privacidad\.html|terminos\.html|404\.html|productos/[^/]+\.html|servicios/[^/]+\.html|soluciones/[^/]+\.html|sectores/[^/]+\.html|perspectivas/[^/]+\.html)$' || true)"
+          if [ -n "$UNEXPECTED" ]; then
+            echo "El renderer v6 modificó archivos públicos fuera de las 46 superficies certificadas:" >&2
+            printf '%s\n' "$UNEXPECTED" >&2
+            exit 1
+          fi
+          COUNT="$(printf '%s\n' "$CHANGED" | sed '/^$/d' | wc -l | tr -d ' ')"
+          if [ "$COUNT" -lt 1 ] || [ "$COUNT" -gt 46 ]; then
+            echo "La materialización sobre baseline v6 debe modificar entre 1 y 46 superficies; encontró $COUNT." >&2
+            exit 1
+          fi
+          echo "Scoped materialization OK: $COUNT superficie(s) cambiada(s); cobertura estructural 46/46 validada por los validators."
