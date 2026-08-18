@@ -4,6 +4,7 @@ on:
   pull_request:
     branches: [main]
     paths:
+      - version.json
       - site-config.json
       - sitemap.xml
       - robots.txt
@@ -39,12 +40,15 @@ jobs:
           python-version: "3.12"
       - name: Compile discovery scripts
         run: python3 -m py_compile scripts/site_config.py scripts/sync_public_version.py scripts/apply_search_discovery_v62.py scripts/validate_search_discovery_v62.py scripts/validate_quality_v48.py
-      - name: Capture declared discovery drift
+      - name: Capture declared release and discovery drift
         run: |
-          python3 scripts/sync_public_version.py --check || true
+          python3 scripts/sync_public_version.py --check > /tmp/release-before.txt 2>&1 || true
+          cat /tmp/release-before.txt
+          sed -n 's/^- //p' /tmp/release-before.txt | sort -u > /tmp/release-expected.txt
           python3 scripts/apply_search_discovery_v62.py --check > /tmp/discovery-before.txt 2>&1 || true
           cat /tmp/discovery-before.txt
           sed -n 's/^- //p' /tmp/discovery-before.txt | sort -u > /tmp/discovery-expected.txt
+          cat /tmp/release-expected.txt /tmp/discovery-expected.txt | sed '/^$/d' | sort -u > /tmp/canonical-expected.txt
       - name: Materialize search discovery readiness
         run: |
           python3 scripts/sync_public_version.py
@@ -57,13 +61,13 @@ jobs:
           python3 scripts/apply_search_discovery_v62.py --check
       - name: Prove exact first-pass boundary
         run: |
-          git diff --name-only | sort -u > /tmp/discovery-actual.txt
-          echo '--- expected discovery drift ---'
-          cat /tmp/discovery-expected.txt
+          git diff --name-only | sort -u > /tmp/canonical-actual.txt
+          echo '--- expected release ∪ discovery drift ---'
+          cat /tmp/canonical-expected.txt
           echo '--- actual first-pass drift ---'
-          cat /tmp/discovery-actual.txt
-          if ! diff -u /tmp/discovery-expected.txt /tmp/discovery-actual.txt; then
-            echo 'Search discovery first-pass boundary diverged from the exact declared drift.' >&2
+          cat /tmp/canonical-actual.txt
+          if ! diff -u /tmp/canonical-expected.txt /tmp/canonical-actual.txt; then
+            echo 'Search discovery first-pass boundary diverged from exact release ∪ discovery drift.' >&2
             exit 1
           fi
       - name: Prove second-pass idempotence
@@ -77,4 +81,6 @@ jobs:
             diff -u /tmp/discovery-pass-1.diff /tmp/discovery-pass-2.diff || true
             exit 1
           }
+          python3 scripts/sync_public_version.py --check
+          python3 scripts/apply_search_discovery_v62.py --check
           python3 scripts/validate_search_discovery_v62.py
