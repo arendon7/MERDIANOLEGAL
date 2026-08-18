@@ -86,6 +86,7 @@ on:
       - decision-compression-v531.css
       - assets/**
       - assets/css/v6/**
+      - scripts/validate_*.py
       - scripts/build_catalog_shells.py
       - scripts/render_catalog_static.mjs
       - scripts/render_services_v42.mjs
