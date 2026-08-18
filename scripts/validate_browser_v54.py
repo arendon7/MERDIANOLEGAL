@@ -54,8 +54,6 @@ def main() -> int:
     require("pageerror" in helpers and "console.error" in helpers, "helpers debe capturar errores runtime")
     require("scrollWidth" in helpers and "clientWidth" in helpers, "helpers debe controlar overflow horizontal")
 
-    # v5.17 extiende la cobertura sin sumar una entrada E2E: el fixture observa el
-    # handoff que ya ocurre dentro del test de formulario y verifica integridad/stale.
     for marker in (
         "meridiano:handoff-draft-v517",
         "__meridianoHandoffGuardV517",
@@ -106,7 +104,17 @@ def main() -> int:
     require("Validate browser E2E infrastructure v5.4" in pages, "quality no valida infraestructura v5.4")
     require("name: Browser E2E on deployed Pages" in pages, "falta job Browser E2E")
     require("needs: [deploy, live_smoke]" in pages, "Browser E2E debe depender de deploy y smoke HTTP")
-    require("timeout 360s npx playwright install --with-deps chromium webkit" in pages, "instalación de navegadores debe tener timeout explícito")
+    require("timeout 900s npx playwright install --with-deps chromium webkit" in pages, "instalación de navegadores debe usar timeout resiliente de 900s")
+    for marker in (
+        "Prefer official Ubuntu mirrors for browser dependencies",
+        "/etc/apt/apt-mirrors.txt",
+        "https://archive.ubuntu.com/ubuntu/",
+        "https://security.ubuntu.com/ubuntu/",
+        'Acquire::Retries "3";',
+        'Acquire::http::Timeout "30";',
+        'Acquire::https::Timeout "30";',
+    ):
+        require(marker in pages, f"Pages no endurece instalación Playwright: falta {marker}")
     require("npm run test:e2e" in pages, "job Browser E2E no ejecuta la suite")
     if version >= (5, 6, 0):
         require("needs: [browser_e2e, lighthouse_quality]" in pages, "stable debe depender de Browser E2E y Lighthouse desde v5.6")
@@ -129,13 +137,11 @@ def main() -> int:
     ):
         require(marker in build, f"build-canonical no vigila {marker}")
 
-    # En PR se valida el contrato fuente. Una vez el builder materializa v5.17,
-    # este mismo gate de Pages detecta el bloque y ejecuta el validator completo.
     if "HANDOFF-V517:START" in (R / "index.html").read_text(encoding="utf-8"):
         completed = subprocess.run([sys.executable, str(R / "scripts/validate_handoff_v517.py")], cwd=R)
         require(completed.returncode == 0, "validator materializado v5.17 falló")
 
-    print("VALIDACIÓN BROWSER V5.4/V5.17 OK: runtime, handoff manual, stale protection, Playwright multi-browser y gate previo a stable íntegros.")
+    print("VALIDACIÓN BROWSER V5.4/V6 OK: runtime, handoff manual, Playwright multi-browser y gate resiliente previo a stable íntegros.")
     return 0
 
 
