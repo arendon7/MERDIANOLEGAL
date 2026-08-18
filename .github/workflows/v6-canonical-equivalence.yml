@@ -1,0 +1,124 @@
+name: V6 canonical builder equivalence
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - version.json
+      - experience-system-v60.json
+      - experience-content-v60.json
+      - catalog-products-v41/**
+      - catalog-services-v42/**
+      - growth-solutions-v51.json
+      - cro-solutions-v52.json
+      - assets/**
+      - scripts/**
+      - .github/workflows/build-canonical.yml
+      - .github/workflows/v6-canonical-equivalence.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: meridiano-v6-canonical-equivalence-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  equivalence:
+    name: Reproduce canonical builder through v6
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout candidate
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: "3.12"
+      - name: Setup Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Generate QA dependency lockfile
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+      - name: Reproduce canonical chain v3 to v5.18
+        run: |
+          python3 scripts/build_catalog_shells.py
+          node scripts/render_catalog_static.mjs
+          node scripts/render_services_v42.mjs
+          python3 scripts/enrich_editorial_pages.py
+          python3 scripts/apply_commercial_v43.py
+          python3 scripts/apply_visual_assets.py
+          python3 scripts/apply_ux_v45.py
+          python3 scripts/apply_detail_ux_v46.py
+          python3 scripts/apply_editorial_ux_v47.py
+          python3 scripts/normalize_editorial_v47.py
+          python3 scripts/normalize_growth_compat_v51.py
+          python3 scripts/apply_quality_v48.py
+          python3 scripts/normalize_quality_v48.py
+          python3 scripts/apply_operations_v49.py
+          python3 scripts/sync_public_version.py
+          python3 scripts/apply_production_v50.py
+          python3 scripts/apply_growth_v51.py
+          python3 scripts/finalize_growth_v51.py
+          python3 scripts/apply_cro_v52.py
+          python3 scripts/apply_authority_v53.py
+          python3 scripts/apply_decision_v58.py
+          python3 scripts/apply_commercial_v59.py
+          python3 scripts/apply_conversion_v510.py
+          python3 scripts/apply_engagement_v511.py
+          python3 scripts/apply_proof_v512.py
+          python3 scripts/apply_commercial_brief_v513.py
+          python3 scripts/apply_recommendation_v514.py
+          python3 scripts/apply_decision_action_v515.py
+          python3 scripts/apply_handoff_v517.py
+          python3 scripts/apply_handoff_observability_v518.py
+      - name: Materialize certified Experience System v6
+        run: |
+          python3 scripts/apply_experience_v60.py
+          python3 scripts/apply_experience_solutions_v60.py
+          python3 scripts/apply_experience_sectors_v60.py
+          python3 scripts/apply_experience_perspectives_v60.py
+          python3 scripts/apply_experience_final_v60.py
+          python3 scripts/apply_funnel_trust_v529.py
+          python3 scripts/normalize_experience_compat_v60.py
+      - name: Validate certified Experience System v6
+        run: |
+          python3 scripts/validate_experience_v60.py
+          python3 scripts/validate_experience_solutions_v60.py
+          python3 scripts/validate_experience_sectors_v60.py
+          python3 scripts/validate_experience_perspectives_v60.py
+          python3 scripts/validate_experience_final_v60.py
+          python3 scripts/validate_funnel_trust_v529.py
+          python3 scripts/validate_proof_v512.py
+          python3 scripts/validate_capability_truth_v521.py
+          python3 scripts/validate_editorial_context.py
+      - name: Prove second-pass v6 idempotence
+        run: |
+          git diff -- index.html perspectivas.html firma.html experiencia.html demo.html aviso-legal.html privacidad.html terminos.html 404.html productos servicios soluciones sectores perspectivas > /tmp/canonical-pass-1.diff
+          python3 scripts/apply_experience_v60.py
+          python3 scripts/apply_experience_solutions_v60.py
+          python3 scripts/apply_experience_sectors_v60.py
+          python3 scripts/apply_experience_perspectives_v60.py
+          python3 scripts/apply_experience_final_v60.py
+          python3 scripts/apply_funnel_trust_v529.py
+          python3 scripts/normalize_experience_compat_v60.py
+          git diff -- index.html perspectivas.html firma.html experiencia.html demo.html aviso-legal.html privacidad.html terminos.html 404.html productos servicios soluciones sectores perspectivas > /tmp/canonical-pass-2.diff
+          cmp --silent /tmp/canonical-pass-1.diff /tmp/canonical-pass-2.diff || {
+            echo "Canonical v6 materialization is not idempotent." >&2
+            diff -u /tmp/canonical-pass-1.diff /tmp/canonical-pass-2.diff || true
+            exit 1
+          }
+      - name: Report canonical materialization boundary
+        run: |
+          CHANGED="$(git diff --name-only)"
+          printf '%s\n' "$CHANGED"
+          if printf '%s\n' "$CHANGED" | grep -E '^\.github/'; then
+            echo "Canonical materialization unexpectedly changed workflow files." >&2
+            exit 1
+          fi
