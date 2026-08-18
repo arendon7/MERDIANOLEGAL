@@ -43,7 +43,6 @@ HTML_MARKERS = {
     "og:url",
     "twitter:card",
     "data-journey-bar",
-    'aria-current="page"',
 }
 
 JS_MARKERS = {
@@ -89,9 +88,16 @@ def validate() -> list[str]:
 
     for relative in sorted(CATALOG_FILES):
         text = (ROOT / relative).read_text(encoding="utf-8")
+        experience_v6 = 'data-experience-system="v6"' in text
         for marker in sorted(HTML_MARKERS):
             if marker not in text:
                 errors.append(f"{relative}: falta {marker!r}")
+        if experience_v6:
+            for marker in ('class="v6-detail-nav"', 'aria-label="Navegación de la ficha v6"', 'data-experience-v60-cta="journey"'):
+                if marker not in text:
+                    errors.append(f"{relative}: contexto v6 no contiene {marker!r}")
+        elif 'aria-current="page"' not in text:
+            errors.append(f"{relative}: la navegación legacy debe identificar la página actual con aria-current")
         if "?context=" not in text or "&amp;need=" not in text:
             errors.append(f"{relative}: el enlace de contacto no conserva contexto explícito")
         if text.count("application/ld+json") < 2:
@@ -107,7 +113,7 @@ def main() -> int:
         for error in errors:
             print(f"- {error}")
         return 1
-    print("VALIDACIÓN DE CONTEXTO OK: 16 fichas, navegación, contacto, versión y datos estructurados íntegros.")
+    print("VALIDACIÓN DE CONTEXTO OK: 16 fichas, navegación, contacto, versión y datos estructurados íntegros; Experience v6 compatible cuando aplica.")
     return 0
 
 
