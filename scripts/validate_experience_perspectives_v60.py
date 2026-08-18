@@ -57,6 +57,28 @@ def tag_text(fragment: str, tag: str, class_name: str | None = None) -> str:
     return clean(match.group(1)) if match else ""
 
 
+def balanced_tag_block(value: str, tag: str, class_name: str) -> str:
+    opening = re.search(
+        rf'<{tag}\b[^>]*class="[^"]*\b{re.escape(class_name)}\b[^"]*"[^>]*>',
+        value,
+        flags=re.I,
+    )
+    if not opening:
+        fail(f"falta {tag}.{class_name}")
+    token_re = re.compile(rf'</?{tag}\b[^>]*>', flags=re.I)
+    depth = 0
+    for token in token_re.finditer(value, opening.start()):
+        raw = token.group(0)
+        if raw.startswith("</"):
+            depth -= 1
+            if depth == 0:
+                return value[opening.start():token.end()]
+        elif not raw.rstrip().endswith("/>"):
+            depth += 1
+    fail(f"{tag}.{class_name} no está balanceado")
+    return ""
+
+
 def validate_article(path: Path) -> None:
     slug = path.stem
     value = text(path)
@@ -87,15 +109,30 @@ def validate_article(path: Path) -> None:
 
     hero = re.search(r'<section\b[^>]*class="[^"]*v6-perspective-hero[^"]*"[^>]*>(.*?)</section>', value, flags=re.S)
     guide = re.search(r'<section\b[^>]*class="[^"]*v6-reading-guide[^"]*"[^>]*>(.*?)</section>', value, flags=re.S)
-    body = re.search(r'<article\b[^>]*class="article-body"[^>]*>(.*?)</article>', value, flags=re.S)
-    aside = re.search(r'<aside\b[^>]*class="article-aside"[^>]*>(.*?)</aside>', value, flags=re.S)
-    if not all((hero, guide, body, aside)):
+    if not hero or not guide:
+        fail(f"{slug}: hero o guía v6 ausente")
+    body = balanced_tag_block(value, "article", "article-body")
+    aside = balanced_tag_block(value, "aside", "article-aside")
+    if not body or not aside:
         fail(f"{slug}: estructura de lectura v6 incompleta")
-    assert_contains(hero.group(1), [tag_text(hero.group(1), "h1"), tag_text(hero.group(1), "p", "v6-lead")], f"{slug}: hero")
-    if len(re.findall(r'<a\b[^>]*href="#[^"]+"', guide.group(1))) < 4:
-        fail(f"{slug}: guía de lectura insuficiente")
-    if len(re.findall(r"<h2\b", body.group(1))) < 4:
-        fail(f"{slug}: cuerpo editorial perdió profundidad")
+
+    title = tag_text(hero.group(1), "h1")
+    lead = tag_text(hero.group(1), "p", "v6-lead")
+    if not title or not lead:
+        fail(f"{slug}: hero editorial incompleto")
+
+    guide_links = re.findall(r'<a\b[^>]*href="#([^"]+)"', guide.group(1))
+    if not guide_links:
+        fail(f"{slug}: guía de lectura sin destinos")
+    missing_targets = [target for target in guide_links if f'id="{target}"' not in body]
+    if missing_targets:
+        fail(f"{slug}: cuerpo editorial truncado; faltan destinos {missing_targets}")
+    body_h2_ids = set(re.findall(r'<h2\b[^>]*id="([^"]+)"', body))
+    if not set(guide_links).issubset(body_h2_ids):
+        fail(f"{slug}: recorrido y secciones del cuerpo no coinciden")
+    if body.count("<article") != body.count("</article>"):
+        fail(f"{slug}: article-body quedó desbalanceado")
+
     if "LECTURAS RELACIONADAS" not in value or "DE LA LECTURA A LA DECISIÓN" not in value:
         fail(f"{slug}: faltan conexiones editoriales/autoridad")
     for managed in re.findall(r'data-authority-solution="([^"]+)"', value):
@@ -153,7 +190,7 @@ def main() -> int:
     for path in paths:
         validate_article(path)
     validate_hub()
-    print("VALIDATE EXPERIENCE V6 WAVE 5 OK: 6 artículos abiertos + hub, autoridad/editorial intactos y seis lecturas visibles.")
+    print("VALIDATE EXPERIENCE V6 WAVE 5 OK: 6 artículos abiertos completos + hub, autoridad/editorial intactos y recorrido proporcional al cuerpo.")
     return 0
 
 
