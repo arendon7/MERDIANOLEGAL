@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from pathlib import Path
 import json
-import re
 import subprocess
 import sys
 
@@ -18,6 +17,8 @@ TELEMETRY_PATH = ROOT / "telemetry-v50.js"
 PUBLIC_DIRS = ("servicios", "productos", "soluciones", "sectores", "perspectivas")
 EXPECTED_STAGES = ["need", "offer", "evidence", "decision", "contact", "handoff"]
 EXPECTED_EVENTS = [f"meridiano_funnel_{stage}" for stage in EXPECTED_STAGES]
+EXPECTED_WITHOUT_TELEMETRY = {"404.html", "demo.html", "experiencia.html"}
+EXPECTED_INSTRUMENTED = 43
 errors: list[str] = []
 
 
@@ -105,24 +106,26 @@ for marker in (
 ):
     require(marker in privacy, f"privacidad.html debe conservar la promesa vigente: {marker!r}")
 
-instrumented = 0
-without_telemetry = 0
+instrumented_paths: set[str] = set()
+without_telemetry_paths: set[str] = set()
 for path in html_targets():
     text = path.read_text(encoding="utf-8")
     telemetry_count = text.count("telemetry-v50.js")
     adapter_count = text.count("analytics-adapter-v61.js")
-    relative = path.relative_to(ROOT)
+    relative = path.relative_to(ROOT).as_posix()
     if telemetry_count:
         require(telemetry_count == 1, f"{relative}: telemetría v5.0 debe ser única")
         require(adapter_count == 1, f"{relative}: adapter v6.1 debe ser único donde existe telemetría")
         if telemetry_count == 1 and adapter_count == 1:
             require(text.find("analytics-adapter-v61.js") < text.find("telemetry-v50.js"), f"{relative}: adapter debe cargar antes de telemetría")
-        instrumented += 1
+        instrumented_paths.add(relative)
     else:
         require(adapter_count == 0, f"{relative}: no debe añadirse adapter sin telemetría previa")
-        without_telemetry += 1
+        without_telemetry_paths.add(relative)
 
-require(instrumented >= 30, f"Cobertura de readiness inesperadamente baja: {instrumented}")
+require(len(instrumented_paths) == EXPECTED_INSTRUMENTED, f"Measurement v6.1 debe instrumentar exactamente {EXPECTED_INSTRUMENTED} superficies; encontró {len(instrumented_paths)}")
+require(without_telemetry_paths == EXPECTED_WITHOUT_TELEMETRY, f"Superficies sin telemetría cambiaron: {sorted(without_telemetry_paths)}")
+require(len(instrumented_paths | without_telemetry_paths) == 46, "Measurement v6.1 debe clasificar exactamente las 46 superficies públicas")
 
 node = subprocess.run(["node", "--check", str(ADAPTER_PATH)], capture_output=True, text=True)
 require(node.returncode == 0, f"analytics-adapter-v61.js no supera node --check: {node.stderr.strip()}")
@@ -135,6 +138,7 @@ if errors:
 
 print(
     "MEASUREMENT READINESS V6.1 OK: "
-    f"{instrumented} superficies instrumentadas, {without_telemetry} sin telemetría previa, "
-    "6 etapas allowlisted, analítica externa deshabilitada y cero PII/propiedades/persistencia propias."
+    f"{len(instrumented_paths)} superficies instrumentadas, {len(without_telemetry_paths)} sin telemetría previa "
+    f"({', '.join(sorted(without_telemetry_paths))}), 6 etapas allowlisted, analítica externa deshabilitada y "
+    "cero PII/propiedades/persistencia propias."
 )
