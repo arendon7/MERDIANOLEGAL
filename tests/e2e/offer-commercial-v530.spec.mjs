@@ -22,6 +22,7 @@ const offers = [
 test('v5.30 cubre exactamente las 16 ofertas con lógica de contratación verificable', async ({ page }) => {
   for (const [path, catalogId] of offers) {
     await page.goto(path);
+    await openDetailLegacy(page);
     const block = page.locator(`[data-offer-commercial-v530="${catalogId}"]`);
     await expect(block).toHaveCount(1);
     await expect(block.getByText('CONTRATACIÓN SIN LETRA PEQUEÑA')).toHaveCount(1);

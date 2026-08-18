@@ -66,18 +66,38 @@ def route_keys(block: str) -> set[tuple[str, str]]:
     return keys
 
 
+def balanced_tag_block(text: str, marker: str, tag: str = "section") -> str:
+    """Aísla el elemento balanceado que contiene marker, tolerando tags anidados."""
+    marker_pos = text.find(marker)
+    require(marker_pos >= 0, f"falta marcador {marker}")
+    start = text.rfind(f"<{tag}", 0, marker_pos + 1)
+    require(start >= 0, f"no se pudo localizar <{tag}> para {marker}")
+    depth = 0
+    token_re = re.compile(rf"</?{tag}\b[^>]*>", re.I)
+    for match in token_re.finditer(text, start):
+        token = match.group(0)
+        if token.startswith("</"):
+            depth -= 1
+            if depth == 0:
+                return text[start:match.end()]
+        else:
+            depth += 1
+    raise SystemExit(f"PROOF V5.12 FAIL: bloque {tag} no balanceado para {marker}")
+
+
 def validate_home() -> None:
     text = HOME.read_text(encoding="utf-8")
     require('<link rel="stylesheet" href="proof-v512.css">' in text, "falta CSS v5.12 en portada")
 
     if version_at_least(5, 20) and 'data-home-decision-v520="true"' in text:
         require(text.count('data-home-decision-v520="true"') == 1, "v5.20 final debe conservar una única superficie unificada")
-        require(text.count('data-proof-router-v512="true"') == 1, "v5.20 final debe preservar selector de prueba v5.12")
-        require(text.count('data-proof-model-v512=') == 5, "v5.20 final debe preservar cinco modalidades")
+        surface = balanced_tag_block(text, 'data-home-decision-v520="true"')
+        require(surface.count('data-proof-router-v512="true"') == 1, "v5.20 final debe preservar selector de prueba v5.12")
+        require(surface.count('data-proof-model-v512=') == 5, "v5.20 final debe preservar cinco modalidades")
         for model in ("diagnostic", "audit", "product", "specialist", "recurring"):
-            require(f'data-proof-model-v512="{model}"' in text, f"falta modalidad final {model}")
-        require(text.count('data-proof-standard-v512="true"') == 1, "v5.20 final debe preservar estándar de prueba")
-        require("testimonio" not in text.lower() and "caso de éxito" not in text.lower(), "no deben aparecer pruebas sociales inventadas")
+            require(f'data-proof-model-v512="{model}"' in surface, f"falta modalidad final {model}")
+        require(surface.count('data-proof-standard-v512="true"') == 1, "v5.20 final debe preservar estándar de prueba")
+        require("testimonio" not in surface.lower() and "caso de éxito" not in surface.lower(), "la superficie de prueba no puede introducir pruebas sociales inventadas")
         return
 
     require(text.count(HOME_START) == 1 and text.count(HOME_END) == 1, "portada debe tener un bloque gestionado")

@@ -80,14 +80,15 @@ test('v6 mantiene las cuatro profundidades secundarias v5.31 en las 6 soluciones
     await expect(page.locator('#ruta')).not.toBeVisible();
     await openSolutionLegacy(page);
 
-    await expect(page.locator('#ruta')).toBeVisible();
-    await expect(page.getByText('ALCANCE Y HONORARIOS', { exact: true })).toBeVisible();
-    await expect(page.getByText('RESULTADO ESPERADO', { exact: true })).toBeVisible();
-    await expect(page.getByText('LÍMITES', { exact: true }).first()).toBeVisible();
-    await expect(page.locator('.growth-cta-v51')).toBeVisible();
+    const legacy = page.locator('#v6-solution-depth');
+    await expect(legacy.locator('#ruta')).toBeVisible();
+    await expect(legacy.getByText('ALCANCE Y HONORARIOS', { exact: true })).toBeVisible();
+    await expect(legacy.getByText('RESULTADO ESPERADO', { exact: true })).toBeVisible();
+    await expect(legacy.getByText('LÍMITES', { exact: true }).first()).toBeVisible();
+    await expect(legacy.locator('.growth-cta-v51')).toBeVisible();
 
     for (const key of ['objections', 'faq', 'related', 'proof']) {
-      const disclosure = page.locator(`details[data-decision-compression-v531="solution-${key}"]`);
+      const disclosure = legacy.locator(`details[data-decision-compression-v531="solution-${key}"]`);
       await expect(disclosure).toHaveCount(1);
       await expect(disclosure).not.toHaveAttribute('open', '');
       const summary = disclosure.locator(':scope > summary');

@@ -30,6 +30,7 @@ on:
       - scripts/validate_experience_perspectives_v60.py
       - scripts/validate_experience_final_v60.py
       - scripts/validate_funnel_trust_v529.py
+      - scripts/validate_proof_v512.py
       - .github/workflows/v6-browser-candidate.yml
   workflow_dispatch:
 
@@ -44,7 +45,7 @@ jobs:
   browser:
     name: Browser E2E / axe on local v6 candidate
     runs-on: ubuntu-latest
-    timeout-minutes: 18
+    timeout-minutes: 30
     env:
       MERIDIANO_BASE_URL: http://127.0.0.1:8000/
     steps:
@@ -79,6 +80,7 @@ jobs:
           python3 scripts/validate_experience_perspectives_v60.py
           python3 scripts/validate_experience_final_v60.py
           python3 scripts/validate_funnel_trust_v529.py
+          python3 scripts/validate_proof_v512.py
           python3 scripts/validate_capability_truth_v521.py
           python3 scripts/validate_decision_compression_v531.py
       - name: Validate E2E JavaScript syntax
@@ -88,8 +90,19 @@ jobs:
           for f in tests/e2e/*.mjs; do node --check "$f"; done
       - name: Install locked QA dependencies
         run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Prefer official Ubuntu mirrors for browser dependencies
+        run: |
+          if [ -f /etc/apt/apt-mirrors.txt ]; then
+            printf 'https://archive.ubuntu.com/ubuntu/\tpriority:1\nhttps://security.ubuntu.com/ubuntu/\tpriority:2\n' \
+              | sudo tee /etc/apt/apt-mirrors.txt >/dev/null
+          fi
+          printf '%s\n' \
+            'Acquire::Retries "3";' \
+            'Acquire::http::Timeout "30";' \
+            'Acquire::https::Timeout "30";' \
+            | sudo tee /etc/apt/apt.conf.d/80meridiano-network >/dev/null
       - name: Install Chromium and WebKit
-        run: timeout 360s npx playwright install --with-deps chromium webkit
+        run: timeout 900s npx playwright install --with-deps chromium webkit
       - name: Start local candidate server
         run: |
           python3 -m http.server 8000 --bind 127.0.0.1 > /tmp/meridiano-v6-http.log 2>&1 &
