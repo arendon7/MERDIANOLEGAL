@@ -1,0 +1,102 @@
+name: V6.3 engagement clarity
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - catalog-products-v41/**
+      - catalog-services-v42/**
+      - productos/**
+      - servicios/**
+      - assets/data/v6/engagement-clarity-v63.json
+      - assets/css/v6/engagement-clarity-v63.css
+      - scripts/apply_engagement_clarity_v63.py
+      - scripts/validate_engagement_clarity_v63.py
+      - scripts/normalize_experience_compat_v60.py
+      - tests/e2e/engagement-clarity-v63.spec.mjs
+      - .github/workflows/v63-engagement-clarity.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: meridiano-v63-engagement-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  engagement:
+    name: Engagement clarity / canonical truth
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout candidate
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: "3.12"
+      - name: Compile v6.3 scripts
+        run: python3 -m py_compile scripts/apply_engagement_clarity_v63.py scripts/validate_engagement_clarity_v63.py scripts/normalize_experience_compat_v60.py
+      - name: Capture declared v6.3 drift
+        run: |
+          python3 scripts/apply_engagement_clarity_v63.py --check > /tmp/v63-before.txt 2>&1 || true
+          cat /tmp/v63-before.txt
+          sed -n 's/^- //p' /tmp/v63-before.txt | sort -u > /tmp/v63-expected.txt
+          COUNT="$(sed '/^$/d' /tmp/v63-expected.txt | wc -l | tr -d ' ')"
+          if [ "$COUNT" -ne 16 ]; then
+            echo "Engagement Clarity debe declarar exactamente 16 fichas pendientes; encontró $COUNT." >&2
+            cat /tmp/v63-expected.txt >&2
+            exit 1
+          fi
+          if grep -Ev '^(productos|servicios)/[^/]+\.html$' /tmp/v63-expected.txt; then
+            echo "Engagement Clarity declaró drift fuera de productos/servicios." >&2
+            exit 1
+          fi
+      - name: Materialize canonical v6 with engagement clarity
+        run: |
+          python3 scripts/sync_public_version.py
+          python3 scripts/apply_experience_v60.py
+          python3 scripts/apply_experience_solutions_v60.py
+          python3 scripts/apply_experience_sectors_v60.py
+          python3 scripts/apply_experience_perspectives_v60.py
+          python3 scripts/apply_experience_final_v60.py
+          python3 scripts/apply_funnel_trust_v529.py
+          python3 scripts/normalize_experience_compat_v60.py
+      - name: Validate canonical truth and preserved v6 surface
+        run: |
+          python3 scripts/validate_engagement_clarity_v63.py
+          python3 scripts/apply_engagement_clarity_v63.py --check
+          python3 scripts/validate_experience_v60.py
+          python3 scripts/validate_capability_truth_v521.py
+      - name: Prove exact first-pass boundary
+        run: |
+          git diff --name-only | sort -u > /tmp/v63-actual.txt
+          echo '--- expected v6.3 drift ---'
+          cat /tmp/v63-expected.txt
+          echo '--- actual v6.3 drift ---'
+          cat /tmp/v63-actual.txt
+          if ! diff -u /tmp/v63-expected.txt /tmp/v63-actual.txt; then
+            echo 'Engagement Clarity first-pass boundary diverged from the exact 16-page contract.' >&2
+            exit 1
+          fi
+      - name: Prove second-pass idempotence
+        run: |
+          git diff > /tmp/v63-pass-1.diff
+          python3 scripts/sync_public_version.py
+          python3 scripts/apply_experience_v60.py
+          python3 scripts/apply_experience_solutions_v60.py
+          python3 scripts/apply_experience_sectors_v60.py
+          python3 scripts/apply_experience_perspectives_v60.py
+          python3 scripts/apply_experience_final_v60.py
+          python3 scripts/apply_funnel_trust_v529.py
+          python3 scripts/normalize_experience_compat_v60.py
+          git diff > /tmp/v63-pass-2.diff
+          cmp --silent /tmp/v63-pass-1.diff /tmp/v63-pass-2.diff || {
+            echo 'Engagement Clarity materialization is not idempotent.' >&2
+            diff -u /tmp/v63-pass-1.diff /tmp/v63-pass-2.diff || true
+            exit 1
+          }
+          python3 scripts/validate_engagement_clarity_v63.py
