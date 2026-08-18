@@ -156,3 +156,26 @@ export async function preventNavigationFor(locator) {
     node.addEventListener('click', (event) => event.preventDefault(), { once: true, capture: true });
   });
 }
+
+export async function openDisclosure(locator) {
+  await expect(locator).toHaveCount(1);
+  if (await locator.getAttribute('open') === null) {
+    const summary = locator.locator(':scope > summary');
+    await expect(summary).toHaveCount(1);
+    await summary.click();
+  }
+  await expect(locator).toHaveAttribute('open', '');
+  return locator;
+}
+
+export async function openHomeLegacy(page) {
+  return openDisclosure(page.locator('#v6-depth.v6-legacy-home'));
+}
+
+export async function openDetailLegacy(page) {
+  return openDisclosure(page.locator('#v6-detail-depth.v6-detail-depth'));
+}
+
+export async function openSolutionLegacy(page) {
+  return openDisclosure(page.locator('#v6-solution-depth.v6-solution-depth'));
+}
