@@ -3,6 +3,7 @@
 
 from pathlib import Path
 import json
+import re
 import subprocess
 import sys
 
@@ -116,7 +117,11 @@ for path in PERSPECTIVES:
     text = path.read_text(encoding='utf-8')
     if text.count('EDITORIAL-V47-CONVERSION:START') != 1 or 'editorial-conversion-v47' not in text:
         fail(f'{path.relative_to(ROOT)} no tiene cierre de conversión editorial')
-    if '<nav class="article-toc"' not in text:
+    if 'data-experience-system="v6"' in text:
+        toc_match = re.search(r'<nav class="v6-reading-toc"[\s\S]*?</nav>', text)
+        if not toc_match or toc_match.group(0).count('<a ') != 7:
+            fail(f'{path.relative_to(ROOT)} debe conservar siete hitos en la guía de lectura v6')
+    elif '<nav class="article-toc"' not in text:
         fail(f'{path.relative_to(ROOT)} perdió el índice del artículo')
 
 for path in SECTORS:
