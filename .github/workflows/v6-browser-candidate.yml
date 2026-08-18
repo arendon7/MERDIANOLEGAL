@@ -11,12 +11,14 @@ on:
       - cro-solutions-v52.json
       - catalog-products-v41/**
       - catalog-services-v42/**
-      - assets/css/v6/**
+      - assets/**
       - funnel-observability-v529.js
       - tests/e2e/**
       - playwright.config.mjs
       - package.json
       - package-lock.json
+      - scripts/sync_public_version.py
+      - scripts/validate_production_v50.py
       - scripts/apply_experience_v60.py
       - scripts/apply_experience_solutions_v60.py
       - scripts/apply_experience_sectors_v60.py
@@ -65,6 +67,7 @@ jobs:
           cache-dependency-path: package-lock.json
       - name: Materialize v6 on canonical baseline
         run: |
+          python3 scripts/sync_public_version.py
           python3 scripts/apply_experience_v60.py
           python3 scripts/apply_experience_solutions_v60.py
           python3 scripts/apply_experience_sectors_v60.py
@@ -74,6 +77,7 @@ jobs:
           python3 scripts/normalize_experience_compat_v60.py
       - name: Validate v6 and preserved contracts
         run: |
+          python3 scripts/validate_production_v50.py
           python3 scripts/validate_experience_v60.py
           python3 scripts/validate_experience_solutions_v60.py
           python3 scripts/validate_experience_sectors_v60.py
