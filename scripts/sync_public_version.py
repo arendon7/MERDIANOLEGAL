@@ -3,13 +3,12 @@
 
 Este paso corre tanto en baselines legacy como en Experience v6. En una baseline ya
 v6, donde apply_production_v50.py no vuelve a ejecutarse, debe mantener alineadas
-todas las etiquetas públicas ya versionadas, runtime-config.js, site-status.json y
-los lastmod del sitemap con version.json sin alterar capabilities ni configuración
-productiva.
+las etiquetas públicas ya versionadas, los metadatos de modificación editorial,
+runtime-config.js, site-status.json y los lastmod del sitemap con version.json sin
+alterar capabilities, fechas de publicación ni configuración productiva.
 
 `--check` no escribe: retorna 0 solo cuando todas las superficies versionadas y los
-metadatos runtime/status/sitemap coinciden exactamente con version.json +
-site-config.json.
+metadatos de release coinciden exactamente con version.json + site-config.json.
 """
 from pathlib import Path
 import json
@@ -23,6 +22,8 @@ VERSION_PATH = ROOT / "version.json"
 WEB_PUBLIC_PATTERN = re.compile(r"Web pública v\d+\.\d+\.\d+")
 WEB_DEMO_PATTERN = re.compile(r"Web demostrativa v\d+\.\d+\.\d+")
 DETAIL_PATTERN = re.compile(r"Ficha v\d+\.\d+\.\d+")
+ARTICLE_MODIFIED_PATTERN = re.compile(r'<meta property="article:modified_time" content="\d{4}-\d{2}-\d{2}">')
+SCHEMA_MODIFIED_PATTERN = re.compile(r'"dateModified":"\d{4}-\d{2}-\d{2}"')
 LASTMOD_PATTERN = re.compile(r"<lastmod>\d{4}-\d{2}-\d{2}</lastmod>")
 PUBLIC_DIRS = ("servicios", "productos", "soluciones", "sectores", "perspectivas")
 
@@ -86,10 +87,14 @@ def public_html_targets() -> list[Path]:
     return sorted(set(targets))
 
 
-def synchronize_labels(text: str, version: str) -> str:
+def synchronize_html(text: str, version: str, release_date: str) -> str:
     text = WEB_PUBLIC_PATTERN.sub(f"Web pública v{version}", text)
     text = WEB_DEMO_PATTERN.sub(f"Web demostrativa v{version}", text)
     text = DETAIL_PATTERN.sub(f"Ficha v{version}", text)
+    text = ARTICLE_MODIFIED_PATTERN.sub(
+        f'<meta property="article:modified_time" content="{release_date}">', text
+    )
+    text = SCHEMA_MODIFIED_PATTERN.sub(f'"dateModified":"{release_date}"', text)
     return text
 
 
@@ -107,7 +112,7 @@ def expected_texts(config: dict, data: dict) -> dict[str, str]:
     for path in public_html_targets():
         relative = path.relative_to(ROOT).as_posix()
         text = path.read_text(encoding="utf-8")
-        updated = synchronize_labels(text, version)
+        updated = synchronize_html(text, version, release_date)
         if updated != text:
             expected[relative] = updated
 
@@ -116,7 +121,9 @@ def expected_texts(config: dict, data: dict) -> dict[str, str]:
         if not path.exists():
             continue
         text = path.read_text(encoding="utf-8")
-        updated = synchronize_labels(text, version)
+        updated = WEB_PUBLIC_PATTERN.sub(f"Web pública v{version}", text)
+        updated = WEB_DEMO_PATTERN.sub(f"Web demostrativa v{version}", updated)
+        updated = DETAIL_PATTERN.sub(f"Ficha v{version}", updated)
         if updated != text:
             expected[relative] = updated
 
