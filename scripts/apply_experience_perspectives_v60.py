@@ -77,10 +77,25 @@ def extract_main(text: str) -> tuple[re.Match[str], str]:
 
 
 def tag_block(value: str, tag: str, class_name: str) -> str:
-    match = re.search(rf'<{tag}\b[^>]*class="[^"]*\b{re.escape(class_name)}\b[^"]*"[^>]*>.*?</{tag}>', value, flags=re.S)
-    if not match:
+    """Extrae una etiqueta completa respetando anidamiento de etiquetas del mismo tipo."""
+    opening = re.search(
+        rf'<{tag}\b[^>]*class="[^"]*\b{re.escape(class_name)}\b[^"]*"[^>]*>',
+        value,
+        flags=re.I,
+    )
+    if not opening:
         raise RuntimeError(f"perspectiva: falta {tag}.{class_name}")
-    return match.group(0)
+    token_re = re.compile(rf'</?{tag}\b[^>]*>', flags=re.I)
+    depth = 0
+    for token in token_re.finditer(value, opening.start()):
+        raw = token.group(0)
+        if raw.startswith("</"):
+            depth -= 1
+            if depth == 0:
+                return value[opening.start():token.end()]
+        elif not raw.rstrip().endswith("/>"):
+            depth += 1
+    raise RuntimeError(f"perspectiva: {tag}.{class_name} no está balanceado")
 
 
 def authority_block(value: str) -> str:
@@ -118,13 +133,16 @@ def article_hero_parts(main: str) -> tuple[str, str, str, str]:
 
 
 def toc_block(main: str) -> str:
-    return tag_block(main, "nav", "article-toc")
+    try:
+        return tag_block(main, "nav", "article-toc")
+    except RuntimeError:
+        # Segunda pasada v6: el TOC canónico ya fue normalizado a la guía visible.
+        return tag_block(main, "nav", "v6-reading-toc")
 
 
 def central_decision(article_body: str) -> tuple[str, str]:
     match = re.search(r'<div\b[^>]*class="[^"]*decision-box[^"]*"[^>]*>(.*?)</div>', article_body, flags=re.S)
     if not match:
-        # Algunas perspectivas usan otra caja; el artículo sigue siendo válido.
         return "Pregunta de lectura", "Use el recorrido del artículo para identificar qué decisión, evidencia o control requiere verificación."
     return find_tag(match.group(1), "strong") or "Decisión central", find_tag(match.group(1), "span")
 
@@ -144,8 +162,9 @@ def render_article(main: str, slug: str) -> str:
     decision_label, decision_copy = central_decision(article_body)
     if not title or not lead:
         raise RuntimeError(f"{slug}: hero editorial incompleto")
+    meta = re.sub(r'class="[^"]*\barticle-meta\b[^"]*"', 'class="article-meta v6-reading-meta"', meta, count=1)
     return f'''{ARTICLE_START}
-<section class="v6-section v6-perspective-hero" aria-labelledby="v6-perspective-title"><div class="v6-container v6-perspective-hero-grid"><div><p class="v6-eyebrow">{e(eyebrow)}</p><h1 class="v6-display" id="v6-perspective-title">{e(title)}</h1><p class="v6-lead">{e(lead)}</p></div>{meta.replace('class="article-meta"', 'class="article-meta v6-reading-meta"', 1)}</div></section>
+<section class="v6-section v6-perspective-hero" aria-labelledby="v6-perspective-title"><div class="v6-container v6-perspective-hero-grid"><div><p class="v6-eyebrow">{e(eyebrow)}</p><h1 class="v6-display" id="v6-perspective-title">{e(title)}</h1><p class="v6-lead">{e(lead)}</p></div>{meta}</div></section>
 <section class="v6-section v6-reading-guide" aria-labelledby="v6-reading-guide-title"><div class="v6-container v6-reading-guide-grid"><div><p class="v6-eyebrow">LECTURA EJECUTIVA</p><h2 class="v6-heading" id="v6-reading-guide-title">La pregunta central antes de entrar al detalle.</h2><div class="v6-central-decision"><strong>{e(decision_label)}</strong><span>{e(decision_copy)}</span></div></div><nav class="v6-reading-toc" aria-label="Recorrido de esta perspectiva">{toc_links(toc)}</nav></div></section>
 <section class="v6-section v6-article-reading"><div class="v6-container v6-article-shell">{article_body}{aside}</div></section>
 <section class="v6-section v6-perspective-authority"><div class="v6-container">{authority}</div></section>
