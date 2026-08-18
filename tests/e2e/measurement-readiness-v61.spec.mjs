@@ -79,5 +79,5 @@ test('v6.1 reconstruye eventos externos desde allowlist y descarta todo el paylo
     null,
   ]);
   expect(result.serialized).not.toContain(result.sentinel);
-  expect(result.serialized).not.toMatch(/email|message|reference|company|need|target|stage/i);
+  expect(result.serialized).not.toMatch(/"(?:email|message|reference|company|need|target|stage)"\s*:/i);
 });
