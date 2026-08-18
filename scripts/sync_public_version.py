@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
 """Sincroniza versión y metadatos públicos de release en cualquier baseline canónica.
 
-Este paso corre tanto en baselines legacy como en Experience v6. En una baseline ya
-v6, donde apply_production_v50.py no vuelve a ejecutarse, debe mantener alineadas
-las etiquetas públicas ya versionadas, los metadatos de modificación editorial,
-runtime-config.js, site-status.json y los lastmod del sitemap con version.json sin
-alterar capabilities, fechas de publicación ni configuración productiva.
+Este paso corre tanto en baselines legacy como en Experience v6. Mantiene alineadas
+las etiquetas públicas versionadas, metadatos editoriales, runtime-config.js y
+site-status.json con version.json sin alterar capabilities ni configuración productiva.
 
-`--check` no escribe: retorna 0 solo cuando todas las superficies versionadas y los
-metadatos de release coinciden exactamente con version.json + site-config.json.
+En baselines anteriores a Search Discovery v6.2 conserva la sincronización histórica
+de sitemap.lastmod requerida por v4.8. Cuando existe el contrato v6.2, el sitemap
+queda bajo responsabilidad exclusiva de apply_search_discovery_v62.py para no usar
+la fecha global de release como una señal de modificación de página no demostrada.
+
+`--check` no escribe: retorna 0 solo cuando las superficies que este sincronizador
+posee coinciden exactamente con version.json + site-config.json.
 """
 from pathlib import Path
 import json
@@ -19,6 +22,7 @@ from site_config import load_site_config
 
 ROOT = Path(__file__).resolve().parents[1]
 VERSION_PATH = ROOT / "version.json"
+DISCOVERY_CONTRACT = ROOT / "assets/data/v6/search-discovery-readiness-v62.json"
 WEB_PUBLIC_PATTERN = re.compile(r"Web pública v\d+\.\d+\.\d+")
 WEB_DEMO_PATTERN = re.compile(r"Web demostrativa v\d+\.\d+\.\d+")
 DETAIL_PATTERN = re.compile(r"Ficha v\d+\.\d+\.\d+")
@@ -127,12 +131,15 @@ def expected_texts(config: dict, data: dict) -> dict[str, str]:
         if updated != text:
             expected[relative] = updated
 
-    sitemap = ROOT / "sitemap.xml"
-    if sitemap.exists():
-        current_sitemap = sitemap.read_text(encoding="utf-8")
-        updated_sitemap = synchronize_sitemap(current_sitemap, release_date)
-        if updated_sitemap != current_sitemap:
-            expected["sitemap.xml"] = updated_sitemap
+    # Legacy-only: v6.2 discovery owns sitemap semantics and intentionally does
+    # not equate a global release date with a meaningful modification date.
+    if not DISCOVERY_CONTRACT.exists():
+        sitemap = ROOT / "sitemap.xml"
+        if sitemap.exists():
+            current_sitemap = sitemap.read_text(encoding="utf-8")
+            updated_sitemap = synchronize_sitemap(current_sitemap, release_date)
+            if updated_sitemap != current_sitemap:
+                expected["sitemap.xml"] = updated_sitemap
 
     expected["runtime-config.js"] = render_runtime(config, data)
     expected["site-status.json"] = render_status(config, data)
