@@ -1,119 +1,70 @@
 # Meridiano Legal — Tarea activa
 
-Actualizado: 2026-08-17.
+Actualizado: 2026-08-18.
 
 ## Estado
 
-**Ciclo funcional activo: v6.0.0 — Experience System.**
+**Ciclo funcional activo: ninguno.**
 
-Rama de implementación: `feat/v6-experience-system`.
-Baseline técnico/documental: `main@56b6d179345966fd4fbb99159d9d1d12652c31d6`.
-Snapshot funcional estable: v5.31.0 en `stable`; **stable no se mueve hasta certificación total de v6**.
+Frente vigente: **cierre documental de v6.0.0 — Experience System**.
 
-## Problema observable
+Rama de cierre: `docs/v600-release-closure`.
+SHA funcional certificado: `a7940696cb358fcd4ace50e32f4a1463b76fdaa5`.
+Al inicio de este cierre: `main == stable == a7940696cb358fcd4ace50e32f4a1463b76fdaa5`.
 
-v5.31 resolvió la exposición simultánea de profundidad secundaria, pero la auditoría post-v5.31 confirmó una deuda distinta:
+No abrir una v6.1/v6.0.1 funcional por inercia. El siguiente ciclo debe partir de un problema observable y un criterio de éxito verificable.
 
-1. la primera lectura todavía exige comprender demasiada taxonomía interna —servicios, productos, planes y modalidades— antes de reconocer el problema empresarial;
-2. contenidos con funciones distintas —decisión, entregable, proceso, perímetro, límite y evidencia— reciben tratamientos visuales demasiado equivalentes;
-3. la presentación se ha sedimentado por releases incrementales: la Home carga 23 CSS y 13 JS, y las fichas profundas combinan múltiples generaciones de shell/visual/detail/decision/proof/offer/commercial/compression;
-4. mobile evita overflow, pero parte de la densidad se traslada a stacks/carruseles en lugar de diseñarse específicamente;
-5. `Centro demo` y otras acciones secundarias compiten con el siguiente paso comercial principal.
+## Qué falta para cerrar v6.0 definitivamente
 
-## Objetivo v6
+1. marcar `version.json` como canal certificado;
+2. actualizar README y memoria canónica v5.x→v6.0;
+3. crear `RELEASE-v6.0.md` con contrato, incidencias y evidencia;
+4. someter el commit documental a los gates vigentes;
+5. fusionar solo con certificación aplicable verde;
+6. dejar que Builder → Pages → smoke → Browser/axe → Lighthouse → snapshot promueva `stable` automáticamente;
+7. verificar al final `main == stable` y Graphify alineado al SHA de cierre.
 
-Convertir Meridiano Legal en una interfaz jurídica de decisión coherente y client-first, preservando toda la profundidad y truth actual, mediante:
+## Resultado funcional ya certificado
 
-- arquitectura `situación → resultado → intervención → evidencia → contacto`;
-- gramática semántica diferenciada para decisión, resultado, entregable, proceso, perímetro, límite, evidencia y profundidad;
-- design system consolidado en lugar de nuevas capas versionadas de CSS;
-- templates diferenciados para producto cerrado y servicio adaptable;
-- mobile diseñado de forma específica;
-- contacto perceptualmente simple con el mismo formulario físico y handoff manual;
-- racionalización de CSS/JS de presentación sin perder contratos funcionales.
-
-## Pilotos obligatorios
-
-Wave 1:
-1. Home desktop/mobile.
-2. Auditoría Jurídica Empresarial Integral desktop/mobile.
-3. Tecnología e Inteligencia Artificial desktop/mobile.
-4. Contacto/handoff.
-
-Solo después de su aceptación se propaga a las demás familias.
-
-## Invariantes
-
-- 46 HTML públicos salvo ADR explícito posterior; objetivo actual: conservar 46.
+- 46/46 superficies públicas migradas a Experience System v6.
+- 16/16 fichas profundas preservan truth y profundidad.
 - 8 productos + 8 servicios.
-- 7 superficies de soluciones —6 rutas + índice—.
+- 7 superficies de soluciones.
 - 8 sectores.
-- 6 perspectivas internas.
-- Un único formulario físico.
-- WhatsApp manual.
-- Sin portal real, auth, pagos, firma, upload o CRM ficticios.
-- Funnel sin PII ni persistencia.
-- Contacto/handoff no equivale a conversión, aceptación ni inicio.
-- Profundidad jurídica completa preservada en DOM.
-- 30 pasos exactos del builder; **no paso 31**.
-- Idempotencia obligatoria.
-- Release Governance, Graphify, Pages/smoke, Playwright, axe y Lighthouse sin relajación.
-- `stable` solo después de gates verdes.
+- 6 perspectivas + hub editorial.
+- 1 formulario físico.
+- 30 pasos canónicos exactos.
+- Idempotencia: PASS.
+- Static validations: PASS.
+- GitHub Pages sirve v6.0.0.
+- Smoke público v5.0→v5.3: PASS.
+- Browser E2E + axe sobre la v6 pública: PASS.
+- Lighthouse: PASS sin relajar budgets.
+- `stable` promovido automáticamente al SHA funcional final.
+- Graphify funcional alineado: 1.007 nodos, 1.887 relaciones, 115 notas wiki, 17 specs E2E.
 
-## No objetivos
+## Invariantes para el cierre
 
-v6 no pretende:
-- convertir la web en SPA o adoptar framework por moda;
-- crear backend/CRM/cuentas/pagos/carga documental;
-- inventar precios, clientes, testimonios, métricas o resultados;
-- sustituir profundidad jurídica por slogans;
-- aprobar una nueva tipografía solo porque Figma usó Source Serif 4 como proxy;
-- introducir motion decorativo antes de estabilizar IA/copy/layout;
-- eliminar contratos de funnel/handoff/capability truth;
-- migrar las 46 superficies en un único cambio no aislable.
+- no tocar contenido público para “hacer coincidir” documentación;
+- no modificar catálogos jurídicos ni truth de ofertas;
+- no inventar métricas, clientes, precios, testimonios o capacidades;
+- no añadir backend/CRM/auth/pagos/firma/upload/agenda ficticios;
+- no mover `stable` manualmente;
+- no reducir tests, axe, Lighthouse ni budgets;
+- mantener un único formulario físico y WhatsApp manual;
+- mantener 46 HTML y 30 pasos canónicos;
+- `main` y `stable` solo vuelven a coincidir después de la certificación del cierre.
 
-## Acceptance bar
+## Próximo ciclo
 
-v6 solo puede certificarse si:
-- truth parity de cantidades, límites, entregables y cierres: PASS;
-- 46/46 superficies migradas al final del ciclo;
-- 16/16 fichas profundas preservan depth y truth;
-- 1/1 formulario físico;
-- 30/30 pasos builder;
-- idempotencia PASS;
-- static validations PASS;
-- Browser E2E PASS;
-- axe serious/critical 0 en cobertura vigente;
-- Lighthouse budgets PASS sin relajación;
-- Pages + smoke PASS;
-- Graphify alineado con `main`;
-- stable se promueve únicamente al SHA final certificado.
+**No definido todavía.**
 
-## Plan de waves
+Antes de proponerlo:
 
-### Wave 0 — Foundations
-Tokens, shell, componentes semánticos, renderer/materializer v6, version gates y validators.
+1. revisar comportamiento real de v6 ya publicada;
+2. identificar una fricción observable de usuario, comercial, jurídica, responsive, accesibilidad, performance u operación;
+3. formular una hipótesis y criterio de éxito;
+4. evitar volver a sedimentar capas versionadas si el problema puede resolverse consolidando el Experience System existente;
+5. si el cambio afecta superficies públicas, aplicar el design orchestrator y validar una muestra representativa antes de propagar.
 
-### Wave 1 — Pilotos
-Home + Auditoría + IA + contacto/mobile.
-
-### Wave 2 — 16 fichas
-8 productos + 8 servicios.
-
-### Wave 3 — Soluciones
-6 rutas + índice.
-
-### Wave 4 — Sectores
-8 superficies sectoriales.
-
-### Wave 5 — Perspectivas
-6 internas + hub editorial.
-
-### Wave 6 — Resto público
-Firma, experiencia/demo, legales y 404, preservando su función específica.
-
-## Fuente de diseño
-
-El discovery aprobado está en `knowledge/20_DESIGN/` y el prototipo editable en Figma `Meridiano Legal — Rediseño post-v5.31`.
-
-El design orchestrator y skills curados deben aplicarse contextual y secuencialmente: truth → UX/IA/a11y → visual/taste → motion/polish → QA.
+Hasta completar el cierre documental, no iniciar trabajo funcional nuevo.
