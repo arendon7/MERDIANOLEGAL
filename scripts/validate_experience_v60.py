@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 import re
 import sys
+from urllib.parse import parse_qsl, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 HOME = ROOT / "index.html"
@@ -112,6 +113,45 @@ def first_layer(value: str, label: str) -> str:
     return unescape(value[start:legacy])
 
 
+def anchor_href(value: str, attribute: str, label: str) -> str:
+    tags = [tag for tag in re.findall(r'<a\b[^>]*>', value, flags=re.S) if attribute in tag]
+    if len(tags) != 1:
+        fail(f"{label}: esperaba una CTA con {attribute!r}; encontró {len(tags)}")
+    match = re.search(r'href="([^"]+)"', tags[0])
+    if not match:
+        fail(f"{label}: CTA sin href")
+    return unescape(match.group(1))
+
+
+def route_signature(href: str) -> tuple[str, str, dict[str, str]]:
+    parts = urlsplit(href)
+    return parts.path, parts.fragment, dict(parse_qsl(parts.query, keep_blank_values=True))
+
+
+def validate_cta_parity(value: str, catalog_id: str) -> None:
+    canonical = anchor_href(value, 'data-decision-v58-cta="true"', f"{catalog_id} CTA canónica")
+    primary = anchor_href(value, 'data-experience-v60-cta="primary"', f"{catalog_id} CTA v6")
+    header = anchor_href(value, 'data-experience-v60-cta="header"', f"{catalog_id} CTA header")
+    journey = anchor_href(value, 'data-experience-v60-cta="journey"', f"{catalog_id} CTA journey")
+    close = anchor_href(value, 'data-experience-v60-cta="close"', f"{catalog_id} CTA cierre")
+
+    canonical_path, canonical_fragment, canonical_params = route_signature(canonical)
+    v6_path, v6_fragment, v6_params = route_signature(primary)
+    expected = dict(canonical_params)
+    expected["experience"] = "v6"
+    if v6_path != canonical_path or v6_fragment != canonical_fragment or v6_params != expected:
+        fail(
+            f"{catalog_id}: CTA v6 perdió continuidad comercial; "
+            f"canónica={canonical_params}, v6={v6_params}"
+        )
+    for name, href in (("header", header), ("journey", journey), ("close", close)):
+        if route_signature(href) != route_signature(primary):
+            fail(f"{catalog_id}: CTA {name} no coincide con la ruta comercial v6 primaria")
+    for required in ("commercial_intent", "modality", "proof_standard"):
+        if required not in canonical_params or not canonical_params[required]:
+            fail(f"{catalog_id}: la CTA canónica no declara {required}")
+
+
 def validate_contracts() -> None:
     contract = load_json(ROOT / "experience-system-v60.json")
     content = load_json(ROOT / "experience-content-v60.json")
@@ -215,6 +255,7 @@ def validate_detail(catalog_id: str, path: Path, source: dict) -> None:
         "DECISION-V58-DETAIL:START", "DECISION-COMPRESSION-V531:PAIR-START",
         "OFFER-NARRATIVE-V522:START", "PROOF-V512-DETAIL:START", 'id="limites-title"',
     ], f"{catalog_id} legacy")
+    validate_cta_parity(value, catalog_id)
 
     # Los dos pilotos conservan su capa editorial aprobada por encima de la misma verdad fuente.
     if catalog_id == "product-diagnostic":
@@ -235,7 +276,7 @@ def main() -> int:
         fail(f"fuentes y fichas no coinciden; solo fuente={sorted(set(sources)-set(paths))}; solo HTML={sorted(set(paths)-set(sources))}")
     for catalog_id in sorted(sources):
         validate_detail(catalog_id, paths[catalog_id], sources[catalog_id])
-    print("VALIDATE EXPERIENCE V6 WAVE 2 OK: 46 HTML, 30 pasos, 1 formulario y 16/16 fichas con truth visible + profundidad v5.31 preservada.")
+    print("VALIDATE EXPERIENCE V6 WAVE 2 OK: 46 HTML, 30 pasos, 1 formulario, 16/16 fichas con truth visible y continuidad comercial CTA preservada.")
     return 0
 
 
