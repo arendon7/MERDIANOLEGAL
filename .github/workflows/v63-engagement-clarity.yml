@@ -42,6 +42,23 @@ jobs:
           python-version: "3.12"
       - name: Compile v6.3 scripts
         run: python3 -m py_compile scripts/sync_public_version.py scripts/apply_engagement_clarity_v63.py scripts/validate_engagement_clarity_v63.py scripts/normalize_experience_compat_v60.py
+      - name: Detect engagement materialization phase
+        run: |
+          MATERIALIZED_COUNT="$(grep -l 'data-engagement-clarity-v63="true"' productos/*.html servicios/*.html 2>/dev/null | wc -l | tr -d ' ')"
+          case "$MATERIALIZED_COUNT" in
+            0)
+              echo 'V63_EXPECTED_ENGAGEMENT_DRIFT=16' >> "$GITHUB_ENV"
+              echo 'Pre-v6.3 baseline detected: exactly 16 engagement pages must materialize.'
+              ;;
+            16)
+              echo 'V63_EXPECTED_ENGAGEMENT_DRIFT=0' >> "$GITHUB_ENV"
+              echo 'Already-materialized v6.3 baseline detected: engagement drift must be zero.'
+              ;;
+            *)
+              echo "Partial Engagement Clarity materialization is invalid: found $MATERIALIZED_COUNT of 16 pages." >&2
+              exit 1
+              ;;
+          esac
       - name: Capture declared release and v6.3 drift
         run: |
           python3 scripts/sync_public_version.py --check > /tmp/release-before.txt 2>&1 || true
@@ -52,12 +69,12 @@ jobs:
           cat /tmp/v63-before.txt
           sed -n 's/^- //p' /tmp/v63-before.txt | sort -u > /tmp/v63-expected.txt
           COUNT="$(sed '/^$/d' /tmp/v63-expected.txt | wc -l | tr -d ' ')"
-          if [ "$COUNT" -ne 16 ]; then
-            echo "Engagement Clarity debe declarar exactamente 16 fichas pendientes; encontró $COUNT." >&2
+          if [ "$COUNT" -ne "$V63_EXPECTED_ENGAGEMENT_DRIFT" ]; then
+            echo "Engagement Clarity declaró $COUNT fichas pendientes; esta fase exige exactamente $V63_EXPECTED_ENGAGEMENT_DRIFT." >&2
             cat /tmp/v63-expected.txt >&2
             exit 1
           fi
-          if grep -Ev '^(productos|servicios)/[^/]+\.html$' /tmp/v63-expected.txt; then
+          if [ "$COUNT" -gt 0 ] && grep -Ev '^(productos|servicios)/[^/]+\.html$' /tmp/v63-expected.txt; then
             echo "Engagement Clarity declaró drift fuera de productos/servicios." >&2
             exit 1
           fi
@@ -91,7 +108,7 @@ jobs:
           echo '--- actual first-pass drift ---'
           cat /tmp/v63-actual.txt
           if ! diff -u /tmp/v63-total-expected.txt /tmp/v63-actual.txt; then
-            echo 'Engagement Clarity first-pass boundary diverged from release drift ∪ exact 16-page engagement drift.' >&2
+            echo 'Engagement Clarity first-pass boundary diverged from release drift ∪ phase-exact engagement drift.' >&2
             exit 1
           fi
       - name: Prove second-pass idempotence
