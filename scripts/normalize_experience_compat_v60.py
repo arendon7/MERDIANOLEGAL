@@ -11,6 +11,8 @@ from __future__ import annotations
 
 from pathlib import Path
 import re
+import subprocess
+import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 HOME = ROOT / "index.html"
@@ -170,10 +172,28 @@ def normalize_measurement_runtime() -> tuple[int, int]:
     return instrumented, untouched
 
 
+def validate_measurement_readiness() -> None:
+    validator = ROOT / "scripts" / "validate_measurement_readiness_v61.py"
+    if not validator.exists():
+        raise RuntimeError("Measurement v6.1: falta validator de readiness")
+    completed = subprocess.run(
+        [sys.executable, str(validator)],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+    if completed.stdout:
+        print(completed.stdout.rstrip())
+    if completed.returncode:
+        detail = completed.stderr.strip() or "validator terminó sin detalle"
+        raise RuntimeError(f"Measurement v6.1 inválido: {detail}")
+
+
 def main() -> int:
     normalize_home_trust()
     normalize_solution_labels()
     instrumented, untouched = normalize_measurement_runtime()
+    validate_measurement_readiness()
     print(
         "EXPERIENCE V6 COMPAT OK: confianza v5.29, contacto v5.28, capability truth y anclas v5.31 "
         f"preservados; measurement readiness v6.1 en {instrumented} superficies, {untouched} sin telemetría previa."
