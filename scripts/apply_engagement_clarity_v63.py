@@ -20,6 +20,7 @@ DETAIL_DIRS = (ROOT / "productos", ROOT / "servicios")
 START = "<!-- ENGAGEMENT-CLARITY-V63:START -->"
 END = "<!-- ENGAGEMENT-CLARITY-V63:END -->"
 CSS_HREF = "../assets/css/v6/engagement-clarity-v63.css"
+V6_TOKENS_HREF = "../assets/css/v6/tokens.css"
 NAV_ATTR = 'data-engagement-clarity-v63-nav="true"'
 
 
@@ -113,14 +114,21 @@ def render_section(catalog_id: str, source: dict, contract: dict) -> str:
 
 
 def ensure_stylesheet(text: str) -> str:
+    # No usar \s* al inicio: puede consumir saltos de línea vecinos y producir drift.
     text = re.sub(
-        rf'(?m)^\s*<link rel="stylesheet" href="{re.escape(CSS_HREF)}">\s*(?:\r?\n)?',
+        rf'(?m)^[ \t]*<link rel="stylesheet" href="{re.escape(CSS_HREF)}">[ \t]*(?:\r?\n)?',
         "",
         text,
     )
-    if "</head>" not in text:
-        raise RuntimeError("ficha sin </head> para Engagement Clarity v6.3")
-    return text.replace("</head>", f'  <link rel="stylesheet" href="{CSS_HREF}">\n</head>', 1)
+    token_pattern = re.compile(
+        rf'(?m)^(?P<indent>[ \t]*)<link rel="stylesheet" href="{re.escape(V6_TOKENS_HREF)}">[ \t]*$'
+    )
+    matches = list(token_pattern.finditer(text))
+    if len(matches) != 1:
+        raise RuntimeError(f"ficha debe cargar exactamente una hoja {V6_TOKENS_HREF}; encontró {len(matches)}")
+    match = matches[0]
+    link = f'{match.group("indent")}<link rel="stylesheet" href="{CSS_HREF}">\n'
+    return text[:match.start()] + link + text[match.start():]
 
 
 def ensure_nav(text: str, label: str) -> str:
