@@ -146,6 +146,14 @@ def patch_detail(path: Path, catalog: dict[str, dict]) -> None:
     catalog_id = match.group(1)
     if catalog_id not in catalog:
         raise RuntimeError(f"{path.name}: catálogo {catalog_id} inexistente")
+
+    if 'data-experience-system="v6"' in text:
+        if text.count(DETAIL_START) != 1 or text.count(DETAIL_END) != 1:
+            raise RuntimeError(f"{path.name}: v6 debe preservar exactamente un bloque v5.12")
+        text = ensure_style(text, DETAIL_STYLE)
+        path.write_text(text, encoding="utf-8")
+        return
+
     text = remove_block(text, DETAIL_START, DETAIL_END)
     anchor = re.compile(r'</div>\s*</main>\s*<!-- STATIC-CATALOG-BODY:END -->')
     replacement = '</div>\n' + detail_block(catalog[catalog_id]) + '\n</main>\n<!-- STATIC-CATALOG-BODY:END -->'
