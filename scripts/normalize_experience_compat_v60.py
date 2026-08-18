@@ -3,9 +3,9 @@
 
 No crea truth jurídico nuevo. Reubica confianza v5.29, preserva el contrato de
 contacto v5.28, evita que etiquetas editoriales v6 interfieran con anclas
-históricas certificadas y cablea el adapter de medición v6.1 en las superficies
-que ya exponen telemetría local. La activación de terceros sigue gobernada por
-site-config.json y permanece deshabilitada por defecto.
+históricas, cablea measurement readiness v6.1 y normaliza Search Discovery v6.2.
+La activación de terceros sigue gobernada por site-config.json y permanece
+deshabilitada/no verificada por defecto.
 """
 from __future__ import annotations
 
@@ -168,12 +168,12 @@ def normalize_measurement_runtime() -> tuple[int, int]:
     return instrumented, untouched
 
 
-def validate_measurement_readiness() -> None:
-    validator = ROOT / "scripts" / "validate_measurement_readiness_v61.py"
-    if not validator.exists():
-        raise RuntimeError("Measurement v6.1: falta validator de readiness")
+def run_contract_script(script_name: str, label: str) -> None:
+    target = ROOT / "scripts" / script_name
+    if not target.exists():
+        raise RuntimeError(f"{label}: falta {script_name}")
     completed = subprocess.run(
-        [sys.executable, str(validator)],
+        [sys.executable, str(target)],
         cwd=ROOT,
         capture_output=True,
         text=True,
@@ -181,8 +181,20 @@ def validate_measurement_readiness() -> None:
     if completed.stdout:
         print(completed.stdout.rstrip())
     if completed.returncode:
-        detail = completed.stderr.strip() or "validator terminó sin detalle"
-        raise RuntimeError(f"Measurement v6.1 inválido: {detail}")
+        detail = completed.stderr.strip() or "script terminó sin detalle"
+        raise RuntimeError(f"{label} inválido: {detail}")
+
+
+def validate_measurement_readiness() -> None:
+    run_contract_script("validate_measurement_readiness_v61.py", "Measurement v6.1")
+
+
+def normalize_search_discovery() -> None:
+    contract = ROOT / "assets" / "data" / "v6" / "search-discovery-readiness-v62.json"
+    if not contract.exists():
+        return
+    run_contract_script("apply_search_discovery_v62.py", "Search Discovery v6.2")
+    run_contract_script("validate_search_discovery_v62.py", "Search Discovery v6.2")
 
 
 def main() -> int:
@@ -190,9 +202,11 @@ def main() -> int:
     normalize_solution_labels()
     instrumented, untouched = normalize_measurement_runtime()
     validate_measurement_readiness()
+    normalize_search_discovery()
     print(
         "EXPERIENCE V6 COMPAT OK: confianza v5.29, contacto v5.28, capability truth y anclas v5.31 "
-        f"preservados; measurement readiness v6.1 en {instrumented} superficies, {untouched} sin telemetría previa."
+        f"preservados; measurement readiness v6.1 en {instrumented} superficies, {untouched} sin telemetría previa; "
+        "Search Discovery v6.2 normalizado cuando existe su contrato."
     )
     return 0
 
