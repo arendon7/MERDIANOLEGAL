@@ -158,3 +158,19 @@ jobs:
             exit 1
           fi
           echo "Scoped materialization OK: $COUNT superficie(s) cambiada(s); cobertura estructural 46/46 validada por los validators."
+      - name: Diagnostic probe of current public Pages release
+        env:
+          MERIDIANO_BASE_URL: https://arendon7.github.io/MERDIANOLEGAL/
+        run: |
+          python3 - <<'PY'
+          import json
+          import time
+          from urllib.request import Request, urlopen
+          url = f"https://arendon7.github.io/MERDIANOLEGAL/site-status.json?diag={time.time_ns()}"
+          req = Request(url, headers={"User-Agent":"MeridianoReleaseProbe/6.0","Cache-Control":"no-cache"})
+          with urlopen(req, timeout=20) as response:
+              body = response.read().decode("utf-8", errors="replace")
+          print("CACHE_BUSTED_SITE_STATUS=", body)
+          print("CACHE_BUSTED_VERSION=", json.loads(body).get("version"))
+          PY
+          python3 scripts/validate_live_v53.py
