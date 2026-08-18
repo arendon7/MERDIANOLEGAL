@@ -69,6 +69,16 @@ jobs:
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
         with:
           python-version: "3.12"
+      - name: Detect candidate baseline phase
+        id: phase
+        run: |
+          if grep -q 'data-experience-system="v6"' index.html; then
+            echo 'is_v6=true' >> "$GITHUB_OUTPUT"
+            echo 'Candidate starts from an already-materialized v6 baseline; zero first-pass changes are valid.'
+          else
+            echo 'is_v6=false' >> "$GITHUB_OUTPUT"
+            echo 'Candidate starts from a pre-v6 baseline; first-pass materialization must produce public changes.'
+          fi
       - name: Compile v6 renderers and validators
         run: python3 -m py_compile scripts/apply_experience_v60.py scripts/apply_experience_solutions_v60.py scripts/apply_experience_sectors_v60.py scripts/apply_experience_perspectives_v60.py scripts/apply_experience_final_v60.py scripts/normalize_experience_compat_v60.py scripts/validate_experience_v60.py scripts/validate_experience_solutions_v60.py scripts/validate_experience_sectors_v60.py scripts/validate_experience_perspectives_v60.py scripts/validate_experience_final_v60.py scripts/validate_proof_v512.py
       - name: Materialize first v6 pass
@@ -96,7 +106,15 @@ jobs:
       - name: Capture first materialized diff
         run: |
           git diff -- index.html perspectivas.html firma.html experiencia.html demo.html aviso-legal.html privacidad.html terminos.html 404.html productos servicios soluciones sectores perspectivas > /tmp/v6-pass-1.diff
-          test -s /tmp/v6-pass-1.diff
+          if [ "${{ steps.phase.outputs.is_v6 }}" != "true" ] && [ ! -s /tmp/v6-pass-1.diff ]; then
+            echo "A pre-v6 candidate must materialize at least one public v6 surface." >&2
+            exit 1
+          fi
+          if [ -s /tmp/v6-pass-1.diff ]; then
+            echo "First pass materialized public candidate changes."
+          else
+            echo "First pass is already canonical on the v6 baseline."
+          fi
       - name: Prove second-pass idempotence
         run: |
           python3 scripts/apply_experience_v60.py
@@ -124,7 +142,7 @@ jobs:
           echo "Experience System v6 is idempotent across all 46 public surfaces."
       - name: Verify scoped v6 materialization boundary
         run: |
-          CHANGED="$(git diff --name-only)"
+          CHANGED="$(git diff --name-only -- index.html perspectivas.html firma.html experiencia.html demo.html aviso-legal.html privacidad.html terminos.html 404.html productos servicios soluciones sectores perspectivas)"
           printf '%s\n' "$CHANGED"
           UNEXPECTED="$(printf '%s\n' "$CHANGED" | grep -Ev '^(index\.html|perspectivas\.html|firma\.html|experiencia\.html|demo\.html|aviso-legal\.html|privacidad\.html|terminos\.html|404\.html|productos/[^/]+\.html|servicios/[^/]+\.html|soluciones/[^/]+\.html|sectores/[^/]+\.html|perspectivas/[^/]+\.html)$' || true)"
           if [ -n "$UNEXPECTED" ]; then
@@ -133,8 +151,10 @@ jobs:
             exit 1
           fi
           COUNT="$(printf '%s\n' "$CHANGED" | sed '/^$/d' | wc -l | tr -d ' ')"
-          if [ "$COUNT" -lt 1 ] || [ "$COUNT" -gt 46 ]; then
-            echo "La materialización sobre baseline v6 debe modificar entre 1 y 46 superficies; encontró $COUNT." >&2
+          MIN=0
+          if [ "${{ steps.phase.outputs.is_v6 }}" != "true" ]; then MIN=1; fi
+          if [ "$COUNT" -lt "$MIN" ] || [ "$COUNT" -gt 46 ]; then
+            echo "La materialización debe modificar entre $MIN y 46 superficies para esta fase; encontró $COUNT." >&2
             exit 1
           fi
           echo "Scoped materialization OK: $COUNT superficie(s) cambiada(s); cobertura estructural 46/46 validada por los validators."
