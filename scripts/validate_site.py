@@ -110,7 +110,8 @@ def validate():
         expected_catalog_id=CATALOG_PAGES.get(relative)
         if expected_catalog_id and parser.catalog_id!=expected_catalog_id: errors.append(f"{relative}: data-catalog-id debe ser {expected_catalog_id!r}")
         if relative in PERSPECTIVE_PAGES:
-            for marker in ("article-hero","article-body","article-meta","LECTURAS RELACIONADAS"):
+            hero_marker="v6-perspective-hero" if 'data-experience-system="v6"' in page_text else "article-hero"
+            for marker in (hero_marker,"article-body","article-meta","LECTURAS RELACIONADAS"):
                 if marker not in page_text: errors.append(f"{relative}: falta el bloque editorial {marker!r}")
         if relative in SECTOR_PAGES:
             for marker in ("sector-hero","decision-grid","map-grid","INTERVENCIÓN MERIDIANO","LECTURAS RELACIONADAS"):
