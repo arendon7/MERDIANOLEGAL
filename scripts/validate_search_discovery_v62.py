@@ -2,7 +2,6 @@
 """Valida Search Discovery Readiness v6.2 y su frontera de indexación."""
 from __future__ import annotations
 
-from pathlib import Path
 import json
 import re
 import sys
@@ -24,7 +23,7 @@ ROBOTS = ROOT / "robots.txt"
 HOME = ROOT / "index.html"
 RUNTIME = ROOT / "runtime-config.js"
 VERIFICATION_TAG = re.compile(
-    r'<meta\b(?=[^>]*\bname=["\']google-site-verification["\'])[^>]*\bcontent=["\']([^"\']*)["\'][^>]*>',
+    r"<meta\b(?=[^>]*\bname=[\"']google-site-verification[\"'])[^>]*\bcontent=[\"']([^\"']*)[\"'][^>]*>",
     re.IGNORECASE,
 )
 
@@ -89,11 +88,11 @@ def main() -> int:
             if signals.canonicals[0] != expected:
                 errors.append(f"{relative}: canonical debe ser autorreferencial")
 
-    expected_noindex = {"404.html", "demo.html"}
+    expected_noindex = {"404.html", "demo.html", "experiencia.html"}
     if noindex_paths != expected_noindex:
         errors.append(f"frontera noindex debe ser exactamente {sorted(expected_noindex)} y es {sorted(noindex_paths)}")
-    if len(entries) != 44:
-        errors.append(f"sitemap/indexación: se esperaban 44 páginas indexables y se encontraron {len(entries)}")
+    if len(entries) != 43:
+        errors.append(f"sitemap/indexación: se esperaban 43 páginas indexables y se encontraron {len(entries)}")
 
     sitemap_text = SITEMAP.read_text(encoding="utf-8") if SITEMAP.exists() else ""
     if any(tag in sitemap_text for tag in ("<lastmod>", "<priority>", "<changefreq>")):
@@ -117,9 +116,8 @@ def main() -> int:
     sitemap_line = f"Sitemap: {config['base_url']}sitemap.xml"
     if robots.count(sitemap_line) != 1:
         errors.append("robots.txt: debe declarar exactamente una referencia al sitemap canónico")
-    for forbidden in ("/demo.html",):
-        if forbidden not in robots:
-            errors.append(f"robots.txt: falta exclusión explícita {forbidden}")
+    if "/demo.html" not in robots:
+        errors.append("robots.txt: falta exclusión explícita de demo.html")
 
     home = HOME.read_text(encoding="utf-8")
     verification_values = VERIFICATION_TAG.findall(home)
@@ -138,8 +136,8 @@ def main() -> int:
     if errors:
         return fail(errors)
     print(
-        "SEARCH DISCOVERY V6.2 OK: 46 HTML clasificados, 44 indexables con canonical propio, "
-        "2 noindex fuera del sitemap y Search Console sin afirmaciones ficticias."
+        "SEARCH DISCOVERY V6.2 OK: 46 HTML clasificados, 43 indexables con canonical propio, "
+        "3 noindex fuera del sitemap y Search Console sin afirmaciones ficticias."
     )
     return 0
 
