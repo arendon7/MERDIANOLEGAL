@@ -29,6 +29,8 @@ DETAIL_START = "<!-- EXPERIENCE-V60-DETAIL:START -->"
 DETAIL_END = "<!-- EXPERIENCE-V60-DETAIL:END -->"
 LEGACY_START = "<!-- EXPERIENCE-V60-LEGACY:START -->"
 LEGACY_END = "<!-- EXPERIENCE-V60-LEGACY:END -->"
+COMMERCIAL_START = "<!-- COMMERCIAL-V43:START -->"
+COMMERCIAL_END = "<!-- COMMERCIAL-V43:END -->"
 FORM_MOVED = '<div class="v6-form-moved-note">El formulario canónico se muestra en el cierre principal v6 de esta página.</div>'
 
 SOLUTION_HREFS = [
@@ -131,7 +133,6 @@ def normalize_detail(catalog_id: str, source: dict, override: dict | None) -> di
     }
     if override:
         data.update(override)
-    # La verdad sustantiva no puede desaparecer por un override editorial.
     data["catalog_id"] = catalog_id
     data["kind"] = kind
     data["result_text"] = source["result"]
@@ -166,7 +167,7 @@ def home_header(text: str) -> str:
     nav = (
         '<nav id="main-nav" class="main-nav" aria-label="Navegación principal">'
         '<a href="#v6-situations">Cómo podemos ayudar</a><a href="soluciones/index.html">Soluciones</a>'
-        '<a href="#v6-depth">Oferta completa</a><a href="perspectivas.html">Perspectivas</a><a href="firma.html">Firma</a>'
+        '<a href="#v6-commercial-depth">Oferta completa</a><a href="perspectivas.html">Perspectivas</a><a href="firma.html">Firma</a>'
         '<span class="mobile-nav-actions"><a href="experiencia.html">Cómo trabajamos · demo</a><a href="#contacto">Presentar necesidad</a></span></nav>'
     )
     text, count = re.subn(r'<nav id="main-nav" class="main-nav" aria-label="Navegación principal">.*?</nav>', nav, text, count=1, flags=re.S)
@@ -183,7 +184,7 @@ def detail_header(text: str, contact_href: str) -> str:
     nav = (
         '<nav class="detail-nav" id="detail-nav" aria-label="Navegación principal">'
         '<a href="../index.html#v6-situations">Cómo podemos ayudar</a><a href="../soluciones/index.html">Soluciones</a>'
-        '<a href="../index.html#v6-depth">Oferta completa</a><a href="../perspectivas.html">Perspectivas</a><a href="../firma.html">Firma</a></nav>'
+        '<a href="../index.html#v6-commercial-depth">Oferta completa</a><a href="../perspectivas.html">Perspectivas</a><a href="../firma.html">Firma</a></nav>'
     )
     text, count = re.subn(r'<nav class="detail-nav" id="detail-nav" aria-label="Navegación principal">.*?</nav>', nav, text, count=1, flags=re.S)
     if count != 1:
@@ -200,14 +201,14 @@ def render_method_artifact(method: list[list[str]]) -> str:
     return '<aside class="v6-artifact" aria-label="Método de trabajo"><div class="v6-artifact-inner"><p class="v6-eyebrow">DE PROBLEMA A EJECUCIÓN</p><h2 class="v6-artifact-title">El criterio jurídico debe dejar una ruta que pueda administrarse.</h2><div class="v6-artifact-steps">' + rows + '</div></div></aside>'
 
 
-def render_home(data: dict, form_html: str, legacy: str) -> str:
+def render_home(data: dict, form_html: str, commercial: str, legacy: str) -> str:
     situations = []
     for idx, (num, title, action) in enumerate(data["situations"]):
         situations.append(f'<a class="v6-index-row" href="{e(SOLUTION_HREFS[idx])}"><span class="v6-index-num">{e(num)}</span><strong class="v6-index-title">{e(title)}</strong><span class="v6-index-action">{e(action)} →</span></a>')
     outcomes = "".join(f'<article class="v6-outcome"><b>{e(num)}</b><h3>{e(title)}</h3><p>{e(copy)}</p></article>' for num, title, copy in data["outcomes"])
     timeline = "".join(f'<article class="v6-timeline-row"><span class="v6-timeline-num">{e(num)}</span><strong class="v6-timeline-title">{e(title)}</strong><p class="v6-timeline-copy">{e(copy)}</p></article>' for num, title, copy in data["method"])
     evidence = "".join(f'<div class="v6-evidence-row"><b>{idx:02d}</b><span>{e(copy)}</span></div>' for idx, copy in enumerate(data["evidence"], 1))
-    families = "".join(f'<article class="v6-family"><h3>{e(title)}</h3><p>{e(copy)}</p><a class="v6-text-link" href="#v6-depth">Explorar oferta y condiciones →</a></article>' for title, copy in data["offer_families"])
+    families = "".join(f'<article class="v6-family"><h3>{e(title)}</h3><p>{e(copy)}</p><a class="v6-text-link" href="#v6-commercial-depth">Explorar oferta y condiciones →</a></article>' for title, copy in data["offer_families"])
     assurance = "".join(f'<span>{e(item)}</span>' for item in data["assurance"])
     return f'''{HOME_START}
 <section class="v6-hero" aria-labelledby="v6-home-title"><div class="v6-container v6-hero-grid"><div class="v6-hero-copy"><p class="v6-eyebrow">{e(data['eyebrow'])}</p><h1 class="v6-display" id="v6-home-title">{e(data['title'])}</h1><p class="v6-lead">{e(data['lead'])}</p><div class="v6-actions"><a class="v6-btn" href="#contacto">{e(data['primary_cta'])} →</a><a class="v6-btn v6-btn-secondary" href="#v6-situations">{e(data['secondary_cta'])}</a></div><div class="v6-assurance">{assurance}</div></div>{render_method_artifact(data['method'])}</div></section>
@@ -216,8 +217,9 @@ def render_home(data: dict, form_html: str, legacy: str) -> str:
 <section class="v6-section v6-home-method" aria-labelledby="v6-method-title"><div class="v6-container"><div class="v6-section-head"><p class="v6-eyebrow">DE PROBLEMA A EJECUCIÓN</p><h2 class="v6-heading" id="v6-method-title">Primero entendemos la decisión. Después definimos el instrumento.</h2></div><div class="v6-method-line"></div><div class="v6-timeline">{timeline}</div></div></section>
 <section class="v6-section v6-evidence" aria-labelledby="v6-evidence-title"><div class="v6-container v6-evidence-grid"><div class="v6-section-head"><p class="v6-eyebrow">CRITERIO QUE PUEDE VERIFICARSE</p><h2 class="v6-heading" id="v6-evidence-title">La experiencia debe leerse en cómo se estructura el trabajo.</h2><p class="v6-lead">La confianza depende de poder entender alcance, método, evidencia, límites y trayectoria.</p><div class="v6-actions"><a class="v6-btn" href="firma.html#trayectoria">Ver trayectoria y método →</a><a class="v6-btn v6-btn-secondary" href="experiencia.html">Ver experiencia demo</a></div></div><div class="v6-evidence-list">{evidence}</div></div></section>
 <section class="v6-section v6-home-offer" id="v6-offer" aria-labelledby="v6-offer-title"><div class="v6-container"><div class="v6-section-head"><p class="v6-eyebrow">OFERTA COMPLETA</p><h2 class="v6-heading" id="v6-offer-title">Cuando ya reconoce la necesidad, compare la forma de intervenir.</h2></div><div class="v6-family-grid">{families}</div></div></section>
-<section class="v6-section v6-contact" id="contacto" aria-labelledby="v6-contact-title"><div class="v6-container v6-contact-grid"><div class="v6-contact-copy"><p class="v6-eyebrow">SIGUIENTE PASO</p><h2 class="v6-heading" id="v6-contact-title">Cuéntenos qué decisión necesita resolver.</h2><p class="v6-lead">No necesita escoger primero un servicio. Comparta el contexto general, el horizonte y el resultado esperado. No envíe información confidencial ni documentos sensibles.</p><p class="v6-lead"><strong>Este formulario no crea una relación profesional, no envía archivos y no registra una conversión.</strong> Prepara un handoff manual a WhatsApp conforme al contrato vigente.</p></div><div class="v6-contact-form">{form_html}</div></div></section>
-<details class="v6-depth v6-legacy-home" id="v6-depth"><summary><span>PROFUNDIDAD COMPLETA</span><strong>Explorar oferta, planes, sectores, perspectivas, firma, preguntas y condiciones del sitio v5.31</strong></summary><div class="v6-depth-inner">{LEGACY_START}{legacy}{LEGACY_END}</div></details>
+<details class="v6-depth v6-commercial-depth" id="v6-commercial-depth"><summary><span>PLANES, HONORARIOS Y CONTRATACIÓN</span><strong>Comparar referencias económicas, modalidades y condiciones antes de presentar la necesidad</strong></summary><div class="v6-depth-inner">{commercial}</div></details>
+<section class="v6-section v6-contact" id="contacto" data-conversion-path-v528="true" aria-labelledby="v6-contact-title"><div class="v6-container v6-contact-grid"><div class="v6-contact-copy"><p class="v6-eyebrow">SIGUIENTE PASO</p><h2 class="v6-heading" id="v6-contact-title">Cuéntenos qué decisión necesita resolver.</h2><p class="v6-lead">No necesita escoger primero un servicio. Comparta el contexto general, el horizonte y el resultado esperado. No envíe información confidencial ni documentos sensibles.</p><p class="v6-lead"><strong>Este formulario no crea una relación profesional, no envía archivos y no registra una conversión.</strong> Prepara un handoff manual a WhatsApp conforme al contrato vigente.</p></div><div class="v6-contact-form">{form_html}</div></div></section>
+<details class="v6-depth v6-legacy-home" id="v6-depth"><summary><span>PROFUNDIDAD COMPLETA</span><strong>Explorar sectores, perspectivas, firma, preguntas y condiciones del sitio v5.31</strong></summary><div class="v6-depth-inner">{LEGACY_START}{legacy}{LEGACY_END}</div></details>
 {HOME_END}'''
 
 
@@ -234,7 +236,7 @@ def render_detail_nav(data: dict) -> str:
 
 
 def render_result(data: dict) -> str:
-    points = data.get("close_points") if data["kind"] == "service" and data.get("close_points") else data.get("result_points", [])
+    points = data.get("result_points", [])
     items = "".join(f'<div class="v6-result-item"><b>{idx:02d}</b><span>{e(item)}</span></div>' for idx, item in enumerate(points, 1))
     return f'<section class="v6-section v6-result" id="v6-result" aria-labelledby="v6-result-title"><div class="v6-container v6-result-grid"><div class="v6-section-head"><p class="v6-eyebrow">RESULTADO</p><h2 class="v6-heading" id="v6-result-title">{e(data["result_title"])}</h2><p class="v6-lead">{e(data["result_text"])}</p></div><div class="v6-result-list">{items}</div></div></section>'
 
@@ -295,6 +297,13 @@ def extract_legacy(current_main: str) -> str:
     return match.group(1) if match else current_main
 
 
+def extract_commercial(current_main: str) -> str:
+    match = re.search(re.escape(COMMERCIAL_START) + r'.*?' + re.escape(COMMERCIAL_END), current_main, flags=re.S)
+    if not match:
+        raise RuntimeError("Home v6: no se localizó bloque comercial v4.3")
+    return match.group(0)
+
+
 def patch_home(data: dict) -> None:
     text = HOME.read_text(encoding="utf-8")
     text = ensure_styles(text, "")
@@ -305,11 +314,15 @@ def patch_home(data: dict) -> None:
     if len(form_matches) != 1:
         raise RuntimeError(f"Home v6 esperaba un único formulario; encontró {len(form_matches)}")
     form_html = form_matches[0].group(0)
+    commercial = extract_commercial(current_main)
     legacy = extract_legacy(current_main)
+    if commercial in legacy:
+        legacy = legacy.replace(commercial, "", 1)
     if re.search(r'<form\b[^>]*>.*?</form>', legacy, flags=re.S):
         legacy = re.sub(r'<form\b[^>]*>.*?</form>', FORM_MOVED, legacy, count=1, flags=re.S)
     legacy = legacy.replace('id="contacto"', 'id="contacto-v531-legacy"')
-    new_main = f'<main id="contenido" data-experience-v60="home">\n{render_home(data, form_html, legacy)}\n</main>'
+    legacy = legacy.replace(' data-conversion-path-v528="true"', '', 1)
+    new_main = f'<main id="contenido" data-experience-v60="home">\n{render_home(data, form_html, commercial, legacy)}\n</main>'
     text = text[:main_match.start()] + new_main + text[main_match.end():]
     HOME.write_text(text, encoding="utf-8")
 
