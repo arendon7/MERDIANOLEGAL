@@ -60,7 +60,7 @@ def mark_body(text: str, surface: str) -> str:
 
 
 def remove_managed(text: str, start: str, end: str) -> str:
-    return re.sub(r"\s*" + re.escape(start) + r".*?" + re.escape(end) + r"\s*", "\n", text, flags=re.S)
+    return re.sub(re.escape(start) + r".*?" + re.escape(end), "", text, flags=re.S)
 
 
 def demo_boundary(kind: str) -> str:
@@ -88,9 +88,11 @@ def demo_boundary(kind: str) -> str:
 
 def patch_demo_surface(text: str, kind: str) -> str:
     text = remove_managed(text, BOUNDARY_START, BOUNDARY_END)
-    if "</header>" not in text:
+    block = demo_boundary(kind)
+    result, count = re.subn(r"</header>\s*", "</header>\n" + block + "\n", text, count=1)
+    if count != 1:
         raise RuntimeError(f"{kind}: falta header")
-    return text.replace("</header>", "</header>\n" + demo_boundary(kind), 1)
+    return result
 
 
 def patch_404(text: str) -> str:
@@ -101,7 +103,8 @@ def patch_404(text: str) -> str:
     block = f'''{RECOVERY_START}
 <div class="v6-recovery-links" aria-label="Rutas recomendadas"><a href="soluciones/index.html">Explorar soluciones</a><a href="perspectivas.html">Leer perspectivas</a><a href="firma.html">Conocer la firma</a></div>
 {RECOVERY_END}'''
-    return text[:actions.end()] + "\n" + block + text[actions.end():]
+    after = re.sub(r"^\s*", "\n", text[actions.end():])
+    return text[:actions.end()] + "\n" + block + after
 
 
 def patch(path: Path, surface: str) -> None:
