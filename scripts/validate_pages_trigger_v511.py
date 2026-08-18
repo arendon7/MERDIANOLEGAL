@@ -46,17 +46,20 @@ def main() -> int:
     if f"!startsWith(github.event.workflow_run.head_commit.message, '{IGNORED_BUILD_MESSAGE}')" not in pages:
         errors.append("pages.yml: quality debe ignorar el workflow_run generado por el commit canónico build:")
 
-    concurrency_line = next(
-        (line.strip() for line in pages.splitlines() if line.strip().startswith("group: meridiano-pages-")),
-        "",
-    )
+    concurrency_match = re.search(r'(?m)^\s*group:\s*"([^"]+)"\s*$', pages)
+    if not concurrency_match:
+        errors.append("pages.yml: concurrency.group dinámico debe permanecer entre comillas dobles para ser YAML inequívoco")
+        concurrency_value = ""
+    else:
+        concurrency_value = concurrency_match.group(1)
     for fragment in (
+        "meridiano-pages-${{",
         "github.event_name == 'workflow_run'",
         f"startsWith(github.event.workflow_run.head_commit.message, '{IGNORED_BUILD_MESSAGE}')",
         "'ignored-build-output'",
         "'main'",
     ):
-        if fragment not in concurrency_line:
+        if fragment not in concurrency_value:
             errors.append(f"pages.yml: concurrencia debe aislar workflow_run build:; falta {fragment!r}")
     if re.search(r"(?m)^\s*group:\s*meridiano-pages-main\s*$", pages):
         errors.append("pages.yml: un grupo fijo meridiano-pages-main permite que un run ignorado cancele una release válida")
@@ -80,7 +83,7 @@ def main() -> int:
 
     print(
         "PAGES TRIGGER V5.11 OK: Pages espera al builder canónico y aísla los workflow_run build: "
-        "para que no cancelen una release válida."
+        "en un concurrency.group YAML quoted para que no cancelen una release válida."
     )
     return 0
 
