@@ -77,6 +77,13 @@ jobs:
           fi
           cat /tmp/release-metadata-check.txt
           sed -n 's/^- //p' /tmp/release-metadata-check.txt | sort -u > /tmp/release-metadata-pending.txt
+          if [ -f assets/data/v6/search-discovery-readiness-v62.json ]; then
+            python3 scripts/apply_search_discovery_v62.py --check > /tmp/search-discovery-check.txt 2>&1 || true
+            cat /tmp/search-discovery-check.txt
+            sed -n 's/^- //p' /tmp/search-discovery-check.txt | sort -u > /tmp/search-discovery-pending.txt
+          else
+            : > /tmp/search-discovery-pending.txt
+          fi
           if [ "$IS_V6" = "true" ]; then
             grep -l 'telemetry-v50.js' *.html servicios/*.html productos/*.html soluciones/*.html sectores/*.html perspectivas/*.html | sort -u > /tmp/v61-measurement-expected.txt
           else
@@ -142,9 +149,9 @@ jobs:
               echo "404.html, demo.html y experiencia.html no pueden formar parte del conjunto measurement v6.1." >&2
               exit 1
             fi
-            cat /tmp/v61-measurement-expected.txt /tmp/release-metadata-pending.txt | sed '/^$/d' | sort -u > /tmp/canonical-expected.txt
+            cat /tmp/v61-measurement-expected.txt /tmp/release-metadata-pending.txt /tmp/search-discovery-pending.txt | sed '/^$/d' | sort -u > /tmp/canonical-expected.txt
           else
-            sed '/^$/d' /tmp/release-metadata-pending.txt | sort -u > /tmp/canonical-expected.txt
+            cat /tmp/release-metadata-pending.txt /tmp/search-discovery-pending.txt | sed '/^$/d' | sort -u > /tmp/canonical-expected.txt
           fi
           echo '--- expected canonical changes ---'
           cat /tmp/canonical-expected.txt
@@ -154,7 +161,7 @@ jobs:
             echo "Canonical v6 first-pass boundary diverge del conjunto exacto esperado." >&2
             exit 1
           fi
-          echo "First-pass canonical boundary OK: cambios exactos = measurement esperado ∪ drift de release declarado por sync --check."
+          echo "First-pass canonical boundary OK: cambios exactos = measurement esperado ∪ release drift ∪ discovery drift declarado."
       - name: Validate certified Experience System v6 and general site integrity
         run: |
           python3 scripts/validate_site.py
@@ -167,6 +174,9 @@ jobs:
           python3 scripts/validate_proof_v512.py
           python3 scripts/validate_capability_truth_v521.py
           python3 scripts/validate_editorial_context.py
+          if [ -f assets/data/v6/search-discovery-readiness-v62.json ]; then
+            python3 scripts/validate_search_discovery_v62.py
+          fi
       - name: Validate Pages static quality contract before merge
         run: |
           python3 scripts/validate_static_catalog.py
@@ -251,6 +261,7 @@ jobs:
           python3 -m json.tool authority-v53.json > /dev/null
           python3 -m json.tool measurement-contract-v53.json > /dev/null
           python3 -m json.tool assets/data/v6/measurement-readiness-v61.json > /dev/null
+          python3 -m json.tool assets/data/v6/search-discovery-readiness-v62.json > /dev/null
           python3 -m json.tool commercial-intake-v59.json > /dev/null
           python3 -m json.tool conversion-close-v510.json > /dev/null
           python3 -m json.tool recommendation-v514.json > /dev/null
@@ -278,6 +289,9 @@ jobs:
             exit 1
           }
           python3 scripts/sync_public_version.py --check
+          if [ -f assets/data/v6/search-discovery-readiness-v62.json ]; then
+            python3 scripts/apply_search_discovery_v62.py --check
+          fi
       - name: Report canonical materialization boundary
         run: |
           CHANGED="$(git diff --name-only)"

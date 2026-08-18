@@ -72,6 +72,8 @@ def main() -> int:
         errors.append("build-canonical.yml: el builder debe conservar push de fuentes + dispatch manual")
     if "scripts/validate_*.py" not in build_triggers:
         errors.append("build-canonical.yml: el builder debe vigilar todos los validators Python que pueden bloquear Pages")
+    if "scripts/apply_search_discovery_v62.py" not in build_triggers:
+        errors.append("build-canonical.yml: cambios del materializador Search Discovery v6.2 deben disparar el builder")
     if "git push origin HEAD:main" not in build:
         errors.append("build-canonical.yml: falta publicación de outputs canónicos a main")
 
@@ -82,8 +84,8 @@ def main() -> int:
         return 1
 
     print(
-        "PAGES TRIGGER V5.11 OK: Pages espera al builder canónico y aísla los workflow_run build: "
-        "en un concurrency.group YAML quoted para que no cancelen una release válida."
+        "PAGES TRIGGER V5.11 OK: Pages espera al builder canónico, aísla los workflow_run build: "
+        "y el builder vigila validators + Search Discovery v6.2 antes de publicar."
     )
     return 0
 

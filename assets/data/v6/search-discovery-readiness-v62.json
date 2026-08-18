@@ -1,0 +1,30 @@
+{
+  "version": "6.2",
+  "status": "readiness-not-verified",
+  "provider": "google-search-console",
+  "property_type": "url-prefix",
+  "verification": {
+    "method": "html-meta",
+    "config_key": "search_console_verification",
+    "requires_authentic_token": true,
+    "empty_token_state": "not-configured"
+  },
+  "sitemap": {
+    "source": "self-referential-indexable-canonicals",
+    "include_optional_lastmod": false,
+    "include_priority": false,
+    "include_changefreq": false,
+    "require_exact_indexable_coverage": true
+  },
+  "canonical": {
+    "require_self_referential": true,
+    "require_exactly_one_per_indexable_page": true,
+    "exclude_noindex_from_sitemap": true
+  },
+  "safety": {
+    "invent_verification_token": false,
+    "claim_search_console_configured_without_token": false,
+    "alter_public_copy": false,
+    "alter_analytics_configuration": false
+  }
+}

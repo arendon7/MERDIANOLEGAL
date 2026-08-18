@@ -2,80 +2,93 @@
 
 Actualizado: 2026-08-18.
 
-## Estado funcional certificado
+## Estado base certificado
 
-- Release: **v6.1.0 — Measurement Readiness / observabilidad privacy-first**.
-- SHA funcional certificado: `8ffe0e923fc626281870ca2bd38d6c55a665b31b`.
-- Canal de cierre: `github-pages-production-measurement-readiness-certified`.
-- GitHub Pages sirve v6.1.0.
-- Browser E2E/axe público: PASS.
-- Lighthouse público: PASS con budgets existentes.
-- 46 HTML, 16 fichas profundas, 1 formulario físico y 30 pasos canónicos preservados.
-- Analytics externa permanece deshabilitada: `enabled=false`, `provider=none`, sin site id real.
+- Release certificada de partida: **v6.1.0 — Measurement Readiness / observabilidad privacy-first**.
+- `main == stable == 5a44596e6e44cda44e77bfd60a039bded753e01a` al abrir este ciclo.
+- Canal base: `github-pages-production-measurement-readiness-certified`.
+- Analytics externa permanece deshabilitada: `enabled=false`, `provider=none`, `site_id=""`.
+- Search Console permanece sin configurar: no existe token auténtico en `site-config.json` y runtime publica `searchConsoleConfigured=false`.
+- 46 HTML, 16 fichas profundas, un único formulario físico y 30 pasos históricos del builder permanecen como invariantes.
 
-## Frente vigente
+## Ciclo funcional activo
 
-**No existe un ciclo funcional nuevo abierto.**
+**v6.2.0 — Search Discovery Readiness / indexación verificable.**
 
-La única tarea activa es el **cierre documental v6.1.0**:
+Rama: `feat/v62-search-discovery-readiness`.
+PR: `#158` (Draft hasta certificación same-SHA).
+Release candidate: `version.json = 6.2.0`, fecha `2026-08-18`, canal `github-pages-search-discovery-readiness-candidate`.
 
-1. marcar el canal como `certified`;
-2. actualizar README y memoria canónica;
-3. publicar `RELEASE-v6.1.md`;
-4. someter este cierre a los gates pre-merge aplicables;
-5. fusionar únicamente con same-SHA verde;
-6. exigir Builder → Pages → smoke → Browser/axe → Lighthouse → snapshot;
-7. cerrar solo cuando `main == stable` y `stable/version.json` declare v6.1.0 certified.
+### Problema observable
 
-## Resultado que queda cerrado
+La web ya tenía canonicals, robots y sitemap, pero dos aspectos impedían considerar discovery como un contrato preciso:
 
-v6.1 dejó preparada una futura medición agregada sin activar un tercero:
+1. Google Search Console no está verificado/configurado y no existe un token auténtico que permita afirmarlo.
+2. El sitemap heredado sincronizaba `lastmod` de todas las URLs con la fecha global de release y conservaba `priority/changefreq`, aunque una release técnica no demuestra por sí sola una modificación material de cada página.
 
-- fuente única `meridiano:funnel-v529`;
-- solo `detail.stage` es elegible para exportación;
-- raw `adapter.track(name,event)` es `no-op`;
-- seis etapas allowlisted: need, offer, evidence, decision, contact, handoff;
-- payload custom de Meridiano: solo nombre del evento, cero propiedades custom;
-- 43 superficies instrumentadas;
-- `404.html`, `demo.html` y `experiencia.html` excluidas por ausencia previa de telemetría;
-- Plausible adapter-ready pero deshabilitado;
-- `autoCapturePageviews:false`;
-- revisión de metadata estándar + actualización de política/configuración obligatorias antes de activar.
+v6.2 corrige la semántica sin inventar propiedad sobre Google ni alterar contenido jurídico/comercial.
 
-## Release engineering cerrado
+## Alcance v6.2
 
-- `sync_public_version.py` sincroniza versión visible, runtime/status, sitemap y metadata editorial de modificación.
-- `--check` bloquea drift de release.
-- Canonical Equivalence compara el conjunto exacto esperado y prueba segunda pasada idempotente.
-- Candidate/Browser/Measurement reproducen la sincronización en baseline v6.
-- Pages aísla los workflow_run del commit canónico `build:` en `ignored-build-output`.
-- El `concurrency.group` dinámico queda quoted para YAML inequívoco.
-- `validate_pages_trigger_v511.py` bloquea una regresión a grupo fijo o expresión no quoted.
+1. contrato `assets/data/v6/search-discovery-readiness-v62.json`;
+2. estado explícito `readiness-not-verified`;
+3. proveedor de verificación previsto: Google Search Console, propiedad URL-prefix;
+4. método preparado: meta HTML gobernada por `site-config.json.search_console_verification`;
+5. token auténtico obligatorio; token vacío implica ausencia total de meta de verificación y `searchConsoleConfigured=false`;
+6. clasificación exacta de las 46 superficies públicas;
+7. **43 páginas indexables** con exactamente un canonical autorreferencial;
+8. **3 páginas `noindex`** fuera del sitemap: `404.html`, `demo.html`, `experiencia.html`;
+9. sitemap determinista derivado de los canonicals indexables;
+10. sitemap mínimo: solo `<loc>`, sin `priority`, `changefreq` ni `lastmod` global no demostrable;
+11. `robots.txt` conserva una única referencia al sitemap canónico y la exclusión explícita de demo;
+12. normalizador `scripts/apply_search_discovery_v62.py` con modo `--check` fail-closed;
+13. validator `scripts/validate_search_discovery_v62.py` para frontera 43/3, canonicals, sitemap, robots y coherencia de verificación;
+14. integración a través de `normalize_experience_compat_v60.py`, sin crear un paso histórico 31;
+15. `sync_public_version.py` conserva el comportamiento sitemap legacy cuando v6.2 no existe y deja de poseer el sitemap cuando el contrato v6.2 está presente;
+16. v4.8 y v5.1 evolucionan phase-aware sin eliminar sus controles históricos;
+17. Canonical Equivalence exige `diff real = measurement esperado ∪ release drift ∪ discovery drift` según corresponda;
+18. gate dedicado `.github/workflows/v62-search-discovery-readiness.yml` exige boundary exacto e idempotencia;
+19. Builder observa cambios futuros de `scripts/apply_search_discovery_v62.py` y su validator de topología lo exige;
+20. Candidate incluye sitemap/robots en la prueba de idempotencia;
+21. Browser Candidate observa `site-config.json`, sitemap, robots y scripts v6.2;
+22. E2E `search-discovery-v62.spec.mjs` verifica dinámicamente coherencia entre runtime y meta de Search Console, además de la frontera sitemap 43/3.
 
-## Fuera de alcance después del cierre
+## Criterios de éxito
 
-No hacer automáticamente:
+- ninguna meta `google-site-verification` mientras el token canónico esté vacío;
+- no afirmar Search Console configurado sin token auténtico;
+- 46/46 HTML clasificados;
+- 43/43 indexables con canonical autorreferencial único;
+- 3/3 noindex fuera del sitemap;
+- sitemap con exactamente 43 `<loc>` y sin `lastmod`, `priority` o `changefreq` no sustentados;
+- `robots.txt` conserva el sitemap canónico;
+- la primera materialización modifica únicamente el conjunto exacto declarado por release metadata + discovery;
+- segunda pasada idempotente;
+- 46 HTML, 16 fichas, un formulario y 30 pasos históricos intactos;
+- analytics externa continúa deshabilitada;
+- Browser/axe, Measurement, Candidate, Search Discovery, Equivalence, Governance y Graphify verdes sobre el mismo SHA;
+- después del merge, Builder → Pages → smoke → Browser/axe → Lighthouse → snapshot debe promover `stable` automáticamente.
 
-- activar Plausible, Umami u otro tercero;
-- crear cuentas/proyectos de analytics;
-- introducir un site id ficticio;
-- cambiar la política como si existiera un tercero activo;
-- añadir propiedades custom o UTMs al payload;
-- convertir `contact`/`handoff` en una métrica de cliente convertido;
-- abrir otro ciclo de UI/CRO/performance sin evidencia observable.
+## Fuera de alcance de esta fase
 
-## Condición para futura activación de analytics
+- inventar o publicar un token de Google;
+- afirmar que la propiedad ya fue verificada en Search Console;
+- crear o controlar una cuenta de Google sin credenciales/decisión explícita;
+- enviar sitemaps a Search Console desde una cuenta no conectada;
+- activar Plausible u otro proveedor de analytics;
+- cambiar copy, servicios, productos, precios, layout o funnel por intuición;
+- convertir discovery readiness en una promesa de ranking o tráfico.
 
-Una futura activación requiere como mínimo:
+## Condición para verificación real posterior
 
-1. decisión explícita de proveedor;
-2. identificador/snippet auténtico;
-3. revisión técnica de metadata estándar y tráfico saliente;
-4. actualización previa de política y configuración;
-5. pageviews automáticos deshabilitados salvo decisión expresa distinta;
-6. nueva suite de privacy/network E2E;
-7. nueva certificación y promoción automática de `stable`.
+Una activación real de Search Console requerirá:
 
-## Próximo ciclo
+1. propiedad/cuenta Google auténtica;
+2. token de verificación generado por Google para la URL-prefix correspondiente;
+3. incorporación del token en `site-config.json` sin exponer credenciales adicionales;
+4. materialización de una única meta en Home;
+5. Browser/Candidate/Search Discovery/Equivalence verdes;
+6. despliegue productivo certificado;
+7. verificación efectiva en Search Console y, posteriormente, envío/lectura del sitemap desde la propiedad verificada.
 
-Después de cerrar esta documentación, el proyecto queda en estado estable. El siguiente ciclo debe arrancar únicamente desde una necesidad observable o una decisión explícita de negocio/medición, con criterio de éxito verificable. No se añade una nueva capa versionada por inercia.
+Hasta entonces, v6.2 es **Search Discovery Readiness**, no Search Console activa ni evidencia de posicionamiento.

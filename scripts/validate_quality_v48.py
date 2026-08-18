@@ -13,6 +13,7 @@ SITE_JS = ROOT / "site-v3.js"
 CATALOG_HOME = ROOT / "catalog-home-v32.js"
 DEMO = ROOT / "demo.html"
 SITEMAP = ROOT / "sitemap.xml"
+DISCOVERY_V62 = ROOT / "assets/data/v6/search-discovery-readiness-v62.json"
 VERSION_DATA = json.loads((ROOT / "version.json").read_text(encoding="utf-8"))
 VERSION = VERSION_DATA.get("version", "")
 RELEASE_DATE = VERSION_DATA.get("release_date", "")
@@ -137,9 +138,17 @@ if '<html lang="es-CO">' not in portal or 'meta name="robots" content="noindex,n
     errors.append("demo.html debe declarar es-CO y noindex,nofollow")
 
 sitemap = SITEMAP.read_text(encoding="utf-8")
-lastmods = re.findall(r"<lastmod>(\d{4}-\d{2}-\d{2})</lastmod>", sitemap)
-if not lastmods or any(value != RELEASE_DATE for value in lastmods):
-    errors.append("sitemap.xml debe usar release_date como lastmod de las páginas vigentes")
+if DISCOVERY_V62.exists():
+    # Evolución semántica: v6.2 conserva el contrato histórico de sitemap/noindex,
+    # pero deja de presentar la fecha global de release como modificación de todas
+    # las URLs y elimina hints que el buscador no utiliza como señal de ranking.
+    for forbidden in ("<lastmod>", "<priority>", "<changefreq>"):
+        if forbidden in sitemap:
+            errors.append(f"sitemap.xml v6.2 no debe publicar {forbidden}")
+else:
+    lastmods = re.findall(r"<lastmod>(\d{4}-\d{2}-\d{2})</lastmod>", sitemap)
+    if not lastmods or any(value != RELEASE_DATE for value in lastmods):
+        errors.append("sitemap.xml legacy debe usar release_date como lastmod de las páginas vigentes")
 if "demo.html" in sitemap:
     errors.append("demo.html no debe estar en sitemap.xml")
 
