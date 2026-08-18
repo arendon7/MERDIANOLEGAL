@@ -3,9 +3,11 @@
 
 No crea truth jurídico nuevo. Reubica confianza v5.29, preserva el contrato de
 contacto v5.28, evita que etiquetas editoriales v6 interfieran con anclas
-históricas, cablea measurement readiness v6.1, Search Discovery v6.2 y
-Engagement Clarity v6.3. La activación de terceros sigue gobernada por
-site-config.json y permanece deshabilitada/no verificada por defecto.
+históricas, cablea measurement readiness v6.1, Search Discovery v6.2,
+Engagement Clarity v6.3 y, cuando existe su contrato de prototipo, materializa
+y valida la capa representativa Legal Intelligence v7.
+La activación de terceros sigue gobernada por site-config.json y permanece
+deshabilitada/no verificada por defecto.
 """
 from __future__ import annotations
 
@@ -139,6 +141,15 @@ def run_contract_script(script_name: str, label: str) -> None:
         raise RuntimeError(f"{label} inválido: {detail}")
 
 
+def normalize_legal_intelligence_prototype() -> None:
+    contract = ROOT / "assets" / "data" / "v7" / "legal-intelligence-prototype-v70.json"
+    if not contract.exists():
+        return
+    run_contract_script("validate_legal_intelligence_v70.py", "Legal Intelligence v7 architecture")
+    run_contract_script("apply_legal_intelligence_prototype_v70.py", "Legal Intelligence v7 prototype")
+    run_contract_script("validate_legal_intelligence_prototype_v70.py", "Legal Intelligence v7 prototype")
+
+
 def normalize_engagement_clarity() -> None:
     contract = ROOT / "assets" / "data" / "v6" / "engagement-clarity-v63.json"
     if not contract.exists():
@@ -208,14 +219,16 @@ def normalize_search_discovery() -> None:
 def main() -> int:
     normalize_home_trust()
     normalize_solution_labels()
+    normalize_legal_intelligence_prototype()
     normalize_engagement_clarity()
     instrumented, untouched = normalize_measurement_runtime()
     validate_measurement_readiness()
     normalize_search_discovery()
     print(
         "EXPERIENCE V6 COMPAT OK: confianza v5.29, contacto v5.28, capability truth y anclas v5.31 "
-        f"preservados; Engagement Clarity v6.3 normalizado cuando existe su contrato; measurement readiness v6.1 en "
-        f"{instrumented} superficies, {untouched} sin telemetría previa; Search Discovery v6.2 normalizado cuando existe su contrato."
+        f"preservados; Legal Intelligence v7 prototype normalizado cuando existe su contrato; Engagement Clarity v6.3 "
+        f"normalizado cuando existe su contrato; measurement readiness v6.1 en {instrumented} superficies, "
+        f"{untouched} sin telemetría previa; Search Discovery v6.2 normalizado cuando existe su contrato."
     )
     return 0
 
