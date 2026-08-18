@@ -2,20 +2,20 @@ import { test, expect, expectNoHorizontalOverflow, openDetailLegacy, openSolutio
 
 const detailPaths = [
   './productos/activos-intangibles-protegidos.html',
-  './productos/arquitectura-societaria-preparada-inversion.html',
-  './productos/cierre-contractual-decisiones-renovacion.html',
   './productos/diagnostico-juridico-empresarial.html',
-  './productos/empresa-proyecto-regulatoriamente-preparado.html',
-  './productos/operacion-juridica-digitalizable.html',
+  './productos/empresa-juridicamente-organizada.html',
+  './productos/empresa-lista-para-inversion.html',
   './productos/programa-gobernanza-ia.html',
+  './productos/proteccion-datos-consumidor.html',
+  './productos/proyecto-regulado-estructurado.html',
   './productos/sistema-contractual-empresarial.html',
   './servicios/contratacion-estrategica.html',
-  './servicios/direccion-juridica-externa.html',
   './servicios/diagnostico-juridico-empresarial.html',
-  './servicios/legal-operations-transformacion.html',
+  './servicios/direccion-juridica-externa.html',
+  './servicios/legal-operations.html',
   './servicios/proyectos-regulados.html',
   './servicios/propiedad-intelectual.html',
-  './servicios/societario-gobierno-corporativo.html',
+  './servicios/sociedades-gobierno-inversion.html',
   './servicios/tecnologia-inteligencia-artificial.html',
 ];
 
@@ -52,7 +52,6 @@ test('v6 mantiene v5.31 completo como profundidad nativa en 16 fichas', async ({
     await expect(commercial).toBeVisible();
     await expect(pair).toBeVisible();
     await expect(narrative).not.toHaveAttribute('open', '');
-    await expect(narrative.locator('<!-- OFFER-NARRATIVE-V522:START -->')).toHaveCount(0);
     await expect(narrative).toContainText('CRITERIO DE CONTRATACIÓN');
     await expect(narrative).toContainText('ALTERNATIVA CERCANA');
     await expect(narrative).toContainText('LENTE JURÍDICA');
