@@ -3,29 +3,7 @@
   const analytics = config.analytics || {};
   const STAGES = Object.freeze(['need', 'offer', 'evidence', 'decision', 'contact', 'handoff']);
   const STAGE_SET = new Set(STAGES);
-  const SOURCE_STAGE = Object.freeze({
-    solution_view: 'offer',
-    route_open: 'offer',
-    authority_open: 'evidence',
-    evidence_open: 'evidence',
-    faq_open: 'evidence',
-    contact_intent: 'contact',
-    lead_prepared: 'handoff',
-    handoff_prepared: 'handoff',
-    handoff_reopen_requested: 'handoff',
-    handoff_copy_succeeded: 'handoff',
-    handoff_copy_failed: 'handoff',
-    handoff_edit_requested: 'contact',
-    handoff_draft_stale: 'handoff',
-  });
-  const CTA_STAGE = Object.freeze({
-    'detail-page': 'offer',
-    'sector-page': 'evidence',
-    perspective: 'evidence',
-    'contact-form': 'contact',
-    whatsapp: 'contact',
-  });
-  const MAX_QUEUE = 24;
+  const MAX_EVENTS = STAGES.length;
   const state = {
     enabled: analytics.enabled === true,
     provider: String(analytics.provider || 'none').trim().toLowerCase(),
@@ -34,6 +12,7 @@
     error: '',
     queue: [],
     emitted: [],
+    seenStages: new Set(),
   };
 
   const safeToken = (value, max = 80) => String(value || '')
@@ -43,28 +22,17 @@
     .replace(/^-+|-+$/g, '')
     .slice(0, max);
 
-  const classifyStage = (event) => {
-    const name = safeToken(event?.name, 48);
-    const detail = event?.detail && typeof event.detail === 'object' ? event.detail : {};
-    if (name === 'funnel_checkpoint') {
-      const stage = safeToken(detail.stage, 24);
-      return STAGE_SET.has(stage) ? stage : '';
-    }
-    if (name === 'cta_click') {
-      return CTA_STAGE[safeToken(detail.target, 48)] || '';
-    }
-    return SOURCE_STAGE[name] || '';
-  };
-
-  const preview = (event) => {
-    const stage = classifyStage(event);
-    if (!stage) return null;
+  // El único input exportable es la etapa ya normalizada por funnel-observability-v529.
+  // event/target y cualquier otro campo del detail se ignoran deliberadamente.
+  const preview = (detail) => {
+    const stage = safeToken(detail?.stage, 24);
+    if (!STAGE_SET.has(stage)) return null;
     return Object.freeze({ name: `meridiano_funnel_${stage}` });
   };
 
   const remember = (name) => {
     state.emitted.push(name);
-    if (state.emitted.length > MAX_QUEUE) state.emitted.shift();
+    if (state.emitted.length > MAX_EVENTS) state.emitted.shift();
   };
 
   const flushPlausible = () => {
@@ -76,12 +44,17 @@
     }
   };
 
-  const emit = (safeEvent) => {
-    if (!state.enabled || !safeEvent) return false;
+  const emitStage = (detail) => {
+    if (!state.enabled) return false;
+    const stage = safeToken(detail?.stage, 24);
+    const safeEvent = preview(detail);
+    if (!safeEvent || state.seenStages.has(stage)) return false;
     if (state.provider !== 'plausible') return false;
+
+    state.seenStages.add(stage);
     if (typeof window.plausible !== 'function' || !state.providerReady) {
       state.queue.push(safeEvent.name);
-      if (state.queue.length > MAX_QUEUE) state.queue.shift();
+      if (state.queue.length > MAX_EVENTS) state.queue.shift();
       return true;
     }
     window.plausible(safeEvent.name);
@@ -89,15 +62,18 @@
     return true;
   };
 
-  // telemetry-v50.js conserva la firma histórica adapter.track(name, event).
-  // preview(event) permanece disponible para QA sin exponer el payload original.
-  const track = (nameOrEvent, maybeEvent) => {
-    const event = maybeEvent && typeof maybeEvent === 'object' ? maybeEvent : nameOrEvent;
-    return emit(preview(event));
-  };
+  // telemetry-v50.js conserva la firma histórica adapter.track(name, event),
+  // pero v6.1 no consume ese payload raw. La exportación nace únicamente del
+  // evento saneado meridiano:funnel-v529.
+  const track = () => false;
 
   const setupPlausible = () => {
-    if (!state.enabled || state.provider !== 'plausible') return;
+    if (!state.enabled) return;
+    if (state.provider !== 'plausible') {
+      state.error = 'unsupported-provider';
+      state.enabled = false;
+      return;
+    }
     if (!/^pa-[A-Za-z0-9_-]+$/.test(state.siteId)) {
       state.error = 'invalid-plausible-site-id';
       state.enabled = false;
@@ -129,6 +105,10 @@
 
   setupPlausible();
 
+  window.addEventListener('meridiano:funnel-v529', (event) => {
+    emitStage(event.detail || {});
+  });
+
   window.MeridianoAnalyticsAdapter = Object.freeze({
     version: '6.1.0',
     enabled: state.enabled,
@@ -143,6 +123,7 @@
       error: state.error,
       queuedEventNames: Object.freeze(state.queue.slice()),
       emittedEventNames: Object.freeze(state.emitted.slice()),
+      observedStageNames: Object.freeze([...state.seenStages]),
       privacy: Object.freeze({
         piiAllowed: false,
         formContentAllowed: false,
