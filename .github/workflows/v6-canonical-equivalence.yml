@@ -68,6 +68,12 @@ jobs:
             echo 'is_v61_materialized=false' >> "$GITHUB_OUTPUT"
             echo 'Measurement readiness v6.1 is not yet materialized in the canonical baseline.'
           fi
+          if python3 scripts/sync_public_version.py --check > /tmp/release-metadata-check.txt 2>&1; then
+            echo 'release_metadata_synced=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'release_metadata_synced=false' >> "$GITHUB_OUTPUT"
+          fi
+          cat /tmp/release-metadata-check.txt
       - name: Reproduce legacy canonical chain v3 to v5.18
         if: steps.phase.outputs.is_v6 != 'true'
         run: |
@@ -103,6 +109,9 @@ jobs:
           python3 scripts/apply_handoff_observability_v518.py
       - name: Materialize certified Experience System v6
         run: |
+          if [ "${{ steps.phase.outputs.is_v6 }}" = "true" ]; then
+            python3 scripts/sync_public_version.py
+          fi
           python3 scripts/apply_experience_v60.py
           python3 scripts/apply_experience_solutions_v60.py
           python3 scripts/apply_experience_sectors_v60.py
@@ -113,25 +122,50 @@ jobs:
       - name: Validate first-pass canonical boundary on v6 baseline
         if: steps.phase.outputs.is_v6 == 'true'
         run: |
+          CHANGED="$(git diff --name-only)"
+          printf '%s\n' "$CHANGED"
           if [ "${{ steps.phase.outputs.has_v61_contract }}" = "true" ] && [ "${{ steps.phase.outputs.is_v61_materialized }}" != "true" ]; then
-            CHANGED="$(git diff --name-only)"
-            printf '%s\n' "$CHANGED"
-            COUNT="$(printf '%s\n' "$CHANGED" | sed '/^$/d' | wc -l | tr -d ' ')"
-            if [ "$COUNT" -ne 43 ]; then
-              echo "La primera materialización v6.1 debe modificar exactamente 43 superficies; encontró $COUNT." >&2
-              exit 1
-            fi
-            UNEXPECTED="$(printf '%s\n' "$CHANGED" | grep -Ev '^(index\.html|perspectivas\.html|firma\.html|aviso-legal\.html|privacidad\.html|terminos\.html|productos/[^/]+\.html|servicios/[^/]+\.html|soluciones/[^/]+\.html|sectores/[^/]+\.html|perspectivas/[^/]+\.html)$' || true)"
-            if [ -n "$UNEXPECTED" ]; then
-              echo "Measurement readiness v6.1 modificó archivos fuera del boundary HTML permitido:" >&2
-              printf '%s\n' "$UNEXPECTED" >&2
+            HTML_CHANGED="$(printf '%s\n' "$CHANGED" | grep -E '^(index\.html|perspectivas\.html|firma\.html|aviso-legal\.html|privacidad\.html|terminos\.html|productos/[^/]+\.html|servicios/[^/]+\.html|soluciones/[^/]+\.html|sectores/[^/]+\.html|perspectivas/[^/]+\.html)$' || true)"
+            HTML_COUNT="$(printf '%s\n' "$HTML_CHANGED" | sed '/^$/d' | wc -l | tr -d ' ')"
+            if [ "$HTML_COUNT" -ne 43 ]; then
+              echo "La primera materialización v6.1 debe modificar exactamente 43 superficies HTML; encontró $HTML_COUNT." >&2
               exit 1
             fi
             if printf '%s\n' "$CHANGED" | grep -Eq '^(404\.html|demo\.html|experiencia\.html)$'; then
               echo "Measurement readiness v6.1 no debe instrumentar 404.html, demo.html ni experiencia.html." >&2
               exit 1
             fi
-            echo "First-pass v6.1 boundary OK: 43 superficies instrumentadas y 3 exclusiones preservadas."
+            EXTRA="$(printf '%s\n' "$CHANGED" | grep -Ev '^(index\.html|perspectivas\.html|firma\.html|aviso-legal\.html|privacidad\.html|terminos\.html|productos/[^/]+\.html|servicios/[^/]+\.html|soluciones/[^/]+\.html|sectores/[^/]+\.html|perspectivas/[^/]+\.html)$' || true)"
+            if [ "${{ steps.phase.outputs.release_metadata_synced }}" = "true" ]; then
+              if [ -n "$EXTRA" ]; then
+                echo "v6.1 produjo cambios no HTML aunque la metadata ya estaba sincronizada:" >&2
+                printf '%s\n' "$EXTRA" >&2
+                exit 1
+              fi
+            else
+              EXPECTED_EXTRA="catalog-home-v32.js
+decision-flow.js
+runtime-config.js
+site-status.json"
+              if [ "$(printf '%s\n' "$EXTRA" | sort)" != "$(printf '%s\n' "$EXPECTED_EXTRA" | sort)" ]; then
+                echo "La transición v6.1 con bump de release debe añadir solo las cuatro superficies de metadata no-HTML:" >&2
+                printf '%s\n' "$EXTRA" >&2
+                exit 1
+              fi
+            fi
+            echo "First-pass v6.1 boundary OK: 43 superficies instrumentadas, 3 exclusiones preservadas y metadata de release acotada."
+          elif [ "${{ steps.phase.outputs.release_metadata_synced }}" != "true" ]; then
+            EXPECTED_RELEASE="catalog-home-v32.js
+decision-flow.js
+index.html
+runtime-config.js
+site-status.json"
+            if [ "$(printf '%s\n' "$CHANGED" | sort)" != "$(printf '%s\n' "$EXPECTED_RELEASE" | sort)" ]; then
+              echo "Una baseline v6 ya materializada solo puede cambiar las cinco superficies de metadata durante un bump de versión:" >&2
+              printf '%s\n' "$CHANGED" >&2
+              exit 1
+            fi
+            echo "Release metadata boundary OK: 5 superficies sincronizadas."
           else
             git diff --exit-code -- index.html catalog-home-v32.js decision-flow.js site-v3.js page-context.js sitemap.xml robots.txt runtime-config.js site-status.json servicios productos firma.html perspectivas perspectivas.html sectores soluciones experiencia.html demo.html 404.html aviso-legal.html privacidad.html terminos.html manifest.webmanifest CNAME scripts/build_catalog_shells.py
           fi
@@ -242,7 +276,8 @@ jobs:
           for f in catalog-products-v41/*.json; do python3 -m json.tool "$f" > /dev/null; done
       - name: Prove second-pass v6 idempotence
         run: |
-          git diff -- index.html perspectivas.html firma.html experiencia.html demo.html aviso-legal.html privacidad.html terminos.html 404.html productos servicios soluciones sectores perspectivas > /tmp/canonical-pass-1.diff
+          git diff -- index.html catalog-home-v32.js decision-flow.js runtime-config.js site-status.json perspectivas.html firma.html experiencia.html demo.html aviso-legal.html privacidad.html terminos.html 404.html productos servicios soluciones sectores perspectivas > /tmp/canonical-pass-1.diff
+          python3 scripts/sync_public_version.py
           python3 scripts/apply_experience_v60.py
           python3 scripts/apply_experience_solutions_v60.py
           python3 scripts/apply_experience_sectors_v60.py
@@ -250,12 +285,13 @@ jobs:
           python3 scripts/apply_experience_final_v60.py
           python3 scripts/apply_funnel_trust_v529.py
           python3 scripts/normalize_experience_compat_v60.py
-          git diff -- index.html perspectivas.html firma.html experiencia.html demo.html aviso-legal.html privacidad.html terminos.html 404.html productos servicios soluciones sectores perspectivas > /tmp/canonical-pass-2.diff
+          git diff -- index.html catalog-home-v32.js decision-flow.js runtime-config.js site-status.json perspectivas.html firma.html experiencia.html demo.html aviso-legal.html privacidad.html terminos.html 404.html productos servicios soluciones sectores perspectivas > /tmp/canonical-pass-2.diff
           cmp --silent /tmp/canonical-pass-1.diff /tmp/canonical-pass-2.diff || {
             echo "Canonical v6 materialization is not idempotent." >&2
             diff -u /tmp/canonical-pass-1.diff /tmp/canonical-pass-2.diff || true
             exit 1
           }
+          python3 scripts/sync_public_version.py --check
       - name: Report canonical materialization boundary
         run: |
           CHANGED="$(git diff --name-only)"
