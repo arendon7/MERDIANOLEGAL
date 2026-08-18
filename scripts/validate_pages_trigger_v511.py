@@ -22,6 +22,7 @@ def main() -> int:
     pages = PAGES.read_text(encoding="utf-8")
     build = BUILD.read_text(encoding="utf-8")
     triggers = trigger_block(pages)
+    build_triggers = trigger_block(build)
 
     if re.search(r"(?m)^\s{2}push:\s*$", triggers):
         errors.append("pages.yml: Site Quality no debe dispararse directamente por push; debe esperar al builder canónico")
@@ -29,7 +30,7 @@ def main() -> int:
     for fragment in (
         "workflow_dispatch:",
         "workflow_run:",
-        'workflows: ["Build canonical public site"]',
+        'workflows: [\"Build canonical public site\"]',
         "types: [completed]",
     ):
         if fragment not in triggers:
@@ -43,8 +44,10 @@ def main() -> int:
 
     if "Build canonical public site" not in build:
         errors.append("build-canonical.yml: nombre canónico del builder ausente")
-    if "workflow_dispatch:" not in build or re.search(r"(?m)^\s{2}push:\s*$", trigger_block(build)) is None:
+    if "workflow_dispatch:" not in build or re.search(r"(?m)^\s{2}push:\s*$", build_triggers) is None:
         errors.append("build-canonical.yml: el builder debe conservar push de fuentes + dispatch manual")
+    if "scripts/validate_*.py" not in build_triggers:
+        errors.append("build-canonical.yml: el builder debe vigilar todos los validators Python que pueden bloquear Pages")
     if "git push origin HEAD:main" not in build:
         errors.append("build-canonical.yml: falta publicación de outputs canónicos a main")
 
@@ -54,7 +57,7 @@ def main() -> int:
             print(f"- {error}")
         return 1
 
-    print("PAGES TRIGGER V5.11 OK: Pages espera al builder canónico; sin carrera directa por push.")
+    print("PAGES TRIGGER V5.11 OK: Pages espera al builder canónico; cambios de validators también disparan release.")
     return 0
 
 
