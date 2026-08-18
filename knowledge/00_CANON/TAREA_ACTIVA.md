@@ -2,93 +2,70 @@
 
 Actualizado: 2026-08-18.
 
-## Estado base certificado
+## Estado funcional certificado
 
-- Release de partida: **v6.2.0 — Search Discovery Readiness**.
-- Base certificada al abrir el ciclo: `main == stable == 992efa56ecdb3d393cd584eccc35a958a5fb0ea6`.
-- Search Console continúa sin configurar; no existe token auténtico y runtime conserva `searchConsoleConfigured=false`.
-- Analytics externa continúa deshabilitada (`enabled=false`, `provider=none`, `site_id=""`).
-- 46 HTML, 16 fichas profundas, un único formulario físico y 30 pasos históricos del builder permanecen como invariantes.
+- Release: **v6.3.0 — Engagement Clarity / claridad precontratación**.
+- SHA funcional certificado: `118cee5030f27689d91172beb525d7d92c751117`.
+- Canal: `github-pages-production-engagement-clarity-certified`.
+- PR funcional: `#160` fusionado.
+- Builder materializó las 16 fichas y produjo el snapshot funcional certificado.
+- `stable` fue promovido automáticamente a `118cee50…` después de Pages, smoke, Browser/axe, Lighthouse y snapshot.
+- Search Console permanece sin configurar: `searchConsoleConfigured=false` y sin token auténtico.
+- Analytics externa permanece deshabilitada: `enabled=false`, `provider=none`, `site_id=""`.
+- 46 HTML, 16 fichas profundas, un único formulario físico y 30 pasos históricos permanecen intactos.
 
-## Ciclo funcional activo
+## Frente vigente
 
-**v6.3.0 — Engagement Clarity / claridad precontratación.**
+**No existe un ciclo funcional nuevo abierto.**
 
-Rama: `feat/v63-engagement-clarity`.
-PR: `#160` (Draft hasta certificación same-SHA).
-Release candidate: `version.json = 6.3.0`, fecha `2026-08-18`, canal `github-pages-engagement-clarity-candidate`.
+La única tarea activa es el **cierre documental v6.3.0**:
 
-### Problema observable
+1. marcar el canal como `certified`;
+2. actualizar README y memoria canónica;
+3. publicar `RELEASE-v6.3.md`;
+4. hacer phase-aware el gate v6.3 para una baseline ya materializada, sin aceptar estados parciales;
+5. someter el cierre a los gates pre-merge aplicables;
+6. fusionar únicamente con same-SHA verde;
+7. exigir nuevamente Builder → Pages → smoke → Browser/axe → Lighthouse → snapshot;
+8. cerrar solo cuando `main == stable` y `stable/version.json` declare v6.3.0 certified.
 
-Las 16 fichas profundas ya explicaban resultado, entregables, perímetro, proceso y límites, pero dos matrices jurídicas/comerciales aprobadas permanecían relegadas a la profundidad histórica:
+## Resultado que queda cerrado
 
-- `requirements`: qué debe estar listo del lado del cliente;
-- `responsibilities`: cómo se distribuyen las responsabilidades del encargo.
+v6.3 hace visible en las 16 fichas una capa de precontratación ya contenida en los catálogos jurídicos:
 
-La consecuencia era una asimetría de decisión: el comprador podía entender qué haría Meridiano, pero no veía con igual claridad qué debía aportar su organización ni quién respondería por qué antes de solicitar una propuesta.
+- `requirements` → **Qué debe estar listo del lado del cliente**;
+- `responsibilities` → **Cómo se distribuyen las responsabilidades**;
+- un único hito `Para empezar`;
+- una única sección `#v6-engagement` antes de Límites;
+- exactamente 7 hitos de navegación en una ficha v6.3.
 
-v6.3 corrige esa fricción **sin inventar contenido jurídico nuevo**. La verdad visible se deriva literalmente de `catalog-products-v41/*.json` y `catalog-services-v42/*.json`.
+La representación visible no redefine esos datos. El validator compara fila por fila contra `catalog-products-v41/*.json` y `catalog-services-v42/*.json`.
 
-## Alcance v6.3
+## Release engineering cerrado
 
-1. contrato `assets/data/v6/engagement-clarity-v63.json`;
-2. exactamente **16 fichas** gobernadas = 8 productos + 8 servicios;
-3. nueva ancla ejecutiva `Para empezar` en las 16 fichas;
-4. nueva sección `#v6-engagement` antes de Límites;
-5. panel `Qué debe estar listo del lado del cliente` derivado exactamente de `requirements`;
-6. panel `Cómo se distribuyen las responsabilidades` derivado exactamente de `responsibilities`;
-7. estilos responsivos aislados en `assets/css/v6/engagement-clarity-v63.css`;
-8. materializador `scripts/apply_engagement_clarity_v63.py` fail-closed e idempotente;
-9. validator `scripts/validate_engagement_clarity_v63.py` que compara fila por fila HTML visible contra los catálogos canónicos;
-10. integración transversal por `normalize_experience_compat_v60.py`, sin crear un paso histórico 31;
-11. gate dedicado v6.3 con boundary exacto de 16 HTML y segunda pasada idempotente;
-12. Canonical Equivalence exige `measurement ∪ release ∪ discovery ∪ engagement`;
-13. v4.6 permanece estricto: seis hitos sin Engagement Clarity, exactamente siete cuando v6.3 está materializada y el séptimo debe ser `#v6-engagement`;
-14. Builder, Candidate y Browser observan expresamente los scripts v6.3;
-15. `validate_pages_trigger_v511.py` exige cobertura del nuevo materializador en Builder;
-16. E2E recorre las 16 fichas y comprueba navegación real en una ficha de producto y una de servicio.
+- materializador v6.3 fail-closed + `--check`;
+- validator 16/16 contra truth canónico;
+- integración mediante `normalize_experience_compat_v60.py`, sin paso 31;
+- first-pass exacto `release drift ∪ engagement drift`;
+- Canonical Equivalence `measurement ∪ release ∪ discovery ∪ engagement`;
+- v4.6 estricto: 6 hitos sin v6.3 / exactamente 7 con v6.3;
+- CSS v6.3 estabilizado para segunda pasada byte-equivalent;
+- Builder/Candidate/Browser con cobertura explícita del nuevo materializador;
+- E2E en las 16 fichas y navegación real representativa;
+- gate v6.3 de cierre: 0/16 materializadas exige 16 drift; 16/16 exige 0; cualquier estado parcial falla.
 
-## Evidencia técnica previa al bump
+## Fuera de alcance después del cierre
 
-SHA técnico previo al bump: `a7e8b057dc4818365247cd0615c796a233836203`.
+No hacer automáticamente:
 
-Sobre ese mismo SHA quedaron verdes:
-
-- V6.3 Engagement Clarity;
-- V6 Candidate Validation;
-- V6 Canonical Builder Equivalence;
-- Release Governance;
-- Graphify;
-- V6 Browser Candidate / axe;
-- V6.1 Measurement Readiness / Browser E2E.
-
-El gate v6.3 demostró exactamente 16 HTML modificados y segunda pasada idempotente. Equivalence volvió a pasar todos los contratos históricos después de hacer v4.6 phase-aware.
-
-## Criterios de éxito del candidate 6.3.0
-
-- 16/16 fichas reproducen literalmente `requirements` y `responsibilities` canónicos;
-- ninguna ficha fuera de productos/servicios recibe la sección;
-- un único enlace `Para empezar` y una única sección `#v6-engagement` por ficha;
-- navegación ejecutiva exacta de siete hitos en v6.3;
-- primera materialización = release drift + engagement drift declarado, sin rutas inesperadas;
-- segunda pasada idempotente;
-- 46 HTML, 16 fichas, 1 formulario y 30 pasos históricos intactos;
-- Search Console continúa sin afirmaciones ficticias;
-- analytics externa continúa deshabilitada;
-- Candidate, Engagement Clarity, Equivalence, Governance, Graphify, Browser/axe y Measurement deben quedar verdes nuevamente sobre el **mismo SHA 6.3.0**;
-- después del merge: Builder → Pages → smoke → Browser/axe → Lighthouse → snapshot debe promover `stable` automáticamente.
-
-## Fuera de alcance
-
-- reescribir o ampliar `requirements`/`responsibilities` por intuición;
-- cambiar entregables, perímetro, método, límites u honorarios;
-- añadir precios o cronogramas no aprobados;
-- crear nuevas obligaciones contractuales desde la capa de presentación;
-- activar Search Console o analytics;
-- alterar el formulario o el handoff manual por WhatsApp;
-- crear un paso canónico 31;
+- reescribir `requirements` o `responsibilities` por intuición;
+- añadir obligaciones, tarifas, descuentos o cronogramas no aprobados;
+- activar Search Console sin token auténtico;
+- activar Plausible, Umami u otra analítica;
+- crear backend, CRM, portal, auth, pagos, firma, agenda o upload ficticios;
+- abrir v6.4 solo por continuidad de versionado;
 - reducir cobertura E2E/axe o relajar Lighthouse.
 
-## Condición de cierre
+## Próximo ciclo
 
-v6.3.0 queda funcionalmente cerrada únicamente cuando el candidate same-SHA sea verde, #160 se fusione, el builder materialice las 16 fichas, Pages complete smoke + Browser/axe + Lighthouse + snapshot y `stable` alcance automáticamente el snapshot canónico de v6.3. Después se realiza el cierre documental `candidate → certified` y se exige nuevamente `main == stable`.
+Después de cerrar esta documentación, el proyecto queda en estado estable. El próximo ciclo debe partir de una necesidad observable de negocio, conversión, contenido o operación jurídica. Antes de añadir otra capa, debe comprobarse si la verdad necesaria ya existe en los catálogos o contratos actuales y puede presentarse mejor, como ocurrió en v6.3.
