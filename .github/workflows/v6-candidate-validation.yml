@@ -11,7 +11,10 @@ on:
       - catalog-services-v42/**
       - assets/css/v6/**
       - scripts/apply_experience_v60.py
+      - scripts/normalize_experience_compat_v60.py
+      - scripts/apply_funnel_trust_v529.py
       - scripts/validate_experience_v60.py
+      - scripts/validate_funnel_trust_v529.py
       - .github/workflows/build-canonical.yml
       - .github/workflows/v6-candidate-validation.yml
       - index.html
@@ -40,21 +43,27 @@ jobs:
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
         with:
           python-version: "3.12"
-      - name: Compile v6 renderer and validator
-        run: python3 -m py_compile scripts/apply_experience_v60.py scripts/validate_experience_v60.py
+      - name: Compile v6 renderer and validators
+        run: python3 -m py_compile scripts/apply_experience_v60.py scripts/normalize_experience_compat_v60.py scripts/validate_experience_v60.py
       - name: Materialize first pass and validate contracts
         run: |
           python3 scripts/apply_experience_v60.py
+          python3 scripts/apply_funnel_trust_v529.py
+          python3 scripts/normalize_experience_compat_v60.py
           python3 scripts/validate_experience_v60.py
+          python3 scripts/validate_funnel_trust_v529.py
           git diff -- index.html productos servicios > /tmp/v6-pass-1.diff
           test -s /tmp/v6-pass-1.diff
       - name: Prove second-pass idempotence
         run: |
           python3 scripts/apply_experience_v60.py
+          python3 scripts/apply_funnel_trust_v529.py
+          python3 scripts/normalize_experience_compat_v60.py
           python3 scripts/validate_experience_v60.py
+          python3 scripts/validate_funnel_trust_v529.py
           git diff -- index.html productos servicios > /tmp/v6-pass-2.diff
           cmp --silent /tmp/v6-pass-1.diff /tmp/v6-pass-2.diff
-          echo "Experience System v6 is idempotent across two passes."
+          echo "Experience System v6 is idempotent across two passes with v5.29 trust composition."
       - name: Verify Wave 2 materialization boundary
         run: |
           CHANGED="$(git diff --name-only)"
