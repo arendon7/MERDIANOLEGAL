@@ -67,10 +67,14 @@ def validate() -> list[str]:
     for path in TARGETS:
         text = path.read_text(encoding='utf-8')
         experience_v6 = 'data-experience-system="v6"' in text
+        engagement_v63 = 'data-engagement-clarity-v63="true"' in text
         required = set(COMMON_PAGE_MARKERS)
         if experience_v6:
             required |= V6_NAV_MARKERS
             required.add('href="#v6-result"' if path.parent.name == 'productos' else 'href="#v6-question"')
+            if engagement_v63:
+                required.add('href="#v6-engagement"')
+                required.add('data-engagement-clarity-v63-nav="true"')
         else:
             required |= LEGACY_NAV_MARKERS
         for marker in sorted(required):
@@ -91,8 +95,12 @@ def validate() -> list[str]:
             errors.append(f'{path.relative_to(ROOT)}: no refleja la versión pública {VERSION}')
         if experience_v6:
             nav_match = re.search(r'<nav class="v6-detail-nav"[\s\S]*?</nav>', text)
-            if not nav_match or nav_match.group(0).count('<a ') != 6:
-                errors.append(f'{path.relative_to(ROOT)}: la navegación ejecutiva v6 debe contener seis hitos')
+            expected_hitos = 7 if engagement_v63 else 6
+            if not nav_match or nav_match.group(0).count('<a ') != expected_hitos:
+                phase = 'con Engagement Clarity v6.3' if engagement_v63 else 'sin Engagement Clarity v6.3'
+                errors.append(
+                    f'{path.relative_to(ROOT)}: la navegación ejecutiva v6 {phase} debe contener exactamente {expected_hitos} hitos'
+                )
         else:
             toc_match = re.search(r'<nav class="detail-toc-v46"[\s\S]*?</nav>', text)
             if not toc_match or toc_match.group(0).count('<a ') != 7:
@@ -121,7 +129,7 @@ def main() -> int:
         for error in errors:
             print(f'- {error}')
         return 1
-    print(f'VALIDACIÓN UX/UI PROFUNDA OK: 16 fichas con navegación ejecutiva, CTA contextual, responsive y versión {VERSION}; Experience v6 compatible cuando aplica.')
+    print(f'VALIDACIÓN UX/UI PROFUNDA OK: 16 fichas con navegación ejecutiva, CTA contextual, responsive y versión {VERSION}; Experience v6 y Engagement Clarity v6.3 compatibles cuando aplican.')
     return 0
 
 

@@ -159,6 +159,7 @@ on:
       - scripts/validate_experience_final_v60.py
       - scripts/normalize_experience_compat_v60.py
       - scripts/apply_search_discovery_v62.py
+      - scripts/apply_engagement_clarity_v63.py
       - scripts/validate_browser_v54.py
       - scripts/run_quality_v55.mjs
       - scripts/validate_quality_v55.py

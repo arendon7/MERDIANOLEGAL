@@ -74,6 +74,8 @@ def main() -> int:
         errors.append("build-canonical.yml: el builder debe vigilar todos los validators Python que pueden bloquear Pages")
     if "scripts/apply_search_discovery_v62.py" not in build_triggers:
         errors.append("build-canonical.yml: cambios del materializador Search Discovery v6.2 deben disparar el builder")
+    if "scripts/apply_engagement_clarity_v63.py" not in build_triggers:
+        errors.append("build-canonical.yml: cambios del materializador Engagement Clarity v6.3 deben disparar el builder")
     if "git push origin HEAD:main" not in build:
         errors.append("build-canonical.yml: falta publicación de outputs canónicos a main")
 
@@ -85,7 +87,7 @@ def main() -> int:
 
     print(
         "PAGES TRIGGER V5.11 OK: Pages espera al builder canónico, aísla los workflow_run build: "
-        "y el builder vigila validators + Search Discovery v6.2 antes de publicar."
+        "y el builder vigila validators + materializadores Search Discovery v6.2 / Engagement Clarity v6.3 antes de publicar."
     )
     return 0
 

@@ -23,6 +23,8 @@ on:
       - scripts/sync_public_version.py
       - scripts/apply_search_discovery_v62.py
       - scripts/validate_search_discovery_v62.py
+      - scripts/apply_engagement_clarity_v63.py
+      - scripts/validate_engagement_clarity_v63.py
       - scripts/validate_production_v50.py
       - scripts/apply_experience_v60.py
       - scripts/apply_experience_solutions_v60.py
@@ -95,6 +97,10 @@ jobs:
           if [ -f assets/data/v6/search-discovery-readiness-v62.json ]; then
             python3 scripts/validate_search_discovery_v62.py
             python3 scripts/apply_search_discovery_v62.py --check
+          fi
+          if [ -f assets/data/v6/engagement-clarity-v63.json ]; then
+            python3 scripts/validate_engagement_clarity_v63.py
+            python3 scripts/apply_engagement_clarity_v63.py --check
           fi
       - name: Validate E2E JavaScript syntax
         run: |

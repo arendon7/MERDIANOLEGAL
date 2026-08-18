@@ -2,50 +2,93 @@
 
 Actualizado: 2026-08-18.
 
-## Release vigente
+## Estado base certificado
 
-**v6.2.0 — Search Discovery Readiness / indexación verificable**.
+- Release de partida: **v6.2.0 — Search Discovery Readiness**.
+- Base certificada al abrir el ciclo: `main == stable == 992efa56ecdb3d393cd584eccc35a958a5fb0ea6`.
+- Search Console continúa sin configurar; no existe token auténtico y runtime conserva `searchConsoleConfigured=false`.
+- Analytics externa continúa deshabilitada (`enabled=false`, `provider=none`, `site_id=""`).
+- 46 HTML, 16 fichas profundas, un único formulario físico y 30 pasos históricos del builder permanecen como invariantes.
 
-- SHA funcional certificado: `4027b6a5425a13cdd0134799c88081e08ac80b6f`.
-- Canal de cierre: `github-pages-production-search-discovery-readiness-certified`.
-- 46 HTML clasificados: 43 indexables + 3 `noindex` (`404.html`, `demo.html`, `experiencia.html`).
-- Sitemap canónico: 43 `<loc>`, sin `lastmod`, `priority` ni `changefreq` no sustentados.
-- Search Console: no configurado; no existe token auténtico y runtime conserva `searchConsoleConfigured=false`.
-- Analytics externa: deshabilitada (`enabled=false`, `provider=none`, `site_id=""`).
-- 16 fichas profundas, 1 formulario físico y 30 pasos históricos preservados.
+## Ciclo funcional activo
 
-## Estado del ciclo
+**v6.3.0 — Engagement Clarity / claridad precontratación.**
 
-El frente funcional v6.2 quedó completado y certificado. PR #158 fue fusionado después de **7/7 gates same-SHA verdes** y el builder materializó el snapshot público `4027b6a5…`; `stable` alcanzó automáticamente ese mismo SHA después de Pages/Browser/Lighthouse.
+Rama: `feat/v63-engagement-clarity`.
+PR: `#160` (Draft hasta certificación same-SHA).
+Release candidate: `version.json = 6.3.0`, fecha `2026-08-18`, canal `github-pages-engagement-clarity-candidate`.
 
-La única tarea vigente es **cerrar documentalmente v6.2**: README, memoria canónica, `RELEASE-v6.2.md` y canal `certified`. Ese cierre también debe atravesar la cadena completa y terminar con `main == stable`.
+### Problema observable
 
-## Qué quedó preparado
+Las 16 fichas profundas ya explicaban resultado, entregables, perímetro, proceso y límites, pero dos matrices jurídicas/comerciales aprobadas permanecían relegadas a la profundidad histórica:
 
-1. contrato `assets/data/v6/search-discovery-readiness-v62.json` en estado `readiness-not-verified`;
-2. 43 páginas indexables con canonical autorreferencial único;
-3. 3 superficies noindex fuera del sitemap;
-4. sitemap determinista derivado de canonicals indexables;
-5. ausencia de señales no sustentadas `lastmod`, `priority`, `changefreq`;
-6. verificación Search Console gobernada por `site-config.json.search_console_verification`;
-7. token vacío => ninguna meta Google + runtime `searchConsoleConfigured=false`;
-8. normalizador y validator fail-closed;
-9. Builder, Candidate, Browser, Equivalence y gate v6.2 con cobertura de cambios futuros;
-10. E2E dinámico de Search Console/sitemap.
+- `requirements`: qué debe estar listo del lado del cliente;
+- `responsibilities`: cómo se distribuyen las responsabilidades del encargo.
 
-## No hacer por inercia
+La consecuencia era una asimetría de decisión: el comprador podía entender qué haría Meridiano, pero no veía con igual claridad qué debía aportar su organización ni quién respondería por qué antes de solicitar una propuesta.
 
-No abrir una v6.3 ni activar servicios externos solo para continuar el versionado. No inventar un token Google, propiedad, cuenta, tráfico, ranking, impresiones o clics. No activar analytics ni cambiar la política de privacidad sin una decisión explícita y evidencia real.
+v6.3 corrige esa fricción **sin inventar contenido jurídico nuevo**. La verdad visible se deriva literalmente de `catalog-products-v41/*.json` y `catalog-services-v42/*.json`.
 
-## Próximo paso externo posible
+## Alcance v6.3
 
-La siguiente acción material de Search Console requiere un **token auténtico emitido por Google para la propiedad correspondiente**. Cuando exista:
+1. contrato `assets/data/v6/engagement-clarity-v63.json`;
+2. exactamente **16 fichas** gobernadas = 8 productos + 8 servicios;
+3. nueva ancla ejecutiva `Para empezar` en las 16 fichas;
+4. nueva sección `#v6-engagement` antes de Límites;
+5. panel `Qué debe estar listo del lado del cliente` derivado exactamente de `requirements`;
+6. panel `Cómo se distribuyen las responsabilidades` derivado exactamente de `responsibilities`;
+7. estilos responsivos aislados en `assets/css/v6/engagement-clarity-v63.css`;
+8. materializador `scripts/apply_engagement_clarity_v63.py` fail-closed e idempotente;
+9. validator `scripts/validate_engagement_clarity_v63.py` que compara fila por fila HTML visible contra los catálogos canónicos;
+10. integración transversal por `normalize_experience_compat_v60.py`, sin crear un paso histórico 31;
+11. gate dedicado v6.3 con boundary exacto de 16 HTML y segunda pasada idempotente;
+12. Canonical Equivalence exige `measurement ∪ release ∪ discovery ∪ engagement`;
+13. v4.6 permanece estricto: seis hitos sin Engagement Clarity, exactamente siete cuando v6.3 está materializada y el séptimo debe ser `#v6-engagement`;
+14. Builder, Candidate y Browser observan expresamente los scripts v6.3;
+15. `validate_pages_trigger_v511.py` exige cobertura del nuevo materializador en Builder;
+16. E2E recorre las 16 fichas y comprueba navegación real en una ficha de producto y una de servicio.
 
-1. incorporarlo únicamente en `site-config.json.search_console_verification`;
-2. comprobar que se materialice una sola meta `google-site-verification`;
-3. exigir runtime `searchConsoleConfigured=true`;
-4. ejecutar Search Discovery + Candidate + Browser + Equivalence + Governance;
-5. publicar por Builder/Pages y promover `stable` únicamente después de Browser/Lighthouse;
-6. completar la verificación en la cuenta Google correspondiente y, solo entonces, tratar Search Console como configurado externamente.
+## Evidencia técnica previa al bump
 
-Hasta recibir ese insumo, **no existe un nuevo ciclo funcional activo**.
+SHA técnico previo al bump: `a7e8b057dc4818365247cd0615c796a233836203`.
+
+Sobre ese mismo SHA quedaron verdes:
+
+- V6.3 Engagement Clarity;
+- V6 Candidate Validation;
+- V6 Canonical Builder Equivalence;
+- Release Governance;
+- Graphify;
+- V6 Browser Candidate / axe;
+- V6.1 Measurement Readiness / Browser E2E.
+
+El gate v6.3 demostró exactamente 16 HTML modificados y segunda pasada idempotente. Equivalence volvió a pasar todos los contratos históricos después de hacer v4.6 phase-aware.
+
+## Criterios de éxito del candidate 6.3.0
+
+- 16/16 fichas reproducen literalmente `requirements` y `responsibilities` canónicos;
+- ninguna ficha fuera de productos/servicios recibe la sección;
+- un único enlace `Para empezar` y una única sección `#v6-engagement` por ficha;
+- navegación ejecutiva exacta de siete hitos en v6.3;
+- primera materialización = release drift + engagement drift declarado, sin rutas inesperadas;
+- segunda pasada idempotente;
+- 46 HTML, 16 fichas, 1 formulario y 30 pasos históricos intactos;
+- Search Console continúa sin afirmaciones ficticias;
+- analytics externa continúa deshabilitada;
+- Candidate, Engagement Clarity, Equivalence, Governance, Graphify, Browser/axe y Measurement deben quedar verdes nuevamente sobre el **mismo SHA 6.3.0**;
+- después del merge: Builder → Pages → smoke → Browser/axe → Lighthouse → snapshot debe promover `stable` automáticamente.
+
+## Fuera de alcance
+
+- reescribir o ampliar `requirements`/`responsibilities` por intuición;
+- cambiar entregables, perímetro, método, límites u honorarios;
+- añadir precios o cronogramas no aprobados;
+- crear nuevas obligaciones contractuales desde la capa de presentación;
+- activar Search Console o analytics;
+- alterar el formulario o el handoff manual por WhatsApp;
+- crear un paso canónico 31;
+- reducir cobertura E2E/axe o relajar Lighthouse.
+
+## Condición de cierre
+
+v6.3.0 queda funcionalmente cerrada únicamente cuando el candidate same-SHA sea verde, #160 se fusione, el builder materialice las 16 fichas, Pages complete smoke + Browser/axe + Lighthouse + snapshot y `stable` alcance automáticamente el snapshot canónico de v6.3. Después se realiza el cierre documental `candidate → certified` y se exige nuevamente `main == stable`.
