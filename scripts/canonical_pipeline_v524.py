@@ -81,6 +81,7 @@ V6_EXTENSION_COMMANDS: tuple[str, ...] = (
     "python3 scripts/apply_experience_final_v60.py",
     "python3 scripts/apply_funnel_trust_v529.py",
     "python3 scripts/normalize_experience_compat_v60.py",
+    "python3 scripts/apply_fit_scope_clarity_v64.py",
     "python3 scripts/validate_experience_v60.py",
     "python3 scripts/validate_experience_solutions_v60.py",
     "python3 scripts/validate_experience_sectors_v60.py",
@@ -90,6 +91,7 @@ V6_EXTENSION_COMMANDS: tuple[str, ...] = (
     "python3 scripts/validate_proof_v512.py",
     "python3 scripts/validate_capability_truth_v521.py",
     "python3 scripts/validate_editorial_context.py",
+    "python3 scripts/validate_fit_scope_clarity_v64.py",
 )
 
 
