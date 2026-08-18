@@ -3,6 +3,7 @@
 
 from pathlib import Path
 import json
+import re
 import subprocess
 import sys
 
@@ -26,6 +27,14 @@ def semver_tuple(value: str) -> tuple[int, int, int]:
     except (TypeError, ValueError):
         fail(f'versión inválida: {value!r}')
         raise AssertionError('unreachable')
+
+
+def between(value: str, start: str, end: str, label: str) -> str:
+    start_pos = value.find(start)
+    end_pos = value.find(end, start_pos + len(start)) if start_pos >= 0 else -1
+    if start_pos < 0 or end_pos < 0:
+        fail(f'{label}: no se pudo aislar la capa entre {start!r} y {end!r}')
+    return value[start_pos + len(start):end_pos]
 
 
 if semver_tuple(VERSION_RAW) < (4, 7, 0):
@@ -73,10 +82,34 @@ slugs = [
     'socios-inversion-gobierno.html',
     'legal-operations-modelo-operativo.html',
 ]
-for slug in slugs:
-    count = library.count(f'perspectivas/{slug}')
-    if count != 1:
-        fail(f'perspectivas.html debe enlazar {slug} exactamente una vez y tiene {count}')
+if 'data-experience-system="v6"' in library:
+    hub = between(
+        library,
+        '<!-- EXPERIENCE-V60-PERSPECTIVES-HUB:START -->',
+        '<!-- EXPERIENCE-V60-PERSPECTIVES-HUB:END -->',
+        'perspectivas.html v6',
+    )
+    legacy = between(
+        hub,
+        '<!-- EXPERIENCE-V60-PERSPECTIVES-HUB-LEGACY:START -->',
+        '<!-- EXPERIENCE-V60-PERSPECTIVES-HUB-LEGACY:END -->',
+        'perspectivas.html legacy',
+    )
+    visible = hub.split('<!-- EXPERIENCE-V60-PERSPECTIVES-HUB-LEGACY:START -->', 1)[0]
+    for slug in slugs:
+        href = f'perspectivas/{slug}'
+        visible_count = visible.count(href)
+        legacy_count = legacy.count(href)
+        if visible_count != 1 or legacy_count != 1:
+            fail(
+                f'perspectivas.html v6 debe enlazar {slug} exactamente una vez por capa '
+                f'(visible={visible_count}, legacy={legacy_count})'
+            )
+else:
+    for slug in slugs:
+        count = library.count(f'perspectivas/{slug}')
+        if count != 1:
+            fail(f'perspectivas.html debe enlazar {slug} exactamente una vez y tiene {count}')
 if library.count('<a class="insight-card"') != 5:
     fail('perspectivas.html debe conservar 5 tarjetas insight sin duplicar las 3 lecturas destacadas')
 
@@ -84,7 +117,11 @@ for path in PERSPECTIVES:
     text = path.read_text(encoding='utf-8')
     if text.count('EDITORIAL-V47-CONVERSION:START') != 1 or 'editorial-conversion-v47' not in text:
         fail(f'{path.relative_to(ROOT)} no tiene cierre de conversión editorial')
-    if '<nav class="article-toc"' not in text:
+    if 'data-experience-system="v6"' in text:
+        toc_match = re.search(r'<nav class="v6-reading-toc"[\s\S]*?</nav>', text)
+        if not toc_match or toc_match.group(0).count('<a ') != 7:
+            fail(f'{path.relative_to(ROOT)} debe conservar siete hitos en la guía de lectura v6')
+    elif '<nav class="article-toc"' not in text:
         fail(f'{path.relative_to(ROOT)} perdió el índice del artículo')
 
 for path in SECTORS:
@@ -128,4 +165,4 @@ result = subprocess.run(['node', '--check', str(js)], capture_output=True, text=
 if result.returncode != 0:
     fail('editorial-v47.js no supera node --check: ' + result.stderr.strip())
 
-print('OK: UX/UI editorial y demostrativa v4.7 validada en 18 páginas.')
+print('OK: UX/UI editorial y demostrativa v4.7 validada en 18 páginas; Experience v6 compatible cuando aplica.')

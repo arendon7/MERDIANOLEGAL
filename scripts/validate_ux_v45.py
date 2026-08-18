@@ -27,10 +27,9 @@ capability_truth_v521 = version_tuple >= (5, 21, 0)
 conversion_path_v528 = version_tuple >= (5, 28, 0)
 
 text = INDEX.read_text(encoding="utf-8")
+experience_v6 = 'data-experience-system="v6"' in text
 required = [
     'href="ux-v45.css"',
-    '<a href="#necesidades">Necesidades</a>',
-    '<a href="#planes">Planes y precios</a>',
     '<a class="btn btn-navy" href="#contacto">Presentar necesidad</a>',
     'class="mobile-nav-actions"',
     'class="mobile-conversion-v45"',
@@ -42,7 +41,19 @@ required = [
     'id="sectores"', 'id="perspectivas"', 'id="firma"', 'id="preguntas"', 'id="contacto"',
     'Planes y honorarios', 'demo.html#documentos',
 ]
-required.append('Demo de cliente' if capability_truth_v521 else 'Área de clientes')
+if experience_v6:
+    required.extend([
+        '<a href="#v6-situations">Cómo podemos ayudar</a>',
+        '<a href="#v6-commercial-depth">Oferta completa</a>',
+        '<a href="experiencia.html">Cómo trabajamos · demo</a>',
+        'id="v6-situations"', 'id="v6-offer"', 'id="v6-commercial-depth"', 'id="v6-depth"',
+    ])
+else:
+    required.extend([
+        '<a href="#necesidades">Necesidades</a>',
+        '<a href="#planes">Planes y precios</a>',
+    ])
+required.append('Demo de cliente' if capability_truth_v521 and not experience_v6 else 'Centro demo')
 if not compact_home_v520:
     required.append('id="elegir"')
 else:
@@ -77,28 +88,41 @@ if text.count('class="mobile-conversion-v45"') != 1:
 if 'href="#ruta"' in text or 'href="#documentos"' in text:
     errors.append("La navegación pública conserva anclas eliminadas de la portada")
 
-order = ['id="necesidades"']
-if not compact_home_v520:
-    order.append('id="elegir"')
-order.extend([
-    'id="servicios"', 'id="productos"', 'id="entregables"', 'id="experiencia"',
-    'id="planes"', 'id="honorarios"', 'id="contratacion"',
-])
-if conversion_path_v528:
-    order.extend(['id="contacto"', 'id="sectores"', 'id="perspectivas"', 'id="firma"', 'id="preguntas"'])
+if experience_v6:
+    order = ['id="v6-situations"', 'id="v6-offer"', 'id="v6-commercial-depth"', 'id="contacto"', 'id="v6-depth"']
+    positions = [text.find(marker) for marker in order]
+    if any(position < 0 for position in positions) or positions != sorted(positions):
+        errors.append("El orden narrativo v6 de la portada no es canónico")
 else:
-    order.extend(['id="sectores"', 'id="perspectivas"', 'id="firma"', 'id="preguntas"', 'id="contacto"'])
-positions = [text.find(marker) for marker in order]
-if any(position < 0 for position in positions) or positions != sorted(positions):
-    contract = "v5.28" if conversion_path_v528 else "v4.5/v5.20"
-    errors.append(f"El orden narrativo {contract} de la portada no es canónico")
+    order = ['id="necesidades"']
+    if not compact_home_v520:
+        order.append('id="elegir"')
+    order.extend([
+        'id="servicios"', 'id="productos"', 'id="entregables"', 'id="experiencia"',
+        'id="planes"', 'id="honorarios"', 'id="contratacion"',
+    ])
+    if conversion_path_v528:
+        order.extend(['id="contacto"', 'id="sectores"', 'id="perspectivas"', 'id="firma"', 'id="preguntas"'])
+    else:
+        order.extend(['id="sectores"', 'id="perspectivas"', 'id="firma"', 'id="preguntas"', 'id="contacto"'])
+    positions = [text.find(marker) for marker in order]
+    if any(position < 0 for position in positions) or positions != sorted(positions):
+        contract = "v5.28" if conversion_path_v528 else "v4.5/v5.20"
+        errors.append(f"El orden narrativo {contract} de la portada no es canónico")
 
 if conversion_path_v528:
-    contracting_position = text.find('id="contratacion"')
-    contact_position = text.find('id="contacto"')
-    sectors_position = text.find('id="sectores"')
-    if not (contracting_position >= 0 and contracting_position < contact_position < sectors_position):
-        errors.append("v5.28 debe ubicar contacto después de contratación y antes de la profundidad sectorial")
+    if experience_v6:
+        commercial_position = text.find('id="v6-commercial-depth"')
+        contact_position = text.find('id="contacto"')
+        legacy_position = text.find('id="v6-depth"')
+        if not (commercial_position >= 0 and commercial_position < contact_position < legacy_position):
+            errors.append("v6 debe ubicar contacto después de profundidad comercial y antes de profundidad legacy")
+    else:
+        contracting_position = text.find('id="contratacion"')
+        contact_position = text.find('id="contacto"')
+        sectors_position = text.find('id="sectores"')
+        if not (contracting_position >= 0 and contracting_position < contact_position < sectors_position):
+            errors.append("v5.28 debe ubicar contacto después de contratación y antes de la profundidad sectorial")
 
 if compact_home_v520:
     need_position = text.find('id="necesidades"')
@@ -139,4 +163,5 @@ if errors:
     sys.exit(1)
 
 compat = "; v5.28 conversion-path compatible" if conversion_path_v528 else ""
-print(f"VALIDACIÓN UX/UI V4.5 OK: narrativa, densidad, navegación, mockup, accesibilidad y móvil íntegros; v5.20/v5.21 compatibles{compat}.")
+phase = "; Experience System v6 compatible" if experience_v6 else ""
+print(f"VALIDACIÓN UX/UI V4.5 OK: narrativa, densidad, navegación, mockup, accesibilidad y móvil íntegros; v5.20/v5.21 compatibles{compat}{phase}.")
