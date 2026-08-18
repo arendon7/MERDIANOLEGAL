@@ -7,6 +7,8 @@ on:
       - version.json
       - assets/js/v6/analytics-adapter-v61.js
       - assets/data/v6/measurement-readiness-v61.json
+      - assets/data/v6/fit-scope-clarity-v64.json
+      - assets/css/v6/fit-scope-clarity-v64.css
       - telemetry-v50.js
       - site-config.json
       - runtime-config.js
@@ -16,7 +18,10 @@ on:
       - scripts/validate_production_v50.py
       - scripts/normalize_experience_compat_v60.py
       - scripts/validate_measurement_readiness_v61.py
+      - scripts/apply_fit_scope_clarity_v64.py
+      - scripts/validate_fit_scope_clarity_v64.py
       - tests/e2e/measurement-readiness-v61.spec.mjs
+      - tests/e2e/fit-scope-clarity-v64.spec.mjs
       - playwright.config.mjs
       - package.json
       - package-lock.json
@@ -62,15 +67,28 @@ jobs:
           python3 scripts/apply_experience_final_v60.py
           python3 scripts/apply_funnel_trust_v529.py
           python3 scripts/normalize_experience_compat_v60.py
+          if [ -f assets/data/v6/fit-scope-clarity-v64.json ]; then
+            python3 scripts/apply_fit_scope_clarity_v64.py
+          fi
       - name: Validate measurement privacy and release metadata
         run: |
           python3 scripts/validate_production_v50.py
           python3 scripts/validate_measurement_readiness_v61.py
           python3 scripts/validate_release_governance_v57.py
           python3 scripts/validate_pages_trigger_v511.py
+          if [ -f assets/data/v6/fit-scope-clarity-v64.json ]; then
+            python3 scripts/validate_fit_scope_clarity_v64.py
+            python3 scripts/apply_fit_scope_clarity_v64.py --check
+          fi
           node --check assets/js/v6/analytics-adapter-v61.js
           node --check tests/e2e/measurement-readiness-v61.spec.mjs
+          if [ -f tests/e2e/fit-scope-clarity-v64.spec.mjs ]; then
+            node --check tests/e2e/fit-scope-clarity-v64.spec.mjs
+          fi
           python3 -m json.tool assets/data/v6/measurement-readiness-v61.json > /dev/null
+          if [ -f assets/data/v6/fit-scope-clarity-v64.json ]; then
+            python3 -m json.tool assets/data/v6/fit-scope-clarity-v64.json > /dev/null
+          fi
           python3 -m json.tool site-status.json > /dev/null
       - name: Install locked QA dependencies
         run: npm ci --ignore-scripts --no-audit --no-fund
