@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - .github/workflows/v6-live-release-diagnostic.yml
+      - .github/workflows/v6-candidate-validation.yml
   workflow_dispatch:
 
 permissions:
@@ -34,86 +35,172 @@ jobs:
       - name: Smoke test current public URL
         run: python3 scripts/validate_live_v53.py
 
-  live_browser_e2e:
-    name: Probe deployed Browser E2E and axe
-    runs-on: ubuntu-latest
-    timeout-minutes: 18
-    steps:
-      - name: Checkout diagnostic source
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-        with:
-          persist-credentials: false
-      - name: Setup Node.js with npm cache
-        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
-        with:
-          node-version: "22"
-          cache: npm
-          cache-dependency-path: package-lock.json
-      - name: Install locked QA dependencies
-        run: npm ci --ignore-scripts --no-audit --no-fund
-      - name: Prefer official Ubuntu mirrors for browser dependencies
-        run: |
-          if [ -f /etc/apt/apt-mirrors.txt ]; then
-            printf 'https://archive.ubuntu.com/ubuntu/\tpriority:1\nhttps://security.ubuntu.com/ubuntu/\tpriority:2\n' \
-              | sudo tee /etc/apt/apt-mirrors.txt >/dev/null
-          fi
-          printf '%s\n' \
-            'Acquire::Retries "3";' \
-            'Acquire::http::Timeout "30";' \
-            'Acquire::https::Timeout "30";' \
-            | sudo tee /etc/apt/apt.conf.d/80meridiano-network >/dev/null
-      - name: Install Chromium and WebKit
-        run: timeout 900s npx playwright install --with-deps chromium webkit
-      - name: Run deployed browser E2E suite
-        run: npm run test:e2e
-      - name: Upload browser diagnostic artifacts
-        if: failure()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        with:
-          name: v6-live-browser-diagnostic
-          path: |
-            playwright-report
-            test-results
-          if-no-files-found: ignore
-          retention-days: 7
-
-  live_lighthouse:
-    name: Probe deployed Lighthouse budgets
+  pages_quality:
+    name: Reproduce Pages quality on canonical main
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
-      - name: Checkout diagnostic source
+      - name: Checkout canonical main
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
+          ref: main
           persist-credentials: false
-      - name: Setup Node.js with npm cache
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: "3.12"
+      - name: Setup Node.js
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: "22"
-          cache: npm
-          cache-dependency-path: package-lock.json
-      - name: Install locked QA dependencies
-        run: npm ci --ignore-scripts --no-audit --no-fund
-      - name: Install pinned Lighthouse Chromium
-        run: timeout 180s npx playwright install chromium
-      - name: Resolve pinned Lighthouse Chromium
+      - name: Reproduce phase-aware idempotence gate
         run: |
-          CHROME_BIN="$(node -e 'console.log(require("playwright").chromium.executablePath())')"
-          if [ ! -x "$CHROME_BIN" ]; then
-            echo "Pinned Playwright Chromium was not found." >&2
-            exit 1
+          if grep -q 'data-experience-system="v6"' index.html; then
+            MERIDIANO_CANONICAL_V6=true
+            echo "Experience System v6 baseline detected; legacy HTML materializers are skipped."
+          else
+            MERIDIANO_CANONICAL_V6=false
+            echo "Pre-v6 baseline detected; legacy canonical chain remains active."
           fi
-          echo "CHROME_PATH=$CHROME_BIN" >> "$GITHUB_ENV"
-          "$CHROME_BIN" --version
-      - name: Run deployed Lighthouse performance and accessibility budgets
-        run: npm run audit:quality
-      - name: Upload Lighthouse diagnostic summary
-        if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        with:
-          name: v6-live-lighthouse-diagnostic
-          path: |
-            quality-artifacts/v5.5/summary.json
-            quality-artifacts/v5.5/summary.md
-          if-no-files-found: ignore
-          retention-days: 7
+          if [ "$MERIDIANO_CANONICAL_V6" != "true" ]; then
+            python3 scripts/build_catalog_shells.py
+            node scripts/render_catalog_static.mjs
+            node scripts/render_services_v42.mjs
+            python3 scripts/enrich_editorial_pages.py
+            python3 scripts/apply_commercial_v43.py
+            python3 scripts/apply_visual_assets.py
+            python3 scripts/apply_ux_v45.py
+            python3 scripts/apply_detail_ux_v46.py
+            python3 scripts/apply_editorial_ux_v47.py
+            python3 scripts/normalize_editorial_v47.py
+            python3 scripts/normalize_growth_compat_v51.py
+            python3 scripts/apply_quality_v48.py
+            python3 scripts/normalize_quality_v48.py
+            python3 scripts/apply_operations_v49.py
+          fi
+          python3 scripts/sync_public_version.py
+          if [ "$MERIDIANO_CANONICAL_V6" != "true" ]; then
+            python3 scripts/apply_production_v50.py
+            python3 scripts/apply_growth_v51.py
+            python3 scripts/finalize_growth_v51.py
+            python3 scripts/apply_cro_v52.py
+            python3 scripts/apply_authority_v53.py
+            python3 scripts/apply_decision_v58.py
+            python3 scripts/apply_commercial_v59.py
+            python3 scripts/apply_conversion_v510.py
+            python3 scripts/apply_engagement_v511.py
+            python3 scripts/apply_proof_v512.py
+            python3 scripts/apply_commercial_brief_v513.py
+            python3 scripts/apply_recommendation_v514.py
+            python3 scripts/apply_decision_action_v515.py
+            python3 scripts/apply_handoff_v517.py
+            python3 scripts/apply_handoff_observability_v518.py
+          fi
+          python3 scripts/apply_experience_v60.py
+          python3 scripts/apply_experience_solutions_v60.py
+          python3 scripts/apply_experience_sectors_v60.py
+          python3 scripts/apply_experience_perspectives_v60.py
+          python3 scripts/apply_experience_final_v60.py
+          python3 scripts/apply_funnel_trust_v529.py
+          python3 scripts/normalize_experience_compat_v60.py
+          python3 scripts/validate_experience_v60.py
+          python3 scripts/validate_experience_solutions_v60.py
+          python3 scripts/validate_experience_sectors_v60.py
+          python3 scripts/validate_experience_perspectives_v60.py
+          python3 scripts/validate_experience_final_v60.py
+          python3 scripts/validate_funnel_trust_v529.py
+          python3 scripts/validate_proof_v512.py
+          python3 scripts/validate_capability_truth_v521.py
+          python3 scripts/validate_editorial_context.py
+          git diff --exit-code -- index.html catalog-home-v32.js decision-flow.js site-v3.js page-context.js sitemap.xml robots.txt runtime-config.js site-status.json servicios productos firma.html perspectivas perspectivas.html sectores soluciones experiencia.html demo.html 404.html aviso-legal.html privacidad.html terminos.html manifest.webmanifest CNAME scripts/build_catalog_shells.py
+      - name: Reproduce Pages static validators
+        run: |
+          python3 scripts/validate_site.py
+          python3 scripts/validate_static_catalog.py
+          python3 scripts/validate_commercial_v44.py
+          python3 scripts/validate_ux_v45.py
+          python3 scripts/validate_detail_ux_v46.py
+          python3 scripts/validate_editorial_ux_v47.py
+          python3 scripts/validate_quality_v48.py
+          python3 scripts/validate_operations_v49.py
+          python3 scripts/validate_production_v50.py
+          python3 scripts/validate_growth_v51.py
+          python3 scripts/validate_cro_v52.py
+          python3 scripts/validate_authority_v53.py
+          python3 scripts/validate_browser_v54.py
+          python3 scripts/validate_quality_v55.py
+          python3 scripts/validate_ci_v56.py
+          python3 scripts/validate_release_governance_v57.py
+          python3 scripts/validate_pages_trigger_v511.py
+          python3 scripts/validate_decision_v58.py
+          python3 scripts/validate_commercial_v59.py
+          python3 scripts/validate_conversion_v510.py
+          python3 scripts/validate_engagement_v511.py
+          python3 scripts/validate_proof_v512.py
+          python3 scripts/validate_commercial_brief_v513.py
+          python3 scripts/validate_recommendation_v514.py
+          python3 scripts/validate_decision_action_v515.py
+          python3 scripts/validate_handoff_v517.py
+          python3 scripts/validate_handoff_observability_v518.py
+          python3 scripts/validate_offer_narrative_v522.py
+          python3 scripts/validate_decision_flow.py
+          python3 scripts/validate_page_context.py
+          python3 scripts/validate_editorial_context.py
+          python3 scripts/validate_visual_assets.py
+      - name: Reproduce JavaScript and JSON checks
+        run: |
+          node --check site-v3.js
+          node --check catalog-v32.js
+          node --check catalog-page.js
+          node --check catalog-home-v32.js
+          node --check commercial-conversion-v44.js
+          node --check decision-flow.js
+          node --check page-context.js
+          node --check experiencia.js
+          node --check demo.js
+          node --check visual-v39.js
+          node --check detail-v46.js
+          node --check editorial-v47.js
+          node --check runtime-config.js
+          node --check telemetry-v50.js
+          node --check measurement-v53.js
+          node --check commercial-intake-v59.js
+          node --check conversion-close-v510.js
+          node --check commercial-brief-v513.js
+          node --check recommendation-v514.js
+          node --check decision-action-v515.js
+          node --check handoff-continuity-v517.js
+          node --check handoff-observability-v518.js
+          node --check playwright.config.mjs
+          node --check tests/e2e/helpers.mjs
+          node --check tests/e2e/public-site.spec.mjs
+          node --check tests/e2e/demo.spec.mjs
+          node --check tests/e2e/accessibility.spec.mjs
+          node --check tests/e2e/capability-truth.spec.mjs
+          node --check tests/e2e/offer-narrative.spec.mjs
+          node --check tests/e2e/ci-summary-reporter.mjs
+          node --check scripts/run_quality_v55.mjs
+          node --check scripts/render_catalog_static.mjs
+          node --check scripts/render_services_v42.mjs
+          python3 -m json.tool manifest.webmanifest > /dev/null
+          python3 -m json.tool version.json > /dev/null
+          python3 -m json.tool site-config.json > /dev/null
+          python3 -m json.tool site-status.json > /dev/null
+          python3 -m json.tool package.json > /dev/null
+          python3 -m json.tool package-lock.json > /dev/null
+          python3 -m json.tool quality-budgets-v55.json > /dev/null
+          python3 -m json.tool ci-baseline-v56.json > /dev/null
+          python3 -m json.tool release-governance-v57.json > /dev/null
+          python3 -m json.tool growth-solutions-v51.json > /dev/null
+          python3 -m json.tool cro-solutions-v52.json > /dev/null
+          python3 -m json.tool authority-v53.json > /dev/null
+          python3 -m json.tool measurement-contract-v53.json > /dev/null
+          python3 -m json.tool commercial-intake-v59.json > /dev/null
+          python3 -m json.tool conversion-close-v510.json > /dev/null
+          python3 -m json.tool recommendation-v514.json > /dev/null
+          python3 -m json.tool handoff-observability-v518.json > /dev/null
+          python3 -m json.tool offer-narrative-v522.json > /dev/null
+          python3 -m json.tool experience-system-v60.json > /dev/null
+          python3 -m json.tool experience-content-v60.json > /dev/null
+          for f in catalog-services-v42/*.json; do python3 -m json.tool "$f" > /dev/null; done
+          for f in catalog-products-v41/*.json; do python3 -m json.tool "$f" > /dev/null; done
