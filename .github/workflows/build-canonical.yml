@@ -11,6 +11,19 @@ on:
       - quality-budgets-v55.json
       - ci-baseline-v56.json
       - release-governance-v57.json
+      - experience-system-v60.json
+      - experience-content-v60.json
+      - index.html
+      - firma.html
+      - perspectivas.html
+      - experiencia.html
+      - demo.html
+      - aviso-legal.html
+      - privacidad.html
+      - terminos.html
+      - 404.html
+      - sectores/**
+      - perspectivas/**
       - .gitignore
       - playwright.config.mjs
       - tests/e2e/**
@@ -72,6 +85,7 @@ on:
       - decision-compression-v531.json
       - decision-compression-v531.css
       - assets/**
+      - assets/css/v6/**
       - scripts/build_catalog_shells.py
       - scripts/render_catalog_static.mjs
       - scripts/render_services_v42.mjs
@@ -132,6 +146,17 @@ on:
       - scripts/validate_offer_commercial_v530.py
       - scripts/apply_decision_compression_v531.py
       - scripts/validate_decision_compression_v531.py
+      - scripts/apply_experience_v60.py
+      - scripts/validate_experience_v60.py
+      - scripts/apply_experience_solutions_v60.py
+      - scripts/validate_experience_solutions_v60.py
+      - scripts/apply_experience_sectors_v60.py
+      - scripts/validate_experience_sectors_v60.py
+      - scripts/apply_experience_perspectives_v60.py
+      - scripts/validate_experience_perspectives_v60.py
+      - scripts/apply_experience_final_v60.py
+      - scripts/validate_experience_final_v60.py
+      - scripts/normalize_experience_compat_v60.py
       - scripts/validate_browser_v54.py
       - scripts/run_quality_v55.mjs
       - scripts/validate_quality_v55.py
@@ -142,6 +167,7 @@ on:
       - scripts/sync_public_version.py
       - .github/workflows/build-canonical.yml
       - .github/workflows/pages.yml
+      - .github/workflows/v6-candidate-validation.yml
   workflow_dispatch:
 
 concurrency:
@@ -221,7 +247,7 @@ jobs:
         run: python3 scripts/apply_decision_action_v515.py
       - name: Apply manual handoff continuity v5.17
         run: python3 scripts/apply_handoff_v517.py
-      - name: Apply handoff observability v5.18+
+      - name: Apply handoff observability v5.18 + canonical extensions
         run: python3 scripts/apply_handoff_observability_v518.py
       - name: Commit canonical outputs
         run: |

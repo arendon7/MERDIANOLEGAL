@@ -13,6 +13,22 @@ on:
       - package-lock.json
       - release-governance-v57.json
       - quality-budgets-v55.json
+      - experience-system-v60.json
+      - experience-content-v60.json
+      - index.html
+      - firma.html
+      - perspectivas.html
+      - experiencia.html
+      - demo.html
+      - aviso-legal.html
+      - privacidad.html
+      - terminos.html
+      - 404.html
+      - sectores/**
+      - perspectivas/**
+      - growth-solutions-v51.json
+      - cro-solutions-v52.json
+      - assets/css/v6/**
       - decision-v58.css
       - commercial-intake-v59.json
       - commercial-intake-v59.css
@@ -53,7 +69,9 @@ on:
       - catalog-products-v41/**
       - catalog-services-v42/**
       - tests/e2e/**
+      - scripts/enrich_editorial_pages.py
       - scripts/sync_public_version.py
+      - scripts/apply_production_v50.py
       - scripts/validate_visual_assets.py
       - scripts/apply_decision_v58.py
       - scripts/validate_decision_v58.py
@@ -95,6 +113,17 @@ on:
       - scripts/validate_offer_commercial_v530.py
       - scripts/apply_decision_compression_v531.py
       - scripts/validate_decision_compression_v531.py
+      - scripts/apply_experience_v60.py
+      - scripts/validate_experience_v60.py
+      - scripts/apply_experience_solutions_v60.py
+      - scripts/validate_experience_solutions_v60.py
+      - scripts/apply_experience_sectors_v60.py
+      - scripts/validate_experience_sectors_v60.py
+      - scripts/apply_experience_perspectives_v60.py
+      - scripts/validate_experience_perspectives_v60.py
+      - scripts/apply_experience_final_v60.py
+      - scripts/validate_experience_final_v60.py
+      - scripts/normalize_experience_compat_v60.py
       - scripts/validate_operations_v49.py
       - scripts/validate_static_catalog.py
       - scripts/validate_growth_v51.py
@@ -140,6 +169,7 @@ jobs:
       - name: Validate public version semantics v5.0
         run: |
           python3 scripts/sync_public_version.py
+          python3 scripts/apply_production_v50.py
           python3 scripts/validate_production_v50.py
           python3 scripts/validate_visual_assets.py
       - name: Validate buying decision contract v5.8

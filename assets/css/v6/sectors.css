@@ -1,0 +1,88 @@
+/* Meridiano Legal v6 — lectura sectorial como interfaz de decisiones. */
+
+.v6-sector-hero .v6-display { max-width: 14ch; }
+.v6-sector-brief {
+  align-self: stretch;
+  padding: clamp(26px,4vw,38px);
+  background: var(--v6-ivory);
+  color: var(--v6-navy);
+  border-top: 3px solid var(--v6-gold);
+}
+.v6-sector-brief > span { display:block; margin-bottom:16px; color:var(--v6-gold); font-size:.66rem; font-weight:900; letter-spacing:.11em; }
+.v6-sector-brief ol { margin:0; padding:0; list-style:none; counter-reset:sector-brief; }
+.v6-sector-brief li { counter-increment:sector-brief; display:grid; grid-template-columns:34px 1fr; gap:10px; padding:12px 0; border-bottom:1px solid #d8ccb8; line-height:1.45; }
+.v6-sector-brief li::before { content:counter(sector-brief, decimal-leading-zero); color:var(--v6-gold); font-size:.67rem; font-weight:900; }
+
+.v6-sector-context { background:var(--v6-white); }
+.v6-sector-context-grid { display:grid; grid-template-columns:minmax(260px,.72fr) minmax(0,1.28fr); gap:clamp(40px,6vw,78px); align-items:start; }
+.v6-sector-prose { display:grid; gap:16px; }
+.v6-sector-prose p { margin:0; color:var(--v6-muted); font-size:.94rem; line-height:1.72; }
+.v6-sector-prose p:first-child { color:var(--v6-navy); font-size:1.03rem; }
+
+.v6-sector-decisions { background:var(--v6-ivory); }
+.v6-sector-decision-list { border-top:1px solid #d8ccb8; }
+.v6-sector-decision-row { display:grid; grid-template-columns:96px minmax(180px,.55fr) minmax(0,1fr); gap:22px; align-items:start; padding:20px 0; border-bottom:1px solid #d8ccb8; }
+.v6-sector-decision-row b { color:var(--v6-gold); font-size:.66rem; letter-spacing:.07em; }
+.v6-sector-decision-row strong { color:var(--v6-navy); font-family:var(--v6-serif); font-size:1.25rem; line-height:1.2; }
+.v6-sector-decision-row p { margin:0; color:var(--v6-muted); line-height:1.55; }
+
+.v6-sector-map { background:var(--v6-navy); color:var(--v6-white); }
+.v6-sector-map .v6-heading { color:var(--v6-white); }
+.v6-sector-map-grid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); border-top:1px solid rgba(255,255,255,.18); border-left:1px solid rgba(255,255,255,.18); }
+.v6-sector-map-item { min-height:190px; padding:22px; border-right:1px solid rgba(255,255,255,.18); border-bottom:1px solid rgba(255,255,255,.18); }
+.v6-sector-map-item b { display:block; margin-bottom:22px; color:var(--v6-gold-light); font-size:.68rem; }
+.v6-sector-map-item strong { display:block; margin-bottom:10px; color:var(--v6-white); font-family:var(--v6-serif); font-size:1.22rem; }
+.v6-sector-map-item p { margin:0; color:#cbd5db; font-size:.82rem; line-height:1.55; }
+
+.v6-sector-risks { background:var(--v6-soft); }
+.v6-sector-risk-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:0; border-top:1px solid var(--v6-line); border-left:1px solid var(--v6-line); }
+.v6-sector-risk { padding:24px; border-right:1px solid var(--v6-line); border-bottom:1px solid var(--v6-line); }
+.v6-sector-risk b { color:var(--v6-gold); font-size:.66rem; letter-spacing:.08em; }
+.v6-sector-risk h3 { margin:16px 0 10px; color:var(--v6-navy); font-family:var(--v6-serif); font-size:1.3rem; line-height:1.2; }
+.v6-sector-risk p { margin:0; color:var(--v6-muted); line-height:1.55; }
+
+.v6-sector-interventions,
+.v6-sector-routes { background:var(--v6-white); }
+.v6-sector-offer-list { border-top:1px solid var(--v6-line); }
+.v6-sector-offer { display:grid; grid-template-columns:100px minmax(180px,.55fr) minmax(0,1fr) auto; gap:20px; align-items:center; padding:20px 0; border-bottom:1px solid var(--v6-line); }
+.v6-sector-offer b { color:var(--v6-gold); font-size:.65rem; letter-spacing:.08em; }
+.v6-sector-offer strong { color:var(--v6-navy); font-family:var(--v6-serif); font-size:1.2rem; }
+.v6-sector-offer p { margin:0; color:var(--v6-muted); line-height:1.5; }
+.v6-sector-offer a { color:var(--v6-navy); font-size:.73rem; font-weight:900; white-space:nowrap; }
+
+.v6-sector-moments { background:var(--v6-ivory); }
+.v6-sector-moment-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); border-top:1px solid #d8ccb8; border-bottom:1px solid #d8ccb8; }
+.v6-sector-moment { padding:24px; border-right:1px solid #d8ccb8; }
+.v6-sector-moment:last-child { border-right:0; }
+.v6-sector-moment strong { display:block; margin-bottom:8px; color:var(--v6-navy); font-family:var(--v6-serif); font-size:1.15rem; }
+.v6-sector-moment span { color:var(--v6-muted); font-size:.82rem; line-height:1.5; }
+
+.v6-sector-reading-list { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; }
+.v6-sector-reading { padding-top:18px; border-top:2px solid var(--v6-gold); }
+.v6-sector-reading b { display:block; margin-bottom:9px; color:var(--v6-gold); font-size:.65rem; }
+.v6-sector-reading strong { display:block; margin-bottom:8px; color:var(--v6-navy); font-family:var(--v6-serif); font-size:1.15rem; line-height:1.25; }
+.v6-sector-reading span { display:block; color:var(--v6-muted); font-size:.8rem; line-height:1.5; }
+.v6-sector-reading a { display:inline-block; margin-top:12px; color:var(--v6-navy); font-size:.72rem; font-weight:900; }
+
+.v6-sector-cta { background:var(--v6-navy-deep); color:var(--v6-white); }
+.v6-sector-cta .v6-heading { color:var(--v6-white); }
+.v6-sector-cta .v6-lead { color:#cbd5db; }
+.v6-sector-cta-grid { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:40px; align-items:center; }
+
+@media(max-width:900px){
+  .v6-sector-context-grid { grid-template-columns:1fr; }
+  .v6-sector-map-grid { grid-template-columns:1fr 1fr; }
+  .v6-sector-risk-grid { grid-template-columns:1fr; }
+  .v6-sector-moment-grid { grid-template-columns:1fr 1fr; }
+  .v6-sector-reading-list { grid-template-columns:1fr; }
+}
+@media(max-width:700px){
+  .v6-sector-decision-row { grid-template-columns:42px 1fr; gap:12px; }
+  .v6-sector-decision-row p { grid-column:2; }
+  .v6-sector-map-grid { grid-template-columns:1fr; }
+  .v6-sector-map-item { min-height:0; }
+  .v6-sector-offer { grid-template-columns:1fr; gap:7px; }
+  .v6-sector-moment-grid { grid-template-columns:1fr; }
+  .v6-sector-moment { border-right:0; border-bottom:1px solid #d8ccb8; }
+  .v6-sector-cta-grid { grid-template-columns:1fr; }
+}

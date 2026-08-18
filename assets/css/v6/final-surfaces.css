@@ -1,0 +1,76 @@
+/* Experience System v6 — institutional, demo, legal and recovery surfaces. */
+[data-experience-wave="final"] { color: var(--v6-ink); font-family: var(--v6-sans); }
+[data-experience-wave="final"] :where(a,button,input,select,textarea):focus-visible { outline: none; box-shadow: var(--v6-focus); }
+
+/* Firm */
+body[data-experience-surface="firm"] .firm-hero { background: linear-gradient(180deg,var(--v6-ivory),#fff); }
+body[data-experience-surface="firm"] .firm-hero-grid { align-items: start; gap: clamp(36px,6vw,84px); }
+body[data-experience-surface="firm"] .firm-hero h1,
+body[data-experience-surface="firm"] .section-heading h2,
+body[data-experience-surface="firm"] .split h2 { font-family: var(--v6-serif); letter-spacing: -.025em; }
+body[data-experience-surface="firm"] .director-card { border: 1px solid var(--v6-line); border-radius: var(--v6-radius-md); box-shadow: var(--v6-shadow-soft); }
+body[data-experience-surface="firm"] .professional-authority-v525 { border-block: 1px solid var(--v6-line); }
+body[data-experience-surface="firm"] .authority-timeline-v525 { max-width: 920px; }
+body[data-experience-surface="firm"] .authority-boundary-v525 { border-left: 3px solid var(--v6-gold); background: var(--v6-ivory); }
+body[data-experience-surface="firm"] .method-grid article,
+body[data-experience-surface="firm"] .principle-grid article,
+body[data-experience-surface="firm"] .thesis-grid article { box-shadow: none; border-color: var(--v6-line); }
+
+/* Demonstration boundary */
+.v6-demo-boundary { border-block: 1px solid rgba(168,132,84,.45); background: var(--v6-navy-deep); color: #fff; }
+.v6-demo-boundary .v6-demo-boundary-inner { width: var(--v6-container); margin-inline: auto; padding: 18px 0; display: grid; grid-template-columns: minmax(0,1.45fr) repeat(3,minmax(0,.8fr)); gap: 18px; align-items: center; }
+.v6-demo-boundary strong { display: block; font-family: var(--v6-serif); font-size: 1.08rem; }
+.v6-demo-boundary span { display: block; margin-top: 4px; color: rgba(255,255,255,.72); font-size: .82rem; line-height: 1.45; }
+.v6-demo-boundary .v6-demo-kicker { color: var(--v6-gold-light); font: 700 .68rem/1 var(--v6-sans); letter-spacing: .12em; text-transform: uppercase; }
+body[data-experience-surface="experience"] .experience-hero h1 { font-family: var(--v6-serif); letter-spacing: -.025em; }
+body[data-experience-surface="experience"] .experience-scorecard article,
+body[data-experience-surface="experience"] .deliverable-card { border-color: var(--v6-line); box-shadow: none; }
+body[data-experience-surface="experience"] .experience-index { border-block: 1px solid var(--v6-line); background: #fff; }
+body[data-experience-surface="experience"] .experience-tab { min-height: 72px; }
+body[data-experience-surface="experience"] .experience-disclaimer { max-width: 68ch; }
+body[data-experience-surface="demo"] .demo-topbar { border-bottom: 1px solid var(--v6-line); }
+body[data-experience-surface="demo"] .demo-badge { letter-spacing: .1em; }
+body[data-experience-surface="demo"] .login-shell { padding-top: clamp(28px,5vw,64px); }
+body[data-experience-surface="demo"] .login-panel,
+body[data-experience-surface="demo"] .credential-panel,
+body[data-experience-surface="demo"] .panel-card,
+body[data-experience-surface="demo"] .module-card { border-color: var(--v6-line); box-shadow: none; }
+body[data-experience-surface="demo"] .portal-header h1,
+body[data-experience-surface="demo"] .login-panel h1 { font-family: var(--v6-serif); }
+
+/* Legal reading */
+body[data-experience-surface^="legal:"] { background: var(--v6-soft); }
+body[data-experience-surface^="legal:"] .legal-header { background: rgba(255,255,255,.96); border-bottom: 1px solid var(--v6-line); }
+body[data-experience-surface^="legal:"] .legal-main { padding-block: clamp(34px,6vw,76px); }
+body[data-experience-surface^="legal:"] .legal-layout { display: grid; grid-template-columns: 220px minmax(0,var(--v6-reading)); justify-content: center; gap: clamp(32px,6vw,80px); align-items: start; }
+body[data-experience-surface^="legal:"] .legal-nav { position: sticky; top: 24px; display: grid; gap: 4px; padding: 10px; border: 1px solid var(--v6-line); border-radius: var(--v6-radius-md); background: #fff; }
+body[data-experience-surface^="legal:"] .legal-nav a { padding: 10px 12px; border-radius: var(--v6-radius-sm); text-decoration: none; }
+body[data-experience-surface^="legal:"] .legal-document { padding: clamp(28px,5vw,58px); border: 1px solid var(--v6-line); border-radius: var(--v6-radius-md); background: #fff; box-shadow: var(--v6-shadow-soft); }
+body[data-experience-surface^="legal:"] .legal-document h1,
+body[data-experience-surface^="legal:"] .legal-document h2 { font-family: var(--v6-serif); letter-spacing: -.02em; }
+body[data-experience-surface^="legal:"] .legal-document h1 { max-width: 16ch; }
+body[data-experience-surface^="legal:"] .legal-document h2 { margin-top: 2.1em; padding-top: .8em; border-top: 1px solid var(--v6-line); }
+body[data-experience-surface^="legal:"] .legal-document p,
+body[data-experience-surface^="legal:"] .legal-document li { line-height: 1.75; }
+body[data-experience-surface^="legal:"] .legal-callout { border-left: 3px solid var(--v6-gold); background: var(--v6-ivory); }
+
+/* 404 recovery */
+body[data-experience-surface="404"] .error-page { min-height: 100vh; background: var(--v6-navy-deep); padding: 28px; }
+body[data-experience-surface="404"] .error-card { width: min(760px,100%); border-radius: var(--v6-radius-md); box-shadow: var(--v6-shadow-soft); }
+body[data-experience-surface="404"] .error-card h1 { font-family: var(--v6-serif); letter-spacing: -.035em; }
+.v6-recovery-links { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; margin-top: 28px; }
+.v6-recovery-links a { display: block; padding: 14px; border: 1px solid var(--v6-line); border-radius: var(--v6-radius-sm); color: var(--v6-navy); text-decoration: none; font-weight: 700; }
+.v6-recovery-links a:hover { border-color: var(--v6-gold); }
+
+@media (max-width: 860px) {
+  .v6-demo-boundary .v6-demo-boundary-inner { grid-template-columns: 1fr 1fr; }
+  .v6-demo-boundary .v6-demo-boundary-intro { grid-column: 1 / -1; }
+  body[data-experience-surface^="legal:"] .legal-layout { grid-template-columns: 1fr; }
+  body[data-experience-surface^="legal:"] .legal-nav { position: static; display: flex; overflow-x: auto; }
+}
+
+@media (max-width: 620px) {
+  .v6-demo-boundary .v6-demo-boundary-inner { grid-template-columns: 1fr; }
+  body[data-experience-surface^="legal:"] .legal-document { padding: 24px 18px; }
+  .v6-recovery-links { grid-template-columns: 1fr; }
+}
