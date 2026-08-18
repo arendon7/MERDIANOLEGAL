@@ -30,12 +30,20 @@ test('v5.23 concentra el contacto abierto en una síntesis y un proceso colapsad
   await expectNoHorizontalOverflow(page);
 });
 
-test('v5.23 abre el único proceso cuando la intención explícita es propuesta', async ({ page }) => {
+test('v5.23 abre el único proceso cuando la intención explícita v6 es propuesta', async ({ page }) => {
   await page.goto('./productos/programa-gobernanza-ia.html');
-  const proposal = page.locator('[data-decision-v58-cta="true"][data-close-intent-v510="proposal"]');
+  const proposal = page.locator('[data-experience-v60-cta="primary"]');
   await expect(proposal).toBeVisible();
+  const href = await proposal.getAttribute('href');
+  const source = new URL(href, 'https://meridiano.invalid/');
+  expect(source.searchParams.get('commercial_intent')).toBe('proposal');
+  expect(source.searchParams.get('modality')).toBe('product');
+  expect(source.searchParams.get('proof_standard')).toBe('source');
+  expect(source.searchParams.get('experience')).toBe('v6');
   await proposal.click();
-  await expect(page).toHaveURL(/commercial_intent=proposal.*#contacto$/);
+  await expect(page).toHaveURL(/#contacto$/);
+  const current = new URL(page.url());
+  expect(current.searchParams.get('commercial_intent')).toBe('proposal');
 
   const form = page.locator('form[data-contact-compression-v523="true"]');
   const synthesis = form.locator('[data-contact-synthesis-v523="true"]');
