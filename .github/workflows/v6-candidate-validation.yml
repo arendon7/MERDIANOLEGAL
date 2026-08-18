@@ -12,19 +12,24 @@ on:
       - catalog-products-v41/**
       - catalog-services-v42/**
       - assets/css/v6/**
+      - scripts/enrich_editorial_pages.py
       - scripts/apply_experience_v60.py
       - scripts/apply_experience_solutions_v60.py
+      - scripts/apply_experience_sectors_v60.py
       - scripts/normalize_experience_compat_v60.py
       - scripts/apply_funnel_trust_v529.py
       - scripts/validate_experience_v60.py
       - scripts/validate_experience_solutions_v60.py
+      - scripts/validate_experience_sectors_v60.py
       - scripts/validate_funnel_trust_v529.py
+      - scripts/validate_editorial_context.py
       - .github/workflows/build-canonical.yml
       - .github/workflows/v6-candidate-validation.yml
       - index.html
       - productos/**
       - servicios/**
       - soluciones/**
+      - sectores/**
   workflow_dispatch:
 
 permissions:
@@ -49,42 +54,48 @@ jobs:
         with:
           python-version: "3.12"
       - name: Compile v6 renderers and validators
-        run: python3 -m py_compile scripts/apply_experience_v60.py scripts/apply_experience_solutions_v60.py scripts/normalize_experience_compat_v60.py scripts/validate_experience_v60.py scripts/validate_experience_solutions_v60.py
+        run: python3 -m py_compile scripts/apply_experience_v60.py scripts/apply_experience_solutions_v60.py scripts/apply_experience_sectors_v60.py scripts/normalize_experience_compat_v60.py scripts/validate_experience_v60.py scripts/validate_experience_solutions_v60.py scripts/validate_experience_sectors_v60.py
       - name: Materialize first pass and validate contracts
         run: |
           python3 scripts/apply_experience_v60.py
           python3 scripts/apply_experience_solutions_v60.py
+          python3 scripts/apply_experience_sectors_v60.py
           python3 scripts/apply_funnel_trust_v529.py
           python3 scripts/normalize_experience_compat_v60.py
           python3 scripts/validate_experience_v60.py
           python3 scripts/validate_experience_solutions_v60.py
+          python3 scripts/validate_experience_sectors_v60.py
           python3 scripts/validate_funnel_trust_v529.py
-          git diff -- index.html productos servicios soluciones > /tmp/v6-pass-1.diff
+          python3 scripts/validate_editorial_context.py
+          git diff -- index.html productos servicios soluciones sectores > /tmp/v6-pass-1.diff
           test -s /tmp/v6-pass-1.diff
       - name: Prove second-pass idempotence
         run: |
           python3 scripts/apply_experience_v60.py
           python3 scripts/apply_experience_solutions_v60.py
+          python3 scripts/apply_experience_sectors_v60.py
           python3 scripts/apply_funnel_trust_v529.py
           python3 scripts/normalize_experience_compat_v60.py
           python3 scripts/validate_experience_v60.py
           python3 scripts/validate_experience_solutions_v60.py
+          python3 scripts/validate_experience_sectors_v60.py
           python3 scripts/validate_funnel_trust_v529.py
-          git diff -- index.html productos servicios soluciones > /tmp/v6-pass-2.diff
+          python3 scripts/validate_editorial_context.py
+          git diff -- index.html productos servicios soluciones sectores > /tmp/v6-pass-2.diff
           cmp --silent /tmp/v6-pass-1.diff /tmp/v6-pass-2.diff
-          echo "Experience System v6 Waves 2-3 are idempotent across two passes."
-      - name: Verify Wave 3 materialization boundary
+          echo "Experience System v6 Waves 2-4 are idempotent across two passes."
+      - name: Verify Wave 4 materialization boundary
         run: |
           CHANGED="$(git diff --name-only)"
           printf '%s\n' "$CHANGED"
-          UNEXPECTED="$(printf '%s\n' "$CHANGED" | grep -Ev '^(index\.html|productos/[^/]+\.html|servicios/[^/]+\.html|soluciones/[^/]+\.html)$' || true)"
+          UNEXPECTED="$(printf '%s\n' "$CHANGED" | grep -Ev '^(index\.html|productos/[^/]+\.html|servicios/[^/]+\.html|soluciones/[^/]+\.html|sectores/[^/]+\.html)$' || true)"
           if [ -n "$UNEXPECTED" ]; then
-            echo "El renderer v6 modificó archivos públicos fuera de Home + fichas + soluciones:" >&2
+            echo "El renderer v6 modificó archivos públicos fuera de Home + fichas + soluciones + sectores:" >&2
             printf '%s\n' "$UNEXPECTED" >&2
             exit 1
           fi
           COUNT="$(printf '%s\n' "$CHANGED" | sed '/^$/d' | wc -l | tr -d ' ')"
-          if [ "$COUNT" -ne 24 ]; then
-            echo "Wave 3 esperaba exactamente 24 archivos públicos materializados y encontró $COUNT." >&2
+          if [ "$COUNT" -ne 32 ]; then
+            echo "Wave 4 esperaba exactamente 32 archivos públicos materializados y encontró $COUNT." >&2
             exit 1
           fi
