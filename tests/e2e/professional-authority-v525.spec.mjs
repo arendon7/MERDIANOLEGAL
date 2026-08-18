@@ -1,9 +1,12 @@
-import { test, expect, expectNoHorizontalOverflow } from './helpers.mjs';
+import { test, expect, expectNoHorizontalOverflow, openHomeLegacy } from './helpers.mjs';
 
-test('portada v5.25 publica autoridad profesional verificable', async ({ page }) => {
+test('portada v6 conserva autoridad profesional verificable en profundidad', async ({ page }) => {
   await page.goto('./');
   const proof = page.locator('[data-professional-authority-v525="home"]');
   await expect(proof).toHaveCount(1);
+  await expect(proof).not.toBeVisible();
+  await openHomeLegacy(page);
+  await expect(proof).toBeVisible();
   await expect(proof).toContainText('Universidad EAFIT');
   await expect(proof).toContainText('2018');
   await expect(proof).toContainText('Greenatics S.A.S.');
@@ -14,6 +17,7 @@ test('portada v5.25 publica autoridad profesional verificable', async ({ page })
 
 test('firma v5.25 separa trayectoria profesional de experiencia demo', async ({ page }, testInfo) => {
   await page.goto('./firma.html');
+  await expect(page.locator('body')).toHaveAttribute('data-experience-surface', 'firm');
   const trajectory = page.locator('[data-professional-authority-v525="firm"]');
   await expect(trajectory).toHaveCount(1);
   for (const text of ['Greenatics S.A.S.', 'Herbalgem S.A.S.', 'Grupo Pineal S.A.S.', 'Incubik', 'Compañía de Empaques']) {
