@@ -26,6 +26,8 @@ CONTACT_PATTERN = re.compile(r'<section class="v6-section v6-contact" id="contac
 ANALYTICS_SCRIPT = "analytics-adapter-v61.js"
 TELEMETRY_SCRIPT = "telemetry-v50.js"
 PUBLIC_DIRS = ("servicios", "productos", "soluciones", "sectores", "perspectivas")
+EXPECTED_INSTRUMENTED = 43
+EXPECTED_UNTOUCHED = 3
 READINESS_MARKUP = f'''{READINESS_START}
 <div class="contact-readiness-v528" data-conversion-readiness-v528="true" role="region" aria-label="Información mínima para presentar una necesidad">
   <div class="contact-readiness-copy-v528">
@@ -167,8 +169,11 @@ def normalize_measurement_runtime() -> tuple[int, int]:
         path.write_text(text, encoding="utf-8")
         instrumented += 1
 
-    if instrumented < 30:
-        raise RuntimeError(f"Measurement v6.1: cobertura inesperadamente baja ({instrumented} superficies)")
+    if instrumented != EXPECTED_INSTRUMENTED or untouched != EXPECTED_UNTOUCHED:
+        raise RuntimeError(
+            "Measurement v6.1: topología inesperada; "
+            f"esperaba {EXPECTED_INSTRUMENTED}/{EXPECTED_UNTOUCHED} y obtuvo {instrumented}/{untouched}"
+        )
     return instrumented, untouched
 
 
