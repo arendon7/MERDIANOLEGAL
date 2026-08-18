@@ -38,15 +38,20 @@ def normalize_home_contact_contract(text: str) -> str:
     if not CONTACT_PATTERN.search(text):
         raise RuntimeError("Experience v6: falta contacto canónico v6 para preservar v5.28")
 
-    readiness_count = text.count('data-conversion-readiness-v528="true"')
-    if readiness_count == 0:
-        pattern = re.compile(r'(<div class="v6-contact-copy">.*?)(</div><div class="v6-contact-form">)', re.S)
-        text, count = pattern.subn(lambda match: match.group(1) + READINESS_MARKUP + match.group(2), text, count=1)
-        if count != 1:
-            raise RuntimeError("Experience v6: no fue posible insertar preparación v5.28 dentro del contacto")
-    elif readiness_count != 1:
-        raise RuntimeError(f"Experience v6: preparación v5.28 debe ser única; encontró {readiness_count}")
+    # v6 conserva toda la profundidad histórica, por lo que el bloque v5.28 puede
+    # quedar dentro del legacy. Se extrae y se reubica, nunca se duplica.
+    managed = re.search(re.escape(READINESS_START) + r".*?" + re.escape(READINESS_END), text, flags=re.S)
+    readiness = managed.group(0) if managed else READINESS_MARKUP
+    if managed:
+        text = text[:managed.start()] + text[managed.end():]
 
+    pattern = re.compile(r'(<div class="v6-contact-copy">.*?)(</div><div class="v6-contact-form">)', re.S)
+    text, count = pattern.subn(lambda match: match.group(1) + readiness + match.group(2), text, count=1)
+    if count != 1:
+        raise RuntimeError("Experience v6: no fue posible reubicar preparación v5.28 dentro del contacto")
+
+    if text.count('data-conversion-readiness-v528="true"') != 1:
+        raise RuntimeError("Experience v6: preparación v5.28 debe permanecer única")
     if text.count(READINESS_START) != 1 or text.count(READINESS_END) != 1:
         raise RuntimeError("Experience v6: marcadores de preparación v5.28 deben permanecer únicos")
 
