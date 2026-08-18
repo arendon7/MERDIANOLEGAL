@@ -8,58 +8,62 @@ Sitio público y centro demostrativo de Meridiano Legal. Arquitectura static-fir
 
 ## Estado funcional
 
-- Release funcional certificada: **6.0.0 — Experience System**.
-- SHA funcional certificado: `a7940696cb358fcd4ace50e32f4a1463b76fdaa5`.
-- `main == stable` sobre ese SHA al cierre funcional.
-- Canal certificado: `github-pages-production-experience-system-certified`.
-- GitHub Pages sirve v6.0.0; smoke público v5.0→v5.3: PASS.
-- Browser E2E + axe sobre la v6 pública: PASS.
-- Lighthouse: PASS con budgets existentes.
-- 46/46 superficies migradas; 16/16 fichas preservan depth/truth; 1/1 formulario físico; 30/30 pasos canónicos.
-- No hay un ciclo funcional posterior abierto. La tarea vigente es únicamente el cierre documental v6.0.0.
-- Para la referencia documental definitiva, verificar los refs vigentes `main` y `stable`; no incrustar un SHA recursivo de cierre en esta nota.
+- Release funcional certificada: **6.1.0 — Measurement Readiness / observabilidad privacy-first**.
+- SHA funcional certificado: `8ffe0e923fc626281870ca2bd38d6c55a665b31b`.
+- Canal de cierre: `github-pages-production-measurement-readiness-certified`.
+- Browser E2E + axe sobre la v6.1 pública: PASS.
+- Lighthouse sobre la v6.1 pública: PASS con budgets existentes.
+- 46/46 superficies, 16/16 fichas, 1/1 formulario físico y 30/30 pasos canónicos preservados.
+- Analítica externa sigue deshabilitada: `analytics.enabled=false`, `provider=none`, `site_id=""`.
+- 43 superficies con telemetría previa cargan el adapter v6.1; `404.html`, `demo.html` y `experiencia.html` permanecen sin adapter.
 - Portal real de clientes: deshabilitado; `demo.html` continúa siendo demostrativo/noindex.
+- Después del cierre documental no existe un ciclo funcional posterior abierto.
+- Para la referencia documental definitiva, verificar los refs vigentes `main` y `stable`; no incrustar un SHA recursivo de cierre en esta nota.
 
-## Qué cambió en v6.0
+## Qué cambió en v6.1
 
-v6 reemplaza la primera lectura centrada en taxonomía interna por una arquitectura client-first:
+v6.1 prepara medición agregada futura sin activar un tercero ni transportar telemetría raw.
 
-**situación → resultado → intervención → evidencia → contacto**.
+- Fuente única: evento saneado `meridiano:funnel-v529`.
+- Campo aceptado: `detail.stage`.
+- `event` y `target` se ignoran.
+- `adapter.track(name,event)` histórico permanece como `no-op`.
+- Etapas allowlisted: `need`, `offer`, `evidence`, `decision`, `contact`, `handoff`.
+- Payload custom de Meridiano: solo nombre del evento; cero propiedades custom.
+- Deduplicación: primera emisión de cada etapa durante la vida de la página.
+- Plausible: adapter preparado pero deshabilitado; sin site id real; `autoCapturePageviews:false`.
+- Cualquier futura activación requiere proveedor/identificador auténticos, revisión de metadata estándar, actualización previa de política/configuración y nueva certificación.
 
-- La Home prioriza situaciones y decisiones empresariales antes que nombres internos de servicios/productos.
-- Las 16 fichas diferencian producto cerrado y servicio adaptable, con gramática visual/semántica para resultado, entregables, proceso, perímetro, límites y profundidad.
-- Las 7 superficies de soluciones, 8 sectores y 6 perspectivas se integran a la misma Experience System sin perder su contenido canónico.
-- Firma, experiencia, demo, legales y 404 conservan su función específica dentro del sistema visual consolidado.
-- La profundidad histórica v5.x se preserva; v6 reorganiza y jerarquiza, no sustituye truth jurídica por slogans.
-- Contacto sigue siendo un único formulario físico con handoff manual por WhatsApp.
+## Release engineering v6.1
 
-## Release engineering v6
-
-- Equivalencia canónica pre-merge reproduce el builder y la calidad estática de Pages.
-- Validators históricos incompatibles con el DOM v6 se hicieron phase-aware sin rebajar sus contratos legacy.
-- El gate de equivalencia ejecuta Python + `node --check` + JSON antes del merge.
-- Cambios en `scripts/validate_*.py` disparan el builder canónico.
-- El smoke live usa cache-busting y espera la versión esperada para tolerar propagación de GitHub Pages sin aceptar una release vieja.
+- `sync_public_version.py` sincroniza versión visible, runtime/status, sitemap y metadata editorial de modificación; `--check` detecta drift sin escribir.
+- Candidate, Browser, Measurement y Canonical Equivalence reproducen la sincronización de release en baseline v6.
+- Canonical Equivalence compara el set exacto de cambios esperados y mantiene segunda pasada idempotente.
+- El builder conserva exactamente 30 pasos históricos; v6.1 no crea un paso 31.
+- Pages aísla los workflow_run del commit canónico `build:` en `ignored-build-output` para que una ejecución ignorada no cancele una release válida.
+- El `concurrency.group` dinámico está quoted y `validate_pages_trigger_v511.py` exige esa forma.
 - `stable` solo se mueve después de quality, deploy, smoke, Browser/axe, Lighthouse y snapshot.
 
 ## Source-of-truth
 
 - `main`: verdad técnica y documental vigente.
-- `stable`: snapshot certificado; debe coincidir con `main` al cierre de una release.
-- `experience-system-v60.json` y `experience-content-v60.json`: contratos principales de Experience System v6.
+- `stable`: snapshot certificado; debe coincidir con `main` al cierre definitivo.
+- `assets/data/v6/measurement-readiness-v61.json`: contrato v6.1 de medición/privacy.
+- `assets/js/v6/analytics-adapter-v61.js`: adapter de measurement fail-closed.
+- `funnel-contract-v529.json`: límites semánticos y de privacidad del funnel.
+- `experience-system-v60.json` y `experience-content-v60.json`: Experience System base.
 - `catalog-products-v41/` y `catalog-services-v42/`: fuente jurídica/comercial principal de las 16 ofertas.
-- `growth-solutions-v51.json` y `cro-solutions-v52.json`: truth de las rutas por situación.
-- `offer-narrative-v522.json`: contrato editorial de decisión y modalidad preservado.
+- `growth-solutions-v51.json` y `cro-solutions-v52.json`: truth de rutas por situación.
+- `offer-narrative-v522.json`: contrato editorial de decisión y modalidad.
 - `professional-authority-v525.json`: hechos profesionales publicables.
 - `visual-assets-v526.json`: verdad de activos visuales.
-- `funnel-contract-v529.json`: límites semánticos y de privacidad del funnel.
 
 ## Invariantes
 
 - no inventar clientes, testimonios, premios, antigüedad o resultados;
 - no publicar importes, monedas, descuentos o tarifas no aprobadas;
 - no cotizador automático ni scoring de honorarios;
-- no PII ni lectura del contenido del formulario;
+- no PII ni lectura/exportación del contenido del formulario;
 - WhatsApp manual;
 - portal real deshabilitado mientras no exista implementación auténtica;
 - no CRM/backend, firma, pagos, agenda, autenticación o carga documental ficticios;
@@ -68,8 +72,9 @@ v6 reemplaza la primera lectura centrada en taxonomía interna por una arquitect
 - no ocultar contenido material para aparentar menor densidad;
 - no equiparar exposición/contacto/handoff con conversión comercial;
 - conservar exactamente 30 pasos canónicos;
+- analytics permanece deshabilitada hasta decisión y revisión expresa;
 - `stable` solo después de gates verdes.
 
-## Graphify
+## Próximo ciclo
 
-Graphify sobre el SHA funcional certificado `a7940696…` está alineado con `main`: 1.007 nodos, 1.887 relaciones, 115 notas wiki y 17 specs E2E detectadas. Es memoria derivada y no sustituye a `main`; si `source_commit` deja de coincidir con `main`, tratarlo como obsoleto hasta su regeneración.
+No se activa automáticamente un proveedor de analytics ni se abre una nueva versión por inercia. El siguiente ciclo debe partir de una necesidad observable o de una decisión explícita de activación, con criterio de éxito y contrato de privacidad verificable.
