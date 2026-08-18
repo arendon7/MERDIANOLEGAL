@@ -50,7 +50,11 @@ jobs:
         run: |
           python3 scripts/build_catalog_shells.py
           node scripts/render_catalog_static.mjs
-          node scripts/render_services_v42.mjs
+          if grep -L 'data-experience-system="v6"' servicios/*.html | grep -q .; then
+            node scripts/render_services_v42.mjs
+          else
+            echo "Service HTML already uses Experience System v6; catalog-services-v42 JSON remains the canonical source and the legacy v4.2 renderer is skipped."
+          fi
           python3 scripts/enrich_editorial_pages.py
           python3 scripts/apply_commercial_v43.py
           python3 scripts/apply_visual_assets.py
