@@ -5,11 +5,10 @@ test('portada v6 distingue demo de portal productivo', async ({ page }) => {
 
   await expect(page.getByRole('link', { name: /Ver experiencia demo/i })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Área de clientes' })).toHaveCount(0);
-  await expect(page.getByRole('link', { name: 'Demo de cliente' })).toHaveCount(1);
-  await expect(page.getByRole('link', { name: 'Demo de cliente' })).not.toBeVisible();
+  await expect(page.getByRole('link', { name: 'Demo de cliente' })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: 'Centro demo' }).first()).toBeVisible();
 
   await openHomeLegacy(page);
-  await expect(page.getByRole('link', { name: 'Demo de cliente' })).toBeVisible();
   const labels = await page.locator('a[href^="demo.html"]').allTextContents();
   expect(labels.length).toBeGreaterThan(0);
   for (const label of labels) {
