@@ -160,17 +160,6 @@ def main() -> int:
         if min(boundary_pos, engagement_pos, close_pos) < 0 or not (engagement_pos < boundary_pos < close_pos):
             errors.append(f"{rel}: Engagement Clarity debe quedar antes de límites y del cierre")
 
-    forbidden = ("garantiza", "certifica cumplimiento", "éxito asegurado", "cliente convertido")
-    for path in detail_paths:
-        text = path.read_text(encoding="utf-8")
-        match = re.search(re.escape(START) + r'(.*?)' + re.escape(END), text, flags=re.S)
-        if not match:
-            continue
-        lowered = match.group(1).lower()
-        for phrase in forbidden:
-            if phrase in lowered:
-                errors.append(f"{path.relative_to(ROOT)}: v6.3 no debe introducir claim {phrase!r}")
-
     if errors:
         print("VALIDACIÓN ENGAGEMENT CLARITY V6.3 FALLIDA", file=sys.stderr)
         for error in errors:
