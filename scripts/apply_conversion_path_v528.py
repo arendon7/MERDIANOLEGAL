@@ -158,7 +158,7 @@ def validate_materialized_contract() -> None:
 
 
 def preserve_future_composition(text: str) -> bool:
-    """En v6, v5.28 ya está materializado: se valida y no se reordena el DOM futuro."""
+    """En v6 preserva jerarquía futura y aplica solo normalizaciones propias de v5.28."""
     if 'data-experience-system="v6"' not in text:
         return False
     expected = {
@@ -175,8 +175,16 @@ def preserve_future_composition(text: str) -> bool:
             raise RuntimeError(f"index.html: v6 debe preservar exactamente una {label} v5.28/v5.23; encontró {count}")
     if text.count(CSS_LINK) != 1:
         raise RuntimeError("index.html: v6 debe preservar exactamente un CSS v5.28")
+
+    # v5.23 reconstruye ambos decks como <dl> nativos sin tabindex/aria-label.
+    # v5.28 sigue siendo responsable de esa accesibilidad, pero no debe reubicar
+    # el contacto ni desmontar la composición v6 para aplicarla.
+    normalized = normalize_focusable_decks(text)
+    if normalized != text:
+        HOME.write_text(normalized, encoding="utf-8")
+
     validate_materialized_contract()
-    print("CONVERSION PATH V5.28 OK: contrato existente preservado dentro de composición v6; sin reordenar DOM futuro.")
+    print("CONVERSION PATH V5.28 OK: contrato preservado dentro de v6; decks normalizados sin reordenar DOM futuro.")
     return True
 
 
