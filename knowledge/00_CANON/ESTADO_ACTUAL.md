@@ -7,94 +7,134 @@
 - Repositorio: `arendon7/MERDIANOLEGAL`.
 - Fuente técnica/documental: `main`.
 - Snapshot certificado: `stable`.
-- Release funcional certificada: **6.4.0 — Fit & Scope Clarity / encaje y cambio de alcance**.
-- SHA funcional certificado: `0045588f795f5f0a0b9144786bc61cdf89f34319`.
-- Canal de cierre: `github-pages-production-fit-scope-clarity-certified`.
-- La referencia documental definitiva se obtiene por los refs vigentes `main` y `stable`, que deben coincidir después de este cierre documental.
+- Release funcional certificada: **7.0.0 — Meridiano Legal Intelligence**.
+- SHA funcional certificado: `291bf23b6e9cd3d3cfb1743f032a4bc4583f726b`.
+- Merge funcional: `6b655fbf502196473a0457fd8e47d0c29e74ab41`.
+- Candidate pre-merge: `50646aadb514611241c0210a6bcfaac8ba7fe2d8`.
+- Canal de cierre: `github-pages-production-legal-intelligence-certified`.
+- Antes de abrir este cierre documental, `main == stable == 291bf23b6e9cd3d3cfb1743f032a4bc4583f726b`.
 
-## Resultado v6.4
+## Resultado v7.0
 
-v6.4 eleva a primer nivel dos matrices de verdad jurídica/comercial que ya existían en los 16 catálogos y ayudan al comprador a reconocer encaje y cambios previsibles de alcance.
+v7 hace visible una capacidad transversal que ya existía distribuida entre Diagnóstico, Dirección Jurídica Externa, Contratación, Tecnología/IA, Proyectos Regulados y Legal Operations: diagnosticar, transformar, controlar y operar trabajo jurídico combinando criterio legal, procesos, IA, automatización y Legal Engineering.
 
-### Encaje y cambio de alcance
+### Arquitectura Legal Intelligence
 
-- 16/16 fichas profundas gobernadas.
-- 8/8 productos y 8/8 servicios.
-- Cada ficha incorpora exactamente una sección `#v6-fit-scope`.
-- La sección está situada después de Resultado y antes de Entregables.
-- `situations` se presenta como **Señales de que esta modalidad encaja**.
-- `supplements` se presenta como **Situaciones que amplían el alcance**.
-- Las filas visibles coinciden exactamente y en orden con el catálogo canónico correspondiente.
-- El TOC conserva exactamente los 7 hitos de v6.3 y no contiene `#v6-fit-scope`.
-- No se alteran `perimeter`, `limits`, entregables, método, honorarios, cronogramas o contacto.
+Meridiano Legal permanece como marca madre. **Meridiano Legal Intelligence** no es un catálogo paralelo ni una nueva unidad comercial independiente.
 
-### Capas previas preservadas
+La arquitectura organiza:
 
-- Engagement Clarity v6.3: 16/16 fichas con `requirements` + `responsibilities` y `#v6-engagement`.
-- Search Discovery v6.2: 43 indexables + 3 `noindex`; sitemap canónico de 43 URLs.
-- Measurement v6.1: privacy-first, sin PII exportada y analytics externa deshabilitada.
-- Experience System v6.0: 46/46 superficies estructurales preservadas.
+1. Legal AI Diagnostic.
+2. Legal AI Transformation.
+3. Meridiano Legal Desk.
+4. Contract Control.
+5. Regulatory Control.
+6. AI Governance 360.
+7. Legal Engineering Studio.
+
+`Meridiano Counsel` permanece como concepto futuro/no producto público.
+
+### Superficies y navegación
+
+- 11 superficies existentes materializan la capa v7.
+- No se crean nuevas URLs por nomenclatura Legal Intelligence.
+- Las seis rutas de solución v6 continúan siendo la entrada principal.
+- Home explica Diagnosticar → Transformar → Controlar → Operar.
+- El hub de Soluciones presenta Legal Intelligence como capa transversal, no como séptima ruta.
+- Legal Operations conecta diagnóstico, transformación y operación.
+- Sistema Contractual Empresarial explica Contract Control.
+- IA organiza Readiness → Implementación → Gobierno recurrente.
+- Proyectos regulados organiza Estructurar → Controlar → Acompañar.
+
+## Verdad jurídica y capability boundaries
+
+Los 8 productos y 8 servicios canónicos continúan gobernando entregables, tiempos, honorarios, responsabilidades y límites. v7 no modifica silenciosamente esa verdad.
+
+Invariantes:
+
+- portal real, auth, CRM, pagos, firma, agenda y upload: deshabilitados/no implementados;
+- Contract Control y Regulatory Control: patrones de implementación/operación, no SaaS autónomos;
+- no CLM productivo implícito;
+- no monitoreo automático universal;
+- no auditorías técnicas o certificaciones no incluidas;
+- no garantía sobre licencias, permisos o decisiones de autoridades;
+- Legal Desk mantiene SLA, canales y capacidad sujetos al alcance pactado;
+- Meridiano Counsel no es oferta transaccional pública;
+- automatizaciones, agentes, integraciones o herramientas solo integran un encargo cuando están expresamente incluidas en su alcance.
+
+## Capas previas preservadas
+
+- **v6.4 Fit & Scope Clarity:** 16/16 fichas con `situations` y `supplements`; `#v6-fit-scope` entre Resultado y Entregables.
+- **v6.3 Engagement Clarity:** 16/16 fichas con `requirements` + `responsibilities` y `#v6-engagement`.
+- **v6.2 Search Discovery:** 43 indexables + 3 `noindex`; sitemap canónico de 43 URLs.
+- **v6.1 Measurement:** privacy-first, sin PII exportada y analytics externa deshabilitada.
+- **v6.0 Experience System:** 46/46 superficies estructurales preservadas.
 - 1/1 formulario físico canónico.
 - WhatsApp manual.
-- Portal real, auth, CRM, pagos, firma, agenda y upload: deshabilitados/no implementados.
 - 30/30 pasos históricos exactos del builder.
 
-## Evidencia funcional
+## Evidencia funcional v7
 
-- SHA técnico pre-bump: `ecc90b17f0784f53fb4a035c3d91d2ff2938e627` — 6/6 gates técnicos aplicables verdes.
-- Candidate final 6.4.0: `38c140f5ec943f6a527f88278e78d2e9a7cb0bd1`.
-- Nueve workflows aplicables sobre ese SHA: PASS:
+### Reconciliación con v6.4
+
+El prototipo original #163 nació sobre v6.3 y dejó de ser un vehículo seguro cuando `main` avanzó a v6.4. Se creó una rama nueva desde v6.4, se portó únicamente source v7 y las 11 superficies se rematerializaron sobre la baseline vigente.
+
+- SHA limpio de reconciliación: `67b097c4e6cb1adf9d252aafb7e6a524b7e0636e`.
+- 9/9 workflows aplicables: PASS.
+- Fit & Scope v6.4 validado después de aplicar v7.
+- Boundary: únicamente las 11 superficies previstas.
+- Graphify temporal restaurado; no quedó en el diff funcional.
+
+### Candidate y merge
+
+- Candidate final: `50646aadb514611241c0210a6bcfaac8ba7fe2d8`.
+- Nueve workflows aplicables sobre el mismo SHA: PASS:
+  - V6 Candidate Validation;
+  - V6 Canonical Builder Equivalence;
   - V6.4 Fit & Scope Clarity;
   - V6.3 Engagement Clarity;
   - V6.2 Search Discovery Readiness;
-  - V6.1 Measurement Readiness / Browser E2E;
-  - V6 Candidate Validation;
-  - V6 Canonical Builder Equivalence;
   - Release Governance;
   - Graphify;
-  - V6 Browser Candidate / axe.
-- PR #162 fusionado con expected head SHA.
-- Merge funcional: `8937a985c94e9f29f6dafbc6a53ab8ff5cb24ee0`.
-- Builder post-merge produjo `0045588f795f5f0a0b9144786bc61cdf89f34319`.
-- GitHub Pages público sirve v6.4.0.
-- Smoke público, Browser/axe y Lighthouse: PASS.
-- `stable` fue promovido automáticamente a `0045588f…` después del snapshot oficial.
+  - V6 Browser Candidate / axe;
+  - V6.1 Measurement Readiness / Browser E2E.
+- PR #167 fusionado con expected head SHA.
+- Merge funcional: `6b655fbf502196473a0457fd8e47d0c29e74ab41`.
+
+### Producción
+
+- Builder post-merge produjo `291bf23b6e9cd3d3cfb1743f032a4bc4583f726b`.
+- El diff del Builder fue la sincronización pública esperada de versión/metadata, sin reescritura sustantiva de la arquitectura jurídica v7.
+- GitHub Pages sirve la release v7.0.0.
+- Quality, deploy, live smoke, Browser/axe y Lighthouse precedieron el snapshot productivo.
+- `stable` fue promovido automáticamente, no manualmente, a `291bf23b6e9cd3d3cfb1743f032a4bc4583f726b`.
+- Antes de este cierre documental: `main == stable == 291bf23b…`.
 - Cobertura reducida: no.
 - Budgets relajados: no.
 - Tests eliminados para aprobar la release: no.
 
-## Incidencia productiva
+## Release engineering v7
 
-El primer run oficial de Pages (`32203459870`) falló únicamente en Lighthouse porque `demo` respondió HTTP 503 de forma transitoria. Quality, deploy, smoke y Browser E2E ya habían pasado, por lo que snapshot quedó `skipped`.
-
-Se abrió #164 como diagnóstico temporal no desplegable. Contra la URL pública se reprodujeron en verde smoke, Browser/axe y Lighthouse. #164 se cerró sin merge.
-
-Se reejecutaron los jobs fallidos del mismo run oficial, sin modificar código. Lighthouse pasó; el snapshot generó la certificación CI y el health report de gobernanza; `Move stable to deployed commit` terminó success.
-
-No se introdujeron retries laxos en los budgets, no se cambió el producto y no se movió `stable` manualmente.
-
-## Release engineering endurecido durante v6.4
-
-1. **Truth reutilizado, no duplicado.** El renderer consume `situations` y `supplements` directamente de los catálogos v4.1/v4.2.
-2. **Validación fila por fila.** La representación HTML debe coincidir exactamente y en orden con su fuente canónica.
-3. **Boundary exacto.** La transición modifica únicamente las 16 fichas previstas; ninguna otra superficie recibe `#v6-fit-scope`.
-4. **TOC deliberadamente estable.** v6.4 no agrega un octavo hito; la sección se descubre dentro del recorrido natural Resultado → Entregables.
-5. **Idempotencia CSS.** La hoja v6.4 se inserta en posición estable frente a v6.3/tokens para evitar order drift.
-6. **Equivalencia exacta.** Canonical Equivalence incorpora `fit/scope drift` al conjunto `measurement ∪ release ∪ discovery ∪ engagement ∪ fit/scope`.
-7. **Builder == Pages == manifiesto.** `canonical_pipeline_v524.py` registra los mismos comandos v6.4 sin alterar los 30 pasos históricos.
-8. **Trigger coverage.** `validate_pages_trigger_v511.py` exige que el materializador v6.4 dispare Builder.
-9. **Measurement integrado.** La suite privacy-first materializa v6.4 antes de Browser E2E; la corrección no redujo pruebas ni expectativas.
-10. **Gate phase-aware desde origen.** 0/16 exige 16 drift; 16/16 exige 0; cualquier estado parcial falla.
+1. **Arquitectura source-driven.** La capa se deriva de contratos v7, no de edición HTML manual.
+2. **Verdad jurídica no duplicada.** Los catálogos v4.1/v4.2 siguen gobernando las 16 ofertas.
+3. **Materializadores deterministas.** `scripts/apply_*_v70.py` produce las superficies previstas.
+4. **Validators fail-closed.** `scripts/validate_*_v70.py` exige soporte canónico y boundaries de capability.
+5. **Phase-aware architecture contract.** `prototype → release-candidate → certified` sin habilitar capabilities por cambio de fase.
+6. **Compatibilidad v6.4.** Fit & Scope se valida después de aplicar v7.
+7. **Normalizador canónico.** `normalize_experience_compat_v60.py` reproduce v7 dentro de la cadena existente.
+8. **E2E dedicado.** `legal-intelligence-v70.spec.mjs` recorre 11 superficies, boundaries y navegación por fragmentos.
+9. **No séptima ruta.** Las seis rutas siguen siendo invariantes públicas.
+10. **Stable fail-closed.** Solo se mueve después de los gates productivos oficiales.
 
 ## PR principal
 
-- #162 — Fit & Scope Clarity v6.4: contrato, renderer, validator, estilos, gates, E2E, integración canónica y release candidate.
-- #164 — diagnóstico temporal post-deploy; cerrado sin merge.
-
-## Invariantes preservadas
-
-46 HTML; 16 fichas profundas; 1 formulario físico; WhatsApp manual; portal real deshabilitado; analytics externa deshabilitada; Search Console no verificada sin token real; no PII; no criterios de encaje inventados; no tarifas inventadas; exactamente 30 pasos históricos; Browser/axe/Lighthouse sin relajación; `stable` solo después de gates verdes.
+- #167 — release funcional v7 reconciliada sobre v6.4: fusionado y publicado.
+- #163 — prototipo histórico sobre v6.3: debe cerrarse sin merge como superseded por #167.
 
 ## Estado del ciclo
 
-**v6.4.0 está implementada, materializada, publicada y certificada funcionalmente. El frente restante es exclusivamente este cierre documental `candidate → certified`. Cuando el commit de cierre atraviese Builder → Pages → smoke → Browser/axe → Lighthouse → snapshot y `main == stable`, no queda un ciclo funcional nuevo abierto.**
+**v7.0.0 está implementada, materializada, publicada y certificada funcionalmente.**
+
+El único frente restante es este cierre documental `candidate → certified` en `docs/v700-release-closure`. Este cierre no cambia producto, HTML público, catálogos ni capabilities. Actualiza canal, estado arquitectónico y memoria de release.
+
+El ciclo v7 quedará totalmente cerrado cuando el commit documental atraviese nuevamente sus gates, se fusione y complete Builder → Pages → smoke → Browser/axe → Lighthouse → snapshot con `main == stable` y `stable/version.json` en `github-pages-production-legal-intelligence-certified`.
