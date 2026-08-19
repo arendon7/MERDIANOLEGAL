@@ -107,7 +107,7 @@ def validate_deep(item: dict) -> None:
 def validate_capability_boundaries(blocks: list[str]) -> None:
     forbidden = [
         r"auditor[ií]a\s+t[eé]cnica\s+(?:incluida|autom[aá]tica)",
-        r"certifica(?:mos|ci[oó]n)?\s+(?:el\s+)?cumplimiento",
+        r"(?<!no )(?<!ni )certifica(?:mos|ci[oó]n)?\s+(?:el\s+)?cumplimiento",
         r"monitoreo\s+autom[aá]tico\s+universal",
         r"plataforma\s+(?:saas\s+)?(?:incluida|disponible)",
         r"garantiza(?:mos)?\s+ausencia\s+de\s+sesgos",
