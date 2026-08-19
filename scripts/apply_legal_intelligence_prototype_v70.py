@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Materialize the v7 Legal Intelligence prototype on one representative solution route.
+"""Materialize the v7 Legal Intelligence prototype surfaces.
 
-The prototype is intentionally narrow: one existing public surface, no new URL, no
-new CSS layer and no mutation of the 16 canonical offer catalogs.
+The route prototype remains narrow and source-driven. When the approved deep-offer
+prototype contract exists, the same canonical pass also materializes those existing
+offer surfaces without creating URLs, CSS layers or new catalog truth.
 """
 
 from __future__ import annotations
@@ -10,10 +11,14 @@ from __future__ import annotations
 import argparse
 import html
 import json
+import subprocess
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / "assets/data/v7/legal-intelligence-prototype-v70.json"
+DEEP_CONTRACT = ROOT / "assets/data/v7/legal-intelligence-deep-offers-v70.json"
+DEEP_APPLY = ROOT / "scripts/apply_legal_intelligence_deep_offers_v70.py"
 START = "<!-- LEGAL-INTELLIGENCE-V70:START -->"
 END = "<!-- LEGAL-INTELLIGENCE-V70:END -->"
 
@@ -92,6 +97,21 @@ def materialized_content(data: dict) -> tuple[Path, str]:
     return target, content.replace(anchor, block + anchor, 1)
 
 
+def run_deep_offer_materializer(check: bool) -> None:
+    if not DEEP_CONTRACT.exists():
+        return
+    if not DEEP_APPLY.exists():
+        raise SystemExit("Missing deep-offer materializer while its v7 contract exists")
+    command = [sys.executable, str(DEEP_APPLY)]
+    if check:
+        command.append("--check")
+    completed = subprocess.run(command, cwd=ROOT, capture_output=True, text=True)
+    if completed.stdout:
+        print(completed.stdout.rstrip())
+    if completed.returncode:
+        raise SystemExit(completed.stderr.strip() or "v7 deep-offer materializer failed")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true", help="Fail if the committed prototype has drift.")
@@ -104,15 +124,16 @@ def main() -> None:
     if args.check:
         if current != expected:
             raise SystemExit(f"v7 Legal Intelligence prototype drift detected in {target.relative_to(ROOT)}")
-        print(f"v7 Legal Intelligence prototype --check: PASS ({target.relative_to(ROOT)})")
+        print(f"v7 Legal Intelligence route prototype --check: PASS ({target.relative_to(ROOT)})")
+        run_deep_offer_materializer(True)
         return
 
     if current == expected:
-        print(f"v7 Legal Intelligence prototype already materialized: {target.relative_to(ROOT)}")
-        return
-
-    target.write_text(expected, encoding="utf-8")
-    print(f"Materialized v7 Legal Intelligence prototype: {target.relative_to(ROOT)}")
+        print(f"v7 Legal Intelligence route prototype already materialized: {target.relative_to(ROOT)}")
+    else:
+        target.write_text(expected, encoding="utf-8")
+        print(f"Materialized v7 Legal Intelligence route prototype: {target.relative_to(ROOT)}")
+    run_deep_offer_materializer(False)
 
 
 if __name__ == "__main__":
