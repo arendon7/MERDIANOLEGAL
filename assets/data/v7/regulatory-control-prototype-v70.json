@@ -1,0 +1,106 @@
+{
+  "version": "7.0.0-prototype-4",
+  "status": "regulatory-control-prototype",
+  "route": {
+    "target": "soluciones/estructurar-proyecto-regulado.html",
+    "insert_before": "<section class=\"v6-section\" id=\"v6-solution-routes\"",
+    "eyebrow": "REGULATORY CONTROL",
+    "title": "La viabilidad regulatoria debe convertirse en una secuencia que pueda controlarse durante la ejecución.",
+    "lead": "Meridiano conecta la estructuración jurídica del proyecto con un modelo de control sobre autoridades, permisos, condiciones precedentes, obligaciones, hitos, responsables y evidencia. El objetivo es que la ruta regulatoria no quede como un diagnóstico estático cuando el proyecto empieza a ejecutarse.",
+    "stages": [
+      {
+        "number": "01",
+        "label": "ESTRUCTURAR",
+        "title": "Definir qué habilita o condiciona el proyecto",
+        "body": "Se califican actividad, territorio, autoridades, permisos, contratos, dependencias y condiciones precedentes para distinguir lo viable, lo condicionado y aquello que todavía no debe ejecutarse.",
+        "action": "Revisar estructuración cerrada",
+        "href": "../productos/proyecto-regulado-estructurado.html"
+      },
+      {
+        "number": "02",
+        "label": "CONTROLAR",
+        "title": "Convertir permisos y obligaciones en trabajo administrable",
+        "body": "La ruta se traduce en hitos, responsables, estados, vigencias, evidencia y puertas de decisión para conectar el frente jurídico con el cronograma técnico, contractual y financiero.",
+        "action": "Explorar estructuración adaptable",
+        "href": "../servicios/proyectos-regulados.html"
+      },
+      {
+        "number": "03",
+        "label": "ACOMPAÑAR",
+        "title": "Mantener el control cuando cambian hitos, requerimientos o condiciones",
+        "body": "Cuando la ejecución exige seguimiento recurrente, el alcance puede incorporar control periódico de permisos, requerimientos, obligaciones, cambios y decisiones dentro de un perímetro y una cadencia acordados.",
+        "action": "Definir seguimiento regulatorio",
+        "href": "../index.html?context=Regulatory+Control&need=Proyecto+regulado#contacto"
+      }
+    ],
+    "boundary": "Regulatory Control es un modelo jurídico de control y acompañamiento. No garantiza permisos o decisiones de autoridades, no sustituye estudios técnicos y no implica monitoreo automático o cobertura universal de fuentes regulatorias."
+  },
+  "deep_offers": [
+    {
+      "id": "regulatory-control-implementation",
+      "target": "productos/proyecto-regulado-estructurado.html",
+      "catalog_source": "catalog-products-v41/p06-regulado.json",
+      "insert_before": "<section class=\"v6-section v6-deliverables\" id=\"v6-deliverables\"",
+      "eyebrow": "REGULATORY CONTROL · IMPLEMENTACIÓN",
+      "title": "El proyecto estructurado instala la base de control regulatorio antes de comprometer capital u operación.",
+      "lead": "Este producto convierte la viabilidad jurídica en un expediente administrable: autoridades, permisos, secuencia habilitante, contratos críticos, condiciones precedentes, riesgos y calendario regulatorio quedan conectados con responsables, estados y evidencia dentro del perímetro contratado.",
+      "items": [
+        {
+          "number": "01",
+          "title": "Control de habilitaciones",
+          "body": "La matriz maestra organiza permisos y autorizaciones por requisitos, dependencia, vigencia, estado y evidencia para hacer visible qué habilita cada etapa del proyecto."
+        },
+        {
+          "number": "02",
+          "title": "Control de puertas de decisión",
+          "body": "La ruta habilitante y las condiciones precedentes conectan hitos jurídicos con responsables, documentos, plazos y efectos antes de invertir, contratar, construir u operar."
+        },
+        {
+          "number": "03",
+          "title": "Control de continuidad",
+          "body": "El calendario regulatorio consolida obligaciones, reportes, vencimientos y renovaciones para que el cierre del proyecto de estructuración deje una base utilizable durante la ejecución."
+        }
+      ],
+      "continuity": {
+        "title": "¿Qué ocurre cuando el proyecto entra en ejecución?",
+        "body": "El producto base puede complementarse con seguimiento mensual para controlar hitos, requerimientos, obligaciones y cambios. Esa continuidad se dimensiona separadamente y no convierte el alcance de 8 a 10 semanas en acompañamiento indefinido.",
+        "action": "Explorar seguimiento e implementación",
+        "href": "../servicios/proyectos-regulados.html"
+      },
+      "boundary": "No garantiza licencias, permisos, financiación ni decisiones de autoridades. Estudios técnicos, trámites completos, representación, recursos y cambios materiales del proyecto permanecen sujetos a sus límites y suplementos canónicos."
+    },
+    {
+      "id": "regulatory-control-managed",
+      "target": "servicios/proyectos-regulados.html",
+      "catalog_source": "catalog-services-v42/s07-regulados.json",
+      "insert_before": "<section class=\"v6-section v6-deliverables\" id=\"v6-deliverables\"",
+      "eyebrow": "REGULATORY CONTROL · ADAPTACIÓN + SEGUIMIENTO",
+      "title": "El servicio adaptable permite controlar proyectos cuyo perímetro regulatorio no cabe en un paquete estándar.",
+      "lead": "Estructuración Jurídica de Proyectos Regulados conecta régimen, autoridades, actores, permisos, contratos y condiciones precedentes con una ruta de decisión. Cuando el proyecto avanza, esa misma arquitectura puede extenderse al acompañamiento de implementación expresamente contratado.",
+      "items": [
+        {
+          "number": "01",
+          "title": "Mapa ejecutable",
+          "body": "Permisos y obligaciones se documentan con responsable, secuencia, evidencia y vigencia para que la dirección pueda ver dependencias y pendientes materiales."
+        },
+        {
+          "number": "02",
+          "title": "Control de cambios",
+          "body": "Cambios técnicos, territoriales, contractuales o regulatorios se recalifican cuando afectan la conclusión, evitando operar con una ruta jurídica que dejó de representar el proyecto real."
+        },
+        {
+          "number": "03",
+          "title": "Acompañamiento de implementación",
+          "body": "Como suplemento, Meridiano puede seguir hitos, permisos y obligaciones durante la ejecución, con un perímetro, responsables y cadencia definidos para el encargo concreto."
+        }
+      ],
+      "continuity": {
+        "title": "¿Cuándo conviene usar el producto cerrado?",
+        "body": "Si existe una configuración técnica y territorial suficientemente estable y el perímetro cabe en sus límites, Proyecto Regulado Jurídicamente Estructurado ofrece una implementación cerrada con mayor previsibilidad de alcance y entregables.",
+        "action": "Revisar producto cerrado",
+        "href": "../productos/proyecto-regulado-estructurado.html"
+      },
+      "boundary": "El acompañamiento no sustituye estudios técnicos ni controla decisiones de autoridades o terceros. Tampoco implica vigilancia automática universal de normas, permisos o fuentes: el perímetro de seguimiento debe acordarse expresamente."
+    }
+  ]
+}

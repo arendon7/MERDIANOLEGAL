@@ -1,8 +1,8 @@
 {
   "name": "Meridiano Legal Web",
-  "version": "6.4.0",
+  "version": "7.0.0",
   "release_date": "2026-08-18",
-  "channel": "github-pages-production-fit-scope-clarity-certified",
-  "commit_scope": "fit-scope-clarity",
+  "channel": "github-pages-legal-intelligence-candidate",
+  "commit_scope": "legal-intelligence-architecture",
   "source_baseline": "main"
 }

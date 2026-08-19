@@ -1,0 +1,44 @@
+{
+  "version": "7.0.0-prototype-1",
+  "status": "route-prototype",
+  "target": "soluciones/ordenar-operacion-juridica.html",
+  "insert_before": "<section class=\"v6-section\" id=\"v6-solution-routes\"",
+  "section": {
+    "eyebrow": "LEGAL INTELLIGENCE",
+    "title": "Cuando el problema no es solo jurídico, sino cómo entra, se procesa y se controla el trabajo.",
+    "lead": "Meridiano puede intervenir en tres niveles distintos: entender dónde existe fricción y oportunidad, transformar procesos prioritarios o asumir capacidad jurídica recurrente bajo un modelo gestionado. La tecnología se incorpora cuando mejora un proceso que ya tiene reglas, responsables y un resultado definido.",
+    "modes": [
+      {
+        "number": "01",
+        "label": "DIAGNOSTICAR",
+        "title": "Legal AI Diagnostic",
+        "body": "Analizamos demanda, procesos, tiempos, conocimiento, herramientas y riesgos para priorizar dónde IA o automatización pueden producir valor jurídico real antes de invertir en tecnología.",
+        "action": "Explorar diagnóstico y transformación",
+        "href": "../servicios/legal-operations.html"
+      },
+      {
+        "number": "02",
+        "label": "TRANSFORMAR",
+        "title": "Legal AI Transformation",
+        "body": "Rediseñamos uno o varios procesos y estructuramos intake, reglas, responsables, artefactos, métricas y pilotos para que la mejora quede operable y no se limite a una recomendación.",
+        "action": "Revisar Legal Operations",
+        "href": "../servicios/legal-operations.html"
+      },
+      {
+        "number": "03",
+        "label": "OPERAR",
+        "title": "Meridiano Legal Desk",
+        "body": "Cuando la necesidad es recurrente, Meridiano puede estructurar capacidad jurídica gestionada con triage, playbooks, revisión profesional, QA y niveles de servicio definidos expresamente en el alcance.",
+        "action": "Presentar una necesidad de Legal Desk",
+        "href": "../index.html?context=Meridiano+Legal+Desk&need=Legal+Operations#contacto"
+      }
+    ],
+    "engineering": {
+      "title": "¿El proceso necesita una solución específica?",
+      "body": "Legal Engineering Studio permite modelar reglas, documentos, decisiones y excepciones y, cuando el alcance lo requiere, convertirlas en workflows, automatizaciones, integraciones o herramientas específicas.",
+      "action": "Explorar tecnología e IA",
+      "href": "../servicios/tecnologia-inteligencia-artificial.html"
+    },
+    "boundary": "Esta capa describe formas de intervención, no funcionalidades de software preexistentes. Automatizaciones, integraciones, interfaces, canales, SLA y herramientas solo forman parte del encargo cuando se incluyen expresamente en su alcance técnico y jurídico."
+  }
+}
