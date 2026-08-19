@@ -91,8 +91,9 @@ def main() -> int:
     if analytics.get("enabled") is not False or analytics.get("provider") != "none" or analytics.get("site_id") != "":
         fail("site-config no puede activar analytics en readiness v7.4")
     measurement = json.loads(MEASUREMENT.read_text(encoding="utf-8"))
-    if (measurement.get("production") or {}).get("analytics_enabled") is not False:
-        fail("measurement v6.1 debe permanecer production-disabled")
+    measurement_activation = measurement.get("activation") or {}
+    if measurement.get("state") != "readiness-disabled" or measurement_activation.get("production_enabled") is not False:
+        fail("measurement v6.1 debe permanecer readiness-disabled / production-disabled")
 
     runtime = RUNTIME.read_text(encoding="utf-8")
     for pattern in FORBIDDEN_RUNTIME:
