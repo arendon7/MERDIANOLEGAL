@@ -161,6 +161,7 @@ on:
       - scripts/apply_search_discovery_v62.py
       - scripts/apply_engagement_clarity_v63.py
       - scripts/apply_fit_scope_clarity_v64.py
+      - scripts/apply_delivery_plan_clarity_v65.py
       - scripts/validate_browser_v54.py
       - scripts/run_quality_v55.mjs
       - scripts/validate_quality_v55.py
@@ -299,6 +300,9 @@ jobs:
           if [ -f assets/data/v6/fit-scope-clarity-v64.json ]; then
             python3 scripts/apply_fit_scope_clarity_v64.py
           fi
+          if [ -f assets/data/v6/delivery-plan-clarity-v65.json ]; then
+            python3 scripts/apply_delivery_plan_clarity_v65.py
+          fi
           python3 scripts/validate_experience_v60.py
           python3 scripts/validate_experience_solutions_v60.py
           python3 scripts/validate_experience_sectors_v60.py
@@ -311,6 +315,10 @@ jobs:
           if [ -f assets/data/v6/fit-scope-clarity-v64.json ]; then
             python3 scripts/validate_fit_scope_clarity_v64.py
             python3 scripts/apply_fit_scope_clarity_v64.py --check
+          fi
+          if [ -f assets/data/v6/delivery-plan-clarity-v65.json ]; then
+            python3 scripts/validate_delivery_plan_clarity_v65.py
+            python3 scripts/apply_delivery_plan_clarity_v65.py --check
           fi
       - name: Commit canonical outputs
         run: |
