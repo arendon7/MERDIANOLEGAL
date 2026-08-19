@@ -1,0 +1,36 @@
+name: Temporary v7.1 materialize copy
+
+on:
+  push:
+    branches:
+      - feat/v710-commercial-clarity
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          ref: feat/v710-commercial-clarity
+          fetch-depth: 0
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12'
+      - name: Materialize v7.1 and validate
+        run: |
+          python3 scripts/apply_legal_intelligence_discovery_v70.py
+          python3 scripts/validate_legal_intelligence_discovery_v70.py
+      - name: Commit canonical HTML and remove temporary workflow
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html soluciones/index.html
+          git rm .github/workflows/tmp-v71-materialize-copy.yml
+          git commit -m 'chore(v7.1): materialize refined commercial copy'
+          git push origin HEAD:feat/v710-commercial-clarity
