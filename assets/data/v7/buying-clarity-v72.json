@@ -17,9 +17,7 @@
     "deliverables_limit": 4,
     "requirements_limit": 2,
     "acceptance_limit": 2,
-    "supplements_limit": 2,
-    "nav_label": "Qué contrata",
-    "secondary_cta": "Ver qué incluye"
+    "supplements_limit": 2
   },
   "labels": {
     "modality": "Modalidad",
@@ -34,12 +32,13 @@
   },
   "links": {
     "perimeter": "Ver perímetro completo",
-    "deliverables": "Ver todos los entregables",
-    "requirements": "Ver condiciones para empezar"
+    "deliverables": "Ver todos los entregables"
   },
   "rules": {
     "preserve_order": true,
     "preserve_quantities_verbatim": true,
+    "preserve_existing_hero_and_nav": true,
+    "no_duplicate_engagement_navigation": true,
     "no_new_pricing": true,
     "no_new_capabilities": true,
     "supplements_are_not_included": true,
