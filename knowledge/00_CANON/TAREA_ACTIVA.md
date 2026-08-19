@@ -35,14 +35,30 @@ Las referencias cuantitativas se derivan verbatim de los catálogos canónicos a
 
 ## Candidate formal
 
-Este branch cambia únicamente lifecycle/release metadata respecto de la funcionalidad ya fusionada:
+Este branch modifica únicamente lifecycle/release respecto de la funcionalidad ya fusionada:
 
-- `version.json`: 7.2.0 → 7.3.0, canal `github-pages-legal-intelligence-demo-candidate`;
-- `assets/data/v7/legal-intelligence-demo-v73.json`: `demo-prototype` → `release-candidate`;
-- `scripts/validate_legal_intelligence_demo_v73.py`: lifecycle phase-aware `demo-prototype → release-candidate → certified`;
-- esta memoria de tarea.
+1. `version.json`: 7.2.0 → 7.3.0, canal `github-pages-legal-intelligence-demo-candidate`.
+2. `assets/data/v7/legal-intelligence-demo-v73.json`: `demo-prototype` → `release-candidate`.
+3. `scripts/validate_legal_intelligence_demo_v73.py`: lifecycle phase-aware `demo-prototype → release-candidate → certified`.
+4. `scripts/apply_legal_intelligence_demo_v73.py`: lifecycle phase-aware con la misma máquina de estados, necesaria para que `--check` y las reconstrucciones canónicas funcionen durante candidate/certified.
+5. esta memoria de tarea.
 
-No debe introducir cambios nuevos en `experiencia.html`, CSS funcional, catálogos, E2E o capabilities.
+No introduce cambios nuevos en `experiencia.html`, CSS funcional, catálogos, E2E o capabilities.
+
+## Corrección de lifecycle del candidate
+
+La primera ronda de #178 reveló una incompatibilidad heredada interna de v7.3:
+
+- el validator ya aceptaba `release-candidate` y validó correctamente el contenido;
+- el materializador seguía exigiendo literalmente `7.3.0-prototype` + `demo-prototype`;
+- por ello `apply_legal_intelligence_demo_v73.py --check` bloqueaba toda reconstrucción canónica al abrir la versión 7.3.0.
+
+La corrección no relaja ningún boundary. El materializador ahora exige la misma máquina de estados cerrada que el validator:
+
+- `demo-prototype` → versión con prefijo `7.3.0-prototype`;
+- `release-candidate` → versión exacta `7.3.0`;
+- `certified` → versión exacta `7.3.0`;
+- baseline exacta `7.2.0` en las tres fases.
 
 ## Capability truth preservado
 
@@ -60,7 +76,7 @@ No debe introducir cambios nuevos en `experiencia.html`, CSS funcional, catálog
 
 Antes de merge:
 
-1. confirmar boundary mínimo de cuatro archivos;
+1. confirmar boundary exacto de cinco archivos;
 2. fijar SHA final;
 3. superar todos los workflows aplicables sobre ese mismo SHA;
 4. fusionar únicamente con `expected_head_sha`;
