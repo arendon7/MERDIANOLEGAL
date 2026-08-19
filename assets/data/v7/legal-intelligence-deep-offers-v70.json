@@ -1,0 +1,72 @@
+{
+  "version": "7.0.0-prototype-2",
+  "status": "deep-offer-prototype",
+  "targets": [
+    {
+      "id": "legal-ai-transformation",
+      "target": "servicios/legal-operations.html",
+      "catalog_source": "catalog-services-v42/s08-legal-ops.json",
+      "insert_before": "<section class=\"v6-section v6-deliverables\" id=\"v6-deliverables\"",
+      "eyebrow": "LEGAL AI TRANSFORMATION",
+      "title": "De Legal Operations a una capacidad jurídica más inteligente.",
+      "lead": "Esta oferta es la base de implementación de Meridiano Legal Intelligence cuando el problema exige rediseñar cómo entra, se decide, se documenta y se mide el trabajo jurídico antes de automatizarlo.",
+      "items": [
+        {
+          "number": "01",
+          "title": "Diagnosticar antes de automatizar",
+          "body": "La fase inicial reconstruye demanda, capacidad, fricciones, herramientas y riesgos para priorizar procesos donde IA o automatización tengan un caso de uso jurídico y operativo defendible."
+        },
+        {
+          "number": "02",
+          "title": "Transformar un proceso completo",
+          "body": "El proyecto define catálogo, triage, RACI, flujos, artefactos, indicadores y un piloto. La tecnología se incorpora como soporte de un proceso ya gobernado, no como sustituto de su diseño."
+        },
+        {
+          "number": "03",
+          "title": "Escalar solo lo que funciona",
+          "body": "Después del piloto, la organización puede ampliar flujos, integrar herramientas, automatizar documentos o contratar operación gestionada como suplementos expresamente delimitados."
+        }
+      ],
+      "next_step": {
+        "title": "¿Dónde encajan Legal AI Diagnostic y Legal Desk?",
+        "body": "Legal AI Diagnostic es la entrada de diagnóstico y priorización. Meridiano Legal Desk es una modalidad posterior de capacidad recurrente. Ninguna de las dos amplía automáticamente el perímetro de este proyecto: deben quedar incluidas y cotizadas expresamente cuando apliquen.",
+        "action": "Presentar una necesidad de transformación",
+        "href": "../index.html?context=Legal+AI+Transformation&need=Legal+Operations#contacto"
+      },
+      "boundary": "Esta ficha sigue siendo un proyecto de transformación jurídica de 6 a 16 semanas con el perímetro, entregables, responsabilidades y límites definidos en su catálogo canónico."
+    },
+    {
+      "id": "contract-control",
+      "target": "productos/sistema-contractual-empresarial.html",
+      "catalog_source": "catalog-products-v41/p07-contractual.json",
+      "insert_before": "<section class=\"v6-section v6-deliverables\" id=\"v6-deliverables\"",
+      "eyebrow": "CONTRACT CONTROL",
+      "title": "El sistema contractual instala la base; Contract Control la convierte en disciplina operativa.",
+      "lead": "Sistema Contractual Empresarial ya organiza modelos, posiciones de negociación, atribuciones, inventario y obligaciones. Contract Control describe cómo esa arquitectura puede utilizarse para controlar el ciclo contractual después de la implementación.",
+      "items": [
+        {
+          "number": "01",
+          "title": "Control de negociación",
+          "body": "Modelos, módulos de cláusulas y playbook permiten saber qué posición usar, qué riesgo puede aceptarse y quién debe aprobar una excepción antes de firmar."
+        },
+        {
+          "number": "02",
+          "title": "Control de obligaciones",
+          "body": "Inventario, matriz de obligaciones y fichas de administración convierten vigencias, garantías, preavisos, compromisos y responsables en información administrable."
+        },
+        {
+          "number": "03",
+          "title": "Control del ciclo de vida",
+          "body": "El procedimiento conecta solicitud, revisión, aprobación, firma, transferencia, seguimiento y cierre para que el contrato no desaparezca operativamente después de la firma."
+        }
+      ],
+      "next_step": {
+        "title": "¿Qué ocurre después de las 8 a 10 semanas?",
+        "body": "El sistema puede quedar a cargo de un responsable interno o evolucionar hacia Legal Operations, negociación extraordinaria o capacidad jurídica recurrente. Esa operación posterior no forma parte automática del producto base.",
+        "action": "Explorar operación contractual recurrente",
+        "href": "../servicios/direccion-juridica-externa.html"
+      },
+      "boundary": "Contract Control es un modelo de implementación y operación derivado del sistema contractual; no afirma la existencia de un CLM, SaaS o monitoreo autónomo de contratos. Software, firma electrónica e integraciones siguen fuera del alcance base salvo contratación expresa."
+    }
+  ]
+}

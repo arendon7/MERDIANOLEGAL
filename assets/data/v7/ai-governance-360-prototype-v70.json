@@ -1,0 +1,106 @@
+{
+  "version": "7.0.0-prototype-3",
+  "status": "ai-governance-360-prototype",
+  "route": {
+    "target": "soluciones/gobernar-inteligencia-artificial-empresa.html",
+    "insert_before": "<section class=\"v6-section\" id=\"v6-solution-routes\"",
+    "eyebrow": "AI GOVERNANCE 360",
+    "title": "Gobernar IA no es una única intervención: depende de cuánto sabe la empresa y de cuánto cambia su exposición.",
+    "lead": "Meridiano organiza la gobernanza jurídica de IA en tres niveles: Readiness para descubrir y priorizar, Implementación para instalar un sistema de gobierno y Managed Governance para revisar de forma periódica nuevos casos, proveedores, cambios e incidentes.",
+    "stages": [
+      {
+        "number": "01",
+        "label": "READINESS",
+        "title": "Saber qué existe antes de diseñar controles",
+        "body": "Inventariamos casos, responsables, proveedores, datos y decisiones; clasificamos exposición y definimos qué usos requieren intervención prioritaria.",
+        "action": "Explorar diagnóstico de gobernanza",
+        "href": "../servicios/tecnologia-inteligencia-artificial.html"
+      },
+      {
+        "number": "02",
+        "label": "IMPLEMENTACIÓN",
+        "title": "Instalar reglas, roles, controles y evidencia",
+        "body": "El Programa de Gobernanza Jurídica y Uso Responsable de IA convierte el inventario en política, clasificación, aprobaciones, controles, cláusulas, incidentes y un plan de implementación verificable.",
+        "action": "Revisar programa de implementación",
+        "href": "../productos/programa-gobernanza-ia.html"
+      },
+      {
+        "number": "03",
+        "label": "MANAGED GOVERNANCE",
+        "title": "Mantener el gobierno cuando los casos cambian",
+        "body": "Para organizaciones con adopción continua, el servicio puede estructurarse como capacidad recurrente para revisar nuevos casos, proveedores, cambios materiales, incidentes, excepciones y evidencia.",
+        "action": "Definir gobierno recurrente",
+        "href": "../index.html?context=AI+Governance+360&need=Gobernanza+de+IA#contacto"
+      }
+    ],
+    "boundary": "AI Governance 360 es una arquitectura de servicio jurídico y organizacional. No sustituye auditorías técnicas, pruebas de seguridad, evaluaciones científicas del modelo ni certifica cumplimiento futuro."
+  },
+  "deep_offers": [
+    {
+      "id": "ai-governance-implementation",
+      "target": "productos/programa-gobernanza-ia.html",
+      "catalog_source": "catalog-products-v41/p05-ia.json",
+      "insert_before": "<section class=\"v6-section v6-deliverables\" id=\"v6-deliverables\"",
+      "eyebrow": "AI GOVERNANCE 360 · IMPLEMENTACIÓN",
+      "title": "Una implementación cerrada para pasar de usos dispersos a un sistema de gobierno operable.",
+      "lead": "Este producto es la capa de implementación de AI Governance 360: toma los casos de uso reales y deja inventario, clasificación, política, responsables, controles, instrumentos, incidentes y un plan de implementación dentro de un perímetro previamente definido.",
+      "items": [
+        {
+          "number": "01",
+          "title": "Inventariar y clasificar",
+          "body": "Cada caso incluido queda conectado con finalidad, propietario, proveedor, datos, nivel de riesgo y estado para evitar que la gobernanza empiece por una política genérica."
+        },
+        {
+          "number": "02",
+          "title": "Convertir riesgo en decisión",
+          "body": "La clasificación se traduce en controles mínimos, aprobadores, supervisión, documentación, cláusulas y criterios para aceptar, condicionar, escalar o restringir usos."
+        },
+        {
+          "number": "03",
+          "title": "Dejar capacidad de implementación",
+          "body": "El cierre incorpora protocolo de incidentes y plan de implementación con responsables, prioridades, controles y revisiones de 90 días para que el sistema pueda continuar después del proyecto."
+        }
+      ],
+      "continuity": {
+        "title": "La gobernanza no termina con la política",
+        "body": "Nuevos casos, proveedores, cambios materiales, incidentes o evaluaciones de mayor impacto pueden requerir extensiones o gobierno recurrente. Esa continuidad no amplía automáticamente el producto de 8 a 10 semanas.",
+        "action": "Explorar gobierno continuo",
+        "href": "../servicios/tecnologia-inteligencia-artificial.html"
+      },
+      "boundary": "El producto no es una auditoría técnica del modelo, no certifica conformidad futura y no sustituye evaluaciones especializadas de seguridad, datos, sesgo, desempeño o derechos cuando resulten necesarias."
+    },
+    {
+      "id": "ai-governance-readiness-managed",
+      "target": "servicios/tecnologia-inteligencia-artificial.html",
+      "catalog_source": "catalog-services-v42/s06-tecnologia-ia.json",
+      "insert_before": "<section class=\"v6-section v6-deliverables\" id=\"v6-deliverables\"",
+      "eyebrow": "AI GOVERNANCE 360 · READINESS + MANAGED",
+      "title": "El servicio flexible cubre la entrada diagnóstica y el gobierno continuo cuando un producto cerrado no basta.",
+      "lead": "Tecnología e Inteligencia Artificial ya admite diagnóstico, implementación o gobierno continuo. Dentro de AI Governance 360, su función principal es adaptar la intervención a casos de alto impacto, proveedores críticos, desarrollos propios o una exposición que cambia de manera recurrente.",
+      "items": [
+        {
+          "number": "01",
+          "title": "Readiness",
+          "body": "Cuando todavía no existe una visión confiable del uso de IA, el servicio mapea casos, sistemas, datos, proveedores y decisiones y determina qué debe priorizarse antes de diseñar un programa completo."
+        },
+        {
+          "number": "02",
+          "title": "Intervención especializada",
+          "body": "Casos de mayor complejidad pueden requerir debida diligencia de proveedor, negociación tecnológica, evaluación jurídica ampliada o coordinación con especialistas técnicos y de seguridad."
+        },
+        {
+          "number": "03",
+          "title": "Managed Governance",
+          "body": "Cuando la exposición cambia continuamente, el servicio puede operar de forma recurrente mediante revisión de nuevos casos, cambios, incidentes, proveedores, aprobaciones y riesgo residual dentro de una cadencia acordada."
+        }
+      ],
+      "continuity": {
+        "title": "¿Cuándo conviene pasar a la implementación cerrada?",
+        "body": "Si el diagnóstico confirma una necesidad transversal y un perímetro suficientemente estable, el Programa de Gobernanza Jurídica y Uso Responsable de IA ofrece una implementación cerrada con inventario, política, controles e instrumentos definidos.",
+        "action": "Revisar implementación cerrada",
+        "href": "../productos/programa-gobernanza-ia.html"
+      },
+      "boundary": "La modalidad recurrente exige perímetro, cadencia, responsables y capacidad expresamente pactados. No implica monitoreo automático universal ni reemplaza controles técnicos, seguridad, privacidad o evaluación científica del modelo."
+    }
+  ]
+}
