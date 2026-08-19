@@ -1,26 +1,55 @@
 # Meridiano Legal — Estado canónico
 
-Última verificación funcional: 2026-08-18.
+Última verificación funcional: 2026-08-19.
 
 ## Fuente canónica
 
 - Repositorio: `arendon7/MERDIANOLEGAL`.
 - Fuente técnica/documental: `main`.
 - Snapshot certificado: `stable`.
-- Release funcional certificada: **7.0.0 — Meridiano Legal Intelligence**.
-- SHA funcional certificado: `291bf23b6e9cd3d3cfb1743f032a4bc4583f726b`.
-- Merge funcional: `6b655fbf502196473a0457fd8e47d0c29e74ab41`.
-- Candidate pre-merge: `50646aadb514611241c0210a6bcfaac8ba7fe2d8`.
-- Canal de cierre: `github-pages-production-legal-intelligence-certified`.
-- Antes de abrir este cierre documental, `main == stable == 291bf23b6e9cd3d3cfb1743f032a4bc4583f726b`.
+- Release vigente: **7.1.0 — Commercial Clarity** sobre **Meridiano Legal Intelligence**.
+- Canal de cierre: `github-pages-production-commercial-clarity-certified`.
+- Antes de abrir el cierre documental: `main == stable == 8b13ff120cceddc9c9913892416046efb7368572`.
+- Los 8 productos + 8 servicios canónicos continúan gobernando alcance, entregables, tiempos, honorarios, responsabilidades y límites.
 
-## Resultado v7.0
+## Resultado v7.1
 
-v7 hace visible una capacidad transversal que ya existía distribuida entre Diagnóstico, Dirección Jurídica Externa, Contratación, Tecnología/IA, Proyectos Regulados y Legal Operations: diagnosticar, transformar, controlar y operar trabajo jurídico combinando criterio legal, procesos, IA, automatización y Legal Engineering.
+v7.1 mejora la comprensión comercial de la arquitectura v7.0 sin crear rutas, productos o servicios nuevos.
 
-### Arquitectura Legal Intelligence
+La Home aplica profundidad progresiva:
 
-Meridiano Legal permanece como marca madre. **Meridiano Legal Intelligence** no es un catálogo paralelo ni una nueva unidad comercial independiente.
+**situación → forma de intervención → capacidad concreta → resultado → profundidad jurídica de respaldo**.
+
+### Cuatro formas de intervención
+
+1. **Diagnosticar** — Legal AI Diagnostic, auditorías y diagnósticos focales.
+2. **Implementar** — productos cerrados, Legal AI Transformation, AI Governance 360, Contract Control y Regulatory Control.
+3. **Operar** — Dirección Jurídica Externa, Meridiano Legal Desk y modalidades gestionadas expresamente pactadas.
+4. **Construir** — Legal Engineering Studio cuando el caso requiere una solución jurídica-tecnológica específica.
+
+### Capacidades visibles
+
+La Home explica cuatro capacidades que pueden quedar funcionando dentro de alcance contratado:
+
+- Contract Control;
+- AI Governance 360;
+- Regulatory Control;
+- Meridiano Legal Desk.
+
+Legal Engineering permanece visible en **Construir** y no se duplica como quinta capacidad instalada.
+
+### Densidad y diseño
+
+- `v6-outcomes` y `v6-home-method` fueron absorbidos de la lectura principal para evitar redundancia.
+- Se preserva el mensaje: **“El trabajo jurídico debe dejar algo que la organización pueda usar, ejecutar y verificar.”**
+- La grilla usa 4 columnas desktop, 2×2 tablet y apilado móvil.
+- El contraste WCAG de las capacidades sobre superficie clara fue corregido de forma scoped.
+- El lenguaje operativo reduce anglicismos no esenciales.
+- El hub de Soluciones explica valor y resultado antes que nomenclatura interna.
+
+## Arquitectura v7 preservada
+
+Meridiano Legal permanece como marca madre. **Meridiano Legal Intelligence** continúa como capa transversal y no como catálogo paralelo.
 
 La arquitectura organiza:
 
@@ -34,61 +63,50 @@ La arquitectura organiza:
 
 `Meridiano Counsel` permanece como concepto futuro/no producto público.
 
-### Superficies y navegación
+Las seis rutas públicas siguen siendo la entrada principal y las 16 ofertas canónicas continúan gobernando la verdad jurídica y comercial.
 
-- 11 superficies existentes materializan la capa v7.
-- No se crean nuevas URLs por nomenclatura Legal Intelligence.
-- Las seis rutas de solución v6 continúan siendo la entrada principal.
-- Home explica Diagnosticar → Transformar → Controlar → Operar.
-- El hub de Soluciones presenta Legal Intelligence como capa transversal, no como séptima ruta.
-- Legal Operations conecta diagnóstico, transformación y operación.
-- Sistema Contractual Empresarial explica Contract Control.
-- IA organiza Readiness → Implementación → Gobierno recurrente.
-- Proyectos regulados organiza Estructurar → Controlar → Acompañar.
-
-## Verdad jurídica y capability boundaries
-
-Los 8 productos y 8 servicios canónicos continúan gobernando entregables, tiempos, honorarios, responsabilidades y límites. v7 no modifica silenciosamente esa verdad.
+## Capability truth
 
 Invariantes:
 
 - portal real, auth, CRM, pagos, firma, agenda y upload: deshabilitados/no implementados;
-- Contract Control y Regulatory Control: patrones de implementación/operación, no SaaS autónomos;
+- Contract Control y Regulatory Control: capacidades/patrones de implementación y operación, no SaaS autónomos;
 - no CLM productivo implícito;
 - no monitoreo automático universal;
-- no auditorías técnicas o certificaciones no incluidas;
+- AI Governance 360 no sustituye auditorías técnicas, seguridad o evaluación científica;
+- no certificaciones técnicas no incluidas;
 - no garantía sobre licencias, permisos o decisiones de autoridades;
-- Legal Desk mantiene SLA, canales y capacidad sujetos al alcance pactado;
+- Legal Desk mantiene perímetro, canales, capacidad y niveles de servicio sujetos al alcance pactado;
+- Legal Engineering solo incorpora desarrollo, integraciones, interfaces de IA o automatización cuando se pactan expresamente;
 - Meridiano Counsel no es oferta transaccional pública;
-- automatizaciones, agentes, integraciones o herramientas solo integran un encargo cuando están expresamente incluidas en su alcance.
+- no se publicaron nuevas tarifas.
 
 ## Capas previas preservadas
 
-- **v6.4 Fit & Scope Clarity:** 16/16 fichas con `situations` y `supplements`; `#v6-fit-scope` entre Resultado y Entregables.
-- **v6.3 Engagement Clarity:** 16/16 fichas con `requirements` + `responsibilities` y `#v6-engagement`.
+- **v6.4 Fit & Scope Clarity:** 16/16 fichas con `situations` y `supplements`.
+- **v6.3 Engagement Clarity:** 16/16 fichas con `requirements` + `responsibilities`.
 - **v6.2 Search Discovery:** 43 indexables + 3 `noindex`; sitemap canónico de 43 URLs.
 - **v6.1 Measurement:** privacy-first, sin PII exportada y analytics externa deshabilitada.
-- **v6.0 Experience System:** 46/46 superficies estructurales preservadas.
+- **v6.0 Experience System:** 46/46 superficies estructurales.
 - 1/1 formulario físico canónico.
 - WhatsApp manual.
 - 30/30 pasos históricos exactos del builder.
 
-## Evidencia funcional v7
+## Evidencia v7.1
 
-### Reconciliación con v6.4
+### Cambio funcional #170
 
-El prototipo original #163 nació sobre v6.3 y dejó de ser un vehículo seguro cuando `main` avanzó a v6.4. Se creó una rama nueva desde v6.4, se portó únicamente source v7 y las 11 superficies se rematerializaron sobre la baseline vigente.
+- Baseline: `e5dc22e33c46a1b4fc2ebc9a01ab33444b935eb6`.
+- Candidate funcional final: `12c8145dc8b6a3901217eb3d5793e210bfe06486`.
+- Gates aplicables same-SHA: PASS.
+- PR #170 fusionado con `expected_head_sha`.
+- Merge funcional: `f01c5163e2c70012218c7d369bfb68180db04ed7`.
+- La cadena productiva promovió `stable` automáticamente; no se movió manualmente.
 
-- SHA limpio de reconciliación: `67b097c4e6cb1adf9d252aafb7e6a524b7e0636e`.
-- 9/9 workflows aplicables: PASS.
-- Fit & Scope v6.4 validado después de aplicar v7.
-- Boundary: únicamente las 11 superficies previstas.
-- Graphify temporal restaurado; no quedó en el diff funcional.
+### Release candidate #171
 
-### Candidate y merge
-
-- Candidate final: `50646aadb514611241c0210a6bcfaac8ba7fe2d8`.
-- Nueve workflows aplicables sobre el mismo SHA: PASS:
+- Candidate formal: `8f0a3c2e016b6bc1aab92922f418965e57cb06c3`.
+- 9/9 workflows aplicables: PASS:
   - V6 Candidate Validation;
   - V6 Canonical Builder Equivalence;
   - V6.4 Fit & Scope Clarity;
@@ -98,43 +116,43 @@ El prototipo original #163 nació sobre v6.3 y dejó de ser un vehículo seguro 
   - Graphify;
   - V6 Browser Candidate / axe;
   - V6.1 Measurement Readiness / Browser E2E.
-- PR #167 fusionado con expected head SHA.
-- Merge funcional: `6b655fbf502196473a0457fd8e47d0c29e74ab41`.
-
-### Producción
-
-- Builder post-merge produjo `291bf23b6e9cd3d3cfb1743f032a4bc4583f726b`.
-- El diff del Builder fue la sincronización pública esperada de versión/metadata, sin reescritura sustantiva de la arquitectura jurídica v7.
-- GitHub Pages sirve la release v7.0.0.
-- Quality, deploy, live smoke, Browser/axe y Lighthouse precedieron el snapshot productivo.
-- `stable` fue promovido automáticamente, no manualmente, a `291bf23b6e9cd3d3cfb1743f032a4bc4583f726b`.
-- Antes de este cierre documental: `main == stable == 291bf23b…`.
+- Browser y Measurement fueron reejecutados sobre el mismo SHA después de cancelaciones externas; terminaron en `success` sin cambios de código.
+- PR #171 fusionado con `expected_head_sha`.
+- Merge candidate: `5185e5c1aed4e3ed23074a41318e446fbb3a741d`.
+- Builder canónico: `8b13ff120cceddc9c9913892416046efb7368572`.
+- Pages quality, deploy, live smoke, Browser/axe y Lighthouse: PASS.
+- Snapshot productivo: `stable → 8b13ff120cceddc9c9913892416046efb7368572`.
+- Antes de este cierre: `main == stable == 8b13ff120cceddc9c9913892416046efb7368572`.
 - Cobertura reducida: no.
 - Budgets relajados: no.
-- Tests eliminados para aprobar la release: no.
+- Tests eliminados para aprobar: no.
 
-## Release engineering v7
+## Release engineering v7.1
 
-1. **Arquitectura source-driven.** La capa se deriva de contratos v7, no de edición HTML manual.
-2. **Verdad jurídica no duplicada.** Los catálogos v4.1/v4.2 siguen gobernando las 16 ofertas.
-3. **Materializadores deterministas.** `scripts/apply_*_v70.py` produce las superficies previstas.
-4. **Validators fail-closed.** `scripts/validate_*_v70.py` exige soporte canónico y boundaries de capability.
-5. **Phase-aware architecture contract.** `prototype → release-candidate → certified` sin habilitar capabilities por cambio de fase.
-6. **Compatibilidad v6.4.** Fit & Scope se valida después de aplicar v7.
-7. **Normalizador canónico.** `normalize_experience_compat_v60.py` reproduce v7 dentro de la cadena existente.
-8. **E2E dedicado.** `legal-intelligence-v70.spec.mjs` recorre 11 superficies, boundaries y navegación por fragmentos.
-9. **No séptima ruta.** Las seis rutas siguen siendo invariantes públicas.
-10. **Stable fail-closed.** Solo se mueve después de los gates productivos oficiales.
+1. **Source-driven.** `assets/data/v7/home-commercial-clarity-v71.json` gobierna Home + hub.
+2. **Materialización determinista.** `apply_legal_intelligence_discovery_v70.py` reproduce la superficie comercial.
+3. **Lifecycle phase-aware.** `prototype → release-candidate → certified` sin habilitar capabilities por cambio de estado.
+4. **Verdad jurídica no duplicada.** Catálogos v4.1/v4.2 siguen gobernando las 16 ofertas.
+5. **Idempotencia.** Segunda pasada canónica sin drift.
+6. **E2E release-aware.** La regresión valida la arquitectura consolidada.
+7. **Stable fail-closed.** Solo se mueve después de Browser y Lighthouse productivos.
 
-## PR principal
+## Cierre certified
 
-- #167 — release funcional v7 reconciliada sobre v6.4: fusionado y publicado.
-- #163 — prototipo histórico sobre v6.3: debe cerrarse sin merge como superseded por #167.
+El cierre `docs/v710-certified-closure` contiene únicamente siete fuentes de metadata/documentación:
 
-## Estado del ciclo
+1. `version.json`.
+2. `assets/data/v7/home-commercial-clarity-v71.json`.
+3. `README.md`.
+4. `RELEASE-v7.1.md`.
+5. `knowledge/00_CANON/CONTEXTO_RAPIDO.md`.
+6. `knowledge/00_CANON/ESTADO_ACTUAL.md`.
+7. `knowledge/00_CANON/TAREA_ACTIVA.md`.
 
-**v7.0.0 está implementada, materializada, publicada y certificada funcionalmente.**
+No modifica HTML, CSS, catálogos, materializadores, validators funcionales, E2E, workflows ni capabilities.
 
-El único frente restante es este cierre documental `candidate → certified` en `docs/v700-release-closure`. Este cierre no cambia producto, HTML público, catálogos ni capabilities. Actualiza canal, estado arquitectónico y memoria de release.
+La certificación documental queda definitiva cuando el SHA final de este cierre supere sus propios workflows, se fusione con `expected_head_sha` y complete nuevamente Builder → Pages → live smoke → Browser/axe → Lighthouse → snapshot, terminando con `main == stable` y `stable/version.json` en canal `github-pages-production-commercial-clarity-certified`.
 
-El ciclo v7 quedará totalmente cerrado cuando el commit documental atraviese nuevamente sus gates, se fusione y complete Builder → Pages → smoke → Browser/axe → Lighthouse → snapshot con `main == stable` y `stable/version.json` en `github-pages-production-legal-intelligence-certified`.
+## Siguiente frente
+
+Después del cierre de v7.1, la siguiente ola recomendada es **Buying Clarity** para fichas profundas y Centro Demo, derivando cantidades, entregables, duración, requisitos, continuidad y forma de contratación exclusivamente de los catálogos canónicos. No introducir tarifas hasta contar con pricing truth aprobado.
