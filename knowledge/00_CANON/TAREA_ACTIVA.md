@@ -4,16 +4,22 @@ Actualizado: 2026-08-19.
 
 ## Frente vigente
 
-**v7.3.0 — Legal Intelligence Demo / release candidate.**
+**v7.3.0 — Legal Intelligence Demo / production-certified closure.**
 
-Rama: `release/v730-legal-intelligence-demo-candidate`.
+Rama: `docs/v730-certified-closure`.
 
-La fase funcional quedó certificada y fusionada mediante PR #177.
+La funcionalidad y el candidate ya fueron certificados productivamente.
 
 - Baseline anterior certificado: v7.2.0.
-- SHA funcional final: `dc3d4beea5637fc6aa104964d0fd0849b8c904c7`.
+- SHA funcional final v7.3: `dc3d4beea5637fc6aa104964d0fd0849b8c904c7`.
 - 10/10 workflows aplicables verdes sobre el SHA funcional.
 - Merge funcional #177: `4867f3418c45a5a6689cd43b79ff48f191cda3a1`.
+- SHA candidate final: `e8656a0ea69aa8cf8140a6d41e74130e3cec9f60`.
+- 10/10 workflows aplicables verdes sobre el SHA candidate.
+- Merge candidate #178: `6c194effd5421326f05296c1e99c54f852f04398`.
+- Builder/snapshot productivo candidate: `2999d28dc6e4ae497ecbfbb9469f55364f34d899`.
+- Pages quality/deploy/live smoke + Browser/axe + Lighthouse: PASS.
+- `stable` fue promovido automáticamente a `2999d28dc6e4ae497ecbfbb9469f55364f34d899`.
 
 ## Qué añade v7.3
 
@@ -29,36 +35,23 @@ Cada escenario muestra:
 
 **problema → flujo → artefacto demostrativo → resultado → referencia de alcance → frontera → oferta relacionada**.
 
-## Fuente de verdad
+Las referencias cuantitativas provienen verbatim de los catálogos canónicos aplicables. Legal Desk no publica LU, volumen, canales, SLA o capacidad estándar.
 
-Las referencias cuantitativas se derivan verbatim de los catálogos canónicos aplicables. Legal Desk no publica LU, volumen, canales, SLA o capacidad incluida porque esa verdad no está aprobada.
+## Correcciones cerradas
 
-## Candidate formal
+Durante desarrollo/candidate se corrigieron sin relajar ningún gate:
 
-Este branch modifica únicamente lifecycle/release respecto de la funcionalidad ya fusionada:
+1. falso positivo del validator sobre la negación de Legal Units/SLA de Legal Desk;
+2. idempotencia de markers administrados;
+3. recomposición canónica v7.3 después de las capas v6;
+4. incompatibilidad de lifecycle del materializador al pasar de prototype a candidate.
 
-1. `version.json`: 7.2.0 → 7.3.0, canal `github-pages-legal-intelligence-demo-candidate`.
-2. `assets/data/v7/legal-intelligence-demo-v73.json`: `demo-prototype` → `release-candidate`.
-3. `scripts/validate_legal_intelligence_demo_v73.py`: lifecycle phase-aware `demo-prototype → release-candidate → certified`.
-4. `scripts/apply_legal_intelligence_demo_v73.py`: lifecycle phase-aware con la misma máquina de estados, necesaria para que `--check` y las reconstrucciones canónicas funcionen durante candidate/certified.
-5. esta memoria de tarea.
+Validator y materializador comparten ahora una máquina de estados cerrada:
 
-No introduce cambios nuevos en `experiencia.html`, CSS funcional, catálogos, E2E o capabilities.
-
-## Corrección de lifecycle del candidate
-
-La primera ronda de #178 reveló una incompatibilidad heredada interna de v7.3:
-
-- el validator ya aceptaba `release-candidate` y validó correctamente el contenido;
-- el materializador seguía exigiendo literalmente `7.3.0-prototype` + `demo-prototype`;
-- por ello `apply_legal_intelligence_demo_v73.py --check` bloqueaba toda reconstrucción canónica al abrir la versión 7.3.0.
-
-La corrección no relaja ningún boundary. El materializador ahora exige la misma máquina de estados cerrada que el validator:
-
-- `demo-prototype` → versión con prefijo `7.3.0-prototype`;
+- `demo-prototype` → prefijo `7.3.0-prototype`;
 - `release-candidate` → versión exacta `7.3.0`;
 - `certified` → versión exacta `7.3.0`;
-- baseline exacta `7.2.0` en las tres fases.
+- baseline exacta `7.2.0`.
 
 ## Capability truth preservado
 
@@ -70,23 +63,39 @@ La corrección no relaja ningún boundary. El materializador ahora exige la mism
 - sin monitoreo automático universal;
 - sin decisión jurídica autónoma;
 - sin precios nuevos;
-- Legal Desk no fija capacidad, LU o SLA estándar.
+- Legal Desk no fija capacidad, LU o SLA estándar;
+- Contract Control y Regulatory Control no son SaaS autónomos.
 
-## Gate del candidate
+## Boundary del cierre
 
-Antes de merge:
+El cierre `production-certified` modifica exactamente siete archivos:
 
-1. confirmar boundary exacto de cinco archivos;
-2. fijar SHA final;
+1. `version.json`: canal candidate → `github-pages-production-legal-intelligence-demo-certified`.
+2. `assets/data/v7/legal-intelligence-demo-v73.json`: `release-candidate` → `certified`.
+3. `README.md`.
+4. `RELEASE-v7.3.md`.
+5. `knowledge/00_CANON/CONTEXTO_RAPIDO.md`.
+6. `knowledge/00_CANON/ESTADO_ACTUAL.md`.
+7. esta memoria.
+
+No modifica HTML, CSS, catálogos, materializadores, validators funcionales, E2E, workflows ni capabilities.
+
+## Gate del cierre
+
+Antes de declarar v7.3 definitivamente cerrada:
+
+1. confirmar boundary exacto de siete archivos;
+2. fijar SHA final del PR;
 3. superar todos los workflows aplicables sobre ese mismo SHA;
 4. fusionar únicamente con `expected_head_sha`;
 5. observar Builder canónico;
 6. exigir Pages quality/deploy → live smoke → Browser/axe + Lighthouse;
 7. permitir únicamente promoción automática de `stable`;
-8. terminar con `main == stable` antes del cierre documental.
+8. terminar con `main == stable`;
+9. confirmar `stable/version.json` = v7.3.0 + canal `github-pages-production-legal-intelligence-demo-certified`.
 
 `stable` no se mueve manualmente.
 
-## Cierre posterior
+## Después de v7.3
 
-Después de certificar productivamente el candidate se abrirá un PR separado `candidate → production-certified` con boundary documental mínimo: versión/canal, contrato `certified`, README, RELEASE-v7.3 y memoria canónica.
+El siguiente frente debe priorizarse con evidencia comercial real producida por la navegación, fichas comprables y Centro Demo. No se abrirán nuevas capabilities tecnológicas solo por completar catálogo: la siguiente ola debe responder a señales de demanda, conversión o aprendizaje verificable.
