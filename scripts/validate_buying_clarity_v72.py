@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Valida Buying Clarity v7.2 contra las 16 fuentes canónicas."""
+"""Valida Buying Clarity v7.2 contra las 16 fuentes canónicas y su lifecycle de release."""
 from __future__ import annotations
 
 from html import unescape
@@ -15,6 +15,11 @@ DETAIL_DIRS = (ROOT / "productos", ROOT / "servicios")
 START = "<!-- BUYING-CLARITY-V72:START -->"
 END = "<!-- BUYING-CLARITY-V72:END -->"
 STYLE = '../assets/css/v7/buying-clarity-v72.css'
+VALID_LIFECYCLE = {
+    "buying-clarity-prototype": {"version_prefix": "7.2.0-prototype"},
+    "release-candidate": {"version_exact": "7.2.0"},
+    "certified": {"version_exact": "7.2.0"},
+}
 
 
 def fail(message: str) -> None:
@@ -86,8 +91,15 @@ def validate_contract() -> dict:
     if not CONTRACT.exists():
         fail("falta buying-clarity-v72.json")
     contract = load_json(CONTRACT)
-    if not str(contract.get("version", "")).startswith("7.2."):
-        fail("contrato Buying Clarity debe declarar 7.2.x")
+    status = contract.get("status")
+    if status not in VALID_LIFECYCLE:
+        fail(f"status Buying Clarity inválido: {status}")
+    version = str(contract.get("version", ""))
+    lifecycle = VALID_LIFECYCLE[status]
+    if "version_exact" in lifecycle and version != lifecycle["version_exact"]:
+        fail(f"{status} debe declarar version {lifecycle['version_exact']}")
+    if "version_prefix" in lifecycle and not version.startswith(lifecycle["version_prefix"]):
+        fail(f"{status} debe declarar versión con prefijo {lifecycle['version_prefix']}")
     if contract.get("baseline") != "7.1.0":
         fail("baseline Buying Clarity debe ser v7.1.0")
     rules = contract.get("rules", {})
@@ -157,7 +169,7 @@ def main() -> int:
         fail(f"fuentes/fichas desalineadas: {sorted(set(sources) ^ set(paths))}")
     for catalog_id in sorted(sources):
         validate_page(catalog_id, paths[catalog_id], sources[catalog_id], contract)
-    print("VALIDATE BUYING CLARITY V7.2 OK: 16/16 resúmenes visibles, source-driven y sin capability drift.")
+    print(f"VALIDATE BUYING CLARITY V7.2 OK: 16/16 resúmenes visibles, source-driven y sin capability drift ({contract['status']}).")
     return 0
 
 
