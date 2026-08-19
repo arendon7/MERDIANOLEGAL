@@ -9,7 +9,7 @@ on:
       - main
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   materialize:
@@ -39,6 +39,18 @@ jobs:
           mkdir -p /tmp/v71-generated/soluciones
           cp index.html /tmp/v71-generated/index.html
           cp soluciones/index.html /tmp/v71-generated/soluciones/index.html
+      - name: Commit canonical surfaces to prototype branch
+        if: github.event_name == 'push'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html soluciones/index.html
+          if git diff --cached --quiet; then
+            echo 'Generated surfaces already canonical.'
+          else
+            git commit -m 'build(v7.1): materialize commercial clarity surfaces'
+            git push origin HEAD:feat/v710-commercial-clarity
+          fi
       - name: Upload generated surfaces
         uses: actions/upload-artifact@v7
         with:
