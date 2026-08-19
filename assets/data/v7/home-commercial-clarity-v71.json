@@ -1,6 +1,6 @@
 {
-  "version": "7.1.0-prototype-3",
-  "status": "commercial-clarity-prototype",
+  "version": "7.1.0",
+  "status": "release-candidate",
   "principle": "La Home conserva las seis rutas por situación y usa profundidad progresiva para explicar cómo puede intervenir Meridiano, qué capacidades concretas existen y qué puede quedar funcionando, sin crear un catálogo paralelo.",
   "home": {
     "target": "index.html",
