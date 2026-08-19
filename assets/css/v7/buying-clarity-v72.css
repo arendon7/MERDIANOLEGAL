@@ -1,0 +1,156 @@
+/* Meridiano Legal v7.2 — Buying Clarity / resumen de contratación. */
+
+.v72-buying-summary {
+  background: var(--v6-ivory);
+  border-bottom: 1px solid #ddd5c7;
+  color: var(--v6-ink);
+}
+
+.v72-buying-shell {
+  display: grid;
+  gap: 28px;
+  padding-block: clamp(46px, 5.5vw, 70px);
+}
+
+.v72-buying-head {
+  display: grid;
+  gap: 12px;
+  max-width: 920px;
+}
+
+.v72-buying-meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid #d8ccb8;
+  border-bottom: 1px solid #d8ccb8;
+}
+
+.v72-buying-meta > div {
+  min-width: 0;
+  padding: 18px 22px;
+  border-right: 1px solid #d8ccb8;
+}
+
+.v72-buying-meta > div:first-child { padding-left: 0; }
+.v72-buying-meta > div:last-child { border-right: 0; }
+
+.v72-buying-meta span {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--v6-gold);
+  font-size: .62rem;
+  font-weight: 900;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+
+.v72-buying-meta strong {
+  display: block;
+  color: var(--v6-navy);
+  font-size: .86rem;
+  line-height: 1.45;
+}
+
+.v72-buying-main {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 32px;
+}
+
+.v72-buying-panel {
+  min-width: 0;
+  padding-top: 20px;
+  border-top: 2px solid var(--v6-gold);
+}
+
+.v72-buying-panel h3,
+.v72-buying-secondary h3 {
+  margin: 0 0 14px;
+  color: var(--v6-navy);
+  font-family: var(--v6-serif);
+  font-size: 1.35rem;
+  line-height: 1.18;
+}
+
+.v72-buying-list,
+.v72-buying-mini-list {
+  border-top: 1px solid #d8ccb8;
+}
+
+.v72-buying-row {
+  display: grid;
+  grid-template-columns: minmax(135px, .42fr) minmax(0, 1fr);
+  gap: 18px;
+  padding-block: 12px;
+  border-bottom: 1px solid #d8ccb8;
+}
+
+.v72-buying-row strong,
+.v72-buying-mini-row strong {
+  color: var(--v6-navy);
+  font-size: .78rem;
+  line-height: 1.45;
+}
+
+.v72-buying-row span,
+.v72-buying-mini-row span,
+.v72-buying-note {
+  color: var(--v6-muted);
+  font-size: .78rem;
+  line-height: 1.55;
+}
+
+.v72-buying-panel .v6-text-link {
+  display: inline-block;
+  margin-top: 14px;
+}
+
+.v72-buying-secondary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 28px;
+  padding-top: 8px;
+}
+
+.v72-buying-secondary > article {
+  min-width: 0;
+  padding-top: 18px;
+  border-top: 1px solid #d8ccb8;
+}
+
+.v72-buying-mini-row {
+  display: grid;
+  gap: 4px;
+  padding-block: 10px;
+  border-bottom: 1px solid #d8ccb8;
+}
+
+.v72-buying-secondary .v6-text-link {
+  display: inline-block;
+  margin-top: 12px;
+}
+
+.v72-buying-note { margin: 12px 0 0; }
+
+@media (max-width: 900px) {
+  .v72-buying-main,
+  .v72-buying-secondary { grid-template-columns: 1fr; }
+  .v72-buying-secondary { gap: 20px; }
+}
+
+@media (max-width: 700px) {
+  .v72-buying-shell { padding-block: 42px; gap: 24px; }
+  .v72-buying-meta { grid-template-columns: 1fr; }
+  .v72-buying-meta > div,
+  .v72-buying-meta > div:first-child {
+    padding: 13px 0;
+    border-right: 0;
+    border-bottom: 1px solid #d8ccb8;
+  }
+  .v72-buying-meta > div:last-child { border-bottom: 0; }
+  .v72-buying-row { grid-template-columns: 1fr; gap: 5px; }
+}
+
+@media print {
+  .v72-buying-summary { break-inside: avoid; }
+}
