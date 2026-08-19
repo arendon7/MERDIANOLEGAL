@@ -132,8 +132,10 @@ def validate_page(catalog_id: str, path: Path, source: dict, contract: dict) -> 
 
     if "Estas ampliaciones no hacen parte del alcance base salvo que la propuesta las incluya expresamente." not in block:
         fail(f"{label}: falta boundary de suplementos")
-    if '#v6-perimeter' not in block or '#v6-deliverables' not in block or '#v6-engagement' not in block:
+    if '#v6-perimeter' not in block or '#v6-deliverables' not in block:
         fail(f"{label}: faltan enlaces de profundidad")
+    if '#v6-engagement' in block:
+        fail(f"{label}: Buying Clarity no debe duplicar la navegación canónica a #v6-engagement")
     if re.search(r"<form\b", block):
         fail(f"{label}: Buying Clarity no puede crear formularios")
 
