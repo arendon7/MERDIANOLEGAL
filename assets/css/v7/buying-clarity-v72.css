@@ -1,6 +1,9 @@
 /* Meridiano Legal v7.2 — Buying Clarity / resumen de contratación. */
 
 .v72-buying-summary {
+  --v6-gold: var(--v6-gold-text);
+  --v6-muted: #606b73;
+  --v6-heading-color: var(--v6-navy);
   background: var(--v6-ivory);
   border-bottom: 1px solid #ddd5c7;
   color: var(--v6-ink);
