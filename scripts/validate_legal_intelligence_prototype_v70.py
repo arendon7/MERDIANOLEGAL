@@ -1,19 +1,35 @@
 #!/usr/bin/env python3
-"""Validate the narrow v7 Legal Intelligence public-surface prototype."""
+"""Validate the approved v7 Legal Intelligence prototype surfaces."""
 
 from __future__ import annotations
 
 import json
+import subprocess
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / "assets/data/v7/legal-intelligence-prototype-v70.json"
+DEEP_CONTRACT = ROOT / "assets/data/v7/legal-intelligence-deep-offers-v70.json"
+DEEP_VALIDATOR = ROOT / "scripts/validate_legal_intelligence_deep_offers_v70.py"
 START = "<!-- LEGAL-INTELLIGENCE-V70:START -->"
 END = "<!-- LEGAL-INTELLIGENCE-V70:END -->"
 
 
 def fail(message: str) -> None:
     raise SystemExit(f"v7 Legal Intelligence prototype validation failed: {message}")
+
+
+def validate_deep_offers() -> None:
+    if not DEEP_CONTRACT.exists():
+        return
+    if not DEEP_VALIDATOR.exists():
+        fail("deep-offer contract exists without validator")
+    completed = subprocess.run([sys.executable, str(DEEP_VALIDATOR)], cwd=ROOT, capture_output=True, text=True)
+    if completed.stdout:
+        print(completed.stdout.rstrip())
+    if completed.returncode:
+        fail(completed.stderr.strip() or completed.stdout.strip() or "deep-offer validation failed")
 
 
 def main() -> None:
@@ -59,7 +75,6 @@ def main() -> None:
         if claim.lower() in lower:
             fail(f"forbidden capability claim found: {claim}")
 
-    # Existing v6 route semantics must remain present.
     preserved = [
         'data-experience-system="v6"',
         'id="v6-solution-fit"',
@@ -70,7 +85,6 @@ def main() -> None:
         if token not in content:
             fail(f"existing v6 route contract was damaged: {token}")
 
-    # All prototype links must resolve to an existing local target or the canonical contact handoff.
     for mode in section["modes"]:
         href = mode["href"]
         if href.startswith("../index.html?"):
@@ -86,6 +100,7 @@ def main() -> None:
         fail(f"Legal Engineering link target does not exist: {engineering_href}")
 
     print("v7 Legal Intelligence route prototype: PASS")
+    validate_deep_offers()
 
 
 if __name__ == "__main__":
