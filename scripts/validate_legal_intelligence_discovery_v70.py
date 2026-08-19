@@ -203,6 +203,13 @@ def validate_common(data: dict, home_block: str, hub_block: str) -> None:
                 fail(f"unsupported public discovery capability claim: {pattern}")
 
 
+def version_tuple(value: str) -> tuple[int, int, int]:
+    match = re.fullmatch(r"(\d+)\.(\d+)\.(\d+)", value)
+    if not match:
+        fail(f"public version must be semantic x.y.z; found {value!r}")
+    return tuple(int(part) for part in match.groups())
+
+
 def validate_v71_phase(data: dict) -> str:
     status = str(data.get("status", ""))
     contract_version = str(data.get("version", ""))
@@ -219,13 +226,23 @@ def validate_v71_phase(data: dict) -> str:
         fail(f"v7.1 {status} contract must use version 7.1.0")
 
     public = json.loads(VERSION_PATH.read_text(encoding="utf-8"))
-    if str(public.get("version")) != "7.1.0":
-        fail(f"v7.1 {status} contract requires public version 7.1.0")
+    public_version = str(public.get("version", ""))
     channel = str(public.get("channel", ""))
-    if status == "release-candidate" and "candidate" not in channel:
-        fail("v7.1 release-candidate requires a candidate public channel")
-    if status == "certified" and "certified" not in channel:
-        fail("v7.1 certified contract requires a certified public channel")
+
+    if status == "release-candidate":
+        if public_version != "7.1.0":
+            fail("v7.1 release-candidate requires public version 7.1.0")
+        if "candidate" not in channel:
+            fail("v7.1 release-candidate requires a candidate public channel")
+        return status
+
+    # Once v7.1 is certified it remains a certified lower layer of later releases.
+    # It must reject regressions below 7.1.0, but must not block a later candidate
+    # merely because that later release is not itself certified yet.
+    if version_tuple(public_version) < (7, 1, 0):
+        fail(f"v7.1 certified contract requires public version >= 7.1.0; found {public_version}")
+    if public_version == "7.1.0" and "certified" not in channel:
+        fail("v7.1 certified contract at public version 7.1.0 requires a certified public channel")
     return status
 
 
