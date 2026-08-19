@@ -2,7 +2,7 @@
   "name": "Meridiano Legal Web",
   "version": "7.2.0",
   "release_date": "2026-08-19",
-  "channel": "github-pages-buying-clarity-candidate",
+  "channel": "github-pages-production-buying-clarity-certified",
   "commit_scope": "buying-clarity",
   "source_baseline": "main"
 }
