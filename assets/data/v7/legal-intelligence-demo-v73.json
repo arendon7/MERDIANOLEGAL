@@ -1,6 +1,6 @@
 {
-  "version": "7.3.0-prototype",
-  "status": "demo-prototype",
+  "version": "7.3.0",
+  "status": "release-candidate",
   "baseline": "7.2.0",
   "target": "experiencia.html",
   "title": "Vea cómo cinco problemas jurídicos se convierten en sistemas operables.",
@@ -16,13 +16,7 @@
       "flow": ["Demanda", "Triage", "Reglas", "Workflow", "Piloto", "Métricas"],
       "artifact": "Modelo operativo + flujos + RACI + artefactos + tablero + piloto.",
       "result": "Un proceso jurídico delimitado y medible sobre el cual sí tiene sentido incorporar automatización o IA.",
-      "metrics": [
-        ["perimeter", 0],
-        ["perimeter", 1],
-        ["perimeter", 2],
-        ["perimeter", 3],
-        ["perimeter", 4]
-      ],
+      "metrics": [["perimeter",0],["perimeter",1],["perimeter",2],["perimeter",3],["perimeter",4]],
       "href": "servicios/legal-operations.html",
       "boundary": "La automatización, integraciones y software a medida solo forman parte del encargo cuando se incluyen expresamente."
     },
@@ -35,14 +29,7 @@
       "flow": ["Inventario", "Modelos", "Playbook", "Aprobaciones", "Obligaciones", "Seguimiento"],
       "artifact": "Ficha contractual ficticia + desviación de playbook + obligación + responsable + siguiente acción.",
       "result": "Contratos convertidos en criterios, decisiones y obligaciones administrables, no solo archivos firmados.",
-      "metrics": [
-        ["perimeter", 2],
-        ["perimeter", 3],
-        ["perimeter", 4],
-        ["perimeter", 5],
-        ["perimeter", 6],
-        ["perimeter", 7]
-      ],
+      "metrics": [["perimeter",2],["perimeter",3],["perimeter",4],["perimeter",5],["perimeter",6],["perimeter",7]],
       "href": "productos/sistema-contractual-empresarial.html",
       "boundary": "Este escenario no representa un CLM o SaaS autónomo ni monitoreo automático de contratos."
     },
@@ -55,13 +42,7 @@
       "flow": ["Inventariar", "Clasificar", "Evaluar", "Aprobar", "Controlar", "Revisar"],
       "artifact": "Matriz ficticia de caso de uso: propietario, proveedor, datos, riesgo, controles, aprobación y evidencia.",
       "result": "Un sistema de gobierno que permite saber qué IA se usa, para qué, quién responde y qué controles deben mantenerse.",
-      "metrics": [
-        ["perimeter", 0],
-        ["perimeter", 1],
-        ["perimeter", 2],
-        ["perimeter", 3],
-        ["perimeter", 4]
-      ],
+      "metrics": [["perimeter",0],["perimeter",1],["perimeter",2],["perimeter",3],["perimeter",4]],
       "href": "productos/programa-gobernanza-ia.html",
       "boundary": "No es auditoría técnica, certificación algorítmica, pentesting ni garantía de ausencia de sesgos o incidentes."
     },
@@ -74,14 +55,7 @@
       "flow": ["Fuente", "Aplicabilidad", "Permiso", "Condición", "Responsable", "Evidencia"],
       "artifact": "Ruta ficticia de permiso/obligación: autoridad, dependencia, plazo, responsable, evidencia y puerta de decisión.",
       "result": "Regulación convertida en una ruta administrable de habilitaciones, hitos, obligaciones y decisiones.",
-      "metrics": [
-        ["perimeter", 4],
-        ["perimeter", 5],
-        ["perimeter", 6],
-        ["deliverables", 3],
-        ["deliverables", 8],
-        ["deliverables", 9]
-      ],
+      "metrics": [["perimeter",4],["perimeter",5],["perimeter",6],["deliverables",3],["deliverables",8],["deliverables",9]],
       "href": "productos/proyecto-regulado-estructurado.html",
       "boundary": "No garantiza permisos, licencias ni decisiones de autoridades y no implica cobertura automática universal de fuentes."
     },
@@ -99,10 +73,5 @@
       "boundary": "Este demo no fija volumen, canales, Legal Units, SLA o capacidad incluida; esos elementos requieren propuesta y alcance específicos."
     }
   ],
-  "forbidden": [
-    "Meridiano Counsel",
-    "portal productivo incluido",
-    "monitoreo automático universal",
-    "decisión jurídica autónoma"
-  ]
+  "forbidden": ["Meridiano Counsel","portal productivo incluido","monitoreo automático universal","decisión jurídica autónoma"]
 }

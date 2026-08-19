@@ -22,6 +22,11 @@ TAB_END = "<!-- LEGAL-INTELLIGENCE-DEMO-V73-TAB:END -->"
 PANEL_START = "<!-- LEGAL-INTELLIGENCE-DEMO-V73-PANEL:START -->"
 PANEL_END = "<!-- LEGAL-INTELLIGENCE-DEMO-V73-PANEL:END -->"
 EMPRESAS_TAB = '<button class="experience-tab" type="button" data-target="empresas"><span>05</span><strong>Meridiano Empresas</strong><small>Seguimiento operativo</small></button>'
+VALID_LIFECYCLE = {
+    "demo-prototype": {"version_prefix": "7.3.0-prototype"},
+    "release-candidate": {"version_exact": "7.3.0"},
+    "certified": {"version_exact": "7.3.0"},
+}
 
 
 def e(value: object) -> str:
@@ -30,6 +35,21 @@ def e(value: object) -> str:
 
 def load_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def validate_lifecycle(data: dict) -> str:
+    status = str(data.get("status", ""))
+    version = str(data.get("version", ""))
+    if status not in VALID_LIFECYCLE:
+        raise RuntimeError(f"status demo v7.3 inválido: {status}")
+    lifecycle = VALID_LIFECYCLE[status]
+    if "version_exact" in lifecycle and version != lifecycle["version_exact"]:
+        raise RuntimeError(f"{status} debe declarar version {lifecycle['version_exact']}")
+    if "version_prefix" in lifecycle and not version.startswith(lifecycle["version_prefix"]):
+        raise RuntimeError(f"{status} debe declarar versión con prefijo {lifecycle['version_prefix']}")
+    if data.get("baseline") != "7.2.0":
+        raise RuntimeError("baseline demo v7.3 debe ser 7.2.0")
+    return status
 
 
 def source_for(scenario: dict) -> dict:
@@ -179,10 +199,7 @@ def main() -> int:
     if not CONTRACT.exists():
         return 0
     data = load_json(CONTRACT)
-    if not str(data.get("version", "")).startswith("7.3.0-prototype"):
-        raise RuntimeError("El contrato demo debe declarar versión 7.3.0-prototype")
-    if data.get("status") != "demo-prototype":
-        raise RuntimeError("El contrato demo debe permanecer demo-prototype en esta fase")
+    status = validate_lifecycle(data)
     if len(data.get("scenarios", [])) != 5:
         raise RuntimeError("El demo debe declarar exactamente cinco escenarios")
 
@@ -191,13 +208,13 @@ def main() -> int:
     if args.check:
         if before != after:
             raise RuntimeError("Legal Intelligence Demo v7.3 drift en experiencia.html")
-        print("LEGAL INTELLIGENCE DEMO V7.3 CHECK OK: experiencia.html sin drift.")
+        print(f"LEGAL INTELLIGENCE DEMO V7.3 CHECK OK: experiencia.html sin drift ({status}).")
         return 0
     if before != after:
         TARGET.write_text(after, encoding="utf-8")
-        print("LEGAL INTELLIGENCE DEMO V7.3 OK: experiencia.html materializado.")
+        print(f"LEGAL INTELLIGENCE DEMO V7.3 OK: experiencia.html materializado ({status}).")
     else:
-        print("LEGAL INTELLIGENCE DEMO V7.3 OK: experiencia.html ya materializado.")
+        print(f"LEGAL INTELLIGENCE DEMO V7.3 OK: experiencia.html ya materializado ({status}).")
     return 0
 
 

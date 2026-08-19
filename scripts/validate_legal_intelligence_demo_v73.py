@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Valida el Centro Demo Legal Intelligence v7.3 contra fuentes canónicas y boundaries."""
+"""Valida el Centro Demo Legal Intelligence v7.3 contra fuentes canónicas, boundaries y lifecycle."""
 from __future__ import annotations
 
 from html import unescape
@@ -16,6 +16,11 @@ TAB_START = "<!-- LEGAL-INTELLIGENCE-DEMO-V73-TAB:START -->"
 TAB_END = "<!-- LEGAL-INTELLIGENCE-DEMO-V73-TAB:END -->"
 PANEL_START = "<!-- LEGAL-INTELLIGENCE-DEMO-V73-PANEL:START -->"
 PANEL_END = "<!-- LEGAL-INTELLIGENCE-DEMO-V73-PANEL:END -->"
+VALID_LIFECYCLE = {
+    "demo-prototype": {"version_prefix": "7.3.0-prototype"},
+    "release-candidate": {"version_exact": "7.3.0"},
+    "certified": {"version_exact": "7.3.0"},
+}
 
 
 def fail(message: str) -> None:
@@ -48,14 +53,26 @@ def link_exists(href: str) -> None:
         fail(f"fragmento demo inexistente: {href}")
 
 
+def validate_lifecycle(data: dict) -> str:
+    status = str(data.get("status", ""))
+    version = str(data.get("version", ""))
+    if status not in VALID_LIFECYCLE:
+        fail(f"status demo v7.3 inválido: {status}")
+    lifecycle = VALID_LIFECYCLE[status]
+    if "version_exact" in lifecycle and version != lifecycle["version_exact"]:
+        fail(f"{status} debe declarar version {lifecycle['version_exact']}")
+    if "version_prefix" in lifecycle and not version.startswith(lifecycle["version_prefix"]):
+        fail(f"{status} debe declarar versión con prefijo {lifecycle['version_prefix']}")
+    if data.get("baseline") != "7.2.0":
+        fail("baseline demo v7.3 debe ser 7.2.0")
+    return status
+
+
 def main() -> int:
     if not CONTRACT.exists() or not TARGET.exists():
         fail("faltan contrato o experiencia.html")
     data = load_json(CONTRACT)
-    if not str(data.get("version", "")).startswith("7.3.0-prototype"):
-        fail("versión demo debe ser 7.3.0-prototype")
-    if data.get("status") != "demo-prototype":
-        fail("status demo debe permanecer demo-prototype")
+    status = validate_lifecycle(data)
     scenarios = data.get("scenarios", [])
     if len(scenarios) != 5:
         fail("deben existir exactamente cinco escenarios")
@@ -127,8 +144,6 @@ def main() -> int:
     if not desk:
         fail("falta card Legal Desk")
     desk_text = desk.group(1)
-    # Bloquea cantidades o promesas positivas. La frase negativa de boundary puede
-    # mencionar "Legal Units" y "SLA" precisamente para dejar claro que no se fijan.
     for pattern in (
         r"\d+\s+LU\b",
         r"\bLU\s*(?:incluidas?|mensuales?|por\s+mes)\b",
@@ -142,7 +157,7 @@ def main() -> int:
     if "no fija volumen, canales, Legal Units, SLA o capacidad incluida" not in desk_text:
         fail("Legal Desk debe declarar explícitamente su boundary de capacidad")
 
-    print("VALIDATE LEGAL INTELLIGENCE DEMO V7.3 OK: 5/5 escenarios source-driven, ficticios y capability-safe.")
+    print(f"VALIDATE LEGAL INTELLIGENCE DEMO V7.3 OK: 5/5 escenarios source-driven, ficticios y capability-safe ({status}).")
     return 0
 
 
