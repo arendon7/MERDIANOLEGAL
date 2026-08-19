@@ -49,22 +49,50 @@ jobs:
           import json
           import os
           from pathlib import Path
-
           graph = json.loads(Path('graphify-out/graph.json').read_text(encoding='utf-8'))
           meta = json.loads(Path('graphify-out/BUILD_META.json').read_text(encoding='utf-8'))
           nodes = graph.get('nodes', [])
           edges = graph.get('edges', graph.get('links', []))
           wiki = list(Path('graphify-out/wiki').glob('*.md'))
-          if not nodes:
-              raise SystemExit('grafo vacío')
-          if not edges:
-              raise SystemExit('grafo sin relaciones')
-          if len(wiki) < 2:
-              raise SystemExit('wiki vacía')
+          if not nodes: raise SystemExit('grafo vacío')
+          if not edges: raise SystemExit('grafo sin relaciones')
+          if len(wiki) < 2: raise SystemExit('wiki vacía')
           if meta.get('source_commit') != os.environ['GITHUB_SHA']:
               raise SystemExit(f"snapshot obsoleto: {meta.get('source_commit')} != {os.environ['GITHUB_SHA']}")
           print(f"Graphify: {len(nodes)} nodos / {len(edges)} relaciones / {len(wiki)} notas wiki / source {meta['source_commit'][:8]}")
           PY
+
+      - name: Canonicalizar Buying Clarity v7.2 en branch
+        if: github.event_name == 'pull_request' && github.head_ref == 'feat/v720-buying-clarity'
+        run: |
+          set -euo pipefail
+          git fetch origin main feat/v720-buying-clarity
+          git checkout -B feat/v720-buying-clarity origin/feat/v720-buying-clarity
+          python3 scripts/apply_buying_clarity_v72.py
+          python3 scripts/apply_engagement_clarity_v63.py --check
+          python3 scripts/apply_fit_scope_clarity_v64.py --check
+          python3 scripts/sync_public_version.py
+          python3 scripts/apply_experience_v60.py
+          python3 scripts/apply_experience_solutions_v60.py
+          python3 scripts/apply_experience_sectors_v60.py
+          python3 scripts/apply_experience_perspectives_v60.py
+          python3 scripts/apply_experience_final_v60.py
+          python3 scripts/apply_funnel_trust_v529.py
+          python3 scripts/normalize_experience_compat_v60.py
+          python3 scripts/apply_fit_scope_clarity_v64.py
+          python3 scripts/apply_engagement_clarity_v63.py --check
+          python3 scripts/apply_fit_scope_clarity_v64.py --check
+          python3 scripts/apply_buying_clarity_v72.py --check
+          git checkout origin/main -- .github/workflows/graphify-knowledge.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add productos/*.html servicios/*.html scripts/apply_buying_clarity_v72.py scripts/normalize_experience_compat_v60.py .github/workflows/graphify-knowledge.yml
+          if git diff --cached --quiet; then
+            echo 'No canonical drift to commit.'
+          else
+            git commit -m 'chore(v7.2): align buying clarity with v6 composition'
+            git push origin HEAD:feat/v720-buying-clarity
+          fi
 
       - name: Publicar snapshot fuera de main
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
