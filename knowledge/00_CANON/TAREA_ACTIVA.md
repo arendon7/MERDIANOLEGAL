@@ -1,6 +1,6 @@
 # Meridiano Legal — Tarea activa
 
-Actualizado: 2026-08-18.
+Actualizado: 2026-08-19.
 
 ## Frente vigente
 
@@ -58,6 +58,15 @@ El método no desaparece: sigue resumido en el artifact del hero y desarrollado 
 
 Así se preserva continuidad semántica sin reintroducir contenido redundante.
 
+## Refinamiento comercial final
+
+Después de obtener seis gates verdes sobre un mismo SHA del prototipo, la revisión visual/comercial detectó dos ajustes de calidad antes de release:
+
+- la grilla de cuatro formas de intervención debía ocupar cuatro columnas reales, no reutilizar sin adaptación la grilla histórica de cinco pasos;
+- el lenguaje operativo debía reducir anglicismos no esenciales y expresiones internas como `managed`, `quick wins`, `intake`, `workflow`, `playbook` y `QA` sin alterar los nombres propios de las capacidades.
+
+El contrato v7.1 se refinó para hablar de modalidades gestionadas, mejoras de rápida ejecución, recepción estructurada, flujos de trabajo, criterios de actuación y control de calidad. El hub también explica el valor de las capacidades antes de enumerar nombres internos.
+
 ## Fuentes v7.1
 
 - `knowledge/20_DESIGN/HOME-COMMERCIAL-CLARITY-v71.md`;
@@ -68,7 +77,7 @@ El materializador y validador de discovery prefieren v7.1 cuando el contrato exi
 ## Capability truth
 
 - Contract Control y Regulatory Control no son SaaS autónomos;
-- Legal Desk es capacidad jurídica gestionada dentro de perímetro, canales, QA, capacidad y SLA pactados cuando correspondan;
+- Legal Desk es capacidad jurídica gestionada dentro de perímetro, canales, control de calidad, capacidad y niveles de servicio pactados cuando correspondan;
 - AI Governance 360 no sustituye auditorías técnicas, seguridad o evaluación científica del modelo;
 - Legal Engineering solo incluye desarrollo, integraciones, agentes, interfaces o automatización cuando el alcance técnico y jurídico lo establece expresamente;
 - no existe promesa de monitoreo automático universal.
@@ -99,6 +108,7 @@ Sin abrir fichas profundas, el usuario debe poder explicar:
 
 - materialización source-driven Home + hub: implementada;
 - seis rutas y capability truth: preservados;
-- Search Discovery y Release Governance: verdes en iteraciones del prototipo;
-- se detectó y corrigió una incompatibilidad con el contrato histórico del resultado de Home reutilizando su título en la nueva sección concreta;
-- PR permanece draft hasta obtener todos los gates verdes sobre el mismo SHA final.
+- Candidate Validation, Canonical Builder, Browser E2E/axe, Search Discovery, Release Governance y Graphify: verdes en el SHA `bde432ba0883c9da1b7a9d8196e083f1e4469a38` previo al refinamiento final de copy/grilla;
+- contraste de las capacidades sobre superficie clara y regresión visual histórica: corregidos;
+- refinamiento final de copy/grilla: en materialización y regresión completa;
+- PR permanece draft hasta obtener nuevamente todos los gates verdes sobre el mismo SHA final.
