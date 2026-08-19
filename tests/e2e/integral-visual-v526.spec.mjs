@@ -4,7 +4,15 @@ test('v6 muestra una primera capa coherente y conserva la señal visual v5.26 en
   await page.goto('./');
   await expect(page.locator('.v6-hero')).toBeVisible();
   await expect(page.locator('#v6-situations')).toBeVisible();
-  await expect(page.locator('.v6-home-method')).toBeVisible();
+
+  const commercialClarity = page.locator('[data-v71-commercial-clarity="home"]');
+  if (await commercialClarity.count()) {
+    await expect(commercialClarity).toBeVisible();
+    await expect(commercialClarity.locator('[data-v71-intervention]')).toHaveCount(4);
+  } else {
+    await expect(page.locator('.v6-home-method')).toBeVisible();
+  }
+
   await expect(page.locator('.v6-evidence')).toBeVisible();
 
   const signal = page.locator('[data-integral-v526="signal"]');
