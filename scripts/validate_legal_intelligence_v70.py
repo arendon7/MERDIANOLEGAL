@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Fail-closed validation for the v7 Legal Intelligence architecture contract.
 
-This validator intentionally validates architecture/capability truth only. It does not
-materialize public HTML and therefore does not change the certified v6.3 surface count.
+Validates architecture, release phase and capability truth. The v7 family may move
+from prototype to release-candidate/certified without changing the capability
+boundaries that protect the public offer.
 """
 
 from __future__ import annotations
@@ -40,6 +41,21 @@ NO_SAAS_CLAIM_IDS = {
     "meridiano-counsel",
 }
 
+PHASES = {
+    "prototype": {
+        "versions": {"7.0.0-draft"},
+        "baselines": {"6.3.0", "6.4.0"},
+    },
+    "release-candidate": {
+        "versions": {"7.0.0"},
+        "baselines": {"6.4.0"},
+    },
+    "certified": {
+        "versions": {"7.0.0"},
+        "baselines": {"6.4.0"},
+    },
+}
+
 
 def fail(message: str) -> None:
     raise SystemExit(f"v7 Legal Intelligence validation failed: {message}")
@@ -51,12 +67,16 @@ def main() -> None:
 
     data = json.loads(CONTRACT.read_text(encoding="utf-8"))
 
-    if data.get("version") != "7.0.0-draft":
-        fail("version must remain 7.0.0-draft until a public v7 release is explicitly opened")
-    if data.get("status") != "prototype":
-        fail("architecture contract must remain prototype in this phase")
-    if data.get("public_release_unchanged") != "6.3.0":
-        fail("prototype must explicitly preserve public release 6.3.0")
+    phase = data.get("status")
+    if phase not in PHASES:
+        fail(f"unsupported architecture release phase: {phase!r}")
+    phase_rule = PHASES[phase]
+    if data.get("version") not in phase_rule["versions"]:
+        fail(f"version {data.get('version')!r} is invalid for phase {phase!r}")
+    if data.get("public_release_unchanged") not in phase_rule["baselines"]:
+        fail(
+            f"public baseline {data.get('public_release_unchanged')!r} is invalid for phase {phase!r}"
+        )
 
     brand = data.get("brand") or {}
     if brand.get("master") != "Meridiano Legal":
@@ -81,7 +101,7 @@ def main() -> None:
         if not item.get("problem") or not item.get("transformation"):
             fail(f"{sid}: problem and transformation are mandatory")
         if item.get("software_product_claim") is not False:
-            fail(f"{sid}: software_product_claim must remain false in prototype phase")
+            fail(f"{sid}: software_product_claim must remain false until that capability is separately certified")
 
         sources = item.get("canonical_sources", [])
         if not isinstance(sources, list):
@@ -104,9 +124,9 @@ def main() -> None:
 
     counsel = next(item for item in solutions if item["id"] == "meridiano-counsel")
     if counsel.get("status") != "not-public-product":
-        fail("Meridiano Counsel must remain not-public-product in prototype phase")
+        fail("Meridiano Counsel must remain not-public-product until separately certified")
     if counsel.get("public_transactional_offer") is not False:
-        fail("Meridiano Counsel cannot be a public transactional offer in prototype phase")
+        fail("Meridiano Counsel cannot become a public transactional offer by release-phase change")
     if counsel.get("canonical_sources") != []:
         fail("Meridiano Counsel cannot borrow current offer truth to imply a certified product")
 
@@ -123,7 +143,7 @@ def main() -> None:
     if regulatory_control.get("status") != "implementation-pattern":
         fail("Regulatory Control must remain an implementation-pattern until product capability exists")
 
-    print("v7 Legal Intelligence architecture contract: PASS")
+    print(f"v7 Legal Intelligence architecture contract: PASS ({phase}, baseline {data['public_release_unchanged']})")
 
 
 if __name__ == "__main__":
