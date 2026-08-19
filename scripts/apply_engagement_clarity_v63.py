@@ -121,7 +121,7 @@ def ensure_stylesheet(text: str) -> str:
     materializadores posteriores como Fit & Scope v6.4.
     """
     css_pattern = re.compile(
-        rf'(?m)^(?P<indent>[ \t]*)<link rel="stylesheet" href="{re.escape(CSS_HREF)}">[ \t]*$'
+        rf'(?m)^(?P<indent>[ \t]*)<link rel="stylesheet" href="{re.escape(CSS_HREF)}">[ \t]*(?:\r?\n)?'
     )
     token_pattern = re.compile(
         rf'(?m)^(?P<indent>[ \t]*)<link rel="stylesheet" href="{re.escape(V6_TOKENS_HREF)}">[ \t]*$'
@@ -138,9 +138,7 @@ def ensure_stylesheet(text: str) -> str:
         existing = css_matches[0]
         if existing.start() < token.start():
             return text
-        # Si existe pero quedó después de tokens, moverla sin normalizar más HTML.
         text = text[:existing.start()] + text[existing.end():]
-        text = re.sub(r'(?m)^\r?\n', "", text[existing.start():], count=1) if False else text
         token_matches = list(token_pattern.finditer(text))
         if len(token_matches) != 1:
             raise RuntimeError(f"ficha perdió la hoja ancla {V6_TOKENS_HREF} al reordenar v6.3")
