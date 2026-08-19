@@ -68,7 +68,19 @@ El prototype permanece `readiness-disabled`:
 
 El `source` permanece visible en URL y el handoff histórico continúa mostrando `pathname+search` en el campo `Origen` del mensaje que el usuario revisa antes de enviar por WhatsApp.
 
-## Archivos source-driven previstos
+## Estado de materialización
+
+Las siete superficies fueron materializadas desde `scripts/apply_commercial_evidence_v74.py` y Graphify fue restaurado byte-for-byte desde `main` antes del commit generado.
+
+El boundary permanente del PR #180 es de **16 archivos**:
+
+- 9 archivos de source/QA/gobernanza (incluida esta memoria y el hook del normalizador);
+- 7 superficies HTML materializadas;
+- ningún workflow temporal adicional.
+
+La primera ejecución de Graphify que produjo el commit termina con freshness obsoleta por diseño, porque su propio push mueve el head durante el job. Esa ejecución no cuenta como certificación; la ronda válida debe ejecutarse sobre un SHA posterior normal, sin modificación de workflows.
+
+## Archivos source-driven
 
 - `assets/data/v7/commercial-evidence-v74.json`.
 - `assets/js/v7/commercial-evidence-v74.js`.
