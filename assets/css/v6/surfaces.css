@@ -20,6 +20,14 @@ body[data-experience-system="v6"] .detail-header-actions .btn-outline { display:
 .v6-artifact-step span { color: var(--v6-gold); font-size: .66rem; font-weight: 900; }
 .v6-artifact-step strong { color: var(--v6-navy); font-size: .82rem; line-height: 1.35; }
 
+/* v7.1 reuses evidence rows on a light commercial surface. Keep the original
+   navy evidence treatment untouched and scope the light-surface contrast here. */
+[data-v71-installed-list="true"] { border-top-color: var(--v6-line); }
+[data-v71-installed-list="true"] .v6-evidence-row { border-bottom-color: var(--v6-line); }
+[data-v71-installed-list="true"] .v6-evidence-row b { color: var(--v6-navy); }
+[data-v71-installed-list="true"] .v6-evidence-row span { color: var(--v6-muted); }
+[data-v71-installed-list="true"] .v6-evidence-row span > strong { color: var(--v6-navy); }
+
 .v6-detail-hero .v6-hero-grid { grid-template-columns: minmax(0,1fr); max-width: 1080px; }
 .v6-detail-hero .v6-display { max-width: 15ch; }
 .v6-detail-meta {
