@@ -1,7 +1,7 @@
 {
-  "version": "7.0.0-draft",
-  "status": "prototype",
-  "public_release_unchanged": "6.3.0",
+  "version": "7.0.0",
+  "status": "release-candidate",
+  "public_release_unchanged": "6.4.0",
   "prototype_surface": "soluciones/ordenar-operacion-juridica.html",
   "brand": {
     "master": "Meridiano Legal",
