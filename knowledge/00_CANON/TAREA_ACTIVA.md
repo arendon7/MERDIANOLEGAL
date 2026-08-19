@@ -4,25 +4,22 @@ Actualizado: 2026-08-19.
 
 ## Frente vigente
 
-**v7.2 — Buying Clarity / fichas profundas y Centro Demo.**
+**v7.2.0 — Buying Clarity / release candidate.**
 
-Rama: `feat/v720-buying-clarity`.
+Rama: `release/v720-buying-clarity-candidate`.
 
-PR: `#174` — draft; en regresión final same-SHA.
+La fase funcional quedó certificada y fusionada mediante PR #174.
 
-Baseline certificado: **v7.1.0 — Commercial Clarity**, con `main == stable == 0a01942c9a2b7868768e0b454af5a600c65ad01a` al abrir esta ola.
+- SHA funcional certificado: `5e9b04487b92b0e47327d1f61880d2a4ac48c629`.
+- Merge funcional: `0b8211ce9aeecda737bec0a11af50496cc6aeccf`.
+- 9/9 workflows aplicables verdes sobre el SHA funcional.
+- Baseline anterior certificado: v7.1.0.
 
-## Problema observable
+## Qué cambia en v7.2
 
-La v7.1 permite entender mejor desde Home dónde encaja una necesidad y cómo puede intervenir Meridiano. Sin embargo, las 16 fichas profundas todavía distribuían la información de compra entre Resultado/Decisión, Encaje, Entregables, Perímetro, Proceso, Condiciones, Límites y Profundidad.
+Las 16 fichas profundas incorporan inmediatamente después del hero un **Resumen de contratación** construido exclusivamente desde los catálogos canónicos de 8 productos + 8 servicios.
 
-La información material ya existía en los catálogos canónicos; el problema era de compresión y descubrimiento.
-
-## Solución fase 1
-
-Cada una de las 16 fichas incorpora inmediatamente después del hero un **Resumen de contratación** construido exclusivamente desde los catálogos v4.1/v4.2.
-
-Hace visible:
+Hace visible, antes de recorrer toda la profundidad jurídica:
 
 1. modalidad;
 2. duración/cadencia;
@@ -31,7 +28,7 @@ Hace visible:
 5. principales entregables;
 6. requisitos para empezar;
 7. criterios de cierre o verificación de prestación;
-8. rutas de ampliación/continuidad.
+8. rutas de ampliación/continuidad expresamente no incluidas salvo pacto.
 
 ## Fuente de verdad
 
@@ -40,88 +37,54 @@ Hace visible:
 - `knowledge/20_DESIGN/BUYING-CLARITY-v72.md`;
 - `assets/data/v7/buying-clarity-v72.json`.
 
-No se modifica el contenido canónico de los 8 productos + 8 servicios.
+No se modifica el contenido jurídico canónico ni se introducen tarifas nuevas.
 
-## Decisión de compatibilidad
+## Arquitectura e idempotencia
 
-La fase 1 **preserva hero y nav sticky históricos**.
+- `scripts/apply_buying_clarity_v72.py`: materialización source-driven.
+- `scripts/validate_buying_clarity_v72.py`: truth + capability boundaries + lifecycle.
+- `scripts/normalize_experience_compat_v60.py`: reaplica Buying Clarity después de reconstrucciones v6.
+- `scripts/apply_engagement_clarity_v63.py`: compatibilidad de composición de stylesheet sin cambio de truth.
+- `tests/e2e/buying-clarity-v72.spec.mjs`: cobertura de las 16 fichas.
+- `.github/workflows/v72-buying-clarity-candidate.yml`: gate específico.
 
-El resumen se materializa entre hero y nav y fuera del `<main>` reconstruido por v6. `scripts/normalize_experience_compat_v60.py` reaplica y valida Buying Clarity después de las normalizaciones históricas.
+El ciclo funcional resolvió la coexistencia v6.3/v6.4/v7.2 sin tolerar drift: Canonical Builder terminó con first-pass boundary e idempotencia verdes.
 
-Además:
+## Candidate formal
 
-- `apply_buying_clarity_v72.py` no consume saltos de línea vecinos al normalizar su stylesheet;
-- `apply_engagement_clarity_v63.py` preserva una hoja v6.3 ya correctamente situada antes de `tokens.css`, evitando drift cosmético frente a capas posteriores;
-- no se añade un segundo enlace a `#v6-engagement`;
-- el nav sticky conserva la única navegación canónica a “Para empezar”;
-- la CTA primaria conserva el handoff existente;
-- las CTAs secundarias históricas permanecen intactas;
-- el resumen enlaza únicamente a Perímetro y Entregables para profundización directa.
+Este branch cambia únicamente lifecycle/release metadata respecto de la funcionalidad ya fusionada:
 
-## Implementación fase 1
+- `version.json`: 7.1.0 → 7.2.0, canal `github-pages-buying-clarity-candidate`;
+- `assets/data/v7/buying-clarity-v72.json`: prototype → `release-candidate`;
+- `scripts/validate_buying_clarity_v72.py`: lifecycle phase-aware `prototype → release-candidate → certified`;
+- esta memoria de tarea.
 
-- materializador idempotente: `scripts/apply_buying_clarity_v72.py`;
-- validador source-truth: `scripts/validate_buying_clarity_v72.py`;
-- integración con normalizador canónico: `scripts/normalize_experience_compat_v60.py`;
-- compatibilidad de composición v6.3: `scripts/apply_engagement_clarity_v63.py`;
-- superficie visual: `assets/css/v7/buying-clarity-v72.css`;
-- gate dedicado: `.github/workflows/v72-buying-clarity-candidate.yml`;
-- E2E: `tests/e2e/buying-clarity-v72.spec.mjs`;
-- materialización: 16/16 fichas;
-- supplements visibles pero expresamente fuera del alcance base salvo pacto.
-
-## Boundary final fase 1
-
-Comparado contra el baseline certificado, la ola queda limitada a **26 archivos permanentes**:
-
-- 16 fichas HTML materializadas;
-- contrato y brief v7.2;
-- CSS v7.2;
-- materializador y validador v7.2;
-- integración del normalizador canónico;
-- compatibilidad de composición en el materializador v6.3, sin alterar truth jurídico;
-- E2E;
-- workflow candidato;
-- tarea activa.
-
-No quedan workflows temporales ni cambios en Home, hub de Soluciones, precios o catálogos canónicos.
-
-## Implementación fase 2
-
-Una vez certificada la fase 1, mejorar el **Centro Demo** para conectar artefactos demostrativos con resultados/entregables de las fichas, siempre con etiquetado explícito `DEMO` y sin presentar Meridiano Empresas como capability productiva no habilitada.
+No debe introducir cambios nuevos en HTML, CSS funcional, catálogos o capacidades.
 
 ## Capability truth preservado
 
 - Meridiano Legal permanece como marca madre;
 - Legal Intelligence continúa como capa transversal;
-- seis rutas públicas permanecen intactas;
-- 8 productos + 8 servicios permanecen como verdad contractual;
+- seis rutas públicas y 8 productos + 8 servicios canónicos permanecen intactos;
 - no crear SaaS, CLM, CRM, portal, firma, pagos, agenda, upload o monitoreo automático implícito;
 - Meridiano Counsel permanece fuera de oferta pública;
-- no introducir tarifas nuevas sin pricing truth aprobado.
+- suplementos y ampliaciones no se presentan como incluidos;
+- no introducir tarifas sin pricing truth aprobado.
 
-## Criterio de aceptación fase 1
+## Gate del candidate
 
-En la parte superior de cualquiera de las 16 fichas, sin recorrer toda la página, el visitante debe poder explicar:
+Antes de merge:
 
-1. qué modalidad contrata;
-2. cuánto dura;
-3. qué cantidades principales cubre;
-4. qué entregables principales recibe;
-5. qué debe aportar para empezar;
-6. cómo se valida cierre/operación;
-7. cómo puede ampliarse el alcance;
-8. dónde consultar el detalle completo.
+1. fijar SHA final;
+2. superar todos los workflows aplicables sobre ese mismo SHA;
+3. fusionar únicamente con `expected_head_sha`;
+4. observar Builder canónico;
+5. exigir Pages quality/deploy → live smoke → Browser/axe + Lighthouse;
+6. permitir únicamente promoción automática de `stable`;
+7. terminar con `main == stable` antes del cierre documental.
 
-## Estado
+`stable` no se mueve manualmente.
 
-- baseline v7.1 certificado y `main == stable` confirmado;
-- brief y contrato source-driven implementados;
-- CSS/materializador/validator/E2E/gate implementados;
-- 16/16 fichas materializadas;
-- duplicación inicial de `#v6-engagement` corregida;
-- Buying Clarity integrado al normalizador canónico;
-- composición de stylesheets v6.3/v6.4/v7.2 endurecida sin cambiar contenido jurídico;
-- canonicalización fuerte validó simultáneamente Engagement, Fit & Scope y Buying Clarity;
-- boundary final limpio: 26 archivos permanentes, cero workflows temporales;
-- pendiente: cerrar todos los workflows aplicables sobre un único SHA normal de contenido, marcar PR #174 ready y promover v7.2 siguiendo Builder → Pages → snapshot `stable`.
+## Fase 2 pendiente
+
+Después de certificar productivamente v7.2 fase 1, mejorar el **Centro Demo** para mostrar cómo se materializan Legal AI Transformation, Contract Control, AI Governance 360, Regulatory Control y Legal Desk mediante escenarios ficticios, artefactos y resultados demostrativos. Todo debe quedar marcado como DEMO y sin presentar Meridiano Empresas como capability productiva no habilitada.
