@@ -82,6 +82,9 @@ jobs:
           if [ -f assets/data/v6/fit-scope-clarity-v64.json ]; then
             python3 scripts/apply_fit_scope_clarity_v64.py
           fi
+          if [ -f assets/data/v6/delivery-plan-clarity-v65.json ]; then
+            python3 scripts/apply_delivery_plan_clarity_v65.py
+          fi
           python3 scripts/validate_experience_v60.py
           python3 scripts/validate_experience_solutions_v60.py
           python3 scripts/validate_experience_sectors_v60.py
@@ -93,6 +96,9 @@ jobs:
           python3 scripts/validate_editorial_context.py
           if [ -f assets/data/v6/fit-scope-clarity-v64.json ]; then
             python3 scripts/validate_fit_scope_clarity_v64.py
+          fi
+          if [ -f assets/data/v6/delivery-plan-clarity-v65.json ]; then
+            python3 scripts/validate_delivery_plan_clarity_v65.py
           fi
           git diff --exit-code -- index.html catalog-home-v32.js decision-flow.js site-v3.js page-context.js sitemap.xml robots.txt runtime-config.js site-status.json servicios productos firma.html perspectivas perspectivas.html sectores soluciones experiencia.html demo.html 404.html aviso-legal.html privacidad.html terminos.html manifest.webmanifest CNAME scripts/build_catalog_shells.py
       - name: Validate HTML and local resources
@@ -191,6 +197,7 @@ jobs:
           node --check tests/e2e/capability-truth.spec.mjs
           node --check tests/e2e/offer-narrative.spec.mjs
           node --check tests/e2e/fit-scope-clarity-v64.spec.mjs
+          node --check tests/e2e/delivery-plan-clarity-v65.spec.mjs
           node --check tests/e2e/ci-summary-reporter.mjs
           node --check scripts/run_quality_v55.mjs
           node --check scripts/render_catalog_static.mjs
@@ -211,6 +218,7 @@ jobs:
           python3 -m json.tool authority-v53.json > /dev/null
           python3 -m json.tool measurement-contract-v53.json > /dev/null
           python3 -m json.tool assets/data/v6/fit-scope-clarity-v64.json > /dev/null
+          python3 -m json.tool assets/data/v6/delivery-plan-clarity-v65.json > /dev/null
           python3 -m json.tool commercial-intake-v59.json > /dev/null
           python3 -m json.tool conversion-close-v510.json > /dev/null
           python3 -m json.tool recommendation-v514.json > /dev/null
