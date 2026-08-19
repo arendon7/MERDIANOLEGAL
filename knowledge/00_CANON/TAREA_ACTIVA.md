@@ -4,19 +4,27 @@ Actualizado: 2026-08-19.
 
 ## Frente vigente
 
-**v7.4 — Commercial Evidence Readiness / prototype.**
+**v7.4.0 — Commercial Evidence Readiness / release candidate.**
 
-Rama: `feat/v740-commercial-evidence-readiness`.
+Rama: `release/v740-commercial-evidence-readiness-candidate`.
 
-Baseline certificada: **v7.3.0 — Legal Intelligence Demo**, con `main == stable == 61790b4bdf0bfe4dd1143a414288559d664826e6` y canal `github-pages-production-legal-intelligence-demo-certified`.
+Baseline estable: **v7.3.0 — Legal Intelligence Demo production-certified**, `stable == 61790b4bdf0bfe4dd1143a414288559d664826e6`.
 
-## Problema que resuelve
+## Evidencia funcional ya cerrada
 
-v7.0–v7.3 hicieron más clara, comprable y demostrable la capa Meridiano Legal Intelligence, pero Measurement v6.1 solo exportaría etapas agregadas del funnel y deliberadamente descarta `target/event`. Hoy no existe una atribución comercial cerrada para saber qué capacidad Legal Intelligence originó una intención de contacto.
+La fase funcional v7.4 fue certificada antes de este candidate:
 
-## Hipótesis v7.4
+- SHA funcional final: `fcd929a63f0cdede944cf1767ec03346711e6ee8`.
+- **12/12 workflows aplicables same-SHA: PASS**.
+- Incluidos: V7.4 Commercial Evidence, V7.3 Legal Intelligence Demo, V7.2 Buying Clarity, V6 Candidate Validation, Canonical Builder Equivalence, Engagement Clarity, Fit & Scope, Search Discovery, Measurement, Browser/axe, Release Governance y Graphify.
+- PR funcional #180 fusionado.
+- Merge funcional: `d781b3296b325d3d4cd6974523b01c27d77ebaf2`.
 
-Preparar una capa local y anónima que permita atribuir interacciones a cinco sujetos comerciales sin activar analytics externo ni crear perfiles:
+`stable` no se movió con el merge funcional y continúa representando la release certificada v7.3 hasta que exista un candidate formal v7.4 publicado y validado.
+
+## Qué contiene v7.4
+
+Commercial Evidence Readiness prepara atribución comercial local y anónima para cinco sujetos públicos de Meridiano Legal Intelligence:
 
 1. Legal AI Transformation.
 2. Contract Control.
@@ -24,92 +32,75 @@ Preparar una capa local y anónima que permita atribuir interacciones a cinco su
 4. Regulatory Control.
 5. Meridiano Legal Desk.
 
-Cada sujeto usa un token público allowlisted `source=li-*`. Cualquier source diferente se ignora.
+Solo admite cuatro interacciones:
 
-## Interacciones admitidas
-
-- `offer_view`.
-- `demo_offer_open`.
-- `contact_intent`.
+- `offer_view`;
+- `demo_offer_open`;
+- `contact_intent`;
 - `handoff_prepared`.
 
-Ninguna interacción equivale a usuario único, mensaje enviado, entrega, lectura, aceptación, contratación o cliente.
+La atribución usa únicamente tokens públicos allowlisted `source=li-*`. Cualquier source libre o manipulado se ignora.
 
-## Boundary funcional
+## Separación lifecycle / estado operativo
 
-Commercial Evidence v7.4 se carga únicamente en siete superficies:
+En v7.4 el lifecycle de release y el estado de analítica son conceptos distintos.
 
-1. `index.html`.
-2. `experiencia.html`.
-3. `servicios/legal-operations.html`.
-4. `productos/sistema-contractual-empresarial.html`.
-5. `productos/programa-gobernanza-ia.html`.
-6. `productos/proyecto-regulado-estructurado.html`.
-7. `soluciones/ordenar-operacion-juridica.html`.
+- `prototype`: contrato `7.4.0-prototype*` sobre release pública v7.3 certificada.
+- `release-candidate`: contrato y runtime `7.4.0`, versión pública `7.4.0`, canal `github-pages-commercial-evidence-readiness-candidate`.
+- `certified`: contrato `7.4.0`, versión pública `7.4.0`, canal `github-pages-production-commercial-evidence-readiness-certified`.
 
-No cambia navegación, formulario, campos, anchors, catálogos, precios o capabilities.
+En las tres fases el estado operativo permanece **`readiness-disabled`**.
 
-## Privacidad / capability truth
+Esto significa que promover v7.4 a candidate o certified **no activa analítica externa**.
 
-El prototype permanece `readiness-disabled`:
+## Privacidad y límites preservados
 
-- analytics externo deshabilitado;
-- provider `none`;
-- cero network transport propio;
-- cero cookies;
-- cero local/session storage;
-- cero identificadores cross-session;
-- cero fingerprinting;
-- cero PII;
-- cero contenido de formulario o texto libre en eventos;
-- buffer máximo de 24 eventos, solo en memoria de la pestaña;
-- payload local limitado a `subject + interaction`;
-- `site-config.json` y Measurement v6.1 siguen production-disabled.
+- `site-config.json`: analytics `enabled=false`, provider `none`, site_id vacío.
+- Measurement v6.1 permanece `readiness-disabled` / production-disabled.
+- Cero requests propios a Plausible, GA4, Umami u otro proveedor.
+- Cero cookies, `localStorage`, `sessionStorage`, IndexedDB o identificadores cross-session.
+- Cero fingerprinting.
+- Cero PII, contenido de formulario o texto libre en eventos.
+- Buffer máximo de 24 eventos, solo en memoria de la pestaña.
+- Payload local limitado a `subject + interaction`.
+- `contact_intent` no significa mensaje enviado.
+- `handoff_prepared` no significa envío, entrega, lectura, aceptación, contratación ni cliente.
 
-El `source` permanece visible en URL y el handoff histórico continúa mostrando `pathname+search` en el campo `Origen` del mensaje que el usuario revisa antes de enviar por WhatsApp.
+Una futura activación externa requiere otra decisión/release, proveedor real, site ID real, revisión de metadata del proveedor y actualización previa de la política de privacidad.
 
-## Estado de materialización
+## Boundary del candidate formal
 
-Las siete superficies fueron materializadas desde `scripts/apply_commercial_evidence_v74.py` y Graphify fue restaurado byte-for-byte desde `main` antes del commit generado.
+El candidate modifica únicamente seis fuentes de lifecycle/release:
 
-El boundary permanente del PR #180 es de **16 archivos**:
+1. `version.json` — 7.3.0 certified → 7.4.0 candidate.
+2. `assets/data/v7/commercial-evidence-v74.json` — añade lifecycle `release-candidate` y fija versión 7.4.0, manteniendo status `readiness-disabled`.
+3. `assets/js/v7/commercial-evidence-v74.js` — metadata runtime prototype → 7.4.0; comportamiento y límites permanecen iguales.
+4. `scripts/apply_commercial_evidence_v74.py` — máquina de estados lifecycle fail-closed.
+5. `scripts/validate_commercial_evidence_v74.py` — valida lifecycle + versión/canal + readiness-disabled.
+6. esta memoria.
 
-- 9 archivos de source/QA/gobernanza (incluida esta memoria y el hook del normalizador);
-- 7 superficies HTML materializadas;
-- ningún workflow temporal adicional.
+No modifica HTML, navegación, formularios, catálogos, precios, capabilities, `site-config.json`, privacidad, E2E ni workflows.
 
-La primera ejecución de Graphify que produjo el commit termina con freshness obsoleta por diseño, porque su propio push mueve el head durante el job. Esa ejecución no cuenta como certificación; la ronda válida debe ejecutarse sobre un SHA posterior normal, sin modificación de workflows.
+## Gate del candidate
 
-## Archivos source-driven
+Antes de fusionar:
 
-- `assets/data/v7/commercial-evidence-v74.json`.
-- `assets/js/v7/commercial-evidence-v74.js`.
-- `knowledge/20_DESIGN/COMMERCIAL-EVIDENCE-v74.md`.
-- `scripts/apply_commercial_evidence_v74.py`.
-- `scripts/validate_commercial_evidence_v74.py`.
-- `scripts/normalize_experience_compat_v60.py`.
-- `tests/e2e/commercial-evidence-v74.spec.mjs`.
-- `.github/workflows/v74-commercial-evidence-readiness.yml`.
-- siete superficies HTML materializadas.
-- esta memoria de tarea.
+1. confirmar boundary exacto del PR;
+2. congelar un único SHA final;
+3. exigir todos los workflows aplicables verdes sobre ese mismo SHA;
+4. preservar `apply_commercial_evidence_v74.py --check` idempotente;
+5. mantener v6.1 Measurement PASS con analytics externos deshabilitados;
+6. mantener Browser E2E/axe PASS;
+7. fusionar únicamente con `expected_head_sha`.
 
-## Gate del prototype
+Después del merge candidate:
 
-Antes de considerar la fase funcional lista:
+1. Builder canónico;
+2. Pages quality/deploy;
+3. live smoke;
+4. Browser E2E desplegado;
+5. Lighthouse;
+6. promoción automática de `stable`;
+7. confirmar `main == stable` y `stable/version.json` = 7.4.0 candidate.
 
-1. materializar exactamente las siete superficies;
-2. confirmar idempotencia `apply --check`;
-3. mantener Measurement v6.1 PASS y analytics production-disabled;
-4. E2E debe probar propagación allowlisted de source, eventos locales, source inválido ignorado y ausencia de requests a proveedores analytics;
-5. superar Builder/Candidate, Engagement, Fit & Scope, Buying Clarity, Legal Intelligence Demo, Search, Release Governance, Graphify, Browser/axe y Measurement;
-6. congelar un único SHA same-SHA antes de cualquier merge.
-
-## No objetivos
-
-- No activar Plausible, GA4, Umami u otro proveedor.
-- No introducir pageviews automáticos.
-- No identificar usuarios.
-- No afirmar conversiones que la web estática no conoce.
-- No cambiar el copy comercial por el solo hecho de instrumentarlo.
-
-Una eventual activación externa será otra decisión y otra release, con proveedor, site ID, política de privacidad, retención y semántica aprobados expresamente.
+Solo después se abrirá un cierre documental separado `candidate → production-certified`. `stable` no se mueve manualmente.

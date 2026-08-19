@@ -1,5 +1,6 @@
 {
-  "version": "7.4.0-prototype-1",
+  "version": "7.4.0",
+  "lifecycle": "release-candidate",
   "status": "readiness-disabled",
   "baseline": "7.3.0",
   "title": "Commercial Evidence Readiness",

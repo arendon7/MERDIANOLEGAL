@@ -1,5 +1,5 @@
 (() => {
-  const VERSION = '7.4.0-prototype-1';
+  const VERSION = '7.4.0';
   const MAX_EVENTS = 24;
   const SOURCE_PREFIX = 'li-';
   const SUBJECTS = Object.freeze({
