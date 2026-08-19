@@ -95,8 +95,11 @@ jobs:
             scripts/normalize_experience_compat_v60.py \
             tests/e2e/legal-intelligence-v70.spec.mjs
 
-          python3 scripts/normalize_experience_compat_v60.py
           python3 scripts/validate_legal_intelligence_v70.py
+          python3 scripts/apply_legal_intelligence_prototype_v70.py
+          python3 scripts/apply_ai_governance_360_prototype_v70.py
+          python3 scripts/apply_regulatory_control_prototype_v70.py
+          python3 scripts/apply_legal_intelligence_discovery_v70.py
           python3 scripts/validate_legal_intelligence_prototype_v70.py
           python3 scripts/validate_legal_intelligence_deep_offers_v70.py
           python3 scripts/validate_ai_governance_360_prototype_v70.py
