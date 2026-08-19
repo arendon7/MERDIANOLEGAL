@@ -132,7 +132,12 @@ def strip_managed(text: str, start: str, end: str) -> str:
         return text
     if text.count(start) != 1 or text.count(end) != 1:
         raise RuntimeError(f"Marcadores parciales/duplicados: {start}")
-    pattern = re.compile(re.escape(start) + r".*?" + re.escape(end) + r"[ \t]*(?:\r?\n)?", re.S)
+    # La indentación pertenece al bloque gestionado. Retirarla evita acumular
+    # espacios en segundas pasadas sin consumir líneas vecinas.
+    pattern = re.compile(
+        r"(?m)^[ \t]*" + re.escape(start) + r".*?" + re.escape(end) + r"[ \t]*(?:\r?\n)?",
+        re.S,
+    )
     return pattern.sub("", text, count=1)
 
 
