@@ -1,0 +1,46 @@
+name: Diagnostic v6.4 documentary closure
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/diag-v64-doc-closure.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  probe:
+    name: Inspect documentary closure Pages run
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Locate recent Pages runs and jobs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/pages.yml/runs?per_page=10" > /tmp/pages-runs.json
+          python3 - <<'PY'
+          import json
+          data=json.load(open('/tmp/pages-runs.json'))
+          for run in data.get('workflow_runs', []):
+              print('RUN', run['id'], 'status='+str(run['status']), 'conclusion='+str(run.get('conclusion')), 'event='+str(run.get('event')), 'head_sha='+str(run.get('head_sha')), 'created='+str(run.get('created_at')), 'updated='+str(run.get('updated_at')))
+          PY
+          RUN_ID="$(python3 - <<'PY'
+          import json
+          data=json.load(open('/tmp/pages-runs.json'))
+          runs=[r for r in data.get('workflow_runs', []) if r.get('event') in ('workflow_run','workflow_dispatch')]
+          print(runs[0]['id'] if runs else '')
+          PY
+          )"
+          test -n "$RUN_ID"
+          echo "PROBED_RUN_ID=$RUN_ID"
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID}/jobs?per_page=100" > /tmp/pages-jobs.json
+          python3 - <<'PY'
+          import json
+          data=json.load(open('/tmp/pages-jobs.json'))
+          for job in data.get('jobs', []):
+              print('JOB', job['id'], job['name'], 'status='+str(job['status']), 'conclusion='+str(job.get('conclusion')), 'started='+str(job.get('started_at')), 'completed='+str(job.get('completed_at')))
+          PY
