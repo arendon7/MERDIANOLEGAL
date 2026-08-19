@@ -1,0 +1,75 @@
+{
+  "version": "7.0.0-prototype-5",
+  "status": "public-discovery-prototype",
+  "principle": "Meridiano Legal Intelligence se presenta como una capa transversal sobre las rutas y ofertas existentes, no como un catálogo o unidad comercial paralela.",
+  "home": {
+    "target": "index.html",
+    "insert_before": "<section class=\"v6-section v6-outcomes\"",
+    "eyebrow": "MERIDIANO LEGAL INTELLIGENCE",
+    "title": "Cuando el reto no termina en una opinión, convertimos criterio jurídico en una forma de trabajar, controlar y decidir.",
+    "lead": "Legal Intelligence es la capa de Meridiano que combina criterio jurídico, diseño de procesos, inteligencia artificial y tecnología aplicada. No reemplaza las prácticas jurídicas ni crea un catálogo paralelo: conecta problemas concretos con diagnóstico, implementación, control u operación cuando esa combinación produce más valor.",
+    "paths": [
+      {
+        "number": "01",
+        "label": "DIAGNOSTICAR",
+        "title": "Identificar dónde existe fricción y qué conviene intervenir",
+        "body": "Legal AI Diagnostic permite priorizar procesos, riesgos, datos y casos de uso antes de invertir en automatización o rediseño.",
+        "href": "soluciones/ordenar-operacion-juridica.html#v7-legal-intelligence",
+        "action": "Explorar diagnóstico y transformación"
+      },
+      {
+        "number": "02",
+        "label": "TRANSFORMAR",
+        "title": "Rediseñar procesos jurídicos y convertirlos en capacidad operable",
+        "body": "Legal AI Transformation y Legal Engineering conectan reglas, responsables, documentos, métricas, automatizaciones e integraciones dentro de un alcance verificable.",
+        "href": "servicios/legal-operations.html#v7-legal-ai-transformation",
+        "action": "Revisar transformación jurídica"
+      },
+      {
+        "number": "03",
+        "label": "CONTROLAR",
+        "title": "Instalar disciplina sobre contratos, IA y proyectos regulados",
+        "body": "Contract Control, AI Governance 360 y Regulatory Control convierten obligaciones, decisiones, hitos y evidencia en sistemas de control proporcionales a cada contexto.",
+        "href": "soluciones/index.html#v7-legal-intelligence-discovery",
+        "action": "Ver dónde aplica Legal Intelligence"
+      },
+      {
+        "number": "04",
+        "label": "OPERAR",
+        "title": "Asumir capacidad recurrente cuando el problema ya no es puntual",
+        "body": "Meridiano Legal Desk y las modalidades de gobierno o seguimiento recurrente permiten sostener procesos definidos bajo perímetro, responsables, QA, capacidad y niveles de servicio acordados.",
+        "href": "soluciones/ordenar-operacion-juridica.html#v7-legal-intelligence",
+        "action": "Explorar capacidad recurrente"
+      }
+    ],
+    "boundary": "Las denominaciones de Legal Intelligence describen recorridos y formas de intervención. Los entregables, tiempos, honorarios, canales, tecnología y niveles de servicio continúan gobernados por la oferta canónica y la propuesta específica."
+  },
+  "hub": {
+    "target": "soluciones/index.html",
+    "insert_before": "<section class=\"v6-section v6-hub-routes\" id=\"v6-solutions-routes\"",
+    "eyebrow": "LEGAL INTELLIGENCE · CAPA TRANSVERSAL",
+    "title": "Tres situaciones ya existentes concentran la capa de transformación, control y tecnología aplicada.",
+    "lead": "Las seis rutas siguen siendo la entrada principal. Legal Intelligence no añade una séptima: hace visible una forma más profunda de intervenir cuando el problema combina criterio jurídico, operación, datos, IA o tecnología.",
+    "areas": [
+      {
+        "title": "Operación jurídica y contratos",
+        "body": "Legal AI Diagnostic, Legal AI Transformation, Legal Desk, Contract Control y Legal Engineering se articulan desde la ruta de Legal Operations y sus ofertas canónicas.",
+        "href": "ordenar-operacion-juridica.html#v7-legal-intelligence",
+        "action": "Explorar operación jurídica"
+      },
+      {
+        "title": "Gobierno de inteligencia artificial",
+        "body": "AI Governance 360 organiza Readiness, Implementación y Managed Governance sin confundir gobierno jurídico con auditoría técnica o certificación.",
+        "href": "gobernar-inteligencia-artificial-empresa.html#v7-ai-governance-360",
+        "action": "Explorar AI Governance 360"
+      },
+      {
+        "title": "Proyectos y operaciones reguladas",
+        "body": "Regulatory Control conecta estructuración, permisos, condiciones, obligaciones, hitos y seguimiento dentro del perímetro regulatorio real del proyecto.",
+        "href": "estructurar-proyecto-regulado.html#v7-regulatory-control",
+        "action": "Explorar Regulatory Control"
+      }
+    ],
+    "boundary": "Esta capa orienta navegación y comprensión comercial. No altera el número de rutas, no crea productos tecnológicos autónomos y no sustituye la calificación profesional del caso."
+  }
+}
