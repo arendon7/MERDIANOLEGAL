@@ -49,7 +49,7 @@ def architecture_labels() -> dict[str, dict]:
     return {item["label"]: item for item in data.get("solutions", [])}
 
 
-def surface_block(surface: dict, start: str, end: str) -> tuple[Path, str]:
+def surface_block(surface: dict, start: str, end: str) -> tuple[Path, str, str]:
     target = ROOT / surface["target"]
     if not target.exists():
         fail(f"missing target {surface['target']}")
@@ -58,7 +58,8 @@ def surface_block(surface: dict, start: str, end: str) -> tuple[Path, str]:
         fail(f"{surface['target']}: discovery markers must exist exactly once")
     if content.index(start) > content.index(surface["insert_before"]):
         fail(f"{surface['target']}: discovery block is after its insertion boundary")
-    return target, content.split(start, 1)[1].split(end, 1)[0]
+    block = content.split(start, 1)[1].split(end, 1)[0]
+    return target, block, content
 
 
 def require_values(block: str, values: list[str], target: Path) -> None:
@@ -68,7 +69,7 @@ def require_values(block: str, values: list[str], target: Path) -> None:
 
 
 def validate_v70_surface(surface: dict, start: str, end: str, expected_count: int) -> str:
-    target, block = surface_block(surface, start, end)
+    target, block, _ = surface_block(surface, start, end)
     required = [surface["eyebrow"], surface["title"], surface["lead"], surface["boundary"]]
     items = surface.get("paths", surface.get("areas", []))
     if len(items) != expected_count:
@@ -83,43 +84,63 @@ def validate_v70_surface(surface: dict, start: str, end: str, expected_count: in
 
 
 def validate_v71_home(surface: dict) -> str:
-    target, block = surface_block(surface, HOME_START, HOME_END)
+    target, block, content = surface_block(surface, HOME_START, HOME_END)
     if 'data-v71-commercial-clarity="home"' not in block:
-        fail("home must expose the v7.1 commercial-clarity surface marker")
+        fail("home must expose the v7.1 commercial-clarity marker")
+    if 'data-v7-legal-intelligence-discovery="home"' not in block:
+        fail("v7 public discovery selector must remain backward compatible")
+
     required = [surface["eyebrow"], surface["title"], surface["lead"], surface["boundary"]]
 
-    modes = surface.get("modes", [])
-    if len(modes) != 5:
-        fail("v7.1 home must expose exactly five intervention modes")
-    for item in modes:
-        required.extend([item["number"], item["label"], item["title"], item["body"], item["result"]])
-
-    intelligence = surface.get("intelligence") or {}
-    required.extend([intelligence.get("eyebrow", ""), intelligence.get("title", ""), intelligence.get("lead", "")])
-    paths = intelligence.get("paths", [])
-    if len(paths) != 4:
-        fail("v7.1 Legal Intelligence must preserve four comprehension stages")
-    for item in paths:
-        required.extend([item["number"], item["label"], item["title"], item["body"], item["href"], item["action"]])
-        validate_link(target, item["href"])
+    if "interventions" in surface:
+        interventions = surface.get("interventions", [])
+        if len(interventions) != 4:
+            fail("v7.1 consolidated Home must expose exactly four intervention paths")
+        for item in interventions:
+            required.extend([
+                item["number"], item["label"], item["title"], item["capabilities"],
+                item["body"], item["result"], item["href"], item["action"]
+            ])
+            validate_link(target, item["href"])
+        if block.count("data-v7-li-discovery=") != 4:
+            fail("v7 backward-compatible discovery must still expose four child paths")
+    else:
+        modes = surface.get("modes", [])
+        if len(modes) != 5:
+            fail("legacy v7.1 Home must expose exactly five intervention modes")
+        for item in modes:
+            required.extend([item["number"], item["label"], item["title"], item["body"], item["result"]])
+        intelligence = surface.get("intelligence") or {}
+        required.extend([intelligence.get("eyebrow", ""), intelligence.get("title", ""), intelligence.get("lead", "")])
+        paths = intelligence.get("paths", [])
+        if len(paths) != 4:
+            fail("legacy v7.1 Legal Intelligence must preserve four comprehension stages")
+        for item in paths:
+            required.extend([item["number"], item["label"], item["title"], item["body"], item["href"], item["action"]])
+            validate_link(target, item["href"])
 
     installed = surface.get("installed") or {}
     required.extend([installed.get("eyebrow", ""), installed.get("title", ""), installed.get("lead", "")])
-    items = installed.get("items", [])
-    if len(items) != 5:
-        fail("v7.1 home must expose exactly five installed-capability explanations")
-    for item in items:
+    installed_items = installed.get("items", [])
+    expected_installed = 4 if "interventions" in surface else 5
+    if len(installed_items) != expected_installed:
+        fail(f"v7.1 Home must expose exactly {expected_installed} installed-capability explanations")
+    for item in installed_items:
         required.extend([
             item["number"], item["name"], item["title"], item["body"], item["outcome"], item["href"], item["action"]
         ])
         validate_link(target, item["href"])
+
+    for class_name in surface.get("suppress_redundant_sections", []):
+        if f'class="v6-section {class_name}"' in content:
+            fail(f"Home still contains redundant section after v7.1 consolidation: {class_name}")
 
     require_values(block, [value for value in required if value], target)
     return block
 
 
 def validate_v71_hub(surface: dict) -> str:
-    target, block = surface_block(surface, HUB_START, HUB_END)
+    target, block, _ = surface_block(surface, HUB_START, HUB_END)
     if 'id="v71-commercial-clarity-hub"' not in block:
         fail("solutions hub must expose the v7.1 commercial-clarity anchor")
     required = [surface["eyebrow"], surface["title"], surface["lead"], surface["boundary"]]
@@ -176,7 +197,7 @@ def validate_common(data: dict, home_block: str, hub_block: str) -> None:
     for pattern in forbidden:
         match = re.search(pattern, joined, flags=re.I)
         if match:
-            prefix = joined[max(0, match.start() - 48):match.start()].lower()
+            prefix = joined[max(0, match.start() - 64):match.start()].lower()
             if "no " not in prefix and "sin " not in prefix and "no implica " not in prefix:
                 fail(f"unsupported public discovery capability claim: {pattern}")
 
@@ -193,8 +214,9 @@ def main() -> None:
     if contract == CONTRACT_V71:
         if data.get("status") != "commercial-clarity-prototype":
             fail("v7.1 commercial clarity must remain prototype-only")
-        if "seis rutas" not in data.get("principle", ""):
-            fail("v7.1 principle must preserve the six-route public architecture")
+        principle = data.get("principle", "")
+        if "seis rutas" not in principle or "catálogo paralelo" not in principle:
+            fail("v7.1 principle must preserve six routes and reject a parallel catalog")
         home_block = validate_v71_home(data["home"])
         hub_block = validate_v71_hub(data["hub"])
     else:
