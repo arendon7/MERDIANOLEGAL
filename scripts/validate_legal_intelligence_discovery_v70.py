@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CONTRACT_V70 = ROOT / "assets/data/v7/legal-intelligence-discovery-v70.json"
 CONTRACT_V71 = ROOT / "assets/data/v7/home-commercial-clarity-v71.json"
 ARCHITECTURE = ROOT / "assets/data/v7/legal-intelligence-architecture-v70.json"
+VERSION_PATH = ROOT / "version.json"
 HOME_START = "<!-- LEGAL-INTELLIGENCE-DISCOVERY-V70-HOME:START -->"
 HOME_END = "<!-- LEGAL-INTELLIGENCE-DISCOVERY-V70-HOME:END -->"
 HUB_START = "<!-- LEGAL-INTELLIGENCE-DISCOVERY-V70-HUB:START -->"
@@ -202,6 +203,32 @@ def validate_common(data: dict, home_block: str, hub_block: str) -> None:
                 fail(f"unsupported public discovery capability claim: {pattern}")
 
 
+def validate_v71_phase(data: dict) -> str:
+    status = str(data.get("status", ""))
+    contract_version = str(data.get("version", ""))
+    allowed_statuses = {"commercial-clarity-prototype", "release-candidate", "certified"}
+    if status not in allowed_statuses:
+        fail(f"unsupported v7.1 lifecycle status: {status!r}")
+
+    if status == "commercial-clarity-prototype":
+        if not contract_version.startswith("7.1.0-prototype"):
+            fail("v7.1 prototype contract must use a 7.1.0-prototype version")
+        return status
+
+    if contract_version != "7.1.0":
+        fail(f"v7.1 {status} contract must use version 7.1.0")
+
+    public = json.loads(VERSION_PATH.read_text(encoding="utf-8"))
+    if str(public.get("version")) != "7.1.0":
+        fail(f"v7.1 {status} contract requires public version 7.1.0")
+    channel = str(public.get("channel", ""))
+    if status == "release-candidate" and "candidate" not in channel:
+        fail("v7.1 release-candidate requires a candidate public channel")
+    if status == "certified" and "certified" not in channel:
+        fail("v7.1 certified contract requires a certified public channel")
+    return status
+
+
 def main() -> None:
     if not ARCHITECTURE.exists():
         fail("missing Legal Intelligence architecture contract")
@@ -211,9 +238,9 @@ def main() -> None:
         fail("missing discovery contract")
     data = json.loads(contract.read_text(encoding="utf-8"))
 
+    phase = "v7.0-prototype"
     if contract == CONTRACT_V71:
-        if data.get("status") != "commercial-clarity-prototype":
-            fail("v7.1 commercial clarity must remain prototype-only")
+        phase = validate_v71_phase(data)
         principle = data.get("principle", "")
         if "seis rutas" not in principle or "catálogo paralelo" not in principle:
             fail("v7.1 principle must preserve six routes and reject a parallel catalog")
@@ -228,7 +255,9 @@ def main() -> None:
         hub_block = validate_v70_surface(data["hub"], HUB_START, HUB_END, 3)
 
     validate_common(data, home_block, hub_block)
-    print(f"Legal Intelligence public discovery: PASS ({contract.name}, six routes preserved, capability truth protected)")
+    print(
+        f"Legal Intelligence public discovery: PASS ({contract.name}, {phase}, six routes preserved, capability truth protected)"
+    )
 
 
 if __name__ == "__main__":
