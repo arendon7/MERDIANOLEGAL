@@ -1,0 +1,96 @@
+name: Diagnostic v6.4 post-deploy
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/diag-v64-postdeploy.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: meridiano-diag-v64-postdeploy-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    name: Diagnostic public smoke v6.4
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    env:
+      MERIDIANO_BASE_URL: https://arendon7.github.io/MERDIANOLEGAL/
+    steps:
+      - name: Checkout canonical diagnostic base
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: "3.12"
+      - name: Verify public v6.4 smoke chain
+        run: python3 scripts/validate_live_v53.py
+
+  browser:
+    name: Diagnostic Browser E2E on public v6.4
+    needs: smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    env:
+      MERIDIANO_BASE_URL: https://arendon7.github.io/MERDIANOLEGAL/
+    steps:
+      - name: Checkout canonical diagnostic base
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Setup Node.js with npm cache
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+      - name: Install locked QA dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Prefer official Ubuntu mirrors for browser dependencies
+        run: |
+          if [ -f /etc/apt/apt-mirrors.txt ]; then
+            printf 'https://archive.ubuntu.com/ubuntu/\tpriority:1\nhttps://security.ubuntu.com/ubuntu/\tpriority:2\n' | sudo tee /etc/apt/apt-mirrors.txt >/dev/null
+          fi
+          printf '%s\n' 'Acquire::Retries "3";' 'Acquire::http::Timeout "30";' 'Acquire::https::Timeout "30";' | sudo tee /etc/apt/apt.conf.d/80meridiano-network >/dev/null
+      - name: Install Chromium and WebKit
+        run: timeout 900s npx playwright install --with-deps chromium webkit
+      - name: Run full public browser E2E suite
+        run: npm run test:e2e
+
+  lighthouse:
+    name: Diagnostic Lighthouse on public v6.4
+    needs: smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    env:
+      MERIDIANO_BASE_URL: https://arendon7.github.io/MERDIANOLEGAL/
+    steps:
+      - name: Checkout canonical diagnostic base
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Setup Node.js with npm cache
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+      - name: Install locked QA dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Install pinned Lighthouse Chromium
+        run: timeout 180s npx playwright install chromium
+      - name: Resolve pinned Lighthouse Chromium
+        run: |
+          CHROME_BIN="$(node -e 'console.log(require("playwright").chromium.executablePath())')"
+          test -x "$CHROME_BIN"
+          echo "CHROME_PATH=$CHROME_BIN" >> "$GITHUB_ENV"
+          "$CHROME_BIN" --version
+      - name: Run public Lighthouse budgets
+        run: npm run audit:quality
