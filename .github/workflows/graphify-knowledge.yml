@@ -5,9 +5,7 @@ on:
   pull_request:
     branches: ["main"]
   push:
-    branches:
-      - "main"
-      - "feat/v700-legal-intelligence-architecture"
+    branches: ["main"]
 
 permissions:
   contents: write
@@ -68,10 +66,12 @@ jobs:
           print(f"Graphify: {len(nodes)} nodos / {len(edges)} relaciones / {len(wiki)} notas wiki / source {meta['source_commit'][:8]}")
           PY
 
-      - name: Materializar AI Governance 360 en la rama de arquitectura
-        if: github.event_name == 'push' && github.ref == 'refs/heads/feat/v700-legal-intelligence-architecture'
+      - name: Materializar AI Governance 360 en el head del PR
+        if: github.event_name == 'pull_request' && github.head_ref == 'feat/v700-legal-intelligence-architecture'
         run: |
           set -euo pipefail
+          git fetch origin feat/v700-legal-intelligence-architecture
+          git checkout -B feat/v700-legal-intelligence-architecture origin/feat/v700-legal-intelligence-architecture
           python3 scripts/apply_ai_governance_360_prototype_v70.py
           python3 scripts/validate_ai_governance_360_prototype_v70.py
           if git diff --quiet -- soluciones/gobernar-inteligencia-artificial-empresa.html productos/programa-gobernanza-ia.html servicios/tecnologia-inteligencia-artificial.html; then
