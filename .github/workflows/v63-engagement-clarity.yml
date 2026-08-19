@@ -11,11 +11,16 @@ on:
       - servicios/**
       - assets/data/v6/engagement-clarity-v63.json
       - assets/css/v6/engagement-clarity-v63.css
+      - assets/data/v6/fit-scope-clarity-v64.json
+      - assets/css/v6/fit-scope-clarity-v64.css
       - scripts/sync_public_version.py
       - scripts/apply_engagement_clarity_v63.py
       - scripts/validate_engagement_clarity_v63.py
+      - scripts/apply_fit_scope_clarity_v64.py
+      - scripts/validate_fit_scope_clarity_v64.py
       - scripts/normalize_experience_compat_v60.py
       - tests/e2e/engagement-clarity-v63.spec.mjs
+      - tests/e2e/fit-scope-clarity-v64.spec.mjs
       - .github/workflows/v63-engagement-clarity.yml
   workflow_dispatch:
 
@@ -40,8 +45,8 @@ jobs:
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
         with:
           python-version: "3.12"
-      - name: Compile v6.3 scripts
-        run: python3 -m py_compile scripts/sync_public_version.py scripts/apply_engagement_clarity_v63.py scripts/validate_engagement_clarity_v63.py scripts/normalize_experience_compat_v60.py
+      - name: Compile v6.3 scripts and later managed extensions
+        run: python3 -m py_compile scripts/sync_public_version.py scripts/apply_engagement_clarity_v63.py scripts/validate_engagement_clarity_v63.py scripts/apply_fit_scope_clarity_v64.py scripts/validate_fit_scope_clarity_v64.py scripts/normalize_experience_compat_v60.py
       - name: Detect engagement materialization phase
         run: |
           MATERIALIZED_COUNT="$(grep -l 'data-engagement-clarity-v63="true"' productos/*.html servicios/*.html 2>/dev/null | wc -l | tr -d ' ')"
@@ -89,10 +94,17 @@ jobs:
           python3 scripts/apply_experience_final_v60.py
           python3 scripts/apply_funnel_trust_v529.py
           python3 scripts/normalize_experience_compat_v60.py
+          if [ -f assets/data/v6/fit-scope-clarity-v64.json ]; then
+            python3 scripts/apply_fit_scope_clarity_v64.py
+          fi
       - name: Validate canonical truth and preserved v6 surface
         run: |
           python3 scripts/validate_engagement_clarity_v63.py
           python3 scripts/apply_engagement_clarity_v63.py --check
+          if [ -f assets/data/v6/fit-scope-clarity-v64.json ]; then
+            python3 scripts/validate_fit_scope_clarity_v64.py
+            python3 scripts/apply_fit_scope_clarity_v64.py --check
+          fi
           python3 scripts/sync_public_version.py --check
           python3 scripts/validate_experience_v60.py
           python3 scripts/validate_capability_truth_v521.py
@@ -122,12 +134,19 @@ jobs:
           python3 scripts/apply_experience_final_v60.py
           python3 scripts/apply_funnel_trust_v529.py
           python3 scripts/normalize_experience_compat_v60.py
+          if [ -f assets/data/v6/fit-scope-clarity-v64.json ]; then
+            python3 scripts/apply_fit_scope_clarity_v64.py
+          fi
           git diff > /tmp/v63-pass-2.diff
           cmp --silent /tmp/v63-pass-1.diff /tmp/v63-pass-2.diff || {
-            echo 'Engagement Clarity materialization is not idempotent.' >&2
+            echo 'Engagement Clarity materialization is not idempotent with later managed v6 extensions.' >&2
             diff -u /tmp/v63-pass-1.diff /tmp/v63-pass-2.diff || true
             exit 1
           }
           python3 scripts/sync_public_version.py --check
           python3 scripts/validate_engagement_clarity_v63.py
           python3 scripts/apply_engagement_clarity_v63.py --check
+          if [ -f assets/data/v6/fit-scope-clarity-v64.json ]; then
+            python3 scripts/validate_fit_scope_clarity_v64.py
+            python3 scripts/apply_fit_scope_clarity_v64.py --check
+          fi

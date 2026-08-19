@@ -1,70 +1,67 @@
-# Meridiano Legal · Web canónica v6.3.0
+# Meridiano Legal · Web canónica v6.4.0
 
 Sitio público static-first de Meridiano Legal: `https://arendon7.github.io/MERDIANOLEGAL/`.
 
 ## Estado certificado
 
-**v6.3.0 — Engagement Clarity / claridad precontratación**.
+**v6.4.0 — Fit & Scope Clarity / encaje y cambio de alcance**.
 
-- SHA funcional certificado: `118cee5030f27689d91172beb525d7d92c751117`.
-- Canal certificado: `github-pages-production-engagement-clarity-certified`.
+- SHA funcional certificado: `0045588f795f5f0a0b9144786bc61cdf89f34319`.
+- Canal certificado: `github-pages-production-fit-scope-clarity-certified`.
 - 46 HTML públicos, 16 fichas profundas y 1 formulario físico canónico.
-- Las 16 fichas elevan a primer nivel dos matrices jurídicas/comerciales ya aprobadas: `requirements` y `responsibilities`.
-- Cada ficha incorpora un único hito `Para empezar` y una única sección `#v6-engagement` antes de Límites.
-- La navegación ejecutiva v6.3 conserva exactamente 7 hitos; v4.6 permanece phase-aware y estricto.
+- Las 16 fichas exponen `situations` y `supplements` derivados exactamente de los catálogos canónicos.
+- Cada ficha incorpora una única sección `#v6-fit-scope` entre Resultado y Entregables.
+- La navegación ejecutiva conserva exactamente los 7 hitos de v6.3; v6.4 deliberadamente no agrega un octavo enlace.
+- Engagement Clarity v6.3 permanece íntegra: `requirements` + `responsibilities` y `#v6-engagement`.
 - Search Console continúa sin configurar: `searchConsoleConfigured=false`, sin token auténtico.
 - Analítica externa continúa deshabilitada: `analytics.enabled=false`, `provider=none`, `site_id=""`.
-- 43 páginas indexables y 3 superficies `noindex` preservadas desde v6.2.
+- 43 páginas indexables y 3 superficies `noindex` preservadas.
 - 30 pasos históricos exactos del builder; sin paso 31.
 - Browser E2E + axe: PASS.
 - Lighthouse post-deploy: PASS con los budgets existentes antes de la promoción automática de `stable`.
 - Cobertura reducida: no. Budgets relajados: no.
-- El SHA documental definitivo se determina por los refs `main` y `stable` una vez este cierre vuelva a atravesar la cadena productiva.
 
-## v6.3 — Engagement Clarity
+## v6.4 — Fit & Scope Clarity
 
-v6.3 reduce fricción antes de solicitar una propuesta sin crear obligaciones jurídicas nuevas. La mejora parte de una verdad que ya existía en los 16 catálogos canónicos, pero permanecía relegada a la profundidad histórica de cada ficha.
+v6.4 reduce fricción de autocalificación antes del contacto comercial sin crear criterios jurídicos nuevos. La mejora usa dos matrices que ya existían en las 16 fuentes de producto/servicio:
 
-La release hace visible, para cada producto y servicio:
+- **Señales de que esta modalidad encaja**, derivado de `situations`;
+- **Situaciones que amplían el alcance**, derivado de `supplements`.
 
-- **qué debe estar listo del lado del cliente**, derivado exactamente de `requirements`;
-- **cómo se distribuyen las responsabilidades**, derivado exactamente de `responsibilities`;
-- una entrada ejecutiva `Para empezar` dentro de la navegación de la ficha;
-- una sección `#v6-engagement` situada entre Proceso y Límites.
+Ambas aparecen en `#v6-fit-scope`, inmediatamente después de Resultado y antes de Entregables. El objetivo es que el comprador pueda distinguir con mayor precisión si la modalidad corresponde a su situación y qué circunstancias cambian el perímetro base, sin confundir esa orientación con una propuesta o alcance contractual definitivo.
 
-La capa de presentación no modifica entregables, perímetro, método, límites, honorarios, cronogramas, contacto ni capability truth. Si cambia una fila de `requirements` o `responsibilities` en los catálogos canónicos, el validator exige que la representación pública se sincronice exactamente.
+La capa no modifica `perimeter`, `limits`, entregables, método, honorarios, cronogramas, contacto o capability truth.
 
 ## Verdad jurídica y comercial
 
 La fuente permanece en:
 
-- `catalog-products-v41/*.json` para los 8 productos;
-- `catalog-services-v42/*.json` para los 8 servicios.
+- `catalog-products-v41/*.json` para 8 productos;
+- `catalog-services-v42/*.json` para 8 servicios.
 
-`validate_engagement_clarity_v63.py` compara fila por fila las matrices visibles contra esas fuentes. No existe una segunda copia editorial intermedia que pueda divergir silenciosamente.
+`validate_fit_scope_clarity_v64.py` compara fila por fila las matrices visibles contra `situations` y `supplements` de cada catálogo. No existe una segunda copia editorial intermedia.
 
-Esto permite que una ficha explique no solo **qué recibe** la empresa, sino también **qué necesita aportar** y **quién responde por cada frente**, antes del contacto comercial.
+Engagement Clarity v6.3 conserva el mismo principio para `requirements` y `responsibilities`.
 
-## Release engineering v6.3
+## Release engineering v6.4
 
-El ciclo añadió Engagement Clarity como extensión de la arquitectura v6 existente, sin modificar los 30 pasos históricos:
-
-- `apply_engagement_clarity_v63.py` materializa las 16 fichas de forma determinista y ofrece `--check` fail-closed;
-- `validate_engagement_clarity_v63.py` exige 8 productos + 8 servicios, truth exacto, navegación única y orden de secciones;
-- `normalize_experience_compat_v60.py` integra la extensión junto a Measurement v6.1 y Search Discovery v6.2;
-- el gate dedicado v6.3 distingue de forma estricta una baseline pre-materializada `0/16` de una baseline certificada `16/16`; cualquier estado parcial falla;
-- durante la transición inicial exige exactamente 16 HTML de engagement; una baseline ya materializada exige drift cero;
-- Canonical Equivalence exige el conjunto exacto `measurement ∪ release ∪ discovery ∪ engagement` cuando aplica;
-- v4.6 conserva exactamente 6 hitos sin v6.3 y exige exactamente 7 con v6.3, incluido `#v6-engagement`;
-- Builder, Candidate y Browser observan expresamente el materializador/validator v6.3;
-- `validate_pages_trigger_v511.py` bloquea la pérdida de cobertura del materializador en Builder;
-- E2E visita las 16 fichas y verifica navegación real en una ficha de producto y una de servicio;
-- la hoja v6.3 se ubica en una posición estable respecto del bloque CSS v6.0 para preservar idempotencia byte-equivalent;
+- `assets/data/v6/fit-scope-clarity-v64.json`: contrato de presentación y alcance.
+- `scripts/apply_fit_scope_clarity_v64.py`: materializador determinista con `--check` fail-closed.
+- `scripts/validate_fit_scope_clarity_v64.py`: validator 16/16 contra truth canónico.
+- `.github/workflows/v64-fit-scope-clarity.yml`: gate phase-aware; 0/16 exige 16 drift, 16/16 exige 0 y cualquier estado parcial falla.
+- Canonical Equivalence exige `measurement ∪ release ∪ discovery ∪ engagement ∪ fit/scope` cuando aplica.
+- Builder, Pages y `canonical_pipeline_v524.py` ejecutan la misma extensión v6; los 30 pasos históricos permanecen intactos.
+- Candidate, Browser y Measurement materializan/validan v6.4 antes de sus suites.
+- E2E visita las 16 fichas, verifica ambos paneles, conserva 7 hitos y prueba el orden Resultado → Fit/Scope → Entregables.
 - `stable` continúa moviéndose únicamente después de quality, deploy, smoke, Browser/axe, Lighthouse y snapshot.
 
-## Discovery, privacidad y capability truth preservados
+## Incidencia productiva v6.4
 
-v6.3 no altera las garantías de v6.1/v6.2:
+El primer run productivo obtuvo un HTTP 503 transitorio al cargar `demo` durante Lighthouse; quality, deploy, smoke y Browser ya habían pasado. Un diagnóstico temporal contra la misma URL pública reprodujo smoke, Browser/axe y Lighthouse en verde. Se reejecutaron los jobs fallidos del run oficial, sin cambios de código ni relajación de budgets; Lighthouse pasó y el snapshot promovió `stable` automáticamente.
+
+El PR diagnóstico #164 se cerró sin merge.
+
+## Discovery, privacidad y capability truth preservados
 
 - 43 páginas indexables con canonical autorreferencial;
 - `404.html`, `demo.html` y `experiencia.html` permanecen `noindex`;
@@ -78,10 +75,11 @@ v6.3 no altera las garantías de v6.1/v6.2:
 
 ## Source of truth
 
+- `assets/data/v6/fit-scope-clarity-v64.json`: contrato v6.4.
+- `scripts/apply_fit_scope_clarity_v64.py`: materializador v6.4.
+- `scripts/validate_fit_scope_clarity_v64.py`: validator v6.4.
+- `catalog-products-v41/` y `catalog-services-v42/`: verdad jurídica/comercial principal.
 - `assets/data/v6/engagement-clarity-v63.json`: contrato v6.3.
-- `scripts/apply_engagement_clarity_v63.py`: materializador determinista.
-- `scripts/validate_engagement_clarity_v63.py`: validator contra truth canónico.
-- `catalog-products-v41/` y `catalog-services-v42/`: verdad jurídica/comercial de las 16 ofertas.
 - `assets/data/v6/search-discovery-readiness-v62.json`: contrato de discovery.
 - `assets/data/v6/measurement-readiness-v61.json`: contrato privacy-first de measurement.
 - `experience-system-v60.json` y `experience-content-v60.json`: Experience System base.
@@ -90,7 +88,8 @@ v6.3 no altera las garantías de v6.1/v6.2:
 
 ## Documentación
 
-- `RELEASE-v6.3.md`: alcance, evidencia e incidencias del cierre v6.3.
+- `RELEASE-v6.4.md`: alcance, evidencia, incidencia productiva y cierre v6.4.
+- `RELEASE-v6.3.md`: cierre histórico de Engagement Clarity.
 - `RELEASE-v6.2.md`: cierre histórico de Search Discovery Readiness.
 - `RELEASE-v6.1.md`: cierre histórico de Measurement Readiness.
 - `RELEASE-v6.0.md`: cierre histórico del Experience System.
@@ -98,4 +97,4 @@ v6.3 no altera las garantías de v6.1/v6.2:
 - `knowledge/00_CANON/ESTADO_ACTUAL.md`: estado canónico y certificación.
 - `knowledge/00_CANON/TAREA_ACTIVA.md`: frente vigente.
 
-El cierre documental v6.3 queda definitivo únicamente cuando este commit de certificación atraviese nuevamente Builder → Pages → smoke → Browser/axe → Lighthouse → snapshot y termine con `main == stable`.
+Este cierre documental queda definitivo cuando el commit de certificación atraviese nuevamente Builder → Pages → smoke → Browser/axe → Lighthouse → snapshot y termine con `main == stable`.
