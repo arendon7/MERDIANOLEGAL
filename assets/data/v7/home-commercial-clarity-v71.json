@@ -1,0 +1,127 @@
+{
+  "version": "7.1.0-prototype-3",
+  "status": "commercial-clarity-prototype",
+  "principle": "La Home conserva las seis rutas por situación y usa profundidad progresiva para explicar cómo puede intervenir Meridiano, qué capacidades concretas existen y qué puede quedar funcionando, sin crear un catálogo paralelo.",
+  "home": {
+    "target": "index.html",
+    "insert_before": "<section class=\"v6-section v6-evidence\"",
+    "suppress_redundant_sections": ["v6-outcomes", "v6-home-method"],
+    "eyebrow": "MERIDIANO LEGAL INTELLIGENCE",
+    "title": "Cuando el reto no termina en una opinión, convertimos criterio jurídico en una forma de trabajar, controlar y decidir.",
+    "lead": "Meridiano combina criterio jurídico, operaciones jurídicas, inteligencia artificial, automatización y tecnología aplicada. La intervención se dimensiona según el problema: puede empezar por diagnóstico, convertirse en implementación, operar de forma recurrente o requerir una solución jurídica-tecnológica específica.",
+    "interventions": [
+      {
+        "number": "01",
+        "label": "DIAGNOSTICAR",
+        "title": "Saber qué conviene intervenir primero",
+        "capabilities": "Legal AI Diagnostic · auditorías y diagnósticos focales",
+        "body": "Mapeamos riesgo, demanda, procesos, contratos, usos de IA, regulación, datos o herramientas para separar síntomas de causas y definir prioridades antes de invertir o transformar.",
+        "result": "Según el alcance, el resultado puede incluir brechas, prioridades, riesgos, mejoras de rápida ejecución y una hoja de ruta concreta.",
+        "href": "soluciones/ordenar-operacion-juridica.html#v7-legal-intelligence",
+        "action": "Explorar diagnóstico"
+      },
+      {
+        "number": "02",
+        "label": "IMPLEMENTAR",
+        "title": "Convertir una decisión en un sistema operable",
+        "capabilities": "Productos cerrados · Legal AI Transformation · AI Governance 360 · Contract Control · Regulatory Control",
+        "body": "Cuando un documento aislado no resuelve el problema, estructuramos reglas, roles, instrumentos, flujos de trabajo, controles y evidencia para que la solución pueda ejecutarse después de la entrega.",
+        "result": "La intervención puede tomar la forma de un producto de alcance cerrado o de un proyecto de transformación e implementación, según la oferta aplicable.",
+        "href": "servicios/legal-operations.html#v7-legal-ai-transformation",
+        "action": "Ver transformación e implementación"
+      },
+      {
+        "number": "03",
+        "label": "OPERAR",
+        "title": "Sostener capacidad jurídica cuando el problema es recurrente",
+        "capabilities": "Dirección Jurídica Externa · Meridiano Legal Desk · modalidades gestionadas",
+        "body": "Para gerencias o equipos que necesitan criterio continuo, gestión de solicitudes y asuntos, seguimiento, memoria jurídica organizada y control de calidad dentro de un perímetro acordado.",
+        "result": "La propuesta delimita materias, capacidad, responsables, canales, cadencia y niveles de servicio cuando correspondan. No es una bolsa de horas indefinida.",
+        "href": "soluciones/direccion-juridica-externa-empresa.html",
+        "action": "Explorar capacidad recurrente"
+      },
+      {
+        "number": "04",
+        "label": "CONSTRUIR",
+        "title": "Desarrollar la herramienta cuando el caso exige algo específico",
+        "capabilities": "Legal Engineering Studio",
+        "body": "Cuando las reglas, documentos, excepciones, fuentes o aprobaciones no encajan en una herramienta estándar, podemos traducir la lógica jurídica a una solución tecnológica diseñada para el proceso.",
+        "result": "Puede incluir recepción estructurada de solicitudes, flujos de trabajo, automatización documental, verificadores, bases de conocimiento, integraciones, interfaces de IA o aplicaciones especializadas, solo cuando se pacten expresamente.",
+        "href": "servicios/legal-operations.html#v7-legal-ai-transformation",
+        "action": "Explorar Legal Engineering"
+      }
+    ],
+    "installed": {
+      "eyebrow": "CAPACIDADES QUE PUEDEN QUEDAR FUNCIONANDO",
+      "title": "El trabajo jurídico debe dejar algo que la organización pueda usar, ejecutar y verificar.",
+      "lead": "Más que enumerar documentos, mostramos qué puede administrar la organización después. Estas capacidades expresan el cambio operativo posible y su alcance real sigue gobernado por el producto, servicio o propuesta específica.",
+      "items": [
+        {
+          "number": "01",
+          "name": "Contract Control",
+          "title": "Del contrato firmado al control de obligaciones",
+          "body": "Conecta portafolio, riesgos, renovaciones, obligaciones, responsables, fechas y evidencia para que el control contractual no termine con la firma.",
+          "outcome": "Puede dejar una operación contractual más administrable; no se presenta como CLM o SaaS autónomo.",
+          "href": "productos/sistema-contractual-empresarial.html#v7-contract-control",
+          "action": "Ver sistema contractual"
+        },
+        {
+          "number": "02",
+          "name": "AI Governance 360",
+          "title": "Del uso disperso de IA a un sistema de gobierno",
+          "body": "Organiza casos de uso, nivel de exposición, responsables, políticas, controles, aprobaciones, proveedores, incidentes y evidencia conforme al perímetro contratado.",
+          "outcome": "Hace visible qué IA se usa, para qué, quién responde, qué riesgo presenta y qué control exige dentro del alcance definido.",
+          "href": "soluciones/gobernar-inteligencia-artificial-empresa.html#v7-ai-governance-360",
+          "action": "Ver gobierno de IA"
+        },
+        {
+          "number": "03",
+          "name": "Regulatory Control",
+          "title": "De la norma o permiso a la acción verificable",
+          "body": "Conecta fuente, aplicabilidad, impacto, obligación, responsable, fecha, evidencia y cierre dentro de un universo regulatorio delimitado.",
+          "outcome": "Puede convertir regulación, permisos e hitos en una ruta administrable; no implica monitoreo automático universal.",
+          "href": "soluciones/estructurar-proyecto-regulado.html#v7-regulatory-control",
+          "action": "Ver control regulatorio"
+        },
+        {
+          "number": "04",
+          "name": "Meridiano Legal Desk",
+          "title": "De solicitudes dispersas a capacidad jurídica gestionada",
+          "body": "Organiza recepción, prioridad, asignación, criterios de actuación, revisión, control de calidad, entrega, seguimiento y métricas dentro de un perímetro acordado.",
+          "outcome": "El cliente compra capacidad jurídica organizada y resultados dentro del alcance, no simplemente acceso a software o una bolsa indiferenciada de horas.",
+          "href": "soluciones/ordenar-operacion-juridica.html#v7-legal-intelligence",
+          "action": "Ver operación jurídica"
+        }
+      ]
+    },
+    "boundary": "Legal Intelligence organiza capacidades y recorridos de intervención. No implica por sí sola software autónomo, portal, CLM, monitoreo automático, integraciones, SLA, desarrollos o automatizaciones no incluidos expresamente en una oferta o propuesta."
+  },
+  "hub": {
+    "target": "soluciones/index.html",
+    "insert_before": "<section class=\"v6-section v6-hub-routes\" id=\"v6-solutions-routes\"",
+    "eyebrow": "LEGAL INTELLIGENCE · CAPACIDADES TRANSVERSALES",
+    "title": "Las seis rutas siguen siendo la entrada. Estas capacidades explican hasta dónde puede llegar la intervención.",
+    "lead": "Legal Intelligence no crea una séptima ruta ni un segundo catálogo. Conecta problemas existentes con diagnóstico, implementación, operación recurrente e ingeniería jurídica cuando el caso lo requiere.",
+    "areas": [
+      {
+        "title": "Operación jurídica y contratos",
+        "body": "Diagnóstico y transformación de la operación, capacidad jurídica gestionada, control contractual e ingeniería jurídica cuando la organización necesita convertir volumen y dispersión en procesos, responsables y evidencia.",
+        "href": "ordenar-operacion-juridica.html#v7-legal-intelligence",
+        "action": "Ver operación jurídica"
+      },
+      {
+        "title": "Gobierno de inteligencia artificial",
+        "body": "Diagnóstico de preparación, diseño e implementación del sistema de gobierno, acompañamiento recurrente e ingeniería específica cuando el caso exige traducir políticas y controles a procesos o herramientas.",
+        "href": "gobernar-inteligencia-artificial-empresa.html#v7-ai-governance-360",
+        "action": "Ver gobierno de IA"
+      },
+      {
+        "title": "Proyectos y operaciones reguladas",
+        "body": "Estructuración jurídica, control de obligaciones y acompañamiento recurrente para convertir permisos, hitos, actuaciones y fuentes regulatorias en responsabilidades y evidencia verificable.",
+        "href": "estructurar-proyecto-regulado.html#v7-regulatory-control",
+        "action": "Ver control regulatorio"
+      }
+    ],
+    "boundary": "Esta capa orienta navegación y comprensión comercial. No altera las seis rutas, no crea productos tecnológicos autónomos y no sustituye la calificación profesional ni los catálogos canónicos."
+  }
+}

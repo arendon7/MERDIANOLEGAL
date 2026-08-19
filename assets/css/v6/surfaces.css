@@ -20,6 +20,17 @@ body[data-experience-system="v6"] .detail-header-actions .btn-outline { display:
 .v6-artifact-step span { color: var(--v6-gold); font-size: .66rem; font-weight: 900; }
 .v6-artifact-step strong { color: var(--v6-navy); font-size: .82rem; line-height: 1.35; }
 
+/* v7.1: cuatro formas de intervención ocupan la grilla completa. */
+[data-v71-interventions="true"] { grid-template-columns: repeat(4,minmax(0,1fr)); }
+
+/* v7.1 reuses evidence rows on a light commercial surface. Keep the original
+   navy evidence treatment untouched and scope the light-surface contrast here. */
+[data-v71-installed-list="true"] { border-top-color: var(--v6-line); }
+[data-v71-installed-list="true"] .v6-evidence-row { border-bottom-color: var(--v6-line); }
+[data-v71-installed-list="true"] .v6-evidence-row b { color: var(--v6-navy); }
+[data-v71-installed-list="true"] .v6-evidence-row span { color: var(--v6-muted); }
+[data-v71-installed-list="true"] .v6-evidence-row span > strong { color: var(--v6-navy); }
+
 .v6-detail-hero .v6-hero-grid { grid-template-columns: minmax(0,1fr); max-width: 1080px; }
 .v6-detail-hero .v6-display { max-width: 15ch; }
 .v6-detail-meta {
@@ -60,6 +71,10 @@ body[data-experience-system="v6"] .detail-header-actions .btn-outline { display:
 /* El contenido v5.31 sigue completo como profundidad durante el piloto. */
 .v6-detail-depth .detail-section:first-child { margin-top: 0; }
 .v6-detail-depth .buying-clarity-v58 { border-top: 0; }
+
+@media (max-width: 1000px) and (min-width: 701px) {
+  [data-v71-interventions="true"] { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
 
 @media (max-width: 820px) {
   .v6-detail-nav { top: 72px; }
