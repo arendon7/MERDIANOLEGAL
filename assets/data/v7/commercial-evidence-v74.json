@@ -1,0 +1,95 @@
+{
+  "version": "7.4.0-prototype-1",
+  "status": "readiness-disabled",
+  "baseline": "7.3.0",
+  "title": "Commercial Evidence Readiness",
+  "purpose": "Preparar atribución comercial anónima y verificable para Legal Intelligence sin activar analítica externa, persistencia, cookies o perfiles de usuario.",
+  "activation": {
+    "external_analytics": false,
+    "network_transport": false,
+    "provider": "none",
+    "requires_separate_release_decision": true,
+    "requires_privacy_review_before_activation": true
+  },
+  "query_parameter": "source",
+  "source_prefix": "li-",
+  "subjects": [
+    {
+      "id": "legal-ai-transformation",
+      "source": "li-legal-ai-transformation",
+      "label": "Legal AI Transformation",
+      "route": "servicios/legal-operations.html",
+      "catalog_id": "service-ops"
+    },
+    {
+      "id": "contract-control",
+      "source": "li-contract-control",
+      "label": "Contract Control",
+      "route": "productos/sistema-contractual-empresarial.html",
+      "catalog_id": "product-contract-system"
+    },
+    {
+      "id": "ai-governance-360",
+      "source": "li-ai-governance-360",
+      "label": "AI Governance 360",
+      "route": "productos/programa-gobernanza-ia.html",
+      "catalog_id": "product-ai"
+    },
+    {
+      "id": "regulatory-control",
+      "source": "li-regulatory-control",
+      "label": "Regulatory Control",
+      "route": "productos/proyecto-regulado-estructurado.html",
+      "catalog_id": "product-regulated"
+    },
+    {
+      "id": "legal-desk",
+      "source": "li-legal-desk",
+      "label": "Meridiano Legal Desk",
+      "route": "soluciones/ordenar-operacion-juridica.html#v7-legal-intelligence",
+      "catalog_id": null
+    }
+  ],
+  "interactions": [
+    "offer_view",
+    "demo_offer_open",
+    "contact_intent",
+    "handoff_prepared"
+  ],
+  "surfaces": [
+    "index.html",
+    "experiencia.html",
+    "servicios/legal-operations.html",
+    "productos/sistema-contractual-empresarial.html",
+    "productos/programa-gobernanza-ia.html",
+    "productos/proyecto-regulado-estructurado.html",
+    "soluciones/ordenar-operacion-juridica.html"
+  ],
+  "privacy": {
+    "pii_allowed": false,
+    "free_text_allowed": false,
+    "form_content_allowed": false,
+    "full_url_in_event_allowed": false,
+    "persistent_storage": false,
+    "cookies": false,
+    "cross_session_identifier": false,
+    "fingerprinting": false,
+    "network_transport": false,
+    "max_in_memory_events": 24,
+    "exportable_event_properties": false
+  },
+  "semantic_limits": {
+    "offer_view_is_unique_user": false,
+    "contact_intent_is_message_sent": false,
+    "handoff_prepared_is_message_sent": false,
+    "handoff_prepared_is_delivered": false,
+    "handoff_prepared_is_read": false,
+    "handoff_prepared_is_client_conversion": false
+  },
+  "external_preview": {
+    "enabled": false,
+    "event_name_only": true,
+    "pattern": "meridiano_ce_<interaction>_<subject>",
+    "note": "Solo previsualización para una futura decisión de activación; v7.4 no transmite eventos."
+  }
+}
