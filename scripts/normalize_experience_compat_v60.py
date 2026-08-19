@@ -192,6 +192,14 @@ def normalize_buying_clarity_v72() -> None:
     run_contract_script("validate_buying_clarity_v72.py", "Buying Clarity v7.2")
 
 
+def normalize_legal_intelligence_demo_v73() -> None:
+    contract = ROOT / "assets" / "data" / "v7" / "legal-intelligence-demo-v73.json"
+    if not contract.exists():
+        return
+    run_contract_script("apply_legal_intelligence_demo_v73.py", "Legal Intelligence Demo v7.3")
+    run_contract_script("validate_legal_intelligence_demo_v73.py", "Legal Intelligence Demo v7.3")
+
+
 def normalize_measurement_runtime() -> tuple[int, int]:
     """Inserta el adapter v6.1 solo donde la telemetría local ya existe."""
     instrumented = 0
@@ -259,6 +267,7 @@ def main() -> int:
     normalize_legal_intelligence_discovery()
     normalize_engagement_clarity()
     normalize_buying_clarity_v72()
+    normalize_legal_intelligence_demo_v73()
     instrumented, untouched = normalize_measurement_runtime()
     validate_measurement_readiness()
     normalize_search_discovery()
@@ -266,7 +275,7 @@ def main() -> int:
         "EXPERIENCE V6 COMPAT OK: confianza v5.29, contacto v5.28, capability truth y anclas v5.31 "
         f"preservados; Legal Intelligence v7, AI Governance 360 v7, Regulatory Control v7 y descubrimiento público "
         f"Legal Intelligence v7 normalizados cuando existen sus contratos; Engagement Clarity v6.3 y Buying Clarity "
-        f"v7.2 normalizados cuando existen sus contratos; measurement readiness v6.1 en {instrumented} superficies, "
+        f"v7.2 y Legal Intelligence Demo v7.3 normalizados cuando existen sus contratos; measurement readiness v6.1 en {instrumented} superficies, "
         f"{untouched} sin telemetría previa; Search Discovery v6.2 normalizado cuando existe su contrato."
     )
     return 0

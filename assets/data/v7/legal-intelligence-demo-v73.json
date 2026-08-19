@@ -1,0 +1,108 @@
+{
+  "version": "7.3.0-prototype",
+  "status": "demo-prototype",
+  "baseline": "7.2.0",
+  "target": "experiencia.html",
+  "title": "Vea cómo cinco problemas jurídicos se convierten en sistemas operables.",
+  "lead": "Escenarios completamente ficticios para comprender el método, los artefactos y la decisión que queda habilitada. No muestran un portal productivo ni resultados de clientes reales.",
+  "boundary": "DEMO · Datos ficticios · Sin carga de información real · Sin asesoría jurídica · Sin funcionalidades productivas implícitas",
+  "scenarios": [
+    {
+      "id": "legal-ai-transformation",
+      "name": "Legal AI Transformation",
+      "source": "catalog-services-v42/s08-legal-ops.json",
+      "catalog_id": "service-ops",
+      "problem": "Solicitudes, documentos, aprobaciones y conocimiento dependen de correos, personas y memoria individual; la empresa quiere automatizar sin tener todavía un proceso gobernado.",
+      "flow": ["Demanda", "Triage", "Reglas", "Workflow", "Piloto", "Métricas"],
+      "artifact": "Modelo operativo + flujos + RACI + artefactos + tablero + piloto.",
+      "result": "Un proceso jurídico delimitado y medible sobre el cual sí tiene sentido incorporar automatización o IA.",
+      "metrics": [
+        ["perimeter", 0],
+        ["perimeter", 1],
+        ["perimeter", 2],
+        ["perimeter", 3],
+        ["perimeter", 4]
+      ],
+      "href": "servicios/legal-operations.html",
+      "boundary": "La automatización, integraciones y software a medida solo forman parte del encargo cuando se incluyen expresamente."
+    },
+    {
+      "id": "contract-control",
+      "name": "Contract Control",
+      "source": "catalog-products-v41/p07-contractual.json",
+      "catalog_id": "product-contract-system",
+      "problem": "La empresa firma contratos, pero después pierde visibilidad sobre posiciones negociadas, obligaciones, renovaciones, garantías y responsables.",
+      "flow": ["Inventario", "Modelos", "Playbook", "Aprobaciones", "Obligaciones", "Seguimiento"],
+      "artifact": "Ficha contractual ficticia + desviación de playbook + obligación + responsable + siguiente acción.",
+      "result": "Contratos convertidos en criterios, decisiones y obligaciones administrables, no solo archivos firmados.",
+      "metrics": [
+        ["perimeter", 2],
+        ["perimeter", 3],
+        ["perimeter", 4],
+        ["perimeter", 5],
+        ["perimeter", 6],
+        ["perimeter", 7]
+      ],
+      "href": "productos/sistema-contractual-empresarial.html",
+      "boundary": "Este escenario no representa un CLM o SaaS autónomo ni monitoreo automático de contratos."
+    },
+    {
+      "id": "ai-governance-360",
+      "name": "AI Governance 360",
+      "source": "catalog-products-v41/p05-ia.json",
+      "catalog_id": "product-ai",
+      "problem": "Áreas y proveedores usan inteligencia artificial con finalidades, datos, riesgos y controles que no están inventariados bajo una regla común.",
+      "flow": ["Inventariar", "Clasificar", "Evaluar", "Aprobar", "Controlar", "Revisar"],
+      "artifact": "Matriz ficticia de caso de uso: propietario, proveedor, datos, riesgo, controles, aprobación y evidencia.",
+      "result": "Un sistema de gobierno que permite saber qué IA se usa, para qué, quién responde y qué controles deben mantenerse.",
+      "metrics": [
+        ["perimeter", 0],
+        ["perimeter", 1],
+        ["perimeter", 2],
+        ["perimeter", 3],
+        ["perimeter", 4]
+      ],
+      "href": "productos/programa-gobernanza-ia.html",
+      "boundary": "No es auditoría técnica, certificación algorítmica, pentesting ni garantía de ausencia de sesgos o incidentes."
+    },
+    {
+      "id": "regulatory-control",
+      "name": "Regulatory Control",
+      "source": "catalog-products-v41/p06-regulado.json",
+      "catalog_id": "product-regulated",
+      "problem": "Un proyecto depende de autoridades, permisos, contratos y condiciones precedentes, pero el cronograma técnico no muestra qué habilita realmente cada decisión de inversión u operación.",
+      "flow": ["Fuente", "Aplicabilidad", "Permiso", "Condición", "Responsable", "Evidencia"],
+      "artifact": "Ruta ficticia de permiso/obligación: autoridad, dependencia, plazo, responsable, evidencia y puerta de decisión.",
+      "result": "Regulación convertida en una ruta administrable de habilitaciones, hitos, obligaciones y decisiones.",
+      "metrics": [
+        ["perimeter", 4],
+        ["perimeter", 5],
+        ["perimeter", 6],
+        ["deliverables", 3],
+        ["deliverables", 8],
+        ["deliverables", 9]
+      ],
+      "href": "productos/proyecto-regulado-estructurado.html",
+      "boundary": "No garantiza permisos, licencias ni decisiones de autoridades y no implica cobertura automática universal de fuentes."
+    },
+    {
+      "id": "legal-desk",
+      "name": "Meridiano Legal Desk",
+      "source": "catalog-services-v42/s08-legal-ops.json",
+      "catalog_id": "service-ops",
+      "problem": "La organización necesita capacidad jurídica recurrente y trazable, pero no quiere que cada asunto empiece de cero ni que la solución dependa de una herramienta que deba operar por sí sola.",
+      "flow": ["Solicitud", "Triage", "Prioridad", "Playbook", "Revisión jurídica", "QA", "Entrega", "Métrica"],
+      "artifact": "Matter ficticio con solicitud, estado, responsable, criterio de escalamiento, entregable y evidencia de cierre.",
+      "result": "Un modelo de capacidad jurídica gestionada en el que proceso, criterio profesional y métricas se definen en la propuesta aplicable.",
+      "metrics": [],
+      "href": "soluciones/ordenar-operacion-juridica.html#v7-legal-intelligence",
+      "boundary": "Este demo no fija volumen, canales, Legal Units, SLA o capacidad incluida; esos elementos requieren propuesta y alcance específicos."
+    }
+  ],
+  "forbidden": [
+    "Meridiano Counsel",
+    "portal productivo incluido",
+    "monitoreo automático universal",
+    "decisión jurídica autónoma"
+  ]
+}
