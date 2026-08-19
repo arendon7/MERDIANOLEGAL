@@ -4,112 +4,104 @@ Actualizado: 2026-08-18.
 
 ## Frente vigente
 
-**v7.0.0 — cierre documental / `candidate → certified`.**
+**v7.1 — Commercial Clarity / profundidad progresiva de Home y hub de Soluciones.**
 
 Rama:
 
-`docs/v700-release-closure`
+`feat/v710-commercial-clarity`
 
-La release funcional **Meridiano Legal Intelligence v7.0.0 ya está publicada y certificada**. Este frente no añade funcionalidades ni cambia la oferta pública: únicamente convierte la metadata y memoria de release desde candidate a certified y vuelve a someter ese cierre a la cadena completa de certificación.
+## Baseline
 
-## Baseline funcional certificada
+- `main`: v7.0.0 certificada;
+- baseline de apertura: `e5dc22e33c46a1b4fc2ebc9a01ab33444b935eb6`;
+- Meridiano Legal sigue siendo la marca madre;
+- Meridiano Legal Intelligence sigue siendo una capa transversal;
+- se conservan las seis rutas públicas y los 8 productos + 8 servicios canónicos;
+- `Meridiano Counsel` continúa fuera de la oferta pública.
 
-Antes de abrir este cierre:
+## Problema observable
 
-- `main == stable == 291bf23b6e9cd3d3cfb1743f032a4bc4583f726b`;
-- versión pública: **7.0.0**;
-- PR funcional: **#167**, fusionado;
-- candidate final pre-merge: `50646aadb514611241c0210a6bcfaac8ba7fe2d8` — 9/9 workflows verdes;
-- merge funcional: `6b655fbf502196473a0457fd8e47d0c29e74ab41`;
-- Builder productivo: `291bf23b6e9cd3d3cfb1743f032a4bc4583f726b`;
-- GitHub Pages completó quality, deploy, live smoke, Browser/axe y Lighthouse antes de promover `stable` automáticamente;
-- `stable` no se movió manualmente.
+La v7.0 mejoró la arquitectura y redujo carga cognitiva, pero la Home quedó demasiado condensada para comprensión comercial. Un visitante entiende Diagnosticar → Transformar → Controlar → Operar, pero debe navegar demasiado para saber:
 
-## Arquitectura funcional cerrada
+1. qué modalidad puede contratar;
+2. qué capacidades concretas existen detrás de cada verbo;
+3. qué puede recibir o dejar funcionando;
+4. cómo se diferencian intervención puntual, transformación, capacidad recurrente e ingeniería jurídica;
+5. por qué la experiencia de Meridiano es pertinente para ese trabajo.
 
-Meridiano Legal permanece como marca madre. **Meridiano Legal Intelligence** es una capa transversal que organiza:
+## Hipótesis
 
-1. Legal AI Diagnostic.
-2. Legal AI Transformation.
-3. Meridiano Legal Desk.
-4. Contract Control.
-5. Regulatory Control.
-6. AI Governance 360.
-7. Legal Engineering Studio.
+Aplicar profundidad progresiva: problema primero, modalidad después, capacidad concreta luego y profundidad jurídica como respaldo. La Home debe recuperar sustancia sin regresar a una acumulación de tarjetas, taxonomías o claims tecnológicos.
 
-`Meridiano Counsel` permanece como concepto futuro/no producto público.
+## Alcance de esta iteración
 
-La capa v7 se materializa en 11 superficies existentes y conserva las seis rutas públicas v6. Los 8 productos y 8 servicios canónicos continúan gobernando entregables, tiempos, honorarios, responsabilidades y límites.
+1. Definir arquitectura comercial v7.1 de Home y hub.
+2. Hacer visibles cinco modalidades de intervención:
+   - diagnóstico;
+   - proyecto cerrado;
+   - transformación/implementación;
+   - capacidad jurídica recurrente;
+   - Legal Engineering.
+3. Mantener el modelo Diagnosticar → Transformar → Controlar → Operar, revelando detrás:
+   - Legal AI Diagnostic;
+   - Legal AI Transformation;
+   - Meridiano Legal Desk;
+   - Contract Control;
+   - Regulatory Control;
+   - AI Governance 360;
+   - Legal Engineering Studio.
+4. Hacer visibles resultados operativos de alto valor sin crear un segundo catálogo.
+5. Reforzar autoridad y especialización en una iteración posterior del mismo frente, usando únicamente evidencia documentada en `firma.html` y fuentes canónicas.
+6. Mantener source-driven materialization, validación fail-closed y compatibilidad con la capa v7.0.
 
-## Alcance exacto de este cierre
+## Fuentes nuevas
 
-El cierre debe modificar únicamente estas siete fuentes documentales/metadata:
+- `knowledge/20_DESIGN/HOME-COMMERCIAL-CLARITY-v71.md`;
+- `assets/data/v7/home-commercial-clarity-v71.json`.
 
-1. `version.json`;
-2. `assets/data/v7/legal-intelligence-architecture-v70.json`;
-3. `README.md`;
-4. `RELEASE-v7.0.md`;
-5. `knowledge/00_CANON/CONTEXTO_RAPIDO.md`;
-6. `knowledge/00_CANON/ESTADO_ACTUAL.md`;
-7. `knowledge/00_CANON/TAREA_ACTIVA.md`.
+El materializador y validador públicos de Legal Intelligence deben preferir el contrato v7.1 cuando exista y conservar fallback v7.0 cuando no exista.
 
-Cambios permitidos:
+## No objetivos
 
-- canal `github-pages-legal-intelligence-candidate` → `github-pages-production-legal-intelligence-certified`;
-- contrato arquitectónico `release-candidate` → `certified`;
-- documentación de SHAs y evidencia de promoción funcional;
-- memoria canónica del ciclo.
+- no crear una séptima ruta;
+- no crear un segundo catálogo;
+- no modificar todavía los catálogos jurídicos de 8 productos y 8 servicios;
+- no publicar nuevas tarifas;
+- no prometer portal, CLM/SaaS, CRM, pagos, firma, agenda o upload;
+- no prometer monitoreo automático universal;
+- no garantizar permisos o decisiones de autoridades;
+- no publicar Meridiano Counsel;
+- no crear un framework frontend nuevo;
+- no degradar accesibilidad, responsive, performance o el funnel de contacto.
 
-## Fuera de alcance
-
-Este cierre **no debe** modificar:
-
-- HTML público;
-- catálogos de productos o servicios;
-- precios, tiempos, entregables, responsabilidades o límites;
-- materializadores v7;
-- validators v7, salvo que apareciera una inconsistencia real de fase previamente no cubierta;
-- tests E2E;
-- workflows de producción;
-- portal, auth, CRM, pagos, firma, agenda o upload;
-- los seis recorridos públicos de solución.
-
-## Capability truth preservado
+## Capability truth
 
 - Contract Control y Regulatory Control siguen siendo patrones de implementación/operación, no SaaS autónomos;
-- no existe CLM productivo implícito;
-- no se promete monitoreo automático universal;
-- no se prometen certificaciones técnicas no incluidas;
-- no se garantizan permisos, licencias o decisiones de autoridades;
-- Legal Desk mantiene SLA, canales y capacidad sujetos al alcance pactado;
-- Meridiano Counsel continúa fuera de la oferta pública;
-- agentes, automatizaciones, integraciones y herramientas solo se incluyen cuando el encargo lo establece expresamente.
+- Legal Desk es capacidad jurídica gestionada dentro de perímetro, canales, QA, capacidad y SLA pactados;
+- AI Governance 360 no sustituye auditorías técnicas, seguridad o evaluación científica del modelo;
+- Legal Engineering solo incluye desarrollo, integraciones, agentes, interfaces o automatización cuando el alcance técnico y jurídico lo establece expresamente.
 
-## Gate del cierre documental
+## Criterio de aceptación del prototipo
 
-Una vez abierto el PR de `docs/v700-release-closure` contra `main`:
+Sin abrir fichas profundas, un usuario debe poder responder:
 
-1. comprobar que el diff contiene exactamente las siete fuentes anteriores;
-2. fijar el SHA final del cierre;
-3. exigir nuevamente todos los workflows aplicables sobre ese mismo SHA;
-4. no reutilizar la certificación del candidate funcional como sustituto de la certificación del cierre;
-5. solo después de gates verdes, marcar ready y fusionar con `expected_head_sha`;
-6. observar el Builder post-merge y capturar el SHA canónico resultante;
-7. dejar que Pages ejecute quality → deploy → live smoke → Browser/axe + Lighthouse → snapshot;
-8. no mover `stable` manualmente.
+1. qué problemas atiende Meridiano;
+2. qué tipo de intervención puede contratar;
+3. qué es Legal Intelligence;
+4. qué diferencia existe entre Legal Desk y una bolsa de horas;
+5. qué diferencia existe entre Contract Control y un CLM/repositorio;
+6. cómo funciona la escalera de AI Governance;
+7. qué significa Regulatory Control y qué no promete;
+8. cuándo puede intervenir Legal Engineering;
+9. qué puede quedar funcionando después del proyecto;
+10. cuál es el siguiente paso aunque el usuario no conozca el nombre del producto.
 
-## Criterio de cierre definitivo
+## Secuencia de trabajo
 
-v7.0.0 queda totalmente cerrada solo cuando:
-
-- el PR documental haya sido fusionado;
-- `main` y `stable` vuelvan a coincidir en el SHA canónico posterior al cierre;
-- `stable/version.json` declare `github-pages-production-legal-intelligence-certified`;
-- el contrato arquitectónico permanezca en `status: certified`;
-- no exista drift funcional ni reducción de cobertura.
-
-Después de ese punto:
-
-- cerrar PR #163 **sin merge** como superseded por #167 y la reconciliación sobre v6.4;
-- no abrir otra versión por inercia;
-- cualquier nuevo ciclo debe partir de una necesidad observable de negocio, conversión, contenido u operación jurídica.
+1. contrato de contenido y arquitectura;
+2. materialización source-driven en Home + hub;
+3. validación de enlaces, seis rutas y capability truth;
+4. crítica de densidad desktop/mobile;
+5. ajuste de autoridad y consolidación de resultados/método si mejora comprensión;
+6. E2E/axe/performance;
+7. PR permanece draft hasta que todos los gates del mismo SHA estén verdes.
