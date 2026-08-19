@@ -66,6 +66,24 @@ jobs:
           print(f"Graphify: {len(nodes)} nodos / {len(edges)} relaciones / {len(wiki)} notas wiki / source {meta['source_commit'][:8]}")
           PY
 
+      - name: Materializar descubrimiento Legal Intelligence en el head del PR
+        if: github.event_name == 'pull_request' && github.head_ref == 'feat/v700-legal-intelligence-architecture'
+        run: |
+          set -euo pipefail
+          git fetch origin feat/v700-legal-intelligence-architecture
+          git checkout -B feat/v700-legal-intelligence-architecture origin/feat/v700-legal-intelligence-architecture
+          python3 scripts/apply_legal_intelligence_discovery_v70.py
+          python3 scripts/validate_legal_intelligence_discovery_v70.py
+          if git diff --quiet -- index.html soluciones/index.html; then
+            echo "Descubrimiento Legal Intelligence ya materializado."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- index.html soluciones/index.html
+          git commit -m "build(v7): materializa descubrimiento Legal Intelligence"
+          git push origin HEAD:feat/v700-legal-intelligence-architecture
+
       - name: Publicar snapshot fuera de main
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         env:
