@@ -91,7 +91,16 @@ def validate_contract() -> dict:
     if contract.get("baseline") != "7.1.0":
         fail("baseline Buying Clarity debe ser v7.1.0")
     rules = contract.get("rules", {})
-    for key in ("preserve_order", "preserve_quantities_verbatim", "no_new_pricing", "no_new_capabilities", "supplements_are_not_included", "material_information_must_be_visible"):
+    for key in (
+        "preserve_order",
+        "preserve_quantities_verbatim",
+        "preserve_existing_hero_and_nav",
+        "no_duplicate_engagement_navigation",
+        "no_new_pricing",
+        "no_new_capabilities",
+        "supplements_are_not_included",
+        "material_information_must_be_visible",
+    ):
         if rules.get(key) is not True:
             fail(f"regla Buying Clarity no fijada: {key}")
     return contract
