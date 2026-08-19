@@ -1,8 +1,8 @@
 {
   "name": "Meridiano Legal Web",
-  "version": "7.3.0",
+  "version": "7.4.0",
   "release_date": "2026-08-19",
-  "channel": "github-pages-production-legal-intelligence-demo-certified",
-  "commit_scope": "legal-intelligence-demo",
+  "channel": "github-pages-commercial-evidence-readiness-candidate",
+  "commit_scope": "commercial-evidence-readiness",
   "source_baseline": "main"
 }
