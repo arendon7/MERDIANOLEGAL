@@ -114,21 +114,40 @@ def render_section(catalog_id: str, source: dict, contract: dict) -> str:
 
 
 def ensure_stylesheet(text: str) -> str:
-    # No usar \s* al inicio: puede consumir saltos de línea vecinos y producir drift.
-    text = re.sub(
-        rf'(?m)^[ \t]*<link rel="stylesheet" href="{re.escape(CSS_HREF)}">[ \t]*(?:\r?\n)?',
-        "",
-        text,
+    """Preserva una hoja v6.3 existente si ya precede a tokens.
+
+    El contrato depende del orden, no del whitespace editorial. Evitar borrar y
+    reinsertar un `<link>` correcto impide drift puramente cosmético frente a
+    materializadores posteriores como Fit & Scope v6.4.
+    """
+    css_pattern = re.compile(
+        rf'(?m)^(?P<indent>[ \t]*)<link rel="stylesheet" href="{re.escape(CSS_HREF)}">[ \t]*$'
     )
     token_pattern = re.compile(
         rf'(?m)^(?P<indent>[ \t]*)<link rel="stylesheet" href="{re.escape(V6_TOKENS_HREF)}">[ \t]*$'
     )
-    matches = list(token_pattern.finditer(text))
-    if len(matches) != 1:
-        raise RuntimeError(f"ficha debe cargar exactamente una hoja {V6_TOKENS_HREF}; encontró {len(matches)}")
-    match = matches[0]
-    link = f'{match.group("indent")}<link rel="stylesheet" href="{CSS_HREF}">\n'
-    return text[:match.start()] + link + text[match.start():]
+    css_matches = list(css_pattern.finditer(text))
+    token_matches = list(token_pattern.finditer(text))
+    if len(css_matches) > 1:
+        raise RuntimeError(f"ficha debe cargar como máximo una hoja {CSS_HREF}; encontró {len(css_matches)}")
+    if len(token_matches) != 1:
+        raise RuntimeError(f"ficha debe cargar exactamente una hoja {V6_TOKENS_HREF}; encontró {len(token_matches)}")
+
+    token = token_matches[0]
+    if len(css_matches) == 1:
+        existing = css_matches[0]
+        if existing.start() < token.start():
+            return text
+        # Si existe pero quedó después de tokens, moverla sin normalizar más HTML.
+        text = text[:existing.start()] + text[existing.end():]
+        text = re.sub(r'(?m)^\r?\n', "", text[existing.start():], count=1) if False else text
+        token_matches = list(token_pattern.finditer(text))
+        if len(token_matches) != 1:
+            raise RuntimeError(f"ficha perdió la hoja ancla {V6_TOKENS_HREF} al reordenar v6.3")
+        token = token_matches[0]
+
+    link = f'{token.group("indent")}<link rel="stylesheet" href="{CSS_HREF}">\n'
+    return text[:token.start()] + link + text[token.start():]
 
 
 def ensure_nav(text: str, label: str) -> str:
