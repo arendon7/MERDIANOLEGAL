@@ -5,9 +5,7 @@ on:
   pull_request:
     branches: ["main"]
   push:
-    branches:
-      - "main"
-      - "feat/v700-legal-intelligence-architecture"
+    branches: ["main"]
 
 permissions:
   contents: write
@@ -67,23 +65,6 @@ jobs:
               raise SystemExit(f"snapshot obsoleto: {meta.get('source_commit')} != {os.environ['GITHUB_SHA']}")
           print(f"Graphify: {len(nodes)} nodos / {len(edges)} relaciones / {len(wiki)} notas wiki / source {meta['source_commit'][:8]}")
           PY
-
-      - name: Materializar prototipos v7 en la rama de arquitectura
-        if: github.event_name == 'push' && github.ref == 'refs/heads/feat/v700-legal-intelligence-architecture'
-        run: |
-          set -euo pipefail
-          python3 scripts/apply_legal_intelligence_prototype_v70.py
-          python3 scripts/validate_legal_intelligence_v70.py
-          python3 scripts/validate_legal_intelligence_prototype_v70.py
-          if git diff --quiet -- servicios/legal-operations.html productos/sistema-contractual-empresarial.html; then
-            echo "Prototipos profundos v7 ya materializados."
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -- servicios/legal-operations.html productos/sistema-contractual-empresarial.html
-          git commit -m "build(v7): materializa prototipos de ofertas profundas"
-          git push origin HEAD:feat/v700-legal-intelligence-architecture
 
       - name: Publicar snapshot fuera de main
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
