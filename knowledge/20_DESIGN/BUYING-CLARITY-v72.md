@@ -45,7 +45,7 @@ No introducir cifras, precios, alcances, SLA, integraciones o capacidades que no
 
 ## Nuevo bloque: Resumen de contratación
 
-Ubicación: inmediatamente después del hero de cada una de las 16 fichas y antes de Resultado/Pregunta de gobierno.
+Ubicación: inmediatamente después del hero de cada una de las 16 fichas y antes del nav sticky y del contenido profundo.
 
 ### Cabecera
 
@@ -77,15 +77,15 @@ CTA contextual: `Ver todos los entregables → #v6-deliverables`.
 
 Mostrar los primeros dos requisitos de `requirements` como condiciones de inicio.
 
-CTA contextual: `Ver condiciones para empezar → #v6-engagement` cuando la sección exista.
+**No se añade un segundo enlace a `#v6-engagement`.** El resumen hace visibles los requisitos y el nav sticky conserva la única ruta canónica a la sección completa “Para empezar”.
 
 ### Cierre / verificación
 
 Mostrar los primeros dos criterios de `acceptance`.
 
-En productos, lenguaje de cierre: `Cómo sabemos que el producto terminó correctamente`.
+En productos: `Cómo se verifica el cierre`.
 
-En servicios, lenguaje de operación: `Cómo verificamos que la prestación está funcionando dentro del alcance`.
+En servicios: `Cómo se verifica la prestación`.
 
 ### Si la necesidad crece
 
@@ -107,29 +107,20 @@ No presentarlos como incluidos en el alcance base.
 
 - apilado en orden de decisión: modalidad → perímetro → entregables → inicio → cierre → ampliación;
 - sin scroll horizontal;
-- cantidades y límites visibles antes del CTA.
+- cantidades y límites visibles antes del siguiente paso.
 
-## Navegación
+## Compatibilidad de navegación y hero
 
-Añadir `Qué contrata` como primer enlace del nav sticky de ficha, apuntando a `#v72-buying-summary`.
+En la **fase 1 certificable** se preservan el hero y el nav sticky existentes. El resumen vive entre ambos y fuera del `<main>` reconstruido por el materializador v6.
 
-El resto de la ficha permanece disponible y no se elimina:
+Esto permite que:
 
-- Resultado/Decisión;
-- Entregables;
-- Perímetro;
-- Proceso;
-- Para empezar;
-- Límites;
-- Profundidad.
+- el builder histórico vuelva a materializar la ficha sin borrar Buying Clarity;
+- no se duplique la navegación a `#v6-engagement`;
+- la CTA primaria conserve el handoff comercial canónico;
+- las CTAs secundarias históricas sigan apuntando a perímetro o límites según la oferta.
 
-## Hero
-
-La CTA secundaria debe priorizar la comprensión de compra:
-
-`Ver qué incluye → #v72-buying-summary`.
-
-La CTA primaria sigue usando el handoff comercial canónico existente.
+Una modificación futura del hero/nav solo se considerará después de certificar esta capa y si mejora la decisión sin romper contratos históricos.
 
 ## Centro Demo — fase 2 de v7.2
 
@@ -153,7 +144,7 @@ Después de certificar el resumen de contratación en las 16 fichas, integrar un
 
 ## Criterio de aceptación
 
-Sin hacer scroll por toda la ficha, un visitante debe poder explicar:
+Sin recorrer toda la ficha, un visitante debe poder explicar:
 
 1. qué modalidad está contratando;
 2. cuánto dura;
