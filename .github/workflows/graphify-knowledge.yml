@@ -5,7 +5,9 @@ on:
   pull_request:
     branches: ["main"]
   push:
-    branches: ["main"]
+    branches:
+      - "main"
+      - "feat/v700-legal-intelligence-architecture"
 
 permissions:
   contents: write
@@ -65,6 +67,22 @@ jobs:
               raise SystemExit(f"snapshot obsoleto: {meta.get('source_commit')} != {os.environ['GITHUB_SHA']}")
           print(f"Graphify: {len(nodes)} nodos / {len(edges)} relaciones / {len(wiki)} notas wiki / source {meta['source_commit'][:8]}")
           PY
+
+      - name: Materializar AI Governance 360 en la rama de arquitectura
+        if: github.event_name == 'push' && github.ref == 'refs/heads/feat/v700-legal-intelligence-architecture'
+        run: |
+          set -euo pipefail
+          python3 scripts/apply_ai_governance_360_prototype_v70.py
+          python3 scripts/validate_ai_governance_360_prototype_v70.py
+          if git diff --quiet -- soluciones/gobernar-inteligencia-artificial-empresa.html productos/programa-gobernanza-ia.html servicios/tecnologia-inteligencia-artificial.html; then
+            echo "AI Governance 360 ya materializado."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- soluciones/gobernar-inteligencia-artificial-empresa.html productos/programa-gobernanza-ia.html servicios/tecnologia-inteligencia-artificial.html
+          git commit -m "build(v7): materializa AI Governance 360"
+          git push origin HEAD:feat/v700-legal-intelligence-architecture
 
       - name: Publicar snapshot fuera de main
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
