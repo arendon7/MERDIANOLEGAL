@@ -23,6 +23,8 @@ on:
       - scripts/validate_engagement_clarity_v63.py
       - scripts/apply_fit_scope_clarity_v64.py
       - scripts/validate_fit_scope_clarity_v64.py
+      - scripts/apply_delivery_plan_clarity_v65.py
+      - scripts/validate_delivery_plan_clarity_v65.py
       - scripts/validate_production_v50.py
       - scripts/enrich_editorial_pages.py
       - scripts/apply_experience_v60.py
@@ -91,7 +93,7 @@ jobs:
             echo 'Candidate starts from a pre-v6 baseline; first-pass materialization must produce public changes.'
           fi
       - name: Compile v6 renderers and validators
-        run: python3 -m py_compile scripts/sync_public_version.py scripts/apply_search_discovery_v62.py scripts/validate_search_discovery_v62.py scripts/apply_engagement_clarity_v63.py scripts/validate_engagement_clarity_v63.py scripts/apply_fit_scope_clarity_v64.py scripts/validate_fit_scope_clarity_v64.py scripts/validate_production_v50.py scripts/apply_experience_v60.py scripts/apply_experience_solutions_v60.py scripts/apply_experience_sectors_v60.py scripts/apply_experience_perspectives_v60.py scripts/apply_experience_final_v60.py scripts/normalize_experience_compat_v60.py scripts/validate_experience_v60.py scripts/validate_experience_solutions_v60.py scripts/validate_experience_sectors_v60.py scripts/validate_experience_perspectives_v60.py scripts/validate_experience_final_v60.py scripts/validate_proof_v512.py
+        run: python3 -m py_compile scripts/sync_public_version.py scripts/apply_search_discovery_v62.py scripts/validate_search_discovery_v62.py scripts/apply_engagement_clarity_v63.py scripts/validate_engagement_clarity_v63.py scripts/apply_fit_scope_clarity_v64.py scripts/validate_fit_scope_clarity_v64.py scripts/apply_delivery_plan_clarity_v65.py scripts/validate_delivery_plan_clarity_v65.py scripts/validate_production_v50.py scripts/apply_experience_v60.py scripts/apply_experience_solutions_v60.py scripts/apply_experience_sectors_v60.py scripts/apply_experience_perspectives_v60.py scripts/apply_experience_final_v60.py scripts/normalize_experience_compat_v60.py scripts/validate_experience_v60.py scripts/validate_experience_solutions_v60.py scripts/validate_experience_sectors_v60.py scripts/validate_experience_perspectives_v60.py scripts/validate_experience_final_v60.py scripts/validate_proof_v512.py
       - name: Materialize first v6 pass
         run: |
           python3 scripts/sync_public_version.py
@@ -104,6 +106,9 @@ jobs:
           python3 scripts/normalize_experience_compat_v60.py
           if [ -f assets/data/v6/fit-scope-clarity-v64.json ]; then
             python3 scripts/apply_fit_scope_clarity_v64.py
+          fi
+          if [ -f assets/data/v6/delivery-plan-clarity-v65.json ]; then
+            python3 scripts/apply_delivery_plan_clarity_v65.py
           fi
       - name: Validate v6 surface contracts
         run: |
@@ -124,6 +129,10 @@ jobs:
             python3 scripts/validate_fit_scope_clarity_v64.py
             python3 scripts/apply_fit_scope_clarity_v64.py --check
           fi
+          if [ -f assets/data/v6/delivery-plan-clarity-v65.json ]; then
+            python3 scripts/validate_delivery_plan_clarity_v65.py
+            python3 scripts/apply_delivery_plan_clarity_v65.py --check
+          fi
       - name: Validate preserved historical contracts
         run: |
           python3 scripts/validate_production_v50.py
@@ -139,7 +148,7 @@ jobs:
             exit 1
           fi
           if [ -s /tmp/v6-pass-1.diff ]; then
-            echo "First pass materialized candidate changes, including release/discovery/engagement/fit-scope metadata when required."
+            echo "First pass materialized candidate changes, including release/discovery/engagement/fit-scope/delivery-plan metadata when required."
           else
             echo "First pass is already canonical on the v6 baseline."
           fi
@@ -155,6 +164,9 @@ jobs:
           python3 scripts/normalize_experience_compat_v60.py
           if [ -f assets/data/v6/fit-scope-clarity-v64.json ]; then
             python3 scripts/apply_fit_scope_clarity_v64.py
+          fi
+          if [ -f assets/data/v6/delivery-plan-clarity-v65.json ]; then
+            python3 scripts/apply_delivery_plan_clarity_v65.py
           fi
           python3 scripts/validate_production_v50.py
           python3 scripts/validate_experience_v60.py
@@ -178,13 +190,17 @@ jobs:
             python3 scripts/validate_fit_scope_clarity_v64.py
             python3 scripts/apply_fit_scope_clarity_v64.py --check
           fi
+          if [ -f assets/data/v6/delivery-plan-clarity-v65.json ]; then
+            python3 scripts/validate_delivery_plan_clarity_v65.py
+            python3 scripts/apply_delivery_plan_clarity_v65.py --check
+          fi
           git diff -- index.html perspectivas.html firma.html experiencia.html demo.html aviso-legal.html privacidad.html terminos.html 404.html productos servicios soluciones sectores perspectivas catalog-home-v32.js decision-flow.js runtime-config.js site-status.json sitemap.xml robots.txt > /tmp/v6-pass-2.diff
           if ! cmp --silent /tmp/v6-pass-1.diff /tmp/v6-pass-2.diff; then
             echo "Experience System v6 dejó de ser idempotente:" >&2
             diff -u /tmp/v6-pass-1.diff /tmp/v6-pass-2.diff || true
             exit 1
           fi
-          echo "Experience System v6 and public release/discovery/engagement/fit-scope metadata are idempotent."
+          echo "Experience System v6 and public release/discovery/engagement/fit-scope/delivery-plan metadata are idempotent."
       - name: Verify scoped v6 HTML materialization boundary
         run: |
           CHANGED="$(git diff --name-only -- index.html perspectivas.html firma.html experiencia.html demo.html aviso-legal.html privacidad.html terminos.html 404.html productos servicios soluciones sectores perspectivas)"
