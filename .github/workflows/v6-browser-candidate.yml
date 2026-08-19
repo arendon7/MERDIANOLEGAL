@@ -27,6 +27,8 @@ on:
       - scripts/validate_engagement_clarity_v63.py
       - scripts/apply_fit_scope_clarity_v64.py
       - scripts/validate_fit_scope_clarity_v64.py
+      - scripts/apply_delivery_plan_clarity_v65.py
+      - scripts/validate_delivery_plan_clarity_v65.py
       - scripts/validate_production_v50.py
       - scripts/apply_experience_v60.py
       - scripts/apply_experience_solutions_v60.py
@@ -87,6 +89,9 @@ jobs:
           if [ -f assets/data/v6/fit-scope-clarity-v64.json ]; then
             python3 scripts/apply_fit_scope_clarity_v64.py
           fi
+          if [ -f assets/data/v6/delivery-plan-clarity-v65.json ]; then
+            python3 scripts/apply_delivery_plan_clarity_v65.py
+          fi
       - name: Validate v6 and preserved contracts
         run: |
           python3 scripts/validate_production_v50.py
@@ -110,6 +115,10 @@ jobs:
           if [ -f assets/data/v6/fit-scope-clarity-v64.json ]; then
             python3 scripts/validate_fit_scope_clarity_v64.py
             python3 scripts/apply_fit_scope_clarity_v64.py --check
+          fi
+          if [ -f assets/data/v6/delivery-plan-clarity-v65.json ]; then
+            python3 scripts/validate_delivery_plan_clarity_v65.py
+            python3 scripts/apply_delivery_plan_clarity_v65.py --check
           fi
       - name: Validate E2E JavaScript syntax
         run: |

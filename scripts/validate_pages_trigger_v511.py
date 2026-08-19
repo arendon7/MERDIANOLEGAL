@@ -78,6 +78,8 @@ def main() -> int:
         errors.append("build-canonical.yml: cambios del materializador Engagement Clarity v6.3 deben disparar el builder")
     if "scripts/apply_fit_scope_clarity_v64.py" not in build_triggers:
         errors.append("build-canonical.yml: cambios del materializador Fit & Scope Clarity v6.4 deben disparar el builder")
+    if "scripts/apply_delivery_plan_clarity_v65.py" not in build_triggers:
+        errors.append("build-canonical.yml: cambios del materializador Delivery Plan Clarity v6.5 deben disparar el builder")
     if "git push origin HEAD:main" not in build:
         errors.append("build-canonical.yml: falta publicación de outputs canónicos a main")
 
@@ -90,7 +92,7 @@ def main() -> int:
     print(
         "PAGES TRIGGER V5.11 OK: Pages espera al builder canónico, aísla los workflow_run build: "
         "y el builder vigila validators + materializadores Search Discovery v6.2 / Engagement Clarity v6.3 / "
-        "Fit & Scope Clarity v6.4 antes de publicar."
+        "Fit & Scope Clarity v6.4 / Delivery Plan Clarity v6.5 antes de publicar."
     )
     return 0
 

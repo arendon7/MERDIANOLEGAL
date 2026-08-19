@@ -1,0 +1,28 @@
+{
+  "version": "6.5.0",
+  "name": "Delivery Plan Clarity",
+  "scope": {
+    "detail_pages": 16,
+    "products": 8,
+    "services": 8
+  },
+  "truth": {
+    "catalog_fields": ["formats", "timeline"],
+    "policy": "presentation-only",
+    "rule": "La capa visible reproduce exclusivamente formats y timeline de los catálogos canónicos; no crea plataformas, archivos, hitos, frecuencias, SLA o plazos nuevos."
+  },
+  "presentation": {
+    "section_id": "v6-delivery-plan",
+    "eyebrow": "ENTREGA Y RITMO DE TRABAJO",
+    "title": "Cómo se entrega el trabajo y cómo se distribuye en el tiempo.",
+    "intro": "La forma de entrega y el ritmo deben quedar definidos desde la propuesta. Estos formatos y momentos provienen de la ficha canónica y se ajustan únicamente mediante un alcance expreso.",
+    "formats_title": "Cómo queda documentado y administrable",
+    "timeline_title": "Cómo transcurre el trabajo"
+  },
+  "constraints": {
+    "no_new_toc_item": true,
+    "insert_after": "v6-deliverables",
+    "insert_before": "v6-perimeter",
+    "preserve_productive_enablement_disclaimers": true
+  }
+}

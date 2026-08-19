@@ -2,80 +2,74 @@
 
 Actualizado: 2026-08-18.
 
-## Estado funcional certificado
+## Estado base certificado
 
-- Release: **v6.4.0 — Fit & Scope Clarity / encaje y cambio de alcance**.
-- SHA funcional certificado: `0045588f795f5f0a0b9144786bc61cdf89f34319`.
-- Canal objetivo de cierre: `github-pages-production-fit-scope-clarity-certified`.
-- PR funcional: #162 fusionado.
-- Builder materializó las 16 fichas y produjo el snapshot funcional certificado.
-- `stable` fue promovido automáticamente a `0045588f…` después de quality, deploy, smoke, Browser/axe, Lighthouse y snapshot.
+- Release de partida: **v6.4.0 — Fit & Scope Clarity / encaje y cambio de alcance**.
+- Base certificada al abrir este ciclo: `main == stable == 704d61b9f56e58b4ac135fd66aeee89033e22f24`.
+- Canal certificado: `github-pages-production-fit-scope-clarity-certified`.
 - Search Console permanece sin configurar: `searchConsoleConfigured=false` y sin token auténtico.
 - Analytics externa permanece deshabilitada: `enabled=false`, `provider=none`, `site_id=""`.
-- 46 HTML, 16 fichas profundas, un único formulario físico y 30 pasos históricos permanecen intactos.
+- 46 HTML, 16 fichas profundas, un único formulario físico, TOC de 7 hitos y 30 pasos históricos permanecen como invariantes.
 
-## Frente vigente
+## Ciclo funcional activo
 
-**No existe un ciclo funcional nuevo abierto.**
+**v6.5 — Delivery Plan Clarity / claridad de entrega y ritmo de trabajo.**
 
-Este documento acompaña únicamente el **cierre documental v6.4.0**:
+Rama: `feat/v65-delivery-plan-clarity`.
+Estado: fase técnica pre-bump; `version.json` permanece en 6.4.0 hasta que el renderer y su boundary queden certificados.
 
-1. cambiar el canal `candidate → certified`;
-2. actualizar README y memoria canónica;
-3. publicar `RELEASE-v6.4.md`;
-4. someter el cierre a los gates pre-merge aplicables;
-5. fusionar únicamente con same-SHA verde;
-6. exigir nuevamente Builder → Pages → smoke → Browser/axe → Lighthouse → snapshot;
-7. cerrar cuando `main == stable` y `stable/version.json` declare v6.4.0 con canal certified.
+## Problema observable
 
-Si esta nota se lee desde `stable` y `version.json.channel` ya es `github-pages-production-fit-scope-clarity-certified`, el cierre documental está completado y **no hay tarea funcional activa**.
+Las 16 fichas ya exponen en lectura ejecutiva:
 
-## Resultado que queda cerrado
+- resultado y criterios de cierre;
+- encaje y situaciones que amplían el alcance (v6.4);
+- entregables y perímetro;
+- proceso;
+- requisitos y responsabilidades (v6.3);
+- límites.
 
-v6.4 hace visible en las 16 fichas verdad ya contenida en los catálogos jurídicos:
+Sin embargo, dos campos canónicos siguen relegados a la profundidad histórica cerrada por defecto:
 
-- `situations` → **Señales de que esta modalidad encaja**;
-- `supplements` → **Situaciones que amplían el alcance**;
-- una única sección `#v6-fit-scope` entre Resultado y Entregables;
-- TOC v6.3 preservado en exactamente 7 hitos, sin enlace v6.4 adicional.
+- `formats`: archivos, matrices, dashboards, repositorio y trazabilidad en que queda documentada la entrega;
+- `timeline`: semanas, hitos o cadencias que explican cómo transcurre el trabajo.
 
-La representación visible no redefine esos datos. El validator compara fila por fila contra `catalog-products-v41/*.json` y `catalog-services-v42/*.json`.
+La consecuencia es una fricción distinta de v6.3/v6.4: el comprador puede entender qué recibe y si la modalidad encaja, pero debe abrir la profundidad para saber **cómo recibirá materialmente el trabajo y cómo se distribuye en el tiempo**.
 
-## Release engineering cerrado
+## Alcance propuesto v6.5
 
-- materializador v6.4 fail-closed + `--check`;
-- validator 16/16 contra truth canónico;
-- gate v6.4 phase-aware desde el inicio: 0/16 → 16 drift; 16/16 → 0; parcial → fallo;
-- Canonical Equivalence `measurement ∪ release ∪ discovery ∪ engagement ∪ fit/scope`;
-- CSS v6.4 estabilizado frente a v6.3/tokens para segunda pasada byte-equivalent;
-- Builder == Pages == `canonical_pipeline_v524.py` con 30 pasos históricos intactos;
-- Builder/Candidate/Browser/Measurement con cobertura explícita de v6.4;
-- E2E en las 16 fichas y orden DOM representativo;
-- candidate final `38c140f5…` con 9/9 workflows aplicables verdes;
-- producción certificada en `0045588f…`.
+1. contrato `assets/data/v6/delivery-plan-clarity-v65.json`;
+2. exactamente 16 fichas = 8 productos + 8 servicios;
+3. bloque `#v6-delivery-plan` inmediatamente después de Entregables y antes de Perímetro;
+4. panel `Cómo queda documentado y administrable` derivado literalmente de `formats`;
+5. panel `Cómo transcurre el trabajo` derivado literalmente de `timeline`;
+6. sin octavo hito en la navegación: el TOC permanece exactamente en 7;
+7. ninguna plataforma, archivo, plazo, frecuencia, SLA o repositorio se inventa desde presentación;
+8. las advertencias existentes sobre Meridiano Empresas solo cuando esté habilitado productivamente se preservan literalmente desde catálogo;
+9. materializador fail-closed + `--check` e idempotencia;
+10. validator fila por fila contra truth canónico;
+11. E2E 16/16 y orden Entregables → Delivery Plan → Perímetro;
+12. gate dedicado phase-aware: 0/16 → 16 drift; 16/16 → 0; parcial → fallo.
 
-## Incidencia productiva documentada
+## Fuera de alcance
 
-El primer Lighthouse productivo recibió HTTP 503 transitorio únicamente en `demo`; quality, deploy, smoke y Browser habían pasado y snapshot quedó skipped.
+- reescribir `formats` o `timeline` por intuición;
+- prometer plataforma Meridiano Empresas si no existe habilitación productiva real;
+- añadir cronogramas, tiempos de respuesta o SLA no aprobados;
+- añadir precios, descuentos, garantías o nuevas obligaciones;
+- alterar el formulario o WhatsApp manual;
+- activar Search Console o analytics;
+- crear un paso histórico 31;
+- reducir Browser/axe o relajar Lighthouse.
 
-- #164 reprodujo smoke, Browser/axe y Lighthouse en verde contra producción y se cerró sin merge.
-- Se reejecutaron los jobs fallidos del run oficial, sin cambios de código ni budgets.
-- Lighthouse pasó en el rerun.
-- Snapshot y `Move stable to deployed commit` terminaron success.
-- No hubo promoción manual de `stable`.
+## Condición para autorizar bump 6.5.0
 
-## Fuera de alcance después del cierre
+La fase técnica debe demostrar, sobre un mismo SHA:
 
-No hacer automáticamente:
+- exactamente 16 fichas pendientes en baseline v6.4;
+- truth visible idéntico a `formats` + `timeline` de cada catálogo;
+- ninguna ruta fuera de `productos/` y `servicios/`;
+- TOC exacto de 7 hitos;
+- segunda pasada byte-equivalent.
 
-- reescribir `situations`, `supplements`, `requirements` o `responsibilities` por intuición;
-- añadir obligaciones, tarifas, descuentos o cronogramas no aprobados;
-- activar Search Console sin token auténtico;
-- activar Plausible, Umami u otra analítica;
-- crear backend, CRM, portal, auth, pagos, firma, agenda o upload ficticios;
-- abrir v6.5 solo por continuidad de versionado;
-- reducir cobertura E2E/axe o relajar Lighthouse.
-
-## Próximo ciclo
-
-Después de este cierre documental, el proyecto queda en estado estable. El próximo ciclo debe partir de una necesidad observable de negocio, conversión, contenido u operación jurídica. Antes de añadir otra capa, debe comprobarse si la verdad necesaria ya existe en los catálogos o contratos actuales y puede presentarse mejor.
+Solo después se integrará v6.5 en Builder, Pages, Candidate, Equivalence, Browser y Measurement y se realizará el bump formal a 6.5.0 candidate.

@@ -9,6 +9,8 @@ on:
       - assets/data/v6/measurement-readiness-v61.json
       - assets/data/v6/fit-scope-clarity-v64.json
       - assets/css/v6/fit-scope-clarity-v64.css
+      - assets/data/v6/delivery-plan-clarity-v65.json
+      - assets/css/v6/delivery-plan-clarity-v65.css
       - telemetry-v50.js
       - site-config.json
       - runtime-config.js
@@ -20,8 +22,11 @@ on:
       - scripts/validate_measurement_readiness_v61.py
       - scripts/apply_fit_scope_clarity_v64.py
       - scripts/validate_fit_scope_clarity_v64.py
+      - scripts/apply_delivery_plan_clarity_v65.py
+      - scripts/validate_delivery_plan_clarity_v65.py
       - tests/e2e/measurement-readiness-v61.spec.mjs
       - tests/e2e/fit-scope-clarity-v64.spec.mjs
+      - tests/e2e/delivery-plan-clarity-v65.spec.mjs
       - playwright.config.mjs
       - package.json
       - package-lock.json
@@ -70,6 +75,9 @@ jobs:
           if [ -f assets/data/v6/fit-scope-clarity-v64.json ]; then
             python3 scripts/apply_fit_scope_clarity_v64.py
           fi
+          if [ -f assets/data/v6/delivery-plan-clarity-v65.json ]; then
+            python3 scripts/apply_delivery_plan_clarity_v65.py
+          fi
       - name: Validate measurement privacy and release metadata
         run: |
           python3 scripts/validate_production_v50.py
@@ -80,14 +88,24 @@ jobs:
             python3 scripts/validate_fit_scope_clarity_v64.py
             python3 scripts/apply_fit_scope_clarity_v64.py --check
           fi
+          if [ -f assets/data/v6/delivery-plan-clarity-v65.json ]; then
+            python3 scripts/validate_delivery_plan_clarity_v65.py
+            python3 scripts/apply_delivery_plan_clarity_v65.py --check
+          fi
           node --check assets/js/v6/analytics-adapter-v61.js
           node --check tests/e2e/measurement-readiness-v61.spec.mjs
           if [ -f tests/e2e/fit-scope-clarity-v64.spec.mjs ]; then
             node --check tests/e2e/fit-scope-clarity-v64.spec.mjs
           fi
+          if [ -f tests/e2e/delivery-plan-clarity-v65.spec.mjs ]; then
+            node --check tests/e2e/delivery-plan-clarity-v65.spec.mjs
+          fi
           python3 -m json.tool assets/data/v6/measurement-readiness-v61.json > /dev/null
           if [ -f assets/data/v6/fit-scope-clarity-v64.json ]; then
             python3 -m json.tool assets/data/v6/fit-scope-clarity-v64.json > /dev/null
+          fi
+          if [ -f assets/data/v6/delivery-plan-clarity-v65.json ]; then
+            python3 -m json.tool assets/data/v6/delivery-plan-clarity-v65.json > /dev/null
           fi
           python3 -m json.tool site-status.json > /dev/null
       - name: Install locked QA dependencies
