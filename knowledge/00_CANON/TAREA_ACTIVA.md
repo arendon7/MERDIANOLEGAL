@@ -4,26 +4,19 @@ Actualizado: 2026-08-19.
 
 ## Frente vigente
 
-**v7.3.0 — Legal Intelligence Demo / production-certified closure.**
+**v7.4 — Commercial Evidence Readiness / prototype.**
 
-Rama: `docs/v730-certified-closure`.
+Rama: `feat/v740-commercial-evidence-readiness`.
 
-La funcionalidad y el candidate ya fueron certificados productivamente.
+Baseline certificada: **v7.3.0 — Legal Intelligence Demo**, con `main == stable == 61790b4bdf0bfe4dd1143a414288559d664826e6` y canal `github-pages-production-legal-intelligence-demo-certified`.
 
-- Baseline anterior certificado: v7.2.0.
-- SHA funcional final v7.3: `dc3d4beea5637fc6aa104964d0fd0849b8c904c7`.
-- 10/10 workflows aplicables verdes sobre el SHA funcional.
-- Merge funcional #177: `4867f3418c45a5a6689cd43b79ff48f191cda3a1`.
-- SHA candidate final: `e8656a0ea69aa8cf8140a6d41e74130e3cec9f60`.
-- 10/10 workflows aplicables verdes sobre el SHA candidate.
-- Merge candidate #178: `6c194effd5421326f05296c1e99c54f852f04398`.
-- Builder/snapshot productivo candidate: `2999d28dc6e4ae497ecbfbb9469f55364f34d899`.
-- Pages quality/deploy/live smoke + Browser/axe + Lighthouse: PASS.
-- `stable` fue promovido automáticamente a `2999d28dc6e4ae497ecbfbb9469f55364f34d899`.
+## Problema que resuelve
 
-## Qué añade v7.3
+v7.0–v7.3 hicieron más clara, comprable y demostrable la capa Meridiano Legal Intelligence, pero Measurement v6.1 solo exportaría etapas agregadas del funnel y deliberadamente descarta `target/event`. Hoy no existe una atribución comercial cerrada para saber qué capacidad Legal Intelligence originó una intención de contacto.
 
-El Centro Demo conserva sus cinco experiencias históricas y añade una sexta pestaña **Legal Intelligence** con cinco escenarios completamente ficticios:
+## Hipótesis v7.4
+
+Preparar una capa local y anónima que permita atribuir interacciones a cinco sujetos comerciales sin activar analytics externo ni crear perfiles:
 
 1. Legal AI Transformation.
 2. Contract Control.
@@ -31,71 +24,92 @@ El Centro Demo conserva sus cinco experiencias históricas y añade una sexta pe
 4. Regulatory Control.
 5. Meridiano Legal Desk.
 
-Cada escenario muestra:
+Cada sujeto usa un token público allowlisted `source=li-*`. Cualquier source diferente se ignora.
 
-**problema → flujo → artefacto demostrativo → resultado → referencia de alcance → frontera → oferta relacionada**.
+## Interacciones admitidas
 
-Las referencias cuantitativas provienen verbatim de los catálogos canónicos aplicables. Legal Desk no publica LU, volumen, canales, SLA o capacidad estándar.
+- `offer_view`.
+- `demo_offer_open`.
+- `contact_intent`.
+- `handoff_prepared`.
 
-## Correcciones cerradas
+Ninguna interacción equivale a usuario único, mensaje enviado, entrega, lectura, aceptación, contratación o cliente.
 
-Durante desarrollo/candidate se corrigieron sin relajar ningún gate:
+## Boundary funcional
 
-1. falso positivo del validator sobre la negación de Legal Units/SLA de Legal Desk;
-2. idempotencia de markers administrados;
-3. recomposición canónica v7.3 después de las capas v6;
-4. incompatibilidad de lifecycle del materializador al pasar de prototype a candidate.
+Commercial Evidence v7.4 se carga únicamente en siete superficies:
 
-Validator y materializador comparten ahora una máquina de estados cerrada:
+1. `index.html`.
+2. `experiencia.html`.
+3. `servicios/legal-operations.html`.
+4. `productos/sistema-contractual-empresarial.html`.
+5. `productos/programa-gobernanza-ia.html`.
+6. `productos/proyecto-regulado-estructurado.html`.
+7. `soluciones/ordenar-operacion-juridica.html`.
 
-- `demo-prototype` → prefijo `7.3.0-prototype`;
-- `release-candidate` → versión exacta `7.3.0`;
-- `certified` → versión exacta `7.3.0`;
-- baseline exacta `7.2.0`.
+No cambia navegación, formulario, campos, anchors, catálogos, precios o capabilities.
 
-## Capability truth preservado
+## Privacidad / capability truth
 
-- DEMO y datos ficticios visibles;
-- sin carga de información real;
-- sin asesoría jurídica;
-- sin portal productivo implícito;
-- sin Meridiano Counsel;
-- sin monitoreo automático universal;
-- sin decisión jurídica autónoma;
-- sin precios nuevos;
-- Legal Desk no fija capacidad, LU o SLA estándar;
-- Contract Control y Regulatory Control no son SaaS autónomos.
+El prototype permanece `readiness-disabled`:
 
-## Boundary del cierre
+- analytics externo deshabilitado;
+- provider `none`;
+- cero network transport propio;
+- cero cookies;
+- cero local/session storage;
+- cero identificadores cross-session;
+- cero fingerprinting;
+- cero PII;
+- cero contenido de formulario o texto libre en eventos;
+- buffer máximo de 24 eventos, solo en memoria de la pestaña;
+- payload local limitado a `subject + interaction`;
+- `site-config.json` y Measurement v6.1 siguen production-disabled.
 
-El cierre `production-certified` modifica exactamente siete archivos:
+El `source` permanece visible en URL y el handoff histórico continúa mostrando `pathname+search` en el campo `Origen` del mensaje que el usuario revisa antes de enviar por WhatsApp.
 
-1. `version.json`: canal candidate → `github-pages-production-legal-intelligence-demo-certified`.
-2. `assets/data/v7/legal-intelligence-demo-v73.json`: `release-candidate` → `certified`.
-3. `README.md`.
-4. `RELEASE-v7.3.md`.
-5. `knowledge/00_CANON/CONTEXTO_RAPIDO.md`.
-6. `knowledge/00_CANON/ESTADO_ACTUAL.md`.
-7. esta memoria.
+## Estado de materialización
 
-No modifica HTML, CSS, catálogos, materializadores, validators funcionales, E2E, workflows ni capabilities.
+Las siete superficies fueron materializadas desde `scripts/apply_commercial_evidence_v74.py` y Graphify fue restaurado byte-for-byte desde `main` antes del commit generado.
 
-## Gate del cierre
+El boundary permanente del PR #180 es de **16 archivos**:
 
-Antes de declarar v7.3 definitivamente cerrada:
+- 9 archivos de source/QA/gobernanza (incluida esta memoria y el hook del normalizador);
+- 7 superficies HTML materializadas;
+- ningún workflow temporal adicional.
 
-1. confirmar boundary exacto de siete archivos;
-2. fijar SHA final del PR;
-3. superar todos los workflows aplicables sobre ese mismo SHA;
-4. fusionar únicamente con `expected_head_sha`;
-5. observar Builder canónico;
-6. exigir Pages quality/deploy → live smoke → Browser/axe + Lighthouse;
-7. permitir únicamente promoción automática de `stable`;
-8. terminar con `main == stable`;
-9. confirmar `stable/version.json` = v7.3.0 + canal `github-pages-production-legal-intelligence-demo-certified`.
+La primera ejecución de Graphify que produjo el commit termina con freshness obsoleta por diseño, porque su propio push mueve el head durante el job. Esa ejecución no cuenta como certificación; la ronda válida debe ejecutarse sobre un SHA posterior normal, sin modificación de workflows.
 
-`stable` no se mueve manualmente.
+## Archivos source-driven
 
-## Después de v7.3
+- `assets/data/v7/commercial-evidence-v74.json`.
+- `assets/js/v7/commercial-evidence-v74.js`.
+- `knowledge/20_DESIGN/COMMERCIAL-EVIDENCE-v74.md`.
+- `scripts/apply_commercial_evidence_v74.py`.
+- `scripts/validate_commercial_evidence_v74.py`.
+- `scripts/normalize_experience_compat_v60.py`.
+- `tests/e2e/commercial-evidence-v74.spec.mjs`.
+- `.github/workflows/v74-commercial-evidence-readiness.yml`.
+- siete superficies HTML materializadas.
+- esta memoria de tarea.
 
-El siguiente frente debe priorizarse con evidencia comercial real producida por la navegación, fichas comprables y Centro Demo. No se abrirán nuevas capabilities tecnológicas solo por completar catálogo: la siguiente ola debe responder a señales de demanda, conversión o aprendizaje verificable.
+## Gate del prototype
+
+Antes de considerar la fase funcional lista:
+
+1. materializar exactamente las siete superficies;
+2. confirmar idempotencia `apply --check`;
+3. mantener Measurement v6.1 PASS y analytics production-disabled;
+4. E2E debe probar propagación allowlisted de source, eventos locales, source inválido ignorado y ausencia de requests a proveedores analytics;
+5. superar Builder/Candidate, Engagement, Fit & Scope, Buying Clarity, Legal Intelligence Demo, Search, Release Governance, Graphify, Browser/axe y Measurement;
+6. congelar un único SHA same-SHA antes de cualquier merge.
+
+## No objetivos
+
+- No activar Plausible, GA4, Umami u otro proveedor.
+- No introducir pageviews automáticos.
+- No identificar usuarios.
+- No afirmar conversiones que la web estática no conoce.
+- No cambiar el copy comercial por el solo hecho de instrumentarlo.
+
+Una eventual activación externa será otra decisión y otra release, con proveedor, site ID, política de privacidad, retención y semántica aprobados expresamente.

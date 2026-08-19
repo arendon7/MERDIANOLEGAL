@@ -1,0 +1,55 @@
+name: V7.4 Commercial Evidence readiness
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - assets/data/v7/commercial-evidence-v74.json
+      - assets/js/v7/commercial-evidence-v74.js
+      - index.html
+      - experiencia.html
+      - servicios/legal-operations.html
+      - productos/sistema-contractual-empresarial.html
+      - productos/programa-gobernanza-ia.html
+      - productos/proyecto-regulado-estructurado.html
+      - soluciones/ordenar-operacion-juridica.html
+      - scripts/apply_commercial_evidence_v74.py
+      - scripts/validate_commercial_evidence_v74.py
+      - scripts/normalize_experience_compat_v60.py
+      - tests/e2e/commercial-evidence-v74.spec.mjs
+      - .github/workflows/v74-commercial-evidence-readiness.yml
+  workflow_dispatch:
+
+concurrency:
+  group: meridiano-v74-commercial-evidence-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate privacy-safe commercial evidence readiness
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout candidate
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.12'
+      - name: Compile v7.4 contracts
+        run: |
+          python3 -m py_compile scripts/apply_commercial_evidence_v74.py scripts/validate_commercial_evidence_v74.py scripts/normalize_experience_compat_v60.py
+      - name: Validate materialized readiness
+        run: |
+          python3 scripts/validate_commercial_evidence_v74.py
+          python3 scripts/apply_commercial_evidence_v74.py --check
+          python3 scripts/validate_measurement_readiness_v61.py
+      - name: Validate JavaScript and E2E syntax
+        run: |
+          node --check assets/js/v7/commercial-evidence-v74.js
+          node --check tests/e2e/commercial-evidence-v74.spec.mjs
