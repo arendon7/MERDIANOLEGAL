@@ -1,6 +1,6 @@
 {
-  "version": "7.2.0-prototype",
-  "status": "buying-clarity-prototype",
+  "version": "7.2.0",
+  "status": "release-candidate",
   "baseline": "7.1.0",
   "scope": "16 canonical deep offer pages",
   "source_truth": [
