@@ -108,18 +108,14 @@ def validate_deep(item: dict) -> str:
 def validate_boundaries(blocks: list[str]) -> None:
     forbidden = [
         r"garantiza(?:mos)?\s+(?:la\s+)?(?:licencia|licencias|permiso|permisos|decisi[oó]n|decisiones)",
-        r"(?<!no implica )(?<!sin )monitoreo\s+autom[aá]tico",
-        r"cobertura\s+universal\s+de\s+fuentes",
+        r"(?:incluye|ofrece|provee|proporciona)\s+(?:un\s+)?monitoreo\s+autom[aá]tico",
+        r"(?:incluye|ofrece|provee|proporciona|garantiza)\s+(?:una\s+)?cobertura\s+universal\s+de\s+fuentes",
         r"plataforma\s+(?:saas\s+)?(?:incluida|disponible)",
-        r"vigilancia\s+autom[aá]tica\s+universal",
+        r"(?:incluye|ofrece|provee|proporciona)\s+(?:una\s+)?vigilancia\s+autom[aá]tica\s+universal",
     ]
     joined = "\n".join(blocks)
     for pattern in forbidden:
-        match = re.search(pattern, joined, flags=re.I)
-        if match:
-            prefix = joined[max(0, match.start() - 24):match.start()].lower()
-            if "no " in prefix or "tampoco " in prefix:
-                continue
+        if re.search(pattern, joined, flags=re.I):
             fail(f"unsupported regulatory capability claim: {pattern}")
 
 
