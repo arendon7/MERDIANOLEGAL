@@ -2,62 +2,27 @@
 
 Actualizado: 2026-08-19.
 
+## Baseline certificado
+
+**v7.2.0 — Buying Clarity** está completamente cerrada y certificada.
+
+- `main == stable == f7bbf06588518141490a62db7b9fae8530659991` al abrir este frente.
+- `stable/version.json`: `7.2.0`, canal `github-pages-production-buying-clarity-certified`.
+- 16/16 fichas profundas conservan su Resumen de contratación source-driven.
+
 ## Frente vigente
 
-**Cierre documental v7.2.0 — Buying Clarity candidate → certified.**
+**v7.3 — Centro Demo / Legal Intelligence Scenarios.**
 
-Rama: `docs/v720-certified-closure`.
+Rama: `feat/v730-legal-intelligence-demo`.
 
-## Evidencia previa ya cerrada
+PR: `#177` — draft hasta cerrar regresión same-SHA.
 
-### Funcional #174
+## Objetivo
 
-- SHA funcional final: `5e9b04487b92b0e47327d1f61880d2a4ac48c629`.
-- Gates funcionales: 9/9 PASS.
-- Merge funcional: `0b8211ce9aeecda737bec0a11af50496cc6aeccf`.
+Que un comprador pueda ver, con información completamente ficticia, cómo cinco capacidades de Meridiano Legal Intelligence convierten un problema jurídico-operativo en un flujo, un artefacto, un resultado y una siguiente decisión.
 
-### Candidate #175
-
-- SHA candidate: `f11329f40cfcd7d097ff16019dcb462dd97acc70`.
-- Gates candidate: 10/10 PASS.
-- Merge candidate: `a5d14d34cd73aa2772a66adfd6d5ea0f07c34a2e`.
-- Builder canónico: `356f755db67a678142769b3a80ee69837679648d`.
-- Pages quality/deploy/live smoke, Browser/axe y Lighthouse: PASS.
-- `stable` promovido automáticamente a `356f755db67a678142769b3a80ee69837679648d`.
-- `stable/version.json`: 7.2.0 canal `github-pages-buying-clarity-candidate` antes de este cierre.
-
-## Boundary del cierre
-
-Exactamente siete fuentes de metadata/documentación:
-
-1. `version.json` → `github-pages-production-buying-clarity-certified`.
-2. `assets/data/v7/buying-clarity-v72.json` → `status: certified`.
-3. `README.md`.
-4. `RELEASE-v7.2.md`.
-5. `knowledge/00_CANON/CONTEXTO_RAPIDO.md`.
-6. `knowledge/00_CANON/ESTADO_ACTUAL.md`.
-7. `knowledge/00_CANON/TAREA_ACTIVA.md`.
-
-No tocar HTML, CSS, catálogos, materializadores, validators funcionales, E2E, workflows ni capabilities.
-
-## Gate del cierre
-
-1. confirmar boundary exacto de siete archivos;
-2. fijar SHA final;
-3. superar nuevamente todos los workflows aplicables same-SHA;
-4. fusionar solo con `expected_head_sha`;
-5. observar Builder canónico;
-6. completar Pages quality/deploy/live smoke → Browser/axe + Lighthouse;
-7. permitir únicamente promoción automática de `stable`;
-8. terminar con `main == stable` y canal production-certified.
-
-`stable` no se mueve manualmente.
-
-## Siguiente frente tras el cierre
-
-**Centro Demo — Legal Intelligence Scenarios.**
-
-Objetivo: que un comprador pueda ver, con datos enteramente ficticios, cómo se materializan cinco capacidades:
+Escenarios:
 
 1. Legal AI Transformation.
 2. Contract Control.
@@ -65,14 +30,101 @@ Objetivo: que un comprador pueda ver, con datos enteramente ficticios, cómo se 
 4. Regulatory Control.
 5. Meridiano Legal Desk.
 
-El demo debe conectar problema → workflow → artefacto → resultado → siguiente decisión, manteniendo:
+## Diseño
 
-- etiqueta DEMO visible;
+El Centro Demo conserva las cinco experiencias históricas y añade una sexta pestaña **Legal Intelligence**.
+
+Cada escenario muestra:
+
+**problema → flujo → artefacto demostrativo → resultado → referencia de alcance → frontera → oferta relacionada**.
+
+El panel se materializa source-driven desde `assets/data/v7/legal-intelligence-demo-v73.json`.
+
+## Fuente de verdad cuantitativa
+
+Las referencias de alcance se leen verbatim de:
+
+- `catalog-services-v42/s08-legal-ops.json` para Legal AI Transformation;
+- `catalog-products-v41/p07-contractual.json` para Contract Control;
+- `catalog-products-v41/p05-ia.json` para AI Governance 360;
+- `catalog-products-v41/p06-regulado.json` para Regulatory Control.
+
+Legal Desk no muestra LU, volumen, canales, SLA o capacidad incluida porque esa verdad no está aprobada. Su card explica expresamente que esos elementos requieren propuesta y alcance específicos.
+
+## Implementación
+
+- contrato: `assets/data/v7/legal-intelligence-demo-v73.json`;
+- CSS: `assets/css/v7/legal-intelligence-demo-v73.css`;
+- materializador: `scripts/apply_legal_intelligence_demo_v73.py`;
+- validator fail-closed: `scripts/validate_legal_intelligence_demo_v73.py`;
+- integración: `scripts/normalize_experience_compat_v60.py`;
+- HTML materializado: `experiencia.html`;
+- E2E: `tests/e2e/legal-intelligence-demo-v73.spec.mjs`;
+- gate dedicado: `.github/workflows/v73-legal-intelligence-demo-candidate.yml`.
+
+`experiencia.js` no requiere cambios: el sistema existente de `data-target` / `data-panel` soporta la sexta pestaña.
+
+## Boundary funcional actual
+
+**9 archivos permanentes** respecto del baseline v7.2:
+
+1. `.github/workflows/v73-legal-intelligence-demo-candidate.yml`.
+2. `assets/css/v7/legal-intelligence-demo-v73.css`.
+3. `assets/data/v7/legal-intelligence-demo-v73.json`.
+4. `experiencia.html`.
+5. `scripts/apply_legal_intelligence_demo_v73.py`.
+6. `scripts/normalize_experience_compat_v60.py`.
+7. `scripts/validate_legal_intelligence_demo_v73.py`.
+8. `tests/e2e/legal-intelligence-demo-v73.spec.mjs`.
+9. `knowledge/00_CANON/TAREA_ACTIVA.md`.
+
+No quedan modificaciones temporales de Graphify ni workflows auxiliares.
+
+## Capability truth
+
+El panel exige de forma visible:
+
+- `DEMO` en cada escenario;
 - datos ficticios;
-- procesamiento local cuando aplique;
-- cero carga de información real;
-- cero auth/portal productivo implícito;
-- cero Meridiano Counsel;
-- cero precios nuevos;
-- cero monitoreo automático universal;
-- ningún output presentado como asesoría o resultado real de cliente.
+- sin carga de información real;
+- sin asesoría jurídica;
+- sin funcionalidad productiva implícita.
+
+Además:
+
+- no Meridiano Counsel;
+- no portal productivo incluido;
+- no monitoreo automático universal;
+- no decisión jurídica autónoma;
+- no precios nuevos;
+- no métricas de Legal Desk no aprobadas;
+- no outputs presentados como resultados de clientes reales.
+
+## Correcciones realizadas durante materialización
+
+1. El validator dejó de tratar la frase negativa “no fija … Legal Units, SLA…” como si fuera un claim positivo.
+2. El materializador retira también la indentación de sus markers para que `apply → validate → --check` sea idempotente.
+3. La capa se reaplica dentro del normalizador canónico después de las reconstrucciones v6.
+
+## Criterio de aceptación funcional
+
+1. La pestaña `Legal Intelligence` aparece una sola vez como sexta experiencia.
+2. El panel contiene exactamente cinco escenarios.
+3. Cada escenario muestra `DEMO` y una frontera explícita.
+4. Las cantidades de los cuatro escenarios con perímetro estándar coinciden verbatim con sus catálogos.
+5. Legal Desk no inventa capacidad, volumen, canales o SLA.
+6. No existen forms/uploads dentro del nuevo panel.
+7. El panel no altera las otras cinco experiencias.
+8. El materializador es idempotente dentro de Canonical Builder.
+9. Browser E2E/axe y Measurement E2E permanecen verdes.
+
+## Gate de release
+
+- fijar un SHA funcional final;
+- superar todos los workflows aplicables same-SHA;
+- merge #177 únicamente con `expected_head_sha`;
+- después abrir candidate formal `7.3.0` como PR separado;
+- Builder → Pages quality/deploy → live smoke → Browser/axe + Lighthouse → `stable` automático;
+- cierre documental `candidate → production-certified` separado.
+
+`stable` nunca se mueve manualmente.
