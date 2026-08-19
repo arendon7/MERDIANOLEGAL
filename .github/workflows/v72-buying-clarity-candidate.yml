@@ -13,6 +13,7 @@ on:
       - scripts/apply_buying_clarity_v72.py
       - scripts/validate_buying_clarity_v72.py
       - scripts/normalize_experience_compat_v60.py
+      - scripts/apply_engagement_clarity_v63.py
       - tests/e2e/buying-clarity-v72.spec.mjs
       - knowledge/20_DESIGN/BUYING-CLARITY-v72.md
       - .github/workflows/v72-buying-clarity-candidate.yml
@@ -39,33 +40,14 @@ jobs:
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
         with:
           python-version: '3.12'
-      - name: Compile v7.2 materializer and validator
+      - name: Compile v7.2 and compatibility materializers
         run: |
-          python3 -m py_compile scripts/apply_buying_clarity_v72.py scripts/validate_buying_clarity_v72.py scripts/normalize_experience_compat_v60.py
+          python3 -m py_compile scripts/apply_buying_clarity_v72.py scripts/validate_buying_clarity_v72.py scripts/normalize_experience_compat_v60.py scripts/apply_engagement_clarity_v63.py
       - name: Validate materialized Buying Clarity
         run: |
           python3 scripts/validate_buying_clarity_v72.py
           python3 scripts/apply_buying_clarity_v72.py --check
+      - name: Prove Engagement compatibility remains idempotent
+        run: python3 scripts/apply_engagement_clarity_v63.py --check
       - name: Validate E2E syntax
         run: node --check tests/e2e/buying-clarity-v72.spec.mjs
-      - name: Diagnose canonical rebuild ordering
-        run: |
-          target='productos/diagnostico-juridico-empresarial.html'
-          cp "$target" /tmp/v72-original.html
-          python3 scripts/sync_public_version.py
-          python3 scripts/apply_experience_v60.py
-          python3 scripts/apply_experience_solutions_v60.py
-          python3 scripts/apply_experience_sectors_v60.py
-          python3 scripts/apply_experience_perspectives_v60.py
-          python3 scripts/apply_experience_final_v60.py
-          python3 scripts/apply_funnel_trust_v529.py
-          python3 scripts/normalize_experience_compat_v60.py
-          if [ -f assets/data/v6/fit-scope-clarity-v64.json ]; then
-            python3 scripts/apply_fit_scope_clarity_v64.py
-          fi
-          cp "$target" /tmp/v72-rebuilt.html
-          echo '--- candidate vs canonical rebuild (first 220 lines) ---'
-          diff -u /tmp/v72-original.html /tmp/v72-rebuilt.html | head -220 || true
-          python3 scripts/apply_engagement_clarity_v63.py
-          echo '--- canonical rebuild vs engagement reapply (first 220 lines) ---'
-          diff -u /tmp/v72-rebuilt.html "$target" | head -220 || true
