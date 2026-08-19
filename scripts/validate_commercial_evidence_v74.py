@@ -3,6 +3,7 @@
 
 La release debe seguir sin analytics externo. Solo se permiten sujetos/interacciones
 allowlisted, propagación por `source=li-*` y memoria efímera en la pestaña.
+El lifecycle de release es independiente del estado operativo readiness-disabled.
 """
 from __future__ import annotations
 
@@ -13,6 +14,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / "assets" / "data" / "v7" / "commercial-evidence-v74.json"
 RUNTIME = ROOT / "assets" / "js" / "v7" / "commercial-evidence-v74.js"
+VERSION = ROOT / "version.json"
 SITE_CONFIG = ROOT / "site-config.json"
 MEASUREMENT = ROOT / "assets" / "data" / "v6" / "measurement-readiness-v61.json"
 APPLY = ROOT / "scripts" / "apply_commercial_evidence_v74.py"
@@ -35,6 +37,23 @@ EXPECTED_SURFACES = {
     "productos/proyecto-regulado-estructurado.html",
     "soluciones/ordenar-operacion-juridica.html",
 }
+VALID_LIFECYCLE = {
+    "prototype": {
+        "contract_prefix": "7.4.0-prototype",
+        "public_version": "7.3.0",
+        "channel": "github-pages-production-legal-intelligence-demo-certified",
+    },
+    "release-candidate": {
+        "contract_exact": "7.4.0",
+        "public_version": "7.4.0",
+        "channel": "github-pages-commercial-evidence-readiness-candidate",
+    },
+    "certified": {
+        "contract_exact": "7.4.0",
+        "public_version": "7.4.0",
+        "channel": "github-pages-production-commercial-evidence-readiness-certified",
+    },
+}
 FORBIDDEN_RUNTIME = (
     r"\bfetch\s*\(",
     r"\bXMLHttpRequest\b",
@@ -45,6 +64,7 @@ FORBIDDEN_RUNTIME = (
     r"\bindexedDB\b",
     r"\bWebSocket\b",
     r"\bEventSource\b",
+    r"\bwindow\.plausible\b",
 )
 
 
@@ -52,10 +72,29 @@ def fail(message: str) -> None:
     raise SystemExit("Commercial Evidence v7.4 FAIL: " + message)
 
 
+def resolve_lifecycle(data: dict) -> str:
+    lifecycle = str(data.get("lifecycle", "") or "").strip()
+    contract_version = str(data.get("version", "") or "").strip()
+    if not lifecycle and contract_version.startswith("7.4.0-prototype"):
+        lifecycle = "prototype"
+    if lifecycle not in VALID_LIFECYCLE:
+        fail(f"lifecycle inválido: {lifecycle!r}")
+    expected = VALID_LIFECYCLE[lifecycle]
+    if "contract_exact" in expected and contract_version != expected["contract_exact"]:
+        fail(f"{lifecycle} debe declarar version {expected['contract_exact']}")
+    if "contract_prefix" in expected and not contract_version.startswith(expected["contract_prefix"]):
+        fail(f"{lifecycle} debe usar prefijo {expected['contract_prefix']}")
+    public = json.loads(VERSION.read_text(encoding="utf-8"))
+    if public.get("version") != expected["public_version"]:
+        fail(f"{lifecycle} requiere version pública {expected['public_version']}")
+    if public.get("channel") != expected["channel"]:
+        fail(f"{lifecycle} requiere canal público {expected['channel']}")
+    return lifecycle
+
+
 def main() -> int:
     data = json.loads(CONTRACT.read_text(encoding="utf-8"))
-    if not str(data.get("version", "")).startswith("7.4.0-prototype"):
-        fail("la versión debe permanecer prototype")
+    lifecycle = resolve_lifecycle(data)
     if data.get("status") != "readiness-disabled" or data.get("baseline") != "7.3.0":
         fail("status/baseline inválidos")
     activation = data.get("activation") or {}
@@ -63,6 +102,8 @@ def main() -> int:
         fail("analytics/transporte externo deben permanecer deshabilitados")
     if activation.get("provider") != "none" or activation.get("requires_separate_release_decision") is not True:
         fail("la activación futura debe requerir decisión separada")
+    if activation.get("requires_privacy_review_before_activation") is not True:
+        fail("una activación externa debe exigir revisión previa de privacidad")
 
     subjects = data.get("subjects") or []
     actual_subjects = {item.get("id"): item.get("source") for item in subjects}
@@ -86,6 +127,10 @@ def main() -> int:
     if privacy.get("max_in_memory_events") != 24:
         fail("el buffer efímero debe permanecer limitado a 24 eventos")
 
+    preview = data.get("external_preview") or {}
+    if preview.get("enabled") is not False or preview.get("event_name_only") is not True:
+        fail("external_preview debe permanecer deshabilitado y limitado a event-name-only")
+
     site = json.loads(SITE_CONFIG.read_text(encoding="utf-8"))
     analytics = site.get("analytics") or {}
     if analytics.get("enabled") is not False or analytics.get("provider") != "none" or analytics.get("site_id") != "":
@@ -99,6 +144,8 @@ def main() -> int:
     for pattern in FORBIDDEN_RUNTIME:
         if re.search(pattern, runtime):
             fail(f"runtime contiene capacidad prohibida: {pattern}")
+    if "const VERSION = '7.4.0';" not in runtime:
+        fail("runtime candidate/certified debe identificarse como 7.4.0")
     for subject, source in EXPECTED_SUBJECTS.items():
         if subject not in runtime or source not in runtime:
             fail(f"runtime no contiene mapping cerrado {subject}/{source}")
@@ -111,6 +158,8 @@ def main() -> int:
         fail("el detail exportable local debe limitarse a subject + interaction")
     if "externalAnalyticsEnabled: false" not in runtime or "networkTransport: false" not in runtime:
         fail("snapshot runtime no declara límites de transporte")
+    if "status: 'readiness-disabled'" not in runtime:
+        fail("runtime debe conservar status readiness-disabled")
 
     for relative in EXPECTED_SURFACES:
         path = ROOT / relative
@@ -131,7 +180,10 @@ def main() -> int:
 
     if not APPLY.exists():
         fail("falta materializador v7.4")
-    print("Commercial Evidence v7.4: PASS (readiness-disabled, allowlist comercial, sin red/PII/persistencia)")
+    print(
+        "Commercial Evidence v7.4: PASS "
+        f"({lifecycle}, readiness-disabled, allowlist comercial, sin red/PII/persistencia)"
+    )
     return 0
 
 
