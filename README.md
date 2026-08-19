@@ -1,158 +1,108 @@
-# Meridiano Legal · Web canónica v7.1.0
+# Meridiano Legal · Web canónica v7.2.0
 
 Sitio público static-first de Meridiano Legal: `https://arendon7.github.io/MERDIANOLEGAL/`.
 
 ## Estado certificado
 
-**v7.1.0 — Commercial Clarity** sobre **Meridiano Legal Intelligence**.
+**v7.2.0 — Buying Clarity** sobre **Meridiano Legal Intelligence**.
 
-- Candidate funcional v7.1: `12c8145dc8b6a3901217eb3d5793e210bfe06486`.
-- Merge funcional #170: `f01c5163e2c70012218c7d369bfb68180db04ed7`.
-- Candidate formal 7.1.0: `8f0a3c2e016b6bc1aab92922f418965e57cb06c3` — 9/9 workflows verdes.
-- Merge candidate #171: `5185e5c1aed4e3ed23074a41318e446fbb3a741d`.
-- Builder/snapshot candidate: `8b13ff120cceddc9c9913892416046efb7368572`.
-- Antes de este cierre documental: `main == stable == 8b13ff120cceddc9c9913892416046efb7368572`.
-- Canal de cierre: `github-pages-production-commercial-clarity-certified`.
-- Browser E2E + axe y Lighthouse post-deploy: PASS antes de mover `stable`.
-- Cobertura reducida: no. Budgets relajados: no.
+La release hace explícitamente comprables las 16 ofertas profundas sin modificar su verdad jurídica: cada ficha muestra inmediatamente después del hero un **Resumen de contratación** derivado de los catálogos canónicos.
 
-## v7.1 — Commercial Clarity
+### Evidencia de release
 
-v7.1 mejora la comprensión comercial de Legal Intelligence sin crear nuevas rutas ni un segundo catálogo. La Home conserva las seis situaciones de entrada y aplica profundidad progresiva:
+- Baseline certificado anterior v7.1.0: `0a01942c9a2b7868768e0b454af5a600c65ad01a`.
+- SHA funcional v7.2: `5e9b04487b92b0e47327d1f61880d2a4ac48c629` — 9/9 gates verdes.
+- Merge funcional #174: `0b8211ce9aeecda737bec0a11af50496cc6aeccf`.
+- Candidate formal 7.2.0: `f11329f40cfcd7d097ff16019dcb462dd97acc70` — 10/10 gates verdes.
+- Merge candidate #175: `a5d14d34cd73aa2772a66adfd6d5ea0f07c34a2e`.
+- Builder/snapshot productivo candidate: `356f755db67a678142769b3a80ee69837679648d`.
+- Pages quality → deploy → live smoke → Browser/axe + Lighthouse → snapshot: PASS.
+- `stable` fue promovido automáticamente a `356f755db67a678142769b3a80ee69837679648d`; no se movió manualmente.
+- Canal de cierre: `github-pages-production-buying-clarity-certified`.
 
-**situación → forma de intervención → capacidad concreta → resultado → profundidad jurídica de respaldo**.
+## Qué hace Buying Clarity
 
-Cuatro formas de intervención:
+Las 8 fichas de producto y 8 fichas de servicio hacen visible, antes de entrar a toda la profundidad jurídica:
 
-1. **Diagnosticar** — Legal AI Diagnostic, auditorías y diagnósticos focales.
-2. **Implementar** — productos cerrados, Legal AI Transformation, AI Governance 360, Contract Control y Regulatory Control.
-3. **Operar** — Dirección Jurídica Externa, Meridiano Legal Desk y modalidades gestionadas expresamente pactadas.
-4. **Construir** — Legal Engineering Studio cuando el caso exige una solución jurídica-tecnológica específica.
+1. modalidad;
+2. duración o cadencia;
+3. destinatario;
+4. principales cantidades del perímetro;
+5. principales entregables;
+6. requisitos para empezar;
+7. criterios de cierre o verificación de prestación;
+8. rutas de ampliación o continuidad, expresamente fuera del alcance base salvo pacto.
 
-Cuatro capacidades visibles que pueden quedar operando dentro de alcance contratado:
+La fuente de verdad continúa siendo exclusivamente:
 
+- `catalog-products-v41/*.json`;
+- `catalog-services-v42/*.json`.
+
+Buying Clarity no introduce precios, cantidades, entregables o capacidades nuevas.
+
+## Arquitectura preservada
+
+Meridiano Legal permanece como marca madre. **Meridiano Legal Intelligence** continúa como capa transversal, no como catálogo paralelo.
+
+Capacidades organizadas:
+
+- Legal AI Diagnostic;
+- Legal AI Transformation;
+- Meridiano Legal Desk;
 - Contract Control;
-- AI Governance 360;
 - Regulatory Control;
-- Meridiano Legal Desk.
+- AI Governance 360;
+- Legal Engineering Studio.
 
-Legal Engineering Studio permanece visible en **Construir** y no se duplica como quinta capacidad instalada.
-
-## v7 — Meridiano Legal Intelligence
-
-Meridiano Legal permanece como marca madre. **Meridiano Legal Intelligence** es una capa transversal que combina criterio jurídico, diseño de procesos, IA, automatización y Legal Engineering para diagnosticar, implementar, operar y construir soluciones cuando el encargo lo requiere.
-
-No es un catálogo paralelo. Los 8 productos y 8 servicios canónicos siguen gobernando alcance jurídico/comercial, entregables, tiempos, honorarios, responsabilidades y límites.
-
-La arquitectura organiza:
-
-1. Legal AI Diagnostic.
-2. Legal AI Transformation.
-3. Meridiano Legal Desk.
-4. Contract Control.
-5. Regulatory Control.
-6. AI Governance 360.
-7. Legal Engineering Studio.
-
-`Meridiano Counsel` permanece como concepto futuro/no producto público.
-
-## Superficies y navegación
-
-- 46 HTML públicos.
-- 16 fichas profundas.
-- 1 formulario físico canónico.
-- 6 rutas públicas de solución.
-- Home y hub de Soluciones explican Legal Intelligence sin crear una séptima ruta.
-- La capa v7 permanece materializada sobre URLs existentes.
+`Meridiano Counsel` permanece fuera de la oferta pública.
 
 ## Capability truth
 
-La release mantiene límites fail-closed:
+- seis rutas públicas preservadas;
+- 8 productos + 8 servicios canónicos preservados;
+- Contract Control y Regulatory Control no son SaaS autónomos;
+- Legal Desk es capacidad jurídica gestionada bajo alcance pactado;
+- AI Governance 360 no sustituye auditoría técnica, seguridad o evaluación científica;
+- no existe monitoreo automático universal implícito;
+- portal real, auth, CRM, pagos, firma, agenda y upload permanecen deshabilitados/no implementados;
+- Legal Engineering incorpora desarrollo o integraciones solo cuando se pactan expresamente;
+- no se publicaron tarifas nuevas.
 
-- portal real, auth, CRM, pagos, firma, agenda y upload: deshabilitados/no implementados;
-- Contract Control y Regulatory Control: capacidades/patrones de implementación y operación, no SaaS autónomos;
-- no CLM productivo implícito;
-- no monitoreo automático universal;
-- AI Governance 360 no sustituye seguridad, auditorías técnicas o evaluación científica;
-- no certificaciones técnicas no incluidas;
-- no garantía sobre licencias, permisos o decisiones de autoridades;
-- Legal Desk: perímetro, canales, capacidad y niveles de servicio sujetos a propuesta específica;
-- Legal Engineering: desarrollo, integraciones, interfaces de IA o automatización solo cuando se pactan expresamente;
-- Meridiano Counsel: fuera de la oferta pública.
+## Compatibilidad y calidad
 
-## Capas previas preservadas
+v7.2 conserva:
 
-- **v6.4 Fit & Scope Clarity:** 16/16 fichas con `situations` y `supplements`.
-- **v6.3 Engagement Clarity:** `requirements` + `responsibilities` preservados.
-- **v6.2 Search Discovery:** 43 indexables + 3 `noindex`; sitemap canónico de 43 URLs.
-- **v6.1 Measurement:** privacy-first, sin PII exportada y analytics externa deshabilitada.
-- **v6.0 Experience System:** 46/46 superficies estructurales preservadas.
-- 30/30 pasos históricos exactos del builder.
+- v7.1 Commercial Clarity;
+- v7.0 Legal Intelligence;
+- v6.4 Fit & Scope Clarity;
+- v6.3 Engagement Clarity;
+- v6.2 Search Discovery;
+- v6.1 Measurement privacy-first;
+- v6.0 Experience System;
+- 46 superficies HTML, 16 fichas profundas, seis rutas públicas y un único formulario físico canónico.
 
-## Verdad jurídica y comercial
+La composición v6.3/v6.4/v7.2 fue endurecida para mantener primera pasada canónica e idempotencia sin tolerar drift.
 
-La fuente principal continúa en:
+## Release engineering v7.2
 
-- `catalog-products-v41/*.json` para 8 productos;
-- `catalog-services-v42/*.json` para 8 servicios.
-
-Legal Intelligence y Commercial Clarity pueden reorganizar navegación, recorridos y presentación, pero no modificar silenciosamente entregables, honorarios, tiempos, responsabilidades o límites de esos catálogos.
-
-## Release engineering v7.1
-
-- `assets/data/v7/home-commercial-clarity-v71.json`: contrato source-driven y phase-aware de Commercial Clarity.
-- `knowledge/20_DESIGN/HOME-COMMERCIAL-CLARITY-v71.md`: brief de arquitectura comercial.
-- `scripts/apply_legal_intelligence_discovery_v70.py`: materialización de Home + hub.
-- `scripts/validate_legal_intelligence_discovery_v70.py`: validación fail-closed y lifecycle `prototype → release-candidate → certified`.
-- `tests/e2e/integral-visual-v526.spec.mjs`: regresión visual release-aware.
-
-La arquitectura v7.0 permanece en `assets/data/v7/` y sus materializadores/validators continúan integrados en la cadena canónica.
-
-## Evidencia v7.1
-
-### Funcional
-
-- Candidate: `12c8145dc8b6a3901217eb3d5793e210bfe06486`.
-- PR #170 fusionado con expected head SHA.
-- Merge: `f01c5163e2c70012218c7d369bfb68180db04ed7`.
-- Promoción automática de `stable` después de Pages productivo: PASS.
-
-### Candidate 7.1.0
-
-- SHA: `8f0a3c2e016b6bc1aab92922f418965e57cb06c3`.
-- 9/9 workflows aplicables: PASS.
-- PR #171 fusionado con expected head SHA.
-- Merge: `5185e5c1aed4e3ed23074a41318e446fbb3a741d`.
-- Builder: `8b13ff120cceddc9c9913892416046efb7368572`.
-- Pages quality, deploy, live smoke, Browser/axe y Lighthouse: PASS.
-- `stable` promovido automáticamente a `8b13ff120cceddc9c9913892416046efb7368572`.
-
-## Discovery, privacidad y capacidades preservadas
-
-- Search Console sigue sin token auténtico/configuración verificada;
-- analytics externa sigue apagada;
-- no PII ni contenido del formulario exportados;
-- un único formulario físico canónico;
-- WhatsApp continúa como handoff manual.
+- `assets/data/v7/buying-clarity-v72.json`: contrato source-driven y phase-aware.
+- `knowledge/20_DESIGN/BUYING-CLARITY-v72.md`: brief de producto/UX.
+- `scripts/apply_buying_clarity_v72.py`: materialización determinista.
+- `scripts/validate_buying_clarity_v72.py`: validación source-truth, capability boundaries y lifecycle.
+- `scripts/normalize_experience_compat_v60.py`: recomposición canónica.
+- `tests/e2e/buying-clarity-v72.spec.mjs`: regresión en las 16 fichas.
+- `.github/workflows/v72-buying-clarity-candidate.yml`: gate dedicado.
 
 ## Source of truth
 
 - `main`: verdad técnica/documental vigente.
 - `stable`: snapshot certificado.
-- `catalog-products-v41/` y `catalog-services-v42/`: verdad jurídica/comercial principal.
-- `assets/data/v7/`: contratos Legal Intelligence + Commercial Clarity.
-- `assets/data/v6/fit-scope-clarity-v64.json`: Fit & Scope.
-- `assets/data/v6/engagement-clarity-v63.json`: Engagement Clarity.
-- `assets/data/v6/search-discovery-readiness-v62.json`: Search Discovery.
-- `assets/data/v6/measurement-readiness-v61.json`: Measurement.
-- `experience-system-v60.json` y `experience-content-v60.json`: Experience System base.
+- `catalog-products-v41/` y `catalog-services-v42/`: verdad jurídica/comercial.
+- `assets/data/v7/`: contratos Legal Intelligence / Commercial Clarity / Buying Clarity.
+- `knowledge/00_CANON/`: memoria operativa actual.
 
-## Documentación
+## Siguiente frente
 
-- `RELEASE-v7.1.md`: Commercial Clarity, evidencia y cierre.
-- `RELEASE-v7.0.md`: arquitectura Legal Intelligence.
-- `knowledge/00_CANON/CONTEXTO_RAPIDO.md`: contexto operativo actual.
-- `knowledge/00_CANON/ESTADO_ACTUAL.md`: estado canónico y certificación.
-- `knowledge/00_CANON/TAREA_ACTIVA.md`: frente vigente.
+Después del cierre certificado v7.2, la siguiente ola es **Centro Demo — Legal Intelligence Scenarios**: mostrar con datos ficticios cómo se materializan Legal AI Transformation, Contract Control, AI Governance 360, Regulatory Control y Meridiano Legal Desk. Debe permanecer claramente DEMO, sin carga real de información, sin portal productivo implícito y sin ampliar capabilities.
 
-Este cierre documental queda definitivo cuando su propio SHA atraviese nuevamente los gates, se fusione con SHA protegido y complete Builder → Pages → smoke → Browser/axe → Lighthouse → snapshot con `main == stable`.
+Ver `RELEASE-v7.2.md` para evidencia y límites de la release.
