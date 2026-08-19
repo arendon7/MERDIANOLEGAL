@@ -19,30 +19,37 @@ Arquitectura pública preservada:
 
 ## Release vigente
 
-**v7.2.0 — Buying Clarity**.
+**v7.3.0 — Legal Intelligence Demo**.
 
-- Functional SHA: `5e9b04487b92b0e47327d1f61880d2a4ac48c629` — gates funcionales PASS.
-- Merge funcional #174: `0b8211ce9aeecda737bec0a11af50496cc6aeccf`.
-- Candidate formal SHA: `f11329f40cfcd7d097ff16019dcb462dd97acc70` — 10/10 gates PASS.
-- Merge candidate #175: `a5d14d34cd73aa2772a66adfd6d5ea0f07c34a2e`.
-- Builder/snapshot candidate: `356f755db67a678142769b3a80ee69837679648d`.
+- Baseline certificado anterior v7.2.0: `f7bbf06588518141490a62db7b9fae8530659991`.
+- Functional SHA v7.3: `dc3d4beea5637fc6aa104964d0fd0849b8c904c7` — 10/10 gates PASS.
+- Merge funcional #177: `4867f3418c45a5a6689cd43b79ff48f191cda3a1`.
+- Candidate formal SHA: `e8656a0ea69aa8cf8140a6d41e74130e3cec9f60` — 10/10 gates PASS.
+- Merge candidate #178: `6c194effd5421326f05296c1e99c54f852f04398`.
+- Builder/snapshot candidate: `2999d28dc6e4ae497ecbfbb9469f55364f34d899`.
 - Pages quality → deploy → live smoke → Browser/axe + Lighthouse: PASS.
-- `stable` fue promovido automáticamente a `356f755db67a678142769b3a80ee69837679648d`.
-- Canal de cierre: `github-pages-production-buying-clarity-certified`.
+- `stable` fue promovido automáticamente a `2999d28dc6e4ae497ecbfbb9469f55364f34d899` antes del cierre documental.
+- Canal objetivo del cierre: `github-pages-production-legal-intelligence-demo-certified`.
 
-## Qué añade v7.2
+## Qué añade v7.3
 
-Cada una de las 16 fichas incorpora un **Resumen de contratación** source-driven inmediatamente después del hero. Hace visible modalidad, duración, destinatario, principales cantidades del perímetro, entregables, requisitos, criterios de cierre y rutas de ampliación/continuidad.
+El Centro Demo conserva sus cinco experiencias históricas y añade una sexta pestaña **Legal Intelligence** con cinco escenarios ficticios:
 
-Fuente exclusiva:
+1. Legal AI Transformation.
+2. Contract Control.
+3. AI Governance 360.
+4. Regulatory Control.
+5. Meridiano Legal Desk.
 
-- `catalog-products-v41/*.json`;
-- `catalog-services-v42/*.json`.
+Cada escenario conecta:
 
-No añade precios, entregables o capacidades nuevas.
+**problema → flujo → artefacto → resultado → referencia de alcance → frontera → oferta relacionada**.
+
+Las referencias cuantitativas provienen de los catálogos canónicos. Legal Desk no publica LU, volumen, canales, SLA o capacidad estándar.
 
 ## Capas preservadas
 
+- v7.2 Buying Clarity: resumen de contratación source-driven en las 16 fichas.
 - v7.1 Commercial Clarity: Home/hub con profundidad progresiva y cuatro formas de intervención.
 - v7.0 Legal Intelligence: Diagnostic, Transformation, Legal Desk, Contract Control, Regulatory Control, AI Governance 360 y Legal Engineering Studio.
 - v6.4 Fit & Scope Clarity.
@@ -53,26 +60,28 @@ No añade precios, entregables o capacidades nuevas.
 
 ## Capability truth
 
-- Contract Control y Regulatory Control: capacidades de implementación/operación, no SaaS autónomos.
-- Legal Desk: managed legal service sujeto a perímetro, capacidad, canales y SLA pactados.
-- AI Governance 360: no reemplaza seguridad, auditoría técnica o evaluación científica.
-- Legal Engineering: tecnología solo cuando se pacta expresamente.
-- Meridiano Counsel: futuro/no oferta pública.
-- Portal/auth/CRM/pagos/firma/agenda/upload: no productivos.
-- No monitoreo automático universal.
-- No tarifas nuevas sin pricing truth aprobado.
+- todos los escenarios v7.3 son DEMO y usan datos ficticios;
+- no se cargan expedientes o información real;
+- Contract Control y Regulatory Control no son SaaS autónomos;
+- Legal Desk es managed legal service sujeto a propuesta y condiciones pactadas;
+- AI Governance 360 no reemplaza seguridad, auditoría técnica o evaluación científica;
+- Legal Engineering incorpora tecnología solo cuando se pacta expresamente;
+- Meridiano Counsel sigue como futuro/no oferta pública;
+- portal/auth/CRM/pagos/firma/agenda/upload no son productivos;
+- no existe monitoreo automático universal ni decisión jurídica autónoma;
+- no hay tarifas nuevas sin pricing truth aprobado.
 
 ## Source of truth
 
 - `main`: verdad técnica/documental vigente.
 - `stable`: snapshot certificado.
 - catálogos v4.1/v4.2: verdad jurídica/comercial.
-- `assets/data/v7/`: contratos de las capas v7.
+- `assets/data/v7/`: contratos de capas v7.
 - `knowledge/00_CANON/`: memoria operativa.
 
 ## Frente siguiente
 
-Una vez certificado este cierre documental, abrir **Centro Demo — Legal Intelligence Scenarios** como ola independiente. Debe mostrar con datos ficticios Legal AI Transformation, Contract Control, AI Governance 360, Regulatory Control y Meridiano Legal Desk; todo marcado DEMO y sin presentar Meridiano Empresas como portal productivo.
+Con v7.3 cerrada, la siguiente ola debe obtener evidencia comercial real usando las fichas comprables y el Centro Demo antes de ampliar capabilities o priorizar nuevos desarrollos tecnológicos.
 
 ## Invariantes
 
