@@ -1,0 +1,44 @@
+name: V7.1 temporary materialization artifact
+
+on:
+  push:
+    branches:
+      - feat/v710-commercial-clarity
+
+permissions:
+  contents: read
+
+jobs:
+  materialize:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12'
+      - name: Materialize canonical surfaces
+        run: |
+          python3 scripts/sync_public_version.py
+          python3 scripts/apply_experience_v60.py
+          python3 scripts/apply_experience_solutions_v60.py
+          python3 scripts/apply_experience_sectors_v60.py
+          python3 scripts/apply_experience_perspectives_v60.py
+          python3 scripts/apply_experience_final_v60.py
+          python3 scripts/apply_funnel_trust_v529.py
+          python3 scripts/normalize_experience_compat_v60.py
+          if [ -f assets/data/v6/fit-scope-clarity-v64.json ]; then python3 scripts/apply_fit_scope_clarity_v64.py; fi
+          python3 scripts/validate_legal_intelligence_discovery_v70.py
+          git diff --check
+      - name: Stage generated surfaces
+        run: |
+          mkdir -p /tmp/v71-generated/soluciones
+          cp index.html /tmp/v71-generated/index.html
+          cp soluciones/index.html /tmp/v71-generated/soluciones/index.html
+      - name: Upload generated surfaces
+        uses: actions/upload-artifact@v7
+        with:
+          name: v71-generated-surfaces
+          path: /tmp/v71-generated
+          if-no-files-found: error
