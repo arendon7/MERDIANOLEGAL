@@ -17,6 +17,10 @@ on:
       - .github/workflows/v72-buying-clarity-candidate.yml
   workflow_dispatch:
 
+concurrency:
+  group: meridiano-v72-buying-clarity-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
@@ -24,6 +28,7 @@ jobs:
   validate:
     name: Validate source-driven Buying Clarity
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout candidate
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
