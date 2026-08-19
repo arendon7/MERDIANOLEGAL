@@ -39,7 +39,7 @@ test('v7.4 atribuye oferta y contacto sin exportar texto libre', async ({ page }
   expect(state.currentSubject).toBe('contract-control');
   expect(state.events).toContainEqual(expect.objectContaining({ subject: 'contract-control', interaction: 'offer_view' }));
 
-  const contact = page.locator('a[href*="#contacto"]').first();
+  const contact = page.locator('a[href*="#contacto"]:visible').first();
   await expect(contact).toHaveAttribute('href', /source=li-contract-control/);
   await contact.evaluate((node) => node.addEventListener('click', (event) => event.preventDefault(), { once: true }));
   await contact.click();
@@ -77,5 +77,6 @@ test('v7.4 ignora source libre o manipulado', async ({ page }) => {
   await page.evaluate(() => window.dispatchEvent(new CustomEvent('meridiano:lead-prepared', { detail: { reference: 'X' } })));
   state = await snapshot(page);
   expect(state.events).toHaveLength(0);
-  expect(state.subjects).toEqual(SUBJECTS);
+  const exposedSubjects = await page.evaluate(() => window.MeridianoCommercialEvidenceV74?.subjects || []);
+  expect(exposedSubjects).toEqual(SUBJECTS);
 });
