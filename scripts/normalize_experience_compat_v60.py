@@ -5,7 +5,7 @@ No crea truth jurídico nuevo. Reubica confianza v5.29, preserva el contrato de
 contacto v5.28, evita que etiquetas editoriales v6 interfieran con anclas
 históricas, cablea measurement readiness v6.1, Search Discovery v6.2,
 Engagement Clarity v6.3 y, cuando existen sus contratos de prototipo, materializa
-y valida las capas Legal Intelligence v7 y AI Governance 360 v7.
+y valida las capas Legal Intelligence v7, AI Governance 360 v7 y Regulatory Control v7.
 La activación de terceros sigue gobernada por site-config.json y permanece
 deshabilitada/no verificada por defecto.
 """
@@ -158,6 +158,14 @@ def normalize_ai_governance_360_prototype() -> None:
     run_contract_script("validate_ai_governance_360_prototype_v70.py", "AI Governance 360 v7 prototype")
 
 
+def normalize_regulatory_control_prototype() -> None:
+    contract = ROOT / "assets" / "data" / "v7" / "regulatory-control-prototype-v70.json"
+    if not contract.exists():
+        return
+    run_contract_script("apply_regulatory_control_prototype_v70.py", "Regulatory Control v7 prototype")
+    run_contract_script("validate_regulatory_control_prototype_v70.py", "Regulatory Control v7 prototype")
+
+
 def normalize_engagement_clarity() -> None:
     contract = ROOT / "assets" / "data" / "v6" / "engagement-clarity-v63.json"
     if not contract.exists():
@@ -229,15 +237,16 @@ def main() -> int:
     normalize_solution_labels()
     normalize_legal_intelligence_prototype()
     normalize_ai_governance_360_prototype()
+    normalize_regulatory_control_prototype()
     normalize_engagement_clarity()
     instrumented, untouched = normalize_measurement_runtime()
     validate_measurement_readiness()
     normalize_search_discovery()
     print(
         "EXPERIENCE V6 COMPAT OK: confianza v5.29, contacto v5.28, capability truth y anclas v5.31 "
-        f"preservados; Legal Intelligence v7 y AI Governance 360 v7 normalizados cuando existen sus contratos; "
-        f"Engagement Clarity v6.3 normalizado cuando existe su contrato; measurement readiness v6.1 en "
-        f"{instrumented} superficies, {untouched} sin telemetría previa; Search Discovery v6.2 normalizado cuando existe su contrato."
+        f"preservados; Legal Intelligence v7, AI Governance 360 v7 y Regulatory Control v7 normalizados cuando "
+        f"existen sus contratos; Engagement Clarity v6.3 normalizado cuando existe su contrato; measurement readiness "
+        f"v6.1 en {instrumented} superficies, {untouched} sin telemetría previa; Search Discovery v6.2 normalizado cuando existe su contrato."
     )
     return 0
 
