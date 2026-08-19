@@ -91,6 +91,13 @@ jobs:
           else
             : > /tmp/engagement-clarity-pending.txt
           fi
+          if [ -f assets/data/v6/fit-scope-clarity-v64.json ]; then
+            python3 scripts/apply_fit_scope_clarity_v64.py --check > /tmp/fit-scope-check.txt 2>&1 || true
+            cat /tmp/fit-scope-check.txt
+            sed -n 's/^- //p' /tmp/fit-scope-check.txt | sort -u > /tmp/fit-scope-pending.txt
+          else
+            : > /tmp/fit-scope-pending.txt
+          fi
           if [ "$IS_V6" = "true" ]; then
             grep -l 'telemetry-v50.js' *.html servicios/*.html productos/*.html soluciones/*.html sectores/*.html perspectivas/*.html | sort -u > /tmp/v61-measurement-expected.txt
           else
@@ -141,6 +148,9 @@ jobs:
           python3 scripts/apply_experience_final_v60.py
           python3 scripts/apply_funnel_trust_v529.py
           python3 scripts/normalize_experience_compat_v60.py
+          if [ -f assets/data/v6/fit-scope-clarity-v64.json ]; then
+            python3 scripts/apply_fit_scope_clarity_v64.py
+          fi
       - name: Validate first-pass canonical boundary on v6 baseline
         if: steps.phase.outputs.is_v6 == 'true'
         run: |
@@ -156,9 +166,9 @@ jobs:
               echo "404.html, demo.html y experiencia.html no pueden formar parte del conjunto measurement v6.1." >&2
               exit 1
             fi
-            cat /tmp/v61-measurement-expected.txt /tmp/release-metadata-pending.txt /tmp/search-discovery-pending.txt /tmp/engagement-clarity-pending.txt | sed '/^$/d' | sort -u > /tmp/canonical-expected.txt
+            cat /tmp/v61-measurement-expected.txt /tmp/release-metadata-pending.txt /tmp/search-discovery-pending.txt /tmp/engagement-clarity-pending.txt /tmp/fit-scope-pending.txt | sed '/^$/d' | sort -u > /tmp/canonical-expected.txt
           else
-            cat /tmp/release-metadata-pending.txt /tmp/search-discovery-pending.txt /tmp/engagement-clarity-pending.txt | sed '/^$/d' | sort -u > /tmp/canonical-expected.txt
+            cat /tmp/release-metadata-pending.txt /tmp/search-discovery-pending.txt /tmp/engagement-clarity-pending.txt /tmp/fit-scope-pending.txt | sed '/^$/d' | sort -u > /tmp/canonical-expected.txt
           fi
           echo '--- expected canonical changes ---'
           cat /tmp/canonical-expected.txt
@@ -168,7 +178,7 @@ jobs:
             echo "Canonical v6 first-pass boundary diverge del conjunto exacto esperado." >&2
             exit 1
           fi
-          echo "First-pass canonical boundary OK: cambios exactos = measurement esperado ∪ release drift ∪ discovery drift ∪ engagement drift declarado."
+          echo "First-pass canonical boundary OK: cambios exactos = measurement esperado ∪ release drift ∪ discovery drift ∪ engagement drift ∪ fit/scope drift declarado."
       - name: Validate certified Experience System v6 and general site integrity
         run: |
           python3 scripts/validate_site.py
@@ -187,6 +197,10 @@ jobs:
           if [ -f assets/data/v6/engagement-clarity-v63.json ]; then
             python3 scripts/validate_engagement_clarity_v63.py
             python3 scripts/apply_engagement_clarity_v63.py --check
+          fi
+          if [ -f assets/data/v6/fit-scope-clarity-v64.json ]; then
+            python3 scripts/validate_fit_scope_clarity_v64.py
+            python3 scripts/apply_fit_scope_clarity_v64.py --check
           fi
       - name: Validate Pages static quality contract before merge
         run: |
@@ -255,6 +269,7 @@ jobs:
           node --check tests/e2e/offer-narrative.spec.mjs
           node --check tests/e2e/measurement-readiness-v61.spec.mjs
           node --check tests/e2e/engagement-clarity-v63.spec.mjs
+          node --check tests/e2e/fit-scope-clarity-v64.spec.mjs
           node --check tests/e2e/ci-summary-reporter.mjs
           node --check scripts/run_quality_v55.mjs
           node --check scripts/render_catalog_static.mjs
@@ -275,6 +290,7 @@ jobs:
           python3 -m json.tool assets/data/v6/measurement-readiness-v61.json > /dev/null
           python3 -m json.tool assets/data/v6/search-discovery-readiness-v62.json > /dev/null
           python3 -m json.tool assets/data/v6/engagement-clarity-v63.json > /dev/null
+          python3 -m json.tool assets/data/v6/fit-scope-clarity-v64.json > /dev/null
           python3 -m json.tool commercial-intake-v59.json > /dev/null
           python3 -m json.tool conversion-close-v510.json > /dev/null
           python3 -m json.tool recommendation-v514.json > /dev/null
@@ -295,6 +311,9 @@ jobs:
           python3 scripts/apply_experience_final_v60.py
           python3 scripts/apply_funnel_trust_v529.py
           python3 scripts/normalize_experience_compat_v60.py
+          if [ -f assets/data/v6/fit-scope-clarity-v64.json ]; then
+            python3 scripts/apply_fit_scope_clarity_v64.py
+          fi
           git diff > /tmp/canonical-pass-2.diff
           cmp --silent /tmp/canonical-pass-1.diff /tmp/canonical-pass-2.diff || {
             echo "Canonical v6 materialization is not idempotent." >&2
@@ -307,6 +326,10 @@ jobs:
           fi
           if [ -f assets/data/v6/engagement-clarity-v63.json ]; then
             python3 scripts/apply_engagement_clarity_v63.py --check
+          fi
+          if [ -f assets/data/v6/fit-scope-clarity-v64.json ]; then
+            python3 scripts/validate_fit_scope_clarity_v64.py
+            python3 scripts/apply_fit_scope_clarity_v64.py --check
           fi
       - name: Report canonical materialization boundary
         run: |
