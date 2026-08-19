@@ -117,7 +117,12 @@ def render_summary(catalog_id: str, source: dict, contract: dict) -> str:
 
 
 def ensure_style(text: str) -> str:
-    text = re.sub(rf'(?m)^\s*<link rel="stylesheet" href="{re.escape(STYLE)}">\s*(?:\r?\n)?', "", text)
+    # No consumir saltos vecinos: mantiene idempotencia con Engagement v6.3 y Fit & Scope v6.4.
+    text = re.sub(
+        rf'(?m)^[ \t]*<link rel="stylesheet" href="{re.escape(STYLE)}">[ \t]*(?:\r?\n)?',
+        "",
+        text,
+    )
     if "</head>" not in text:
         raise RuntimeError("ficha sin </head>")
     return text.replace("</head>", f'  <link rel="stylesheet" href="{STYLE}">\n</head>', 1)
