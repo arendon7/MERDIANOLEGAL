@@ -1,100 +1,137 @@
-# Meridiano Legal · Web canónica v6.4.0
+# Meridiano Legal · Web canónica v7.0.0
 
 Sitio público static-first de Meridiano Legal: `https://arendon7.github.io/MERDIANOLEGAL/`.
 
 ## Estado certificado
 
-**v6.4.0 — Fit & Scope Clarity / encaje y cambio de alcance**.
+**v7.0.0 — Meridiano Legal Intelligence**.
 
-- SHA funcional certificado: `0045588f795f5f0a0b9144786bc61cdf89f34319`.
-- Canal certificado: `github-pages-production-fit-scope-clarity-certified`.
+- SHA funcional certificado: `291bf23b6e9cd3d3cfb1743f032a4bc4583f726b`.
+- Merge funcional: `6b655fbf502196473a0457fd8e47d0c29e74ab41`.
+- Candidate pre-merge: `50646aadb514611241c0210a6bcfaac8ba7fe2d8` — 9/9 workflows verdes.
+- Canal certificado: `github-pages-production-legal-intelligence-certified`.
 - 46 HTML públicos, 16 fichas profundas y 1 formulario físico canónico.
-- Las 16 fichas exponen `situations` y `supplements` derivados exactamente de los catálogos canónicos.
-- Cada ficha incorpora una única sección `#v6-fit-scope` entre Resultado y Entregables.
-- La navegación ejecutiva conserva exactamente los 7 hitos de v6.3; v6.4 deliberadamente no agrega un octavo enlace.
-- Engagement Clarity v6.3 permanece íntegra: `requirements` + `responsibilities` y `#v6-engagement`.
-- Search Console continúa sin configurar: `searchConsoleConfigured=false`, sin token auténtico.
-- Analítica externa continúa deshabilitada: `analytics.enabled=false`, `provider=none`, `site_id=""`.
-- 43 páginas indexables y 3 superficies `noindex` preservadas.
-- 30 pasos históricos exactos del builder; sin paso 31.
-- Browser E2E + axe: PASS.
-- Lighthouse post-deploy: PASS con los budgets existentes antes de la promoción automática de `stable`.
+- `main == stable` después de la promoción funcional automática.
+- Browser E2E + axe y Lighthouse post-deploy: PASS antes de mover `stable`.
 - Cobertura reducida: no. Budgets relajados: no.
 
-## v6.4 — Fit & Scope Clarity
+## v7 — Meridiano Legal Intelligence
 
-v6.4 reduce fricción de autocalificación antes del contacto comercial sin crear criterios jurídicos nuevos. La mejora usa dos matrices que ya existían en las 16 fuentes de producto/servicio:
+Meridiano Legal permanece como marca madre. **Meridiano Legal Intelligence** es una capa transversal que hace visible cómo Meridiano puede combinar criterio jurídico, diseño de procesos, IA, automatización y Legal Engineering para diagnosticar, transformar, controlar y operar trabajo jurídico.
 
-- **Señales de que esta modalidad encaja**, derivado de `situations`;
-- **Situaciones que amplían el alcance**, derivado de `supplements`.
+No es un catálogo paralelo. La navegación continúa entrando por la situación/decisión del cliente y las seis rutas v6; los 8 productos y 8 servicios canónicos siguen gobernando el alcance jurídico y comercial.
 
-Ambas aparecen en `#v6-fit-scope`, inmediatamente después de Resultado y antes de Entregables. El objetivo es que el comprador pueda distinguir con mayor precisión si la modalidad corresponde a su situación y qué circunstancias cambian el perímetro base, sin confundir esa orientación con una propuesta o alcance contractual definitivo.
+La arquitectura organiza:
 
-La capa no modifica `perimeter`, `limits`, entregables, método, honorarios, cronogramas, contacto o capability truth.
+1. Legal AI Diagnostic.
+2. Legal AI Transformation.
+3. Meridiano Legal Desk.
+4. Contract Control.
+5. Regulatory Control.
+6. AI Governance 360.
+7. Legal Engineering Studio.
+
+`Meridiano Counsel` permanece como concepto futuro/no producto público.
+
+## Superficies v7
+
+La capa se materializa sobre 11 URLs existentes:
+
+- Home y hub de Soluciones;
+- ruta de Legal Operations;
+- servicio Legal Operations;
+- producto Sistema Contractual Empresarial;
+- ruta, producto y servicio de IA;
+- ruta, producto y servicio de proyectos regulados.
+
+No se añadió una séptima ruta ni nuevas URLs por nomenclatura v7.
+
+## Capability truth
+
+La release mantiene límites fail-closed:
+
+- portal real, auth, CRM, pagos, firma, agenda y upload: deshabilitados/no implementados;
+- Contract Control y Regulatory Control: patrones de implementación/operación, no SaaS autónomos;
+- no CLM productivo implícito;
+- no monitoreo automático universal;
+- no certificaciones técnicas no incluidas;
+- no garantía sobre licencias, permisos o decisiones de autoridades;
+- Legal Desk: SLA, canales y capacidad sujetos a la propuesta específica;
+- Meridiano Counsel: fuera de la oferta pública.
+
+## v6.4 preservada
+
+v7 fue reconciliada sobre la baseline certificada **v6.4.0 — Fit & Scope Clarity**.
+
+- 16/16 fichas conservan `situations` → **Señales de que esta modalidad encaja**.
+- 16/16 conservan `supplements` → **Situaciones que amplían el alcance**.
+- `#v6-fit-scope` permanece después de Resultado y antes de Entregables.
+- Engagement Clarity v6.3 continúa íntegra.
+- Search Discovery v6.2 conserva 43 indexables + 3 `noindex`.
+- Measurement v6.1 sigue privacy-first y con analytics externa deshabilitada.
+- Experience System v6.0 mantiene 46/46 superficies y 30 pasos históricos.
 
 ## Verdad jurídica y comercial
 
-La fuente permanece en:
+La fuente principal continúa en:
 
 - `catalog-products-v41/*.json` para 8 productos;
 - `catalog-services-v42/*.json` para 8 servicios.
 
-`validate_fit_scope_clarity_v64.py` compara fila por fila las matrices visibles contra `situations` y `supplements` de cada catálogo. No existe una segunda copia editorial intermedia.
+Legal Intelligence puede reorganizar navegación, recorridos y formas de intervención, pero no puede modificar silenciosamente entregables, honorarios, tiempos, responsabilidades o límites de esos catálogos.
 
-Engagement Clarity v6.3 conserva el mismo principio para `requirements` y `responsibilities`.
+## Release engineering v7
 
-## Release engineering v6.4
+- `assets/data/v7/legal-intelligence-architecture-v70.json`: contrato arquitectónico phase-aware.
+- `assets/data/v7/legal-intelligence-prototype-v70.json`: ruta de operación jurídica.
+- `assets/data/v7/legal-intelligence-deep-offers-v70.json`: Legal AI Transformation + Contract Control.
+- `assets/data/v7/ai-governance-360-prototype-v70.json`: AI Governance 360.
+- `assets/data/v7/regulatory-control-prototype-v70.json`: Regulatory Control.
+- `assets/data/v7/legal-intelligence-discovery-v70.json`: Home + hub.
+- `scripts/apply_*_v70.py`: materializadores deterministas.
+- `scripts/validate_*_v70.py`: validators fail-closed.
+- `scripts/normalize_experience_compat_v60.py`: integración en la cadena canónica.
+- `tests/e2e/legal-intelligence-v70.spec.mjs`: E2E de las 11 superficies y boundaries.
 
-- `assets/data/v6/fit-scope-clarity-v64.json`: contrato de presentación y alcance.
-- `scripts/apply_fit_scope_clarity_v64.py`: materializador determinista con `--check` fail-closed.
-- `scripts/validate_fit_scope_clarity_v64.py`: validator 16/16 contra truth canónico.
-- `.github/workflows/v64-fit-scope-clarity.yml`: gate phase-aware; 0/16 exige 16 drift, 16/16 exige 0 y cualquier estado parcial falla.
-- Canonical Equivalence exige `measurement ∪ release ∪ discovery ∪ engagement ∪ fit/scope` cuando aplica.
-- Builder, Pages y `canonical_pipeline_v524.py` ejecutan la misma extensión v6; los 30 pasos históricos permanecen intactos.
-- Candidate, Browser y Measurement materializan/validan v6.4 antes de sus suites.
-- E2E visita las 16 fichas, verifica ambos paneles, conserva 7 hitos y prueba el orden Resultado → Fit/Scope → Entregables.
-- `stable` continúa moviéndose únicamente después de quality, deploy, smoke, Browser/axe, Lighthouse y snapshot.
+## Evidencia de promoción funcional
 
-## Incidencia productiva v6.4
+- Reconciliación v6.4 + v7: `67b097c4e6cb1adf9d252aafb7e6a524b7e0636e` — 9/9 gates verdes.
+- Candidate 7.0.0: `50646aadb514611241c0210a6bcfaac8ba7fe2d8` — 9/9 gates verdes.
+- PR #167 fusionado con expected head SHA.
+- Merge: `6b655fbf502196473a0457fd8e47d0c29e74ab41`.
+- Builder: `291bf23b6e9cd3d3cfb1743f032a4bc4583f726b`.
+- Pages quality, deploy, live smoke, Browser/axe y Lighthouse precedieron la promoción automática de `stable`.
+- `stable` fue movido por workflow, no manualmente, a `291bf23b…`.
 
-El primer run productivo obtuvo un HTTP 503 transitorio al cargar `demo` durante Lighthouse; quality, deploy, smoke y Browser ya habían pasado. Un diagnóstico temporal contra la misma URL pública reprodujo smoke, Browser/axe y Lighthouse en verde. Se reejecutaron los jobs fallidos del run oficial, sin cambios de código ni relajación de budgets; Lighthouse pasó y el snapshot promovió `stable` automáticamente.
-
-El PR diagnóstico #164 se cerró sin merge.
-
-## Discovery, privacidad y capability truth preservados
+## Discovery, privacidad y capacidades preservadas
 
 - 43 páginas indexables con canonical autorreferencial;
-- `404.html`, `demo.html` y `experiencia.html` permanecen `noindex`;
+- 3 superficies `noindex` preservadas;
 - sitemap canónico de 43 URLs;
-- Search Console sigue en readiness, no verificada;
+- Search Console sigue sin token auténtico/configuración verificada;
 - analytics externa sigue apagada;
 - no PII ni contenido del formulario exportados;
 - un único formulario físico canónico;
-- WhatsApp continúa como handoff manual;
-- portal real, auth, CRM, pagos, firma, agenda y upload continúan deshabilitados/no implementados.
+- WhatsApp continúa como handoff manual.
 
 ## Source of truth
 
-- `assets/data/v6/fit-scope-clarity-v64.json`: contrato v6.4.
-- `scripts/apply_fit_scope_clarity_v64.py`: materializador v6.4.
-- `scripts/validate_fit_scope_clarity_v64.py`: validator v6.4.
-- `catalog-products-v41/` y `catalog-services-v42/`: verdad jurídica/comercial principal.
-- `assets/data/v6/engagement-clarity-v63.json`: contrato v6.3.
-- `assets/data/v6/search-discovery-readiness-v62.json`: contrato de discovery.
-- `assets/data/v6/measurement-readiness-v61.json`: contrato privacy-first de measurement.
-- `experience-system-v60.json` y `experience-content-v60.json`: Experience System base.
 - `main`: verdad técnica/documental vigente.
 - `stable`: snapshot certificado.
+- `catalog-products-v41/` y `catalog-services-v42/`: verdad jurídica/comercial principal.
+- `assets/data/v7/`: contratos Legal Intelligence.
+- `assets/data/v6/fit-scope-clarity-v64.json`: Fit & Scope.
+- `assets/data/v6/engagement-clarity-v63.json`: Engagement Clarity.
+- `assets/data/v6/search-discovery-readiness-v62.json`: Search Discovery.
+- `assets/data/v6/measurement-readiness-v61.json`: Measurement.
+- `experience-system-v60.json` y `experience-content-v60.json`: Experience System base.
 
 ## Documentación
 
-- `RELEASE-v6.4.md`: alcance, evidencia, incidencia productiva y cierre v6.4.
-- `RELEASE-v6.3.md`: cierre histórico de Engagement Clarity.
-- `RELEASE-v6.2.md`: cierre histórico de Search Discovery Readiness.
-- `RELEASE-v6.1.md`: cierre histórico de Measurement Readiness.
-- `RELEASE-v6.0.md`: cierre histórico del Experience System.
+- `RELEASE-v7.0.md`: alcance, reconciliación, evidencia y cierre v7.
+- `RELEASE-v6.4.md`: cierre histórico de Fit & Scope Clarity.
 - `knowledge/00_CANON/CONTEXTO_RAPIDO.md`: contexto operativo actual.
 - `knowledge/00_CANON/ESTADO_ACTUAL.md`: estado canónico y certificación.
 - `knowledge/00_CANON/TAREA_ACTIVA.md`: frente vigente.
 
-Este cierre documental queda definitivo cuando el commit de certificación atraviese nuevamente Builder → Pages → smoke → Browser/axe → Lighthouse → snapshot y termine con `main == stable`.
+Este cierre documental queda definitivo cuando su propio SHA atraviese otra vez Builder → Pages → smoke → Browser/axe → Lighthouse → snapshot y termine nuevamente con `main == stable`.

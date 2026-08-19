@@ -2,7 +2,7 @@
   "name": "Meridiano Legal Web",
   "version": "7.0.0",
   "release_date": "2026-08-18",
-  "channel": "github-pages-legal-intelligence-candidate",
+  "channel": "github-pages-production-legal-intelligence-certified",
   "commit_scope": "legal-intelligence-architecture",
   "source_baseline": "main"
 }
