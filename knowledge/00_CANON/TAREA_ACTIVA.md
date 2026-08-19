@@ -8,7 +8,7 @@ Actualizado: 2026-08-19.
 
 Rama: `feat/v720-buying-clarity`.
 
-PR: `#174` — draft; listo para reabrir y ejecutar regresión final sobre un único SHA congelado.
+PR: `#174` — draft; en regresión final same-SHA.
 
 Baseline certificado: **v7.1.0 — Commercial Clarity**, con `main == stable == 0a01942c9a2b7868768e0b454af5a600c65ad01a` al abrir esta ola.
 
@@ -46,10 +46,12 @@ No se modifica el contenido canónico de los 8 productos + 8 servicios.
 
 La fase 1 **preserva hero y nav sticky históricos**.
 
-El resumen se materializa entre hero y nav y fuera del `<main>` reconstruido por v6. Además, `scripts/normalize_experience_compat_v60.py` reaplica y valida Buying Clarity después de las normalizaciones históricas, de modo que Candidate Validation y Canonical Builder no puedan borrar la capa v7.2 durante una reconstrucción.
+El resumen se materializa entre hero y nav y fuera del `<main>` reconstruido por v6. `scripts/normalize_experience_compat_v60.py` reaplica y valida Buying Clarity después de las normalizaciones históricas.
 
 Además:
 
+- `apply_buying_clarity_v72.py` no consume saltos de línea vecinos al normalizar su stylesheet;
+- `apply_engagement_clarity_v63.py` preserva una hoja v6.3 ya correctamente situada antes de `tokens.css`, evitando drift cosmético frente a capas posteriores;
 - no se añade un segundo enlace a `#v6-engagement`;
 - el nav sticky conserva la única navegación canónica a “Para empezar”;
 - la CTA primaria conserva el handoff existente;
@@ -61,22 +63,23 @@ Además:
 - materializador idempotente: `scripts/apply_buying_clarity_v72.py`;
 - validador source-truth: `scripts/validate_buying_clarity_v72.py`;
 - integración con normalizador canónico: `scripts/normalize_experience_compat_v60.py`;
+- compatibilidad de composición v6.3: `scripts/apply_engagement_clarity_v63.py`;
 - superficie visual: `assets/css/v7/buying-clarity-v72.css`;
 - gate dedicado: `.github/workflows/v72-buying-clarity-candidate.yml`;
 - E2E: `tests/e2e/buying-clarity-v72.spec.mjs`;
 - materialización: 16/16 fichas;
-- contraste de superficie clara ajustado mediante token tipográfico oscuro;
 - supplements visibles pero expresamente fuera del alcance base salvo pacto.
 
 ## Boundary final fase 1
 
-Comparado contra el baseline certificado, la ola queda limitada a **25 archivos permanentes**:
+Comparado contra el baseline certificado, la ola queda limitada a **26 archivos permanentes**:
 
 - 16 fichas HTML materializadas;
 - contrato y brief v7.2;
 - CSS v7.2;
-- materializador y validador;
+- materializador y validador v7.2;
 - integración del normalizador canónico;
+- compatibilidad de composición en el materializador v6.3, sin alterar truth jurídico;
 - E2E;
 - workflow candidato;
 - tarea activa.
@@ -116,8 +119,9 @@ En la parte superior de cualquiera de las 16 fichas, sin recorrer toda la págin
 - brief y contrato source-driven implementados;
 - CSS/materializador/validator/E2E/gate implementados;
 - 16/16 fichas materializadas;
-- primer ciclo detectó duplicación de `#v6-engagement` y gobernanza incompleta del workflow;
-- ambos contratos corregidos sin relajar validadores históricos;
-- Buying Clarity integrado al normalizador canónico para sobrevivir reconstrucciones v6;
-- boundary final limpio: 25 archivos permanentes, cero workflows temporales;
-- pendiente: reabrir PR #174 y cerrar la regresión completa sobre el SHA congelado antes de merge.
+- duplicación inicial de `#v6-engagement` corregida;
+- Buying Clarity integrado al normalizador canónico;
+- composición de stylesheets v6.3/v6.4/v7.2 endurecida sin cambiar contenido jurídico;
+- canonicalización fuerte validó simultáneamente Engagement, Fit & Scope y Buying Clarity;
+- boundary final limpio: 26 archivos permanentes, cero workflows temporales;
+- pendiente: cerrar todos los workflows aplicables sobre un único SHA normal de contenido, marcar PR #174 ready y promover v7.2 siguiendo Builder → Pages → snapshot `stable`.
