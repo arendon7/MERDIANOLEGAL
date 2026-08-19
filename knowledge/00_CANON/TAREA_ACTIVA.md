@@ -6,102 +6,99 @@ Actualizado: 2026-08-18.
 
 **v7.1 — Commercial Clarity / profundidad progresiva de Home y hub de Soluciones.**
 
-Rama:
+Rama: `feat/v710-commercial-clarity`
 
-`feat/v710-commercial-clarity`
+PR: `#170` — draft.
 
 ## Baseline
 
 - `main`: v7.0.0 certificada;
 - baseline de apertura: `e5dc22e33c46a1b4fc2ebc9a01ab33444b935eb6`;
-- Meridiano Legal sigue siendo la marca madre;
-- Meridiano Legal Intelligence sigue siendo una capa transversal;
-- se conservan las seis rutas públicas y los 8 productos + 8 servicios canónicos;
+- Meridiano Legal permanece como marca madre;
+- Meridiano Legal Intelligence permanece como capa transversal;
+- se conservan seis rutas públicas y los 8 productos + 8 servicios canónicos;
 - `Meridiano Counsel` continúa fuera de la oferta pública.
 
 ## Problema observable
 
-La v7.0 mejoró la arquitectura y redujo carga cognitiva, pero la Home quedó demasiado condensada para comprensión comercial. Un visitante entiende Diagnosticar → Transformar → Controlar → Operar, pero debe navegar demasiado para saber:
-
-1. qué modalidad puede contratar;
-2. qué capacidades concretas existen detrás de cada verbo;
-3. qué puede recibir o dejar funcionando;
-4. cómo se diferencian intervención puntual, transformación, capacidad recurrente e ingeniería jurídica;
-5. por qué la experiencia de Meridiano es pertinente para ese trabajo.
+La v7.0 mejoró arquitectura y redujo carga cognitiva, pero dejó la Home demasiado condensada para comprensión comercial. El visitante reconoce una lógica de intervención, pero debe navegar demasiado para entender qué puede contratar, qué capacidades concretas existen y qué puede quedar funcionando después.
 
 ## Hipótesis
 
-Aplicar profundidad progresiva: problema primero, modalidad después, capacidad concreta luego y profundidad jurídica como respaldo. La Home debe recuperar sustancia sin regresar a una acumulación de tarjetas, taxonomías o claims tecnológicos.
+Aplicar profundidad progresiva: **situación → forma de intervención → capacidad concreta → resultado → profundidad jurídica de respaldo**. Recuperar sustancia sin regresar a acumulación de tarjetas, taxonomías o claims tecnológicos.
 
-## Alcance de esta iteración
+## Arquitectura consolidada v7.1
 
-1. Definir arquitectura comercial v7.1 de Home y hub.
-2. Hacer visibles cinco modalidades de intervención:
-   - diagnóstico;
-   - proyecto cerrado;
-   - transformación/implementación;
-   - capacidad jurídica recurrente;
-   - Legal Engineering.
-3. Mantener el modelo Diagnosticar → Transformar → Controlar → Operar, revelando detrás:
-   - Legal AI Diagnostic;
-   - Legal AI Transformation;
-   - Meridiano Legal Desk;
-   - Contract Control;
-   - Regulatory Control;
-   - AI Governance 360;
-   - Legal Engineering Studio.
-4. Hacer visibles resultados operativos de alto valor sin crear un segundo catálogo.
-5. Reforzar autoridad y especialización en una iteración posterior del mismo frente, usando únicamente evidencia documentada en `firma.html` y fuentes canónicas.
-6. Mantener source-driven materialization, validación fail-closed y compatibilidad con la capa v7.0.
+La Home conserva hero y seis situaciones. Después muestra una única capa Legal Intelligence con cuatro formas de intervención:
 
-## Fuentes nuevas
+1. **Diagnosticar** — Legal AI Diagnostic, auditorías y diagnósticos focales.
+2. **Implementar** — productos cerrados, Legal AI Transformation, AI Governance 360, Contract Control y Regulatory Control.
+3. **Operar** — Dirección Jurídica Externa, Meridiano Legal Desk y modalidades recurrentes expresamente pactadas.
+4. **Construir** — Legal Engineering Studio cuando el problema requiere una solución jurídica-tecnológica específica.
+
+Debajo se hacen visibles cuatro capacidades que pueden quedar operando:
+
+- Contract Control;
+- AI Governance 360;
+- Regulatory Control;
+- Meridiano Legal Desk.
+
+Legal Engineering no se repite como quinta capacidad instalada: permanece claramente visible en **Construir**.
+
+## Consolidación de densidad
+
+El prototipo absorbe y retira de la lectura principal dos bloques genéricos de v7.0:
+
+- `v6-outcomes`;
+- `v6-home-method`.
+
+El método no desaparece: sigue resumido en el artifact del hero y desarrollado en firma/experiencia. El contrato histórico de resultado se conserva reutilizando como título del bloque concreto de capacidades:
+
+**“El trabajo jurídico debe dejar algo que la organización pueda usar, ejecutar y verificar.”**
+
+Así se preserva continuidad semántica sin reintroducir contenido redundante.
+
+## Fuentes v7.1
 
 - `knowledge/20_DESIGN/HOME-COMMERCIAL-CLARITY-v71.md`;
 - `assets/data/v7/home-commercial-clarity-v71.json`.
 
-El materializador y validador públicos de Legal Intelligence deben preferir el contrato v7.1 cuando exista y conservar fallback v7.0 cuando no exista.
-
-## No objetivos
-
-- no crear una séptima ruta;
-- no crear un segundo catálogo;
-- no modificar todavía los catálogos jurídicos de 8 productos y 8 servicios;
-- no publicar nuevas tarifas;
-- no prometer portal, CLM/SaaS, CRM, pagos, firma, agenda o upload;
-- no prometer monitoreo automático universal;
-- no garantizar permisos o decisiones de autoridades;
-- no publicar Meridiano Counsel;
-- no crear un framework frontend nuevo;
-- no degradar accesibilidad, responsive, performance o el funnel de contacto.
+El materializador y validador de discovery prefieren v7.1 cuando el contrato existe y conservan fallback v7.0.
 
 ## Capability truth
 
-- Contract Control y Regulatory Control siguen siendo patrones de implementación/operación, no SaaS autónomos;
-- Legal Desk es capacidad jurídica gestionada dentro de perímetro, canales, QA, capacidad y SLA pactados;
+- Contract Control y Regulatory Control no son SaaS autónomos;
+- Legal Desk es capacidad jurídica gestionada dentro de perímetro, canales, QA, capacidad y SLA pactados cuando correspondan;
 - AI Governance 360 no sustituye auditorías técnicas, seguridad o evaluación científica del modelo;
-- Legal Engineering solo incluye desarrollo, integraciones, agentes, interfaces o automatización cuando el alcance técnico y jurídico lo establece expresamente.
+- Legal Engineering solo incluye desarrollo, integraciones, agentes, interfaces o automatización cuando el alcance técnico y jurídico lo establece expresamente;
+- no existe promesa de monitoreo automático universal.
 
-## Criterio de aceptación del prototipo
+## No objetivos
 
-Sin abrir fichas profundas, un usuario debe poder responder:
+- no crear séptima ruta ni segundo catálogo;
+- no modificar todavía los 16 catálogos jurídicos;
+- no publicar nuevas tarifas;
+- no prometer portal, CLM/SaaS, CRM, pagos, firma, agenda o upload;
+- no publicar Meridiano Counsel;
+- no inventar clientes, resultados o credenciales;
+- no degradar accesibilidad, responsive, performance, SEO o funnel.
 
-1. qué problemas atiende Meridiano;
-2. qué tipo de intervención puede contratar;
-3. qué es Legal Intelligence;
-4. qué diferencia existe entre Legal Desk y una bolsa de horas;
-5. qué diferencia existe entre Contract Control y un CLM/repositorio;
-6. cómo funciona la escalera de AI Governance;
-7. qué significa Regulatory Control y qué no promete;
-8. cuándo puede intervenir Legal Engineering;
-9. qué puede quedar funcionando después del proyecto;
-10. cuál es el siguiente paso aunque el usuario no conozca el nombre del producto.
+## Criterio de aceptación
 
-## Secuencia de trabajo
+Sin abrir fichas profundas, el usuario debe poder explicar:
 
-1. contrato de contenido y arquitectura;
-2. materialización source-driven en Home + hub;
-3. validación de enlaces, seis rutas y capability truth;
-4. crítica de densidad desktop/mobile;
-5. ajuste de autoridad y consolidación de resultados/método si mejora comprensión;
-6. E2E/axe/performance;
-7. PR permanece draft hasta que todos los gates del mismo SHA estén verdes.
+1. dónde encaja su situación;
+2. la diferencia entre diagnosticar, implementar, operar y construir;
+3. qué son Contract Control, AI Governance 360, Regulatory Control y Legal Desk;
+4. que Legal Engineering puede construir tecnología únicamente dentro de alcance pactado;
+5. qué capacidades no equivalen a SaaS autónomo o monitoreo universal;
+6. qué puede quedar funcionando después;
+7. cómo pasar de la necesidad a la oferta formal y al contacto.
+
+## Estado técnico
+
+- materialización source-driven Home + hub: implementada;
+- seis rutas y capability truth: preservados;
+- Search Discovery y Release Governance: verdes en iteraciones del prototipo;
+- se detectó y corrigió una incompatibilidad con el contrato histórico del resultado de Home reutilizando su título en la nueva sección concreta;
+- PR permanece draft hasta obtener todos los gates verdes sobre el mismo SHA final.
