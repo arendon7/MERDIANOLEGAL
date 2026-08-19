@@ -1,0 +1,85 @@
+name: Temporary v7.2 fix contracts
+
+on:
+  push:
+    branches:
+      - feat/v720-buying-clarity
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: feat/v720-buying-clarity
+          fetch-depth: 0
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.12'
+      - name: Apply compatibility fixes
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path('scripts/apply_buying_clarity_v72.py')
+          s = p.read_text()
+          old = '''      <article><h3>{e(labels['requirements'])}</h3><div class="v72-buying-mini-list">{requirements}</div><a class="v6-text-link" href="#v6-engagement">{e(links['requirements'])} →</a></article>'''
+          new = '''      <article><h3>{e(labels['requirements'])}</h3><div class="v72-buying-mini-list">{requirements}</div></article>'''
+          if old not in s:
+              raise SystemExit('materializer requirement CTA pattern not found')
+          p.write_text(s.replace(old, new))
+
+          p = Path('scripts/validate_buying_clarity_v72.py')
+          s = p.read_text()
+          old = '''    if '#v6-perimeter' not in block or '#v6-deliverables' not in block or '#v6-engagement' not in block:\n        fail(f"{label}: faltan enlaces de profundidad")'''
+          new = '''    if '#v6-perimeter' not in block or '#v6-deliverables' not in block:\n        fail(f"{label}: faltan enlaces de profundidad")\n    if '#v6-engagement' in block:\n        fail(f"{label}: Buying Clarity no debe duplicar la navegación canónica a #v6-engagement")'''
+          if old not in s:
+              raise SystemExit('validator link pattern not found')
+          p.write_text(s.replace(old, new))
+
+          p = Path('.github/workflows/v72-buying-clarity-candidate.yml')
+          s = p.read_text()
+          old = '''permissions:\n  contents: read\n\njobs:\n  validate:\n    name: Validate source-driven Buying Clarity\n    runs-on: ubuntu-latest\n'''
+          new = '''concurrency:\n  group: meridiano-v72-buying-clarity-${{ github.event_name }}-${{ github.ref }}\n  cancel-in-progress: true\n\npermissions:\n  contents: read\n\njobs:\n  validate:\n    name: Validate source-driven Buying Clarity\n    runs-on: ubuntu-latest\n    timeout-minutes: 10\n'''
+          if old not in s:
+              raise SystemExit('workflow governance pattern not found')
+          p.write_text(s.replace(old, new))
+
+          p = Path('assets/data/v7/buying-clarity-v72.json')
+          s = p.read_text()
+          old = '    "deliverables": "Ver todos los entregables",\n    "requirements": "Ver condiciones para empezar"\n'
+          new = '    "deliverables": "Ver todos los entregables"\n'
+          if old not in s:
+              raise SystemExit('contract requirements link pattern not found')
+          p.write_text(s.replace(old, new))
+
+          p = Path('knowledge/20_DESIGN/BUYING-CLARITY-v72.md')
+          s = p.read_text()
+          old = 'CTA contextual: `Ver condiciones para empezar → #v6-engagement` cuando la sección exista.\n'
+          new = 'No se añade un segundo enlace a `#v6-engagement`: el resumen muestra las condiciones de inicio y el nav sticky conserva la única ruta canónica a la sección completa.\n'
+          if old not in s:
+              raise SystemExit('brief requirements CTA pattern not found')
+          p.write_text(s.replace(old, new))
+          PY
+      - name: Rematerialize and validate
+        run: |
+          python3 -m py_compile scripts/apply_buying_clarity_v72.py scripts/validate_buying_clarity_v72.py
+          python3 scripts/apply_buying_clarity_v72.py
+          python3 scripts/validate_buying_clarity_v72.py
+          python3 scripts/apply_buying_clarity_v72.py --check
+          node --check tests/e2e/buying-clarity-v72.spec.mjs
+      - name: Commit fixes and remove temporary workflow
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add scripts/apply_buying_clarity_v72.py scripts/validate_buying_clarity_v72.py .github/workflows/v72-buying-clarity-candidate.yml assets/data/v7/buying-clarity-v72.json knowledge/20_DESIGN/BUYING-CLARITY-v72.md productos/*.html servicios/*.html
+          git rm .github/workflows/tmp-v72-fix-contracts.yml
+          git commit -m 'fix(v7.2): preserve engagement and workflow governance contracts'
+          git push origin HEAD:feat/v720-buying-clarity
