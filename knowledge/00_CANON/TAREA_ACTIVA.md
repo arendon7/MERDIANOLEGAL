@@ -8,7 +8,7 @@ Actualizado: 2026-08-19.
 
 Rama: `feat/v720-buying-clarity`.
 
-PR: `#174` — temporalmente cerrado durante rematerialización; reabrir sobre SHA limpio para regresión final.
+PR: `#174` — draft; listo para reabrir y ejecutar regresión final sobre un único SHA congelado.
 
 Baseline certificado: **v7.1.0 — Commercial Clarity**, con `main == stable == 0a01942c9a2b7868768e0b454af5a600c65ad01a` al abrir esta ola.
 
@@ -46,7 +46,7 @@ No se modifica el contenido canónico de los 8 productos + 8 servicios.
 
 La fase 1 **preserva hero y nav sticky históricos**.
 
-El resumen se materializa entre hero y nav y fuera del `<main>` reconstruido por v6. Esta ubicación permite que el builder histórico vuelva a materializar las fichas sin borrar Buying Clarity.
+El resumen se materializa entre hero y nav y fuera del `<main>` reconstruido por v6. Además, `scripts/normalize_experience_compat_v60.py` reaplica y valida Buying Clarity después de las normalizaciones históricas, de modo que Candidate Validation y Canonical Builder no puedan borrar la capa v7.2 durante una reconstrucción.
 
 Además:
 
@@ -60,12 +60,28 @@ Además:
 
 - materializador idempotente: `scripts/apply_buying_clarity_v72.py`;
 - validador source-truth: `scripts/validate_buying_clarity_v72.py`;
+- integración con normalizador canónico: `scripts/normalize_experience_compat_v60.py`;
 - superficie visual: `assets/css/v7/buying-clarity-v72.css`;
 - gate dedicado: `.github/workflows/v72-buying-clarity-candidate.yml`;
 - E2E: `tests/e2e/buying-clarity-v72.spec.mjs`;
 - materialización: 16/16 fichas;
 - contraste de superficie clara ajustado mediante token tipográfico oscuro;
 - supplements visibles pero expresamente fuera del alcance base salvo pacto.
+
+## Boundary final fase 1
+
+Comparado contra el baseline certificado, la ola queda limitada a **25 archivos permanentes**:
+
+- 16 fichas HTML materializadas;
+- contrato y brief v7.2;
+- CSS v7.2;
+- materializador y validador;
+- integración del normalizador canónico;
+- E2E;
+- workflow candidato;
+- tarea activa.
+
+No quedan workflows temporales ni cambios en Home, hub de Soluciones, precios o catálogos canónicos.
 
 ## Implementación fase 2
 
@@ -97,11 +113,11 @@ En la parte superior de cualquiera de las 16 fichas, sin recorrer toda la págin
 ## Estado
 
 - baseline v7.1 certificado y `main == stable` confirmado;
-- rama v7.2 creada desde baseline certificado;
 - brief y contrato source-driven implementados;
 - CSS/materializador/validator/E2E/gate implementados;
 - 16/16 fichas materializadas;
-- primer ciclo detectó dos incompatibilidades: duplicación de `#v6-engagement` y gobernanza incompleta del workflow;
-- ambas fuentes corregidas sin relajar validadores históricos;
-- rematerialización posterior completada y workflow temporal eliminado;
-- pendiente: reabrir PR #174 y cerrar toda la regresión sobre un único SHA final antes de merge.
+- primer ciclo detectó duplicación de `#v6-engagement` y gobernanza incompleta del workflow;
+- ambos contratos corregidos sin relajar validadores históricos;
+- Buying Clarity integrado al normalizador canónico para sobrevivir reconstrucciones v6;
+- boundary final limpio: 25 archivos permanentes, cero workflows temporales;
+- pendiente: reabrir PR #174 y cerrar la regresión completa sobre el SHA congelado antes de merge.
