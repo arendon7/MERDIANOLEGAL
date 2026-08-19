@@ -107,7 +107,7 @@ def validate_deep(item: dict) -> str:
 
 def validate_boundaries(blocks: list[str]) -> None:
     forbidden = [
-        r"garantiza(?:mos)?\s+(?:la\s+)?(?:licencia|licencias|permiso|permisos|decisi[oó]n|decisiones)",
+        r"(?<!no )(?<!ni )garantiza(?:mos)?\s+(?:la\s+)?(?:licencia|licencias|permiso|permisos|decisi[oó]n|decisiones)",
         r"(?:incluye|ofrece|provee|proporciona)\s+(?:un\s+)?monitoreo\s+autom[aá]tico",
         r"(?:incluye|ofrece|provee|proporciona|garantiza)\s+(?:una\s+)?cobertura\s+universal\s+de\s+fuentes",
         r"plataforma\s+(?:saas\s+)?(?:incluida|disponible)",
