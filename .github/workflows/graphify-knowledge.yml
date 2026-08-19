@@ -66,6 +66,50 @@ jobs:
           print(f"Graphify: {len(nodes)} nodos / {len(edges)} relaciones / {len(wiki)} notas wiki / source {meta['source_commit'][:8]}")
           PY
 
+      - name: Materializar Legal Intelligence Demo v7.3 en branch
+        if: github.event_name == 'pull_request' && github.head_ref == 'feat/v730-legal-intelligence-demo'
+        run: |
+          set -euo pipefail
+          git fetch origin main feat/v730-legal-intelligence-demo
+          git checkout -B feat/v730-legal-intelligence-demo origin/feat/v730-legal-intelligence-demo
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('scripts/normalize_experience_compat_v60.py')
+          text = path.read_text(encoding='utf-8')
+          marker = 'def normalize_measurement_runtime() -> tuple[int, int]:\n'
+          block = '''def normalize_legal_intelligence_demo_v73() -> None:\n    contract = ROOT / "assets" / "data" / "v7" / "legal-intelligence-demo-v73.json"\n    if not contract.exists():\n        return\n    run_contract_script("apply_legal_intelligence_demo_v73.py", "Legal Intelligence Demo v7.3")\n    run_contract_script("validate_legal_intelligence_demo_v73.py", "Legal Intelligence Demo v7.3")\n\n\n'''
+          if 'def normalize_legal_intelligence_demo_v73()' not in text:
+              if marker not in text:
+                  raise SystemExit('No se encontró ancla para v7.3 en normalizer')
+              text = text.replace(marker, block + marker, 1)
+          old = '    normalize_engagement_clarity()\n    normalize_buying_clarity_v72()\n    instrumented, untouched = normalize_measurement_runtime()\n'
+          new = '    normalize_engagement_clarity()\n    normalize_buying_clarity_v72()\n    normalize_legal_intelligence_demo_v73()\n    instrumented, untouched = normalize_measurement_runtime()\n'
+          if '    normalize_legal_intelligence_demo_v73()\n' not in text:
+              if old not in text:
+                  raise SystemExit('No se encontró ancla main para v7.3')
+              text = text.replace(old, new, 1)
+          old_msg = 'f"v7.2 normalizados cuando existen sus contratos; measurement readiness v6.1 en {instrumented} superficies, "'
+          new_msg = 'f"v7.2 y Legal Intelligence Demo v7.3 normalizados cuando existen sus contratos; measurement readiness v6.1 en {instrumented} superficies, "'
+          if old_msg in text:
+              text = text.replace(old_msg, new_msg, 1)
+          path.write_text(text, encoding='utf-8')
+          PY
+          python3 -m py_compile scripts/normalize_experience_compat_v60.py scripts/apply_legal_intelligence_demo_v73.py scripts/validate_legal_intelligence_demo_v73.py
+          python3 scripts/apply_legal_intelligence_demo_v73.py
+          python3 scripts/validate_legal_intelligence_demo_v73.py
+          python3 scripts/apply_legal_intelligence_demo_v73.py --check
+          node --check tests/e2e/legal-intelligence-demo-v73.spec.mjs
+          git checkout origin/main -- .github/workflows/graphify-knowledge.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add experiencia.html scripts/normalize_experience_compat_v60.py .github/workflows/graphify-knowledge.yml
+          if git diff --cached --quiet; then
+            echo 'No demo drift to commit.'
+          else
+            git commit -m 'chore(v7.3): materialize Legal Intelligence demo'
+            git push origin HEAD:feat/v730-legal-intelligence-demo
+          fi
+
       - name: Publicar snapshot fuera de main
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         env:
