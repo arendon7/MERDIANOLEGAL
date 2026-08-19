@@ -7,46 +7,46 @@
 - Repositorio: `arendon7/MERDIANOLEGAL`.
 - Fuente técnica/documental: `main`.
 - Snapshot certificado: `stable`.
-- Release: **v7.2.0 — Buying Clarity** sobre Meridiano Legal Intelligence.
-- Canal de cierre: `github-pages-production-buying-clarity-certified`.
+- Release: **v7.3.0 — Legal Intelligence Demo** sobre Meridiano Legal Intelligence.
+- Canal objetivo de cierre: `github-pages-production-legal-intelligence-demo-certified`.
 - 8 productos + 8 servicios canónicos continúan gobernando alcance, entregables, tiempos, responsabilidades y límites.
 
-## Resultado v7.2
+## Resultado v7.3
 
-Las 16 fichas profundas contienen un **Resumen de contratación** inmediatamente después del hero, derivado exclusivamente de los catálogos canónicos.
+El Centro Demo conserva sus cinco experiencias históricas y añade una sexta pestaña **Legal Intelligence** con cinco escenarios completamente ficticios:
 
-El resumen expone:
+1. Legal AI Transformation.
+2. Contract Control.
+3. AI Governance 360.
+4. Regulatory Control.
+5. Meridiano Legal Desk.
 
-1. modalidad;
-2. horizonte/cadencia;
-3. destinatario;
-4. principales cantidades del perímetro;
-5. principales entregables;
-6. requisitos de inicio;
-7. criterios de aceptación/cierre;
-8. ampliaciones/continuidad fuera del alcance base salvo pacto.
+Cada escenario presenta:
 
-No modifica la verdad contractual ni introduce pricing nuevo.
+**problema → flujo → artefacto demostrativo → resultado → referencia de alcance → frontera → oferta relacionada**.
+
+Las referencias cuantitativas se derivan exclusivamente de los catálogos canónicos aplicables. Legal Desk no publica LU, volumen, canales, SLA o capacidad estándar porque esos elementos requieren una propuesta específica.
 
 ## Evidencia
 
-### Fase funcional #174
+### Fase funcional #177
 
-- Baseline v7.1 certificado: `0a01942c9a2b7868768e0b454af5a600c65ad01a`.
-- SHA funcional: `5e9b04487b92b0e47327d1f61880d2a4ac48c629`.
-- Gates funcionales same-SHA: PASS.
-- Merge #174: `0b8211ce9aeecda737bec0a11af50496cc6aeccf`.
+- Baseline certificado v7.2.0: `f7bbf06588518141490a62db7b9fae8530659991`.
+- SHA funcional: `dc3d4beea5637fc6aa104964d0fd0849b8c904c7`.
+- 10/10 workflows aplicables same-SHA: PASS.
+- Merge #177: `4867f3418c45a5a6689cd43b79ff48f191cda3a1`.
 
-### Candidate #175
+### Candidate #178
 
-- SHA candidate: `f11329f40cfcd7d097ff16019dcb462dd97acc70`.
-- 10/10 workflows aplicables: PASS.
-- Merge #175: `a5d14d34cd73aa2772a66adfd6d5ea0f07c34a2e`.
-- Builder canónico: `356f755db67a678142769b3a80ee69837679648d`.
+- SHA candidate final: `e8656a0ea69aa8cf8140a6d41e74130e3cec9f60`.
+- 10/10 workflows aplicables same-SHA: PASS.
+- Merge #178: `6c194effd5421326f05296c1e99c54f852f04398`.
+- Builder canónico: `2999d28dc6e4ae497ecbfbb9469f55364f34d899`.
 - Pages quality/deploy/live smoke: PASS.
 - Browser E2E/axe desplegado: PASS.
 - Lighthouse: PASS.
-- Snapshot: `stable → 356f755db67a678142769b3a80ee69837679648d`, automático.
+- Snapshot: `stable → 2999d28dc6e4ae497ecbfbb9469f55364f34d899`, automático.
+- `stable/version.json`: v7.3.0 / `github-pages-legal-intelligence-demo-candidate` antes del cierre documental.
 
 ## Arquitectura preservada
 
@@ -64,39 +64,50 @@ Meridiano Counsel continúa como concepto futuro/no producto público.
 
 ## Capability truth
 
-- seis rutas públicas y 16 ofertas canónicas preservadas;
-- Contract/Regulatory Control no son SaaS autónomos;
+- todos los escenarios v7.3 están marcados DEMO y usan datos ficticios;
+- no hay carga de información real ni asesoría jurídica implícita;
+- Contract Control y Regulatory Control no son SaaS autónomos;
 - no CLM productivo implícito;
-- Legal Desk sujeto a propuesta y SLA/perímetro pactados;
-- AI Governance 360 no sustituye evaluación técnica/seguridad;
-- no monitoreo automático universal;
+- Legal Desk está sujeto a propuesta, perímetro, capacidad, canales y SLA pactados;
+- AI Governance 360 no sustituye evaluación técnica, seguridad o auditoría;
+- no existe monitoreo automático universal ni decisión jurídica autónoma;
 - portal real, auth, CRM, pagos, firma, agenda y upload siguen fuera de capability productiva;
 - no tarifas nuevas.
 
 ## Compatibilidad
 
-- v7.1 Commercial Clarity preservada y lifecycle monotónico para releases posteriores.
+- v7.2 Buying Clarity preservada.
+- v7.1 Commercial Clarity preservada.
 - v7.0 Legal Intelligence preservada.
-- v6.4 Fit & Scope y v6.3 Engagement coexisten idempotentemente con v7.2.
+- v6.4 Fit & Scope y v6.3 Engagement coexisten idempotentemente con v7.3.
 - v6.2 Search, v6.1 Measurement y v6.0 Experience preservados.
 - Canonical Builder mantiene first-pass boundary exacto y segunda pasada sin drift.
 
-## Cierre documental v7.2
+## Correcciones internas v7.3
 
-El branch `docs/v720-certified-closure` contiene únicamente siete fuentes de metadata/documentación:
+Durante desarrollo/candidate se corrigieron sin relajar gates:
+
+1. falso positivo del validator sobre la negación contractual de Legal Units/SLA de Legal Desk;
+2. idempotencia de markers gestionados en `experiencia.html`;
+3. recomposición v7.3 después de reconstrucciones v6;
+4. lifecycle phase-aware del validator y materializador: `demo-prototype → release-candidate → certified`.
+
+## Cierre documental v7.3
+
+El branch `docs/v730-certified-closure` contiene únicamente siete fuentes de metadata/documentación:
 
 1. `version.json`.
-2. `assets/data/v7/buying-clarity-v72.json`.
+2. `assets/data/v7/legal-intelligence-demo-v73.json`.
 3. `README.md`.
-4. `RELEASE-v7.2.md`.
+4. `RELEASE-v7.3.md`.
 5. `knowledge/00_CANON/CONTEXTO_RAPIDO.md`.
 6. `knowledge/00_CANON/ESTADO_ACTUAL.md`.
 7. `knowledge/00_CANON/TAREA_ACTIVA.md`.
 
-No modifica HTML, CSS, catálogos, materializadores, E2E, workflows ni capabilities.
+No modifica HTML, CSS, catálogos, materializadores, validators funcionales, E2E, workflows ni capabilities.
 
-La certificación queda definitiva cuando este cierre supere sus propios gates, se fusione con SHA protegido y complete nuevamente Builder → Pages → Browser/axe + Lighthouse → snapshot, terminando con `main == stable` y `stable/version.json` en canal certified.
+La certificación queda definitiva cuando este cierre supere sus propios gates, se fusione con SHA protegido y complete nuevamente Builder → Pages → Browser/axe + Lighthouse → snapshot, terminando con `main == stable` y `stable/version.json` en canal `github-pages-production-legal-intelligence-demo-certified`.
 
 ## Siguiente frente
 
-**Centro Demo — Legal Intelligence Scenarios**, como ola independiente y demostrativa, con datos ficticios y sin capabilities productivas nuevas.
+Después del cierre definitivo, priorizar la siguiente ola con evidencia comercial real obtenida desde las fichas comprables y el Centro Demo, evitando ampliar capabilities por intuición.
