@@ -127,7 +127,16 @@ def main() -> int:
     if not desk:
         fail("falta card Legal Desk")
     desk_text = desk.group(1)
-    for pattern in (r"\bLU\b", r"Legal Units", r"SLA\s*\d", r"horas incluidas", r"solicitudes incluidas", r"\d+\s+LU"):
+    # Bloquea cantidades o promesas positivas. La frase negativa de boundary puede
+    # mencionar "Legal Units" y "SLA" precisamente para dejar claro que no se fijan.
+    for pattern in (
+        r"\d+\s+LU\b",
+        r"\bLU\s*(?:incluidas?|mensuales?|por\s+mes)\b",
+        r"SLA\s*(?:de\s*)?\d+",
+        r"\d+\s+horas\s+incluidas",
+        r"\d+\s+solicitudes\s+incluidas",
+        r"capacidad\s+incluida\s*:\s*\d+",
+    ):
         if re.search(pattern, desk_text, flags=re.I):
             fail(f"Legal Desk demo inventa capacidad no aprobada: {pattern}")
     if "no fija volumen, canales, Legal Units, SLA o capacidad incluida" not in desk_text:
