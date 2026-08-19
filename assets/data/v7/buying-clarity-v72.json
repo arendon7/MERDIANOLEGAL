@@ -1,0 +1,49 @@
+{
+  "version": "7.2.0-prototype",
+  "status": "buying-clarity-prototype",
+  "baseline": "7.1.0",
+  "scope": "16 canonical deep offer pages",
+  "source_truth": [
+    "catalog-products-v41/*.json",
+    "catalog-services-v42/*.json"
+  ],
+  "summary": {
+    "id": "v72-buying-summary",
+    "eyebrow": "RESUMEN DE CONTRATACIÓN",
+    "title": "Antes de entrar al detalle, esto es lo que está contratando.",
+    "lead": "Una lectura ejecutiva del alcance estándar. La propuesta final confirma perímetro, responsables, exclusiones y cualquier ampliación.",
+    "meta_fields": ["modality", "duration", "audience"],
+    "perimeter_limit": 4,
+    "deliverables_limit": 4,
+    "requirements_limit": 2,
+    "acceptance_limit": 2,
+    "supplements_limit": 2,
+    "nav_label": "Qué contrata",
+    "secondary_cta": "Ver qué incluye"
+  },
+  "labels": {
+    "modality": "Modalidad",
+    "duration": "Horizonte",
+    "audience": "Dirigido a",
+    "perimeter": "Perímetro base",
+    "deliverables": "Entregables clave",
+    "requirements": "Para empezar",
+    "acceptance_product": "Cómo se verifica el cierre",
+    "acceptance_service": "Cómo se verifica la prestación",
+    "supplements": "Si la necesidad crece"
+  },
+  "links": {
+    "perimeter": "Ver perímetro completo",
+    "deliverables": "Ver todos los entregables",
+    "requirements": "Ver condiciones para empezar"
+  },
+  "rules": {
+    "preserve_order": true,
+    "preserve_quantities_verbatim": true,
+    "no_new_pricing": true,
+    "no_new_capabilities": true,
+    "supplements_are_not_included": true,
+    "material_information_must_be_visible": true,
+    "demo_phase": "after-16-detail-summary-certification"
+  }
+}
