@@ -1,8 +1,8 @@
 {
   "name": "Meridiano Legal Web",
-  "version": "7.1.0",
+  "version": "7.2.0",
   "release_date": "2026-08-19",
-  "channel": "github-pages-production-commercial-clarity-certified",
-  "commit_scope": "commercial-clarity",
+  "channel": "github-pages-buying-clarity-candidate",
+  "commit_scope": "buying-clarity",
   "source_baseline": "main"
 }
