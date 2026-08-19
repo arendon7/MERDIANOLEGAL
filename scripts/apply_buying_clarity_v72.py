@@ -107,7 +107,7 @@ def render_summary(catalog_id: str, source: dict, contract: dict) -> str:
       <article class="v72-buying-panel"><h3>{e(labels['deliverables'])}</h3><div class="v72-buying-list">{deliverables}</div><a class="v6-text-link" href="#v6-deliverables">{e(links['deliverables'])} →</a></article>
     </div>
     <div class="v72-buying-secondary">
-      <article><h3>{e(labels['requirements'])}</h3><div class="v72-buying-mini-list">{requirements}</div><a class="v6-text-link" href="#v6-engagement">{e(links['requirements'])} →</a></article>
+      <article><h3>{e(labels['requirements'])}</h3><div class="v72-buying-mini-list">{requirements}</div></article>
       <article><h3>{e(acceptance_label)}</h3><div class="v72-buying-mini-list">{acceptance}</div></article>
       <article><h3>{e(labels['supplements'])}</h3><div class="v72-buying-mini-list">{supplements}</div><p class="v72-buying-note">Estas ampliaciones no hacen parte del alcance base salvo que la propuesta las incluya expresamente.</p></article>
     </div>
