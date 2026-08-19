@@ -3,6 +3,9 @@
 
 No activa analítica externa. Solo carga un runtime local/efímero que propaga un
 `source` allowlisted y expone eventos comerciales sin PII para QA.
+
+El lifecycle de release es independiente del estado operativo: prototype,
+release-candidate y certified mantienen siempre `status=readiness-disabled`.
 """
 from __future__ import annotations
 
@@ -13,6 +16,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / "assets" / "data" / "v7" / "commercial-evidence-v74.json"
+VERSION = ROOT / "version.json"
 RUNTIME = "assets/js/v7/commercial-evidence-v74.js"
 START = "<!-- COMMERCIAL-EVIDENCE-V74:START -->"
 END = "<!-- COMMERCIAL-EVIDENCE-V74:END -->"
@@ -20,16 +24,62 @@ BLOCK_PATTERN = re.compile(
     r"^[ \t]*" + re.escape(START) + r".*?" + re.escape(END) + r"[ \t]*(?:\r?\n)?",
     re.M | re.S,
 )
+VALID_LIFECYCLE = {
+    "prototype": {
+        "contract_prefix": "7.4.0-prototype",
+        "public_version": "7.3.0",
+        "channel": "github-pages-production-legal-intelligence-demo-certified",
+    },
+    "release-candidate": {
+        "contract_exact": "7.4.0",
+        "public_version": "7.4.0",
+        "channel": "github-pages-commercial-evidence-readiness-candidate",
+    },
+    "certified": {
+        "contract_exact": "7.4.0",
+        "public_version": "7.4.0",
+        "channel": "github-pages-production-commercial-evidence-readiness-certified",
+    },
+}
+
+
+def resolve_lifecycle(data: dict) -> str:
+    lifecycle = str(data.get("lifecycle", "") or "").strip()
+    version = str(data.get("version", "") or "").strip()
+    if not lifecycle and version.startswith("7.4.0-prototype"):
+        lifecycle = "prototype"
+    if lifecycle not in VALID_LIFECYCLE:
+        raise RuntimeError(f"Commercial Evidence v7.4 lifecycle inválido: {lifecycle!r}")
+    expected = VALID_LIFECYCLE[lifecycle]
+    if "contract_exact" in expected and version != expected["contract_exact"]:
+        raise RuntimeError(f"Commercial Evidence v7.4 {lifecycle} debe declarar version {expected['contract_exact']}")
+    if "contract_prefix" in expected and not version.startswith(expected["contract_prefix"]):
+        raise RuntimeError(f"Commercial Evidence v7.4 {lifecycle} debe usar prefijo {expected['contract_prefix']}")
+
+    public = json.loads(VERSION.read_text(encoding="utf-8"))
+    if public.get("version") != expected["public_version"]:
+        raise RuntimeError(
+            f"Commercial Evidence v7.4 {lifecycle} requiere version pública {expected['public_version']}"
+        )
+    if public.get("channel") != expected["channel"]:
+        raise RuntimeError(
+            f"Commercial Evidence v7.4 {lifecycle} requiere canal {expected['channel']}"
+        )
+    return lifecycle
 
 
 def load_contract() -> dict:
     data = json.loads(CONTRACT.read_text(encoding="utf-8"))
-    if not str(data.get("version", "")).startswith("7.4.0-prototype"):
-        raise RuntimeError("Commercial Evidence v7.4 debe permanecer prototype durante esta fase")
+    resolve_lifecycle(data)
     if data.get("status") != "readiness-disabled":
         raise RuntimeError("Commercial Evidence v7.4 debe permanecer readiness-disabled")
     if data.get("baseline") != "7.3.0":
         raise RuntimeError("Commercial Evidence v7.4 debe preservar baseline 7.3.0")
+    activation = data.get("activation") or {}
+    if activation.get("external_analytics") is not False or activation.get("network_transport") is not False:
+        raise RuntimeError("Commercial Evidence v7.4 no puede activar analytics ni transporte externo")
+    if activation.get("provider") != "none":
+        raise RuntimeError("Commercial Evidence v7.4 debe mantener provider=none")
     surfaces = data.get("surfaces") or []
     if len(surfaces) != 7 or len(set(surfaces)) != 7:
         raise RuntimeError("Commercial Evidence v7.4 requiere exactamente siete superficies únicas")
