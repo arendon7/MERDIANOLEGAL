@@ -1,6 +1,6 @@
 {
   "version": "7.2.0",
-  "status": "release-candidate",
+  "status": "certified",
   "baseline": "7.1.0",
   "scope": "16 canonical deep offer pages",
   "source_truth": [
