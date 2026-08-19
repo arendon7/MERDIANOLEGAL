@@ -28,6 +28,35 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Materializar Commercial Evidence v7.4 en branch
+        if: github.event_name == 'pull_request'
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          set -euo pipefail
+          git fetch origin main "${HEAD_REF}"
+          git checkout "${HEAD_REF}"
+          python3 scripts/apply_commercial_evidence_v74.py
+          python3 scripts/validate_commercial_evidence_v74.py
+          python3 scripts/apply_commercial_evidence_v74.py --check
+          git checkout origin/main -- .github/workflows/graphify-knowledge.yml
+          git add \
+            .github/workflows/graphify-knowledge.yml \
+            index.html experiencia.html \
+            servicios/legal-operations.html \
+            productos/sistema-contractual-empresarial.html \
+            productos/programa-gobernanza-ia.html \
+            productos/proyecto-regulado-estructurado.html \
+            soluciones/ordenar-operacion-juridica.html
+          if git diff --cached --quiet; then
+            echo "Commercial Evidence v7.4 ya estaba materializado."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "build(v7.4): materialize commercial evidence readiness"
+            git push origin "HEAD:refs/heads/${HEAD_REF}"
+          fi
+
       - name: Instalar uv validado
         run: python -m pip install --disable-pip-version-check "uv==0.12.3"
 
