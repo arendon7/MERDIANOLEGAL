@@ -8,15 +8,18 @@ Actualizado: 2026-08-19.
 
 Rama: `feat/v710-commercial-clarity`
 
-PR: `#170` — draft hasta certificación same-SHA final.
+PR candidate: **#171** — draft hasta certificación same-SHA final.
+
+PR funcional #170: **fusionado** en `main` mediante `f01c5163e2c70012218c7d369bfb68180db04ed7`.
 
 Canal candidate: `github-pages-commercial-clarity-candidate`.
 
-## Baseline certificada
+## Baseline
 
-- release pública de partida: **v7.0.0 — Meridiano Legal Intelligence**;
-- baseline de apertura: `e5dc22e33c46a1b4fc2ebc9a01ab33444b935eb6`;
-- al abrir este candidate, `main == stable` en esa baseline;
+- release certificada de partida: **v7.0.0 — Meridiano Legal Intelligence**;
+- baseline de apertura funcional: `e5dc22e33c46a1b4fc2ebc9a01ab33444b935eb6`;
+- candidate funcional pre-merge: `12c8145dc8b6a3901217eb3d5793e210bfe06486`;
+- merge funcional #170: `f01c5163e2c70012218c7d369bfb68180db04ed7`;
 - Meridiano Legal permanece como marca madre;
 - Meridiano Legal Intelligence permanece como capa transversal;
 - se conservan seis rutas públicas y los 8 productos + 8 servicios canónicos;
@@ -24,9 +27,7 @@ Canal candidate: `github-pages-commercial-clarity-candidate`.
 
 ## Problema que resuelve v7.1
 
-La v7.0 resolvió la arquitectura de Legal Intelligence, pero dejó la Home demasiado condensada para comprensión comercial. El visitante podía reconocer la lógica general, aunque todavía debía navegar demasiado para entender qué puede contratar, qué capacidades concretas existen, qué diferencia hay entre diagnóstico, implementación, operación e ingeniería y qué puede quedar funcionando después.
-
-v7.1 aplica profundidad progresiva:
+v7.0 resolvió la arquitectura de Legal Intelligence, pero la Home quedó demasiado condensada para comprensión comercial. v7.1 aplica profundidad progresiva:
 
 **situación → forma de intervención → capacidad concreta → resultado → profundidad jurídica de respaldo**.
 
@@ -36,7 +37,7 @@ La Home conserva hero y seis situaciones. Después muestra una única capa Legal
 
 1. **Diagnosticar** — Legal AI Diagnostic, auditorías y diagnósticos focales.
 2. **Implementar** — productos cerrados, Legal AI Transformation, AI Governance 360, Contract Control y Regulatory Control.
-3. **Operar** — Dirección Jurídica Externa, Meridiano Legal Desk y modalidades recurrentes expresamente pactadas.
+3. **Operar** — Dirección Jurídica Externa, Meridiano Legal Desk y modalidades gestionadas expresamente pactadas.
 4. **Construir** — Legal Engineering Studio cuando el problema requiere una solución jurídica-tecnológica específica.
 
 Debajo se hacen visibles cuatro capacidades que pueden quedar operando:
@@ -46,20 +47,16 @@ Debajo se hacen visibles cuatro capacidades que pueden quedar operando:
 - Regulatory Control;
 - Meridiano Legal Desk.
 
-Legal Engineering permanece visible en **Construir** y no se duplica como una quinta capacidad instalada.
+Legal Engineering permanece visible en **Construir** y no se duplica como quinta capacidad instalada.
 
-## Consolidación de densidad
+## Consolidación de densidad y lenguaje
 
-El nuevo bloque absorbe de la lectura principal dos secciones genéricas de v7.0:
-
-- `v6-outcomes`;
-- `v6-home-method`.
-
-El método continúa resumido en el hero y desarrollado en firma/experiencia. El contrato histórico de resultado se preserva mediante el título:
-
-**“El trabajo jurídico debe dejar algo que la organización pueda usar, ejecutar y verificar.”**
-
-La grilla usa cuatro columnas reales y el copy evita anglicismos operativos innecesarios sin alterar los nombres propios de las capacidades.
+- `v6-outcomes` y `v6-home-method` fueron absorbidos de la lectura principal para evitar redundancia;
+- el método continúa resumido en el hero y desarrollado en firma/experiencia;
+- se preserva el contrato semántico: **“El trabajo jurídico debe dejar algo que la organización pueda usar, ejecutar y verificar.”**;
+- grilla: 4 columnas desktop, 2×2 tablet y apilado móvil;
+- contraste WCAG scoped para las capacidades sobre superficie clara;
+- menor dependencia de anglicismos operativos sin alterar nombres propios de capacidades.
 
 ## Fuentes v7.1
 
@@ -68,8 +65,6 @@ La grilla usa cuatro columnas reales y el copy evita anglicismos operativos inne
 - `scripts/apply_legal_intelligence_discovery_v70.py`;
 - `scripts/validate_legal_intelligence_discovery_v70.py`;
 - `tests/e2e/integral-visual-v526.spec.mjs`.
-
-El materializador/validator prefieren v7.1 cuando existe su contrato y conservan fallback v7.0.
 
 ## Capability truth
 
@@ -81,45 +76,45 @@ El materializador/validator prefieren v7.1 cuando existe su contrato y conservan
 - no se publica portal, CLM, CRM, pagos, firma, agenda o upload inexistente;
 - no se alteran precios, entregables, responsabilidades o límites de los catálogos canónicos.
 
-## Prototipo certificado antes del candidate
+## Evidencia funcional previa
 
-SHA final del prototipo:
+SHA funcional final antes de abrir candidate:
 
 `12c8145dc8b6a3901217eb3d5793e210bfe06486`
 
-Ese SHA superó todos los workflows aplicables:
+Ese SHA pasó:
 
-1. Candidate Validation — PASS.
-2. Canonical Builder Equivalence — PASS.
-3. Browser E2E / axe — PASS.
-4. Search Discovery — PASS.
-5. Release Governance — PASS.
-6. Graphify — PASS.
+1. Candidate Validation.
+2. Canonical Builder Equivalence + idempotencia.
+3. Browser E2E / axe.
+4. Search Discovery.
+5. Release Governance.
+6. Graphify.
 
-La primera pasada del Builder volvió a quedar canónica después de materializar Home + hub desde source; el workflow temporal de materialización fue retirado y no forma parte del diff final.
+PR #170 fue fusionado con expected head SHA y no se reescribió `main`.
 
 ## Release candidate 7.1.0
 
-El candidate cambia únicamente metadata/fase sobre el prototipo certificado:
+PR #171 cambia únicamente lifecycle/metadata sobre el prototipo funcional ya fusionado:
 
 - `version.json`: `7.1.0` + canal `github-pages-commercial-clarity-candidate`;
 - contrato v7.1: `release-candidate`;
-- validator v7.1: lifecycle phase-aware `prototype → release-candidate → certified`;
+- validator: lifecycle phase-aware `prototype → release-candidate → certified`;
 - esta memoria canónica.
 
-El cambio de fase **no modifica HTML, copy, catálogos ni capabilities**.
+**No modifica HTML, copy, CSS funcional, catálogos ni capabilities.**
 
-Después de este commit no se reutiliza la certificación del prototipo. El SHA final candidate debe volver a superar todos los workflows aplicables sobre la misma evidencia.
+El SHA final de #171 debe obtener nuevamente todos los workflows aplicables verdes; no se reutiliza la certificación de #170.
 
-## Promoción
+## Promoción candidate
 
-Solo después de candidate same-SHA verde:
+Solo después de same-SHA verde en #171:
 
-1. verificar head intacto y `main` sin carrera;
-2. marcar PR #170 ready;
-3. fusionar con `expected_head_sha`;
-4. dejar que Builder sincronice la versión pública canónica cuando corresponda;
-5. exigir Pages quality y deploy;
+1. verificar head intacto y ausencia de carrera con `main`;
+2. marcar **PR #171** ready;
+3. fusionar #171 con `expected_head_sha`;
+4. dejar que Builder sincronice versión/metadata pública;
+5. exigir Pages quality + deploy;
 6. exigir live smoke;
 7. exigir Browser/axe desplegado;
 8. exigir Lighthouse;
@@ -127,25 +122,17 @@ Solo después de candidate same-SHA verde:
 
 **No mover `stable` manualmente.**
 
-## Cierre posterior
+## Cierre certified posterior
 
-Una vez la release funcional v7.1 esté en `main == stable`, abrir un cierre documental separado para:
+Cuando el candidate 7.1 esté publicado y `main == stable`, abrir un cierre documental separado para:
 
-- cambiar `candidate → github-pages-production-commercial-clarity-certified`;
-- cambiar contrato v7.1 `release-candidate → certified`;
+- cambiar canal `candidate → github-pages-production-commercial-clarity-certified`;
+- cambiar contrato `release-candidate → certified`;
 - publicar `RELEASE-v7.1.md`;
-- actualizar README y memoria canónica;
-- registrar candidate, merge, builder/Pages y snapshot final;
+- actualizar README, `ESTADO_ACTUAL`, `CONTEXTO_RAPIDO` y `TAREA_ACTIVA`;
+- registrar candidate, merge, Builder/Pages y snapshot final;
 - volver a pasar la certificación completa del cierre.
 
 ## Siguiente ola, fuera de este PR
 
-Después de cerrar v7.1, desarrollar por separado **Buying Clarity** para las fichas profundas y el Centro Demo:
-
-- Legal AI Transformation;
-- Contract Control;
-- AI Governance 360;
-- Regulatory Control;
-- demo específico de esas capacidades.
-
-Esa segunda ola debe derivar cantidades, entregables, duración, requisitos y continuidad exclusivamente de los catálogos canónicos. No introduce tarifas hasta que exista truth de pricing aprobado.
+Después de cerrar v7.1, desarrollar por separado **Buying Clarity** para fichas profundas y Centro Demo, derivando cantidades, entregables, duración, requisitos y continuidad exclusivamente de los catálogos canónicos. No introducir tarifas hasta que exista truth de pricing aprobado.
