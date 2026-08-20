@@ -1,6 +1,6 @@
 {
   "version": "7.4.0",
-  "lifecycle": "release-candidate",
+  "lifecycle": "certified",
   "status": "readiness-disabled",
   "baseline": "7.3.0",
   "title": "Commercial Evidence Readiness",

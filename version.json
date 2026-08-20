@@ -2,7 +2,7 @@
   "name": "Meridiano Legal Web",
   "version": "7.4.0",
   "release_date": "2026-08-19",
-  "channel": "github-pages-commercial-evidence-readiness-candidate",
+  "channel": "github-pages-production-commercial-evidence-readiness-certified",
   "commit_scope": "commercial-evidence-readiness",
   "source_baseline": "main"
 }
