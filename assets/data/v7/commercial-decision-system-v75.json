@@ -1,0 +1,105 @@
+{
+  "version": "7.5.0-prototype",
+  "lifecycle": "prototype",
+  "baseline": "7.4.0",
+  "title": "Commercial Decision System",
+  "purpose": "Crear una capa comparativa visible entre la Home y las fichas canónicas para que un comprador pueda distinguir qué oferta de Legal Intelligence corresponde a su problema sin crear capacidades, precios o promesas nuevas.",
+  "target": "index.html",
+  "insert_after_marker": "<!-- LEGAL-INTELLIGENCE-DISCOVERY-V70-HOME:END -->",
+  "section": {
+    "eyebrow": "COMPARE ANTES DE ELEGIR",
+    "title": "Cinco ofertas, cinco problemas distintos. Identifique cuál encaja antes de entrar al detalle.",
+    "lead": "La comparación no sustituye la ficha ni la propuesta. Resume el encaje, la modalidad, el horizonte, el resultado y una frontera material usando las fuentes canónicas ya publicadas.",
+    "guide": "Si todavía no puede identificar una opción, presente la necesidad sin escoger producto: Meridiano califica primero el problema y recomienda la modalidad proporcional."
+  },
+  "rules": {
+    "source_driven": true,
+    "preserve_source_text_verbatim": true,
+    "no_new_pricing": true,
+    "no_new_capabilities": true,
+    "no_software_claims": true,
+    "no_external_analytics": true,
+    "no_new_javascript": true,
+    "deliverables_per_offer": 3,
+    "one_material_limit_per_offer": true,
+    "contact_attribution_uses_v74_allowlist_only": true
+  },
+  "offers": [
+    {
+      "id": "legal-ai-transformation",
+      "number": "01",
+      "intent": "TRANSFORMAR OPERACIÓN",
+      "display_name": "Legal AI Transformation",
+      "source": "catalog-services-v42/s08-legal-ops.json",
+      "catalog_id": "service-ops",
+      "route": "servicios/legal-operations.html#v7-legal-ai-transformation",
+      "source_token": "li-legal-ai-transformation",
+      "deliverable_indices": [0, 1, 4],
+      "limit_index": 1
+    },
+    {
+      "id": "contract-control",
+      "number": "02",
+      "intent": "CONTROLAR CONTRATOS",
+      "display_name": "Contract Control",
+      "source": "catalog-products-v41/p07-contractual.json",
+      "catalog_id": "product-contract-system",
+      "route": "productos/sistema-contractual-empresarial.html#v7-contract-control",
+      "source_token": "li-contract-control",
+      "deliverable_indices": [1, 4, 8],
+      "limit_index": 2
+    },
+    {
+      "id": "ai-governance-360",
+      "number": "03",
+      "intent": "GOBERNAR IA",
+      "display_name": "AI Governance 360",
+      "source": "catalog-products-v41/p05-ia.json",
+      "catalog_id": "product-ai",
+      "route": "productos/programa-gobernanza-ia.html#v7-ai-governance-360",
+      "source_token": "li-ai-governance-360",
+      "deliverable_indices": [0, 1, 2],
+      "limit_index": 0
+    },
+    {
+      "id": "regulatory-control",
+      "number": "04",
+      "intent": "CONTROLAR REGULACIÓN",
+      "display_name": "Regulatory Control",
+      "source": "catalog-products-v41/p06-regulado.json",
+      "catalog_id": "product-regulated",
+      "route": "productos/proyecto-regulado-estructurado.html#v7-regulatory-control",
+      "source_token": "li-regulatory-control",
+      "deliverable_indices": [1, 2, 3],
+      "limit_index": 1
+    },
+    {
+      "id": "legal-desk",
+      "number": "05",
+      "intent": "OPERAR CAPACIDAD JURÍDICA",
+      "display_name": "Meridiano Legal Desk",
+      "source": "assets/data/v7/home-commercial-clarity-v71.json",
+      "source_selector": "home.installed.items[name=Meridiano Legal Desk]",
+      "route": "soluciones/ordenar-operacion-juridica.html#v7-legal-intelligence",
+      "source_token": "li-legal-desk",
+      "meta": {
+        "modality": "Capacidad jurídica gestionada",
+        "duration": "Perímetro y cadencia definidos en propuesta",
+        "audience": "Gerencias y equipos con demanda jurídica recurrente"
+      },
+      "deliverables": [
+        "Recepción y priorización de solicitudes dentro del perímetro acordado",
+        "Asignación, criterios de actuación, revisión y control de calidad",
+        "Seguimiento y métricas conforme al alcance definido"
+      ],
+      "boundary_from": "home.installed.items[name=Meridiano Legal Desk].outcome"
+    }
+  ],
+  "attribution": {
+    "contract": "assets/data/v7/commercial-evidence-v74.json",
+    "query_parameter": "source",
+    "contact_target": "index.html#contacto",
+    "demo_target": "experiencia.html#intelligence",
+    "no_new_interaction_types": true
+  }
+}
