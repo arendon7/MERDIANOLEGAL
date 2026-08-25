@@ -48,9 +48,17 @@
   text-transform: uppercase;
 }
 .ml-family-marker::before { content: ""; width: 28px; height: 1px; background: currentColor; }
-.ml-surface--solution .ml-family-marker { color: var(--ml-gold); }
+.ml-surface--solution .ml-family-marker { color: var(--ml-gold-ink); }
 .ml-surface--practice .ml-family-marker { color: var(--ml-blue); }
 .ml-surface--recurring .ml-family-marker { color: var(--ml-navy); }
+
+/* El oro de marca sigue gobernando líneas, puntos y acentos no textuales. Para
+   etiquetas pequeñas usamos un token oscuro con contraste AA sobre blanco/ivory. */
+.ml-eyebrow,
+.ml-index-row b,
+.ml-ledger-item span {
+  color: var(--ml-gold-ink);
+}
 
 .ml-practice-scope {
   display: grid;

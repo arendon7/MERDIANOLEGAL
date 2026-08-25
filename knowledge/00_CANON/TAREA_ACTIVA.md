@@ -8,164 +8,124 @@ Actualizado: 2026-08-25.
 - `main == stable == 86813813e29dd6b47105ba7fb6259630fcd9cb5b`.
 - Release productiva: **v7.4.0 — Commercial Evidence Readiness**.
 - Analytics: `readiness-disabled`.
-- Capability truth v7.4 permanece vigente.
+- Capability truth v7.4 permanece vigente mientras v8 está en candidate.
 - `stable` no se modifica manualmente.
 
-## Stack v8 abierto
+## Programa v8 — estado acumulado
 
 ### W4.1 — Client Architecture & Taxonomy
 
-- rama: `design/v8-client-architecture-w41`;
-- PR draft: #183;
-- 46/46 superficies clasificadas;
-- 6 prácticas + 8 soluciones + servicios continuos;
-- ADR-008;
+PR draft #183.
+
+- taxonomía `Prácticas / Soluciones / Servicios continuos`;
+- matriz 46/46;
+- 6 prácticas;
+- 8 soluciones;
+- Dirección Jurídica Externa como servicio continuo;
 - RC02 Meridiano Contratos bloqueado hasta capability contract verificable.
 
 ### W4.2 — Route Compatibility & SEO Contract
 
-- rama: `design/v8-route-compat-w42`;
-- PR draft: #184, apilado sobre W4.1;
-- `assets/data/v8/route-contract-v80.json`;
-- 46 legacy routes + 43 sitemap URLs modeladas;
+PR draft #184.
+
+- route contract estructurado;
+- 46/46 legacy routes;
+- 43/43 sitemap baseline;
 - canonical/alias/sitemap policy;
-- `scripts/validate_route_contract_v80.py`;
-- workflow candidate dedicado.
+- CI run `32904478022`: **PASS**.
 
-El workflow W4.2 aún no registra una ejecución en el SHA del PR apilado; no se declara PASS sin evidencia.
+### W4.3 — Renderer & Design-System Pilot Infrastructure
 
-## Frente vigente
-
-**W4.3 — v8 Renderer & Design-System Pilot Infrastructure.**
-
-Rama: `design/v8-pilot-infrastructure-w43`.
-Base lógica: W4.2.
-
-W4.3 prepara el renderer y sistema visual sin activar nuevas superficies públicas.
-
-## Pilotos exactos
-
-1. **SO07 — Sistema Contractual Empresarial**
-   - fuente: `catalog-products-v41/p07-contractual.json`;
-   - legacy: `/productos/sistema-contractual-empresarial.html`;
-   - target futuro: `/soluciones/sistema-contractual-empresarial.html`.
-
-2. **PR02 — Corporativo, Societario y Gobierno**
-   - fuente: `catalog-services-v42/s04-societario.json`;
-   - legacy: `/servicios/sociedades-gobierno-inversion.html`;
-   - target futuro: `/practicas/corporativo-societario-gobierno.html`.
-
-3. **RC01 — Dirección Jurídica Externa**
-   - fuente: `catalog-services-v42/s02-direccion.json`;
-   - legacy: `/servicios/direccion-juridica-externa.html`;
-   - target futuro: `/servicios-continuos/direccion-juridica-externa.html`.
-
-RC02 Meridiano Contratos está fuera de W4.3.
-
-## Evidencia W4.3 materializada
-
-### Experience model
-
-`assets/data/v8/experience-model-v80.json`
-
-- referencia fuentes canónicas, no duplica contenido;
-- diferencia `solution`, `practice`, `recurring`;
-- preserva commercial intent/modality histórico de los tres pilotos;
-- `commit_target_html=false`;
-- `candidate_indexing=noindex`;
-- `legacy_routes_unchanged=true`.
-
-### Renderer
-
-`scripts/render_v8_pilot.py`
-
-- `--check`: render doble determinista + truth parity completa en memoria;
-- `--preview SO07|PR02|RC01`: HTML a stdout;
-- no tiene modo de escritura pública;
-- traduce relacionados legacy usando el route contract;
-- no crea segundo formulario;
-- mantiene targets como `noindex` durante piloto.
-
-### Design system
-
-`assets/css/v8/`:
-
-- `tokens.css`;
-- `base.css`;
-- `components.css`;
-- `surfaces.css`.
-
-Consolida identidad v6 en una gramática semántica y distingue solución/práctica/recurrente sin crear marcas separadas.
-
-### Gate de no activación
-
-`scripts/validate_v8_pilot_infra.py`
-
-Exige:
-
-- tres pilotos exactos;
-- cuatro CSS v8;
-- 46 HTML legacy intactos;
-- targets v8 físicamente ausentes;
-- cero HTML actual cargando CSS v8;
-- renderer compilable;
-- renderer `--check` PASS cuando CI pueda ejecutarlo.
-
-### CI
-
-`.github/workflows/v80-pilot-infra-candidate.yml`
-
-Valida:
-
-1. compile;
-2. W4.2 route contract;
-3. W4.3 pilot infra;
-4. canonical pipeline manifest.
-
-No construye ni despliega.
-
-## Boundary W4.3
-
-No se modifica:
-
-- ningún HTML público;
-- `index.html`;
-- sitemap/robots/version;
-- catálogos;
-- CSS v6/v7;
-- runtime JS;
-- formulario;
-- analítica/privacidad;
-- Builder/Pages;
-- `stable`.
-
-## Siguiente frente — W4.4
-
-**Pilot Materialization Candidate**, condicionado a evidencia CI real de W4.2/W4.3.
-
-W4.4 deberá:
-
-1. introducir version-gate v8 controlado;
-2. materializar solo SO07, PR02 y RC01;
-3. mantener los tres legacy completos;
-4. targets `noindex` durante comparación;
-5. añadir E2E target + smoke legacy;
-6. validar desktop/mobile/keyboard/axe;
-7. probar truth parity DOM;
-8. probar dos pasadas idempotentes;
-9. ejecutar crítica independiente;
-10. solo después decidir canonical handoff.
-
-## Definition of Done W4.3
+PR draft #185.
 
 - experience model source-driven;
 - renderer no destructivo;
-- truth parity en memoria como contrato;
-- 4 CSS v8 consolidados;
-- gate de no activación;
-- CI candidate dedicado;
-- 46 HTML productivos intactos;
-- 0 targets físicos;
-- RC02 fuera de scope;
-- `stable` intacta;
-- PR draft apilado abierto para revisión.
+- design system v8 consolidado;
+- truth parity;
+- no-activation gate;
+- CI run `32904520736`: **PASS**.
+
+### W4.4 — Ephemeral Pilot Materialization
+
+PR draft #186.
+
+Pilotos:
+
+1. SO07 `/soluciones/sistema-contractual-empresarial.html`.
+2. PR02 `/practicas/corporativo-societario-gobierno.html`.
+3. RC01 `/servicios-continuos/direccion-juridica-externa.html`.
+
+Resultado definitivo:
+
+- 46 legacy antes del materializado: PASS;
+- materialización efímera: PASS;
+- topología temporal 49 = 46 + 3: PASS;
+- legacy pilots sin reescritura: PASS;
+- contraste determinista WCAG AA: PASS;
+- Chromium desktop: PASS;
+- Chromium mobile: PASS;
+- WebKit desktop: PASS;
+- axe WCAG 2.1 A/AA serious/critical: PASS;
+- run final `32905639585`, job `97989006324`: **success**.
+
+La incidencia previa de contraste se corrigió en el sistema de tokens, sin rebajar axe:
+
+- `--ml-muted` → `#52606a`;
+- `--ml-gold-ink` → `#765b38` para texto dorado;
+- `--ml-gold` se conserva para acento no textual;
+- `validate_v8_contrast_tokens.py` impide regresión.
+
+## Frente vigente
+
+**W4.5 — v8 Public-Tree Candidate.**
+
+Objetivo: persistir exactamente los tres targets ya certificados por W4.4 como páginas `noindex`, manteniendo el sitio productivo v7.4 sin handoff canónico.
+
+### Estrategia de bootstrap reproducible
+
+No se copiará HTML manualmente desde conversación ni se recreará fuera del renderer.
+
+1. crear branch W4.5 sobre W4.4;
+2. CI genera los tres targets desde `render_v8_pilot.py` + fuentes canónicas en un checkout temporal;
+3. CI publica un artefacto con los tres HTML exactos;
+4. esos bytes se incorporan al branch W4.5;
+5. un segundo run vuelve a renderizar y exige byte parity con los tres archivos persistidos;
+6. después ejecuta validación estructural + Browser/Axe sobre el árbol persistente.
+
+## Invariantes W4.5
+
+Durante esta wave:
+
+- los tres targets permanecen `noindex,follow`;
+- no se añaden al sitemap;
+- Home/navigation no los enlaza todavía;
+- los 46 legacy permanecen físicamente presentes;
+- los legacy conservan self-canonical;
+- no se cambia `version.json`;
+- no se integra aún v8 al Builder/Pages productivo;
+- no se cambia robots productivo;
+- no se crea otro formulario;
+- no se activa analytics;
+- RC02 Meridiano Contratos sigue `publishable=false`;
+- `stable` permanece intacta.
+
+## Crítica visual abierta
+
+Screenshots reales W4.4 muestran una mejora de polish no bloqueante:
+
+- en mobile, el summary `Profundidad jurídica y operativa / Ver alcance completo` tiene demasiado peso visual.
+
+Se tratará después de asegurar byte parity y Public-Tree Candidate, sin esconder profundidad material ni romper `<details>` nativo.
+
+## Definition of Done W4.5
+
+- tres target HTML persistidos;
+- generated == persisted byte-for-byte;
+- 49 HTML en candidate = 46 legacy + 3 targets;
+- targets `noindex` y fuera del sitemap;
+- legacy canonical intacto;
+- Home/navigation sin activación v8;
+- route contract y truth parity PASS;
+- Chromium desktop/mobile + WebKit + axe PASS sobre archivos persistidos;
+- no cambio en `stable`;
+- handoff preparado para W4.6, sin activarlo.
