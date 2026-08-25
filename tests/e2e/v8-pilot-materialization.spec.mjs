@@ -42,6 +42,18 @@ async function audit(page) {
   expect(compact(blocking), JSON.stringify(compact(blocking), null, 2)).toEqual([]);
 }
 
+async function expectRelatedLinksResolve(page, pilotId) {
+  const links = page.locator('#ml-related a');
+  expect(await links.count(), `${pilotId}: related links`).toBeGreaterThan(0);
+  const hrefs = await links.evaluateAll((nodes) => nodes.map((node) => node.getAttribute('href')));
+  for (const href of hrefs) {
+    expect(href, `${pilotId}: related href`).toBeTruthy();
+    const absolute = new URL(href, page.url()).href;
+    const response = await page.request.get(absolute);
+    expect(response.status(), `${pilotId}: related ${href}`).toBe(200);
+  }
+}
+
 for (const pilot of pilots) {
   test(`${pilot.id} materializa semántica v8, truth surface y boundary de candidate`, async ({ page }) => {
     const response = await page.goto(pilot.path);
@@ -64,9 +76,6 @@ for (const pilot of pilots) {
     await expect(primary).toHaveAttribute('href', /commercial_intent=/);
     await expect(primary).toHaveAttribute('href', /proof_standard=source/);
 
-    const legacyRelated = page.locator('#ml-related a[href*="../productos/"], #ml-related a[href*="../servicios/"]');
-    await expect(legacyRelated).toHaveCount(0);
-
     const disclosure = page.locator('.ml-disclosure');
     await expect(disclosure).toHaveCount(1);
     await expect(disclosure).not.toHaveAttribute('open', '');
@@ -75,6 +84,7 @@ for (const pilot of pilots) {
     await page.keyboard.press('Enter');
     await expect(disclosure).toHaveAttribute('open', '');
     await expect(disclosure.locator('#ml-related')).toBeVisible();
+    await expectRelatedLinksResolve(page, pilot.id);
 
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     expect(overflow).toBeLessThanOrEqual(1);
