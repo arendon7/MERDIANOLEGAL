@@ -24,6 +24,11 @@ on:
       - 404.html
       - sectores/**
       - perspectivas/**
+      - practicas/**
+      - servicios-continuos/**
+      - soluciones/**
+      - scripts/apply_v8_builder_compat.py
+      - scripts/run_v8_pages_quality_compat.py
       - .gitignore
       - playwright.config.mjs
       - tests/e2e/**
@@ -194,6 +199,12 @@ jobs:
       - name: Generate QA dependency lockfile v5.5+
         run: |
           npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+          if [ -f assets/data/v8/pipeline-compat-v80.json ] && [ -f soluciones/sistema-contractual-empresarial.html ] && [ -f practicas/corporativo-societario-gobierno.html ] && [ -f servicios-continuos/direccion-juridica-externa.html ]; then
+            echo 'MERIDIANO_V8_PIPELINE_COMPAT=true' >> "$GITHUB_ENV"
+            python3 scripts/apply_v8_builder_compat.py
+          else
+            echo 'MERIDIANO_V8_PIPELINE_COMPAT=false' >> "$GITHUB_ENV"
+          fi
           if grep -q 'data-experience-system="v6"' index.html; then
             echo 'MERIDIANO_CANONICAL_V6=true' >> "$GITHUB_ENV"
             echo 'Experience System v6 baseline detected; legacy HTML materializers will be skipped.'
@@ -242,6 +253,7 @@ jobs:
         if: env.MERIDIANO_CANONICAL_V6 != 'true'
         run: python3 scripts/apply_operations_v49.py
       - name: Synchronize visible public version
+        if: env.MERIDIANO_V8_PIPELINE_COMPAT != 'true'
         run: python3 scripts/sync_public_version.py
       - name: Apply production configuration v5.0
         if: env.MERIDIANO_CANONICAL_V6 != 'true'
@@ -285,6 +297,7 @@ jobs:
         if: env.MERIDIANO_CANONICAL_V6 != 'true'
         run: python3 scripts/apply_handoff_v517.py
       - name: Apply handoff observability v5.18 + canonical extensions
+        if: env.MERIDIANO_V8_PIPELINE_COMPAT != 'true'
         run: |
           if [ "$MERIDIANO_CANONICAL_V6" != "true" ]; then
             python3 scripts/apply_handoff_observability_v518.py
