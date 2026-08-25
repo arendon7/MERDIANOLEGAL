@@ -91,7 +91,7 @@ jobs:
             --exclude='test-results' \
             -czf /tmp/w49-builder-shadow-site.tar.gz \
             -C /tmp/meridiano-w49-builder .
-          sha256sum /tmp/w49-builder-shadow-site.tar.gz > /tmp/w49-builder-shadow-site.sha256
+          (cd /tmp && sha256sum w49-builder-shadow-site.tar.gz > w49-builder-shadow-site.sha256)
 
       - name: Upload Builder shadow site
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
@@ -134,7 +134,7 @@ jobs:
             --repo "$GITHUB_REPOSITORY" \
             --name w49-builder-shadow-site \
             --dir /tmp/w49-builder-download
-          sha256sum -c /tmp/w49-builder-download/w49-builder-shadow-site.sha256
+          (cd /tmp/w49-builder-download && sha256sum -c w49-builder-shadow-site.sha256)
           tar -xzf /tmp/w49-builder-download/w49-builder-shadow-site.tar.gz \
             -C /tmp/meridiano-w49-pages
 
@@ -238,7 +238,7 @@ jobs:
             --exclude='__pycache__' \
             -czf /tmp/w49-pages-quality-shadow-site.tar.gz \
             -C /tmp/meridiano-w49-pages .
-          sha256sum /tmp/w49-pages-quality-shadow-site.tar.gz > /tmp/w49-pages-quality-shadow-site.sha256
+          (cd /tmp && sha256sum w49-pages-quality-shadow-site.tar.gz > w49-pages-quality-shadow-site.sha256)
 
       - name: Upload Pages Quality shadow site
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
@@ -276,7 +276,7 @@ jobs:
             --repo "$GITHUB_REPOSITORY" \
             --name w49-pages-quality-shadow-site \
             --dir /tmp/w49-quality-download
-          sha256sum -c /tmp/w49-quality-download/w49-pages-quality-shadow-site.sha256
+          (cd /tmp/w49-quality-download && sha256sum -c w49-pages-quality-shadow-site.sha256)
           tar -xzf /tmp/w49-quality-download/w49-pages-quality-shadow-site.tar.gz \
             -C /tmp/meridiano-w49-artifact
 
@@ -345,7 +345,7 @@ jobs:
             --exclude='node_modules' \
             --exclude='__pycache__' \
             -czf /tmp/w49-integrated-pages-shadow.tar.gz .
-          sha256sum /tmp/w49-integrated-pages-shadow.tar.gz > /tmp/w49-integrated-pages-shadow.sha256
+          (cd /tmp && sha256sum w49-integrated-pages-shadow.tar.gz > w49-integrated-pages-shadow.sha256)
 
       - name: Upload final integrated Pages shadow
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
