@@ -1,85 +1,115 @@
 # Meridiano Legal — Tarea activa
 
-Actualizado: 2026-08-19.
+Actualizado: 2026-08-25.
+
+## Baseline certificado
+
+- Repositorio: `arendon7/MERDIANOLEGAL`.
+- `main == stable == 86813813e29dd6b47105ba7fb6259630fcd9cb5b`.
+- Release productiva: **v7.4.0 — Commercial Evidence Readiness**.
+- Analytics: `readiness-disabled`.
+- Capability truth v7.4 permanece vigente mientras v8 está en diseño.
 
 ## Frente vigente
 
-**v7.4.0 — Commercial Evidence Readiness / production-certified closure.**
+**W4.1 — v8 Client Architecture & Taxonomy.**
 
-Rama: `docs/v740-certified-closure`.
+Rama: `design/v8-client-architecture-w41`.
 
-La funcionalidad y el candidate ya fueron certificados productivamente.
+Este frente es exclusivamente de arquitectura, truth mapping y migración. No modifica todavía HTML público, CSS, JS, sitemap, formularios, precios, analítica ni `stable`.
 
-## Evidencia cerrada
+## Problema observable
 
-### Funcional #180
+La oferta certificada expone simultáneamente `productos`, `servicios` y `soluciones/necesidades`. Existen intenciones de compra solapadas entre estas familias y el visitante debe comprender la taxonomía interna antes de reconocer la intervención adecuada.
 
-- Baseline anterior certificado: v7.3.0 `61790b4bdf0bfe4dd1143a414288559d664826e6`.
-- SHA funcional final: `fcd929a63f0cdede944cf1767ec03346711e6ee8`.
-- 12/12 workflows aplicables same-SHA: PASS.
-- Merge funcional #180: `d781b3296b325d3d4cd6974523b01c27d77ebaf2`.
+La profundidad jurídica/comercial de catálogos v4.1/v4.2 se preserva; el problema a resolver es descubrimiento, jerarquía y arquitectura de compra.
 
-### Candidate #181
+## Decisión v8 propuesta
 
-- SHA candidate final: `b30d92c923f3f982190dfba3ce31b353cb170f97`.
-- 10/10 workflows aplicables same-SHA: PASS.
-- Merge candidate #181: `8a898dd3e791bb4b216815156643396a6f5e7c93`.
-- Builder/snapshot candidate: `8f3596a0a23ec264c0fd4c4cdbf701311403f17a`.
-- Pages quality/deploy/live smoke + Browser E2E/axe + Lighthouse: PASS.
-- `stable` fue promovido automáticamente a `8f3596a0a23ec264c0fd4c4cdbf701311403f17a`.
-- Antes de este cierre: `main == stable == 8f3596a0a23ec264c0fd4c4cdbf701311403f17a`.
-- `stable/version.json`: v7.4.0 / `github-pages-commercial-evidence-readiness-candidate`.
+Tres familias públicas:
 
-## Qué contiene v7.4
+1. **Prácticas** — 6 dominios de expertise.
+2. **Soluciones** — 8 intervenciones de alcance definido.
+3. **Servicios continuos** — Dirección Jurídica Externa y, solo tras capability contract, Meridiano Contratos.
 
-Commercial Evidence Readiness prepara atribución comercial local y anónima para Legal AI Transformation, Contract Control, AI Governance 360, Regulatory Control y Meridiano Legal Desk.
+La cifra de 46 HTML pasa de invariante de producto a baseline histórico de migración. Ninguna URL legacy se elimina sin mapping, compatibilidad y gates.
 
-Solo admite `offer_view`, `demo_offer_open`, `contact_intent` y `handoff_prepared`, asociados mediante tokens públicos allowlisted `source=li-*`.
+## Evidencia W4.1 ya materializada
 
-## Lifecycle y activation boundary
+1. `knowledge/10_DECISIONES/ADR-008-v8-client-architecture-taxonomy.md`
+   - define la nueva taxonomía;
+   - cambia el tratamiento del invariante 46 HTML;
+   - fija capability boundary de Meridiano Contratos;
+   - define rollout y no objetivos.
 
-El cierre cambia el lifecycle del contrato de `release-candidate` a `certified`, pero **no cambia el estado operativo**: v7.4 permanece `readiness-disabled`.
+2. `knowledge/20_DESIGN/V8-ROUTE-MIGRATION-MATRIX.md`
+   - top-level 9/9;
+   - productos 8/8;
+   - servicios 8/8;
+   - soluciones/necesidades 7/7;
+   - sectores 8/8;
+   - perspectivas 6/6;
+   - cobertura total 46/46.
 
-- `site-config.json` continúa con analytics disabled, provider `none`, site_id vacío.
-- No se activa Plausible, GA4, Umami ni otro proveedor.
-- No hay transporte analytics externo propio, cookies, storage persistente, fingerprinting o identificadores cross-session.
-- No se exporta PII, texto libre o contenido del formulario.
-- El buffer local permanece limitado a 24 eventos en memoria.
-- El payload local sigue limitado a `subject + interaction`.
+3. `knowledge/20_DESIGN/V8-OFFER-CANON.md`
+   - 6 prácticas con fuentes;
+   - 8 soluciones con fuentes;
+   - Dirección Jurídica Externa preservada;
+   - Meridiano Contratos mantenido como hipótesis pendiente de contrato verificable;
+   - relación práctica → solución → continuidad.
 
-Una futura activación externa requiere otro frente/release, proveedor/site ID reales, revisión de metadata del proveedor y actualización previa de privacidad.
+## Riesgos abiertos
 
-## Boundary del cierre
+### R1 — P01/S01
 
-El cierre `production-certified` modifica exactamente siete archivos:
+Diagnóstico Jurídico Empresarial existe hoy como producto y servicio. Antes del merge semántico debe construirse una parity matrix de alcance, entregables, perímetro, tiempos y límites.
 
-1. `version.json`: candidate → `github-pages-production-commercial-evidence-readiness-certified`.
-2. `assets/data/v7/commercial-evidence-v74.json`: lifecycle `release-candidate` → `certified`, manteniendo `status: readiness-disabled`.
-3. `README.md`.
-4. `RELEASE-v7.4.md`.
-5. `knowledge/00_CANON/CONTEXTO_RAPIDO.md`.
-6. `knowledge/00_CANON/ESTADO_ACTUAL.md`.
-7. esta memoria.
+### R2 — GitHub Pages / aliases
 
-No modifica runtime JS, HTML, navegación, formularios, CSS, catálogos, precios, capabilities, `site-config.json`, política de privacidad, materializadores, validators funcionales, E2E ni workflows.
+No asumir redirects de servidor. W4.2 debe definir y probar estrategia real de aliases/canonical para rutas legacy.
 
-## Gate del cierre
+### R3 — validators estructurales
 
-Antes de declarar v7.4 definitivamente cerrada:
+Los validators actuales esperan 46 HTML y 8 productos + 8 servicios. No se cambian hasta existir contrato técnico v8 y pruebas equivalentes o más estrictas.
 
-1. confirmar boundary exacto de siete archivos;
-2. congelar un único SHA final;
-3. superar todos los workflows aplicables sobre ese mismo SHA;
-4. confirmar V7.4 PASS con lifecycle `certified` y status `readiness-disabled`;
-5. mantener Measurement y Browser E2E/axe PASS;
-6. fusionar únicamente con `expected_head_sha`;
-7. completar Builder → Pages → live smoke → Browser/axe + Lighthouse;
-8. permitir únicamente promoción automática de `stable`;
-9. terminar con `main == stable`;
-10. confirmar `stable/version.json` = v7.4.0 + `github-pages-production-commercial-evidence-readiness-certified`.
+### R4 — Meridiano Contratos
 
-`stable` no se mueve manualmente.
+No publicar como plataforma/portal/producto cerrado hasta documentar:
 
-## Después de v7.4
+- unidad comercial;
+- intake y workflow;
+- revisión humana;
+- tecnología real;
+- autenticación/almacenamiento si existen;
+- seguridad;
+- versionado;
+- mantenimiento;
+- SLA/soporte si se prometen;
+- límites y suplementos.
 
-Cualquier activación real de analítica será una decisión separada. El próximo frente comercial debe mejorar comprensión, autoridad, descubrimiento y conversión de las ofertas existentes antes de crear nuevas capabilities tecnológicas.
+## Siguiente subfrente — W4.2
+
+**Route Compatibility & SEO Contract.**
+
+Debe producir:
+
+1. estrategia GitHub Pages para legacy routes;
+2. canonical policy;
+3. sitemap target;
+4. breadcrumb target;
+5. aliases vs intent landings;
+6. inventario de validators/tests afectados;
+7. diseño de nuevos invariantes estructurales;
+8. plan de rollback a v7.4;
+9. smoke contract para legacy URLs;
+10. candidate de migración sin tocar `stable`.
+
+## Definition of Done W4.1
+
+- ADR-008 escrito;
+- matriz 46/46 completa;
+- canon 6 prácticas / 8 soluciones / recurrentes documentado;
+- fuentes de verdad identificadas;
+- nuevos claims bloqueados donde no existe evidencia;
+- `stable` intacta;
+- PR de planificación abierto contra `main` para revisión.
