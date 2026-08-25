@@ -3,7 +3,6 @@ name: V8.0 pilot infrastructure candidate
 on:
   pull_request:
     branches:
-      - main
       - design/v8-client-architecture-w41
       - design/v8-route-compat-w42
     paths:
