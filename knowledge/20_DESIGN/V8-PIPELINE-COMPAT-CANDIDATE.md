@@ -2,65 +2,77 @@
 
 Fecha: 2026-08-25
 Dependencia: W4.5 Public-Tree Candidate PASS (`32907133921`).
-Estado inicial: candidate; sin deploy.
+Estado final: **PASS**; sin deploy.
+Run final: `32908333460`.
+Job final: `97997137990`.
 
 ## Objetivo
 
-Demostrar que el árbol físico W4.5 de 49 HTML puede coexistir con el pipeline v6 vigente sin debilitar sus invariantes históricas y sin activar v8 públicamente.
+Demostrar que el árbol físico W4.5 de `49 HTML = 46 legacy + 3 targets v8` puede coexistir con Builder y Pages vigentes sin debilitar invariantes históricas y sin activar v8 públicamente.
 
-## Problema observado
+## Hallazgos reales
 
-El pipeline v6 contiene validadores con topologías cerradas. En particular, `validate_experience_solutions_v60.py` exige que `/soluciones/` contenga exactamente los seis slugs Growth/CRO históricos. La presencia aditiva de `/soluciones/sistema-contractual-empresarial.html` hace fallar correctamente ese contrato v6.
+Durante W4.6 se identificaron tres contratos históricos de topología cerrada:
 
-Ese fallo no se corrige ignorando archivos nuevos ni ampliando silenciosamente v6.
+1. `validate_experience_v60.py`: exige baseline de 46 HTML públicos.
+2. `validate_experience_solutions_v60.py`: exige exactamente las seis rutas v6 de `/soluciones/`.
+3. `validate_growth_v51.py`: exige exactamente las seis rutas Growth + hub en `/soluciones/`.
 
-## Estrategia
+No se modificó ninguno para ignorar el target nuevo.
 
-W4.6 mantiene dos vistas:
+`validate_site.py`, CRO v5.2 y el resto de la batería Pages demostraron ser compatibles con el árbol ampliado cuando se ejecutan bajo el adapter W4.6.
 
-1. **Árbol candidate real**: 49 HTML = 46 legacy + 3 targets v8.
-2. **Proyección legacy temporal**: 46 HTML, obtenida retirando únicamente los tres targets allowlisted dentro de un workspace efímero.
+## Estrategia certificada
 
-El validador v6 original corre sin modificaciones sobre la proyección legacy. Los contratos v8 validan simultáneamente el árbol real.
+W4.6 mantiene dos vistas explícitas:
+
+1. **Árbol candidate real**: 49 HTML.
+2. **Proyección legacy temporal**: 46 HTML, obtenida retirando únicamente los tres targets allowlisted en un workspace efímero.
+
+Los validadores históricos de topología cerrada siguen ejecutándose, sin cambios, sobre la proyección de 46 páginas. Los validadores additive-safe se ejecutan directamente sobre los 49 HTML reales.
 
 ## Contrato
 
 `assets/data/v8/pipeline-compat-v80.json`
 
-Declara:
+Fija:
 
-- baseline pública v7.4.0;
+- baseline pública `7.4.0`;
 - 46 HTML legacy;
 - 49 HTML candidate;
 - exactamente tres targets aditivos;
-- validators legacy que deben permanecer estrictos;
-- ausencia de version bump;
-- ausencia de sitemap/Home activation;
-- ausencia de canonical handoff;
-- no deploy;
-- no movimiento de stable;
+- allowlist de validadores históricos estrictos;
+- Builder v6 ejecutado en proyección;
+- targets `noindex,follow`;
+- targets fuera de sitemap y Home/navigation;
+- legacy self-canonical;
+- cero version bump;
+- cero canonical handoff;
+- cero deploy;
+- cero movimiento de stable;
 - RC02 fuera de alcance.
 
-## Gate principal
+## Gate de compatibilidad
 
 `scripts/validate_v8_pipeline_compat.py`
 
-Prueba:
+Prueba simultáneamente:
 
-- contrato W4.6 exacto;
-- 49 HTML reales;
-- tres targets presentes y `noindex,follow`;
-- sitemap/Home sin targets;
-- W4.5 public-tree validator PASS;
+- árbol real de 49 HTML;
+- W4.5 public-tree PASS;
 - renderer truth PASS;
-- contraste PASS;
-- proyección temporal 46 HTML;
-- `validate_experience_solutions_v60.py` PASS sin modificarlo;
-- hashes de targets reales invariantes durante la proyección.
+- contraste AA PASS;
+- tres targets presentes y noindex;
+- sitemap/Home sin activación;
+- proyección temporal de 46 HTML;
+- Experience v6, Solutions v6 y Growth v5.1 estrictos PASS en la proyección;
+- hashes de targets reales invariantes.
 
-## Builder simulation
+## Builder projection
 
-W4.6 ejecuta sobre el árbol de 49 páginas la cadena canónica de extensiones v6 que el Builder aplica a una baseline v6:
+`scripts/simulate_v8_builder_projection.py`
+
+La cadena canónica v6 se ejecuta únicamente dentro de la proyección de 46 páginas:
 
 - sync de versión visible;
 - Experience general;
@@ -70,45 +82,73 @@ W4.6 ejecuta sobre el árbol de 49 páginas la cadena canónica de extensiones v
 - Experience final;
 - Funnel trust;
 - normalización de compatibilidad;
-- Fit/Scope cuando existe.
+- Fit/Scope cuando existe;
+- validators canónicos posteriores.
 
-Después exige:
+Resultado certificado:
 
-- hashes de los tres targets v8 idénticos;
-- `git diff --exit-code`;
-- validators Builder PASS usando la proyección estricta únicamente donde la topología v6 es cerrada.
+- cadena Builder completa PASS;
+- validators históricos PASS;
+- salida legacy proyectada = árbol legacy real byte por byte;
+- tres targets v8 intactos;
+- checkout real sin diff.
 
-## Pages quality simulation
+## Pages quality dual-view
 
-Se ejecuta la batería de validators estáticos de Pages sobre el árbol real de 49 HTML y sintaxis JavaScript. Finalmente se construye una copia equivalente al artefacto Pages, pero no se invoca `upload-pages-artifact` ni `deploy-pages`.
+`scripts/run_v8_pages_quality_compat.py`
 
-El artefacto simulado debe contener los tres targets y mantenerlos `noindex`, fuera de sitemap.
+Ejecuta:
 
-## No objetivos
+- validadores de topología cerrada dentro de la proyección;
+- validadores additive-safe directamente sobre los 49 HTML;
+- revalidación W4.6 al final para demostrar ausencia de mutaciones.
 
-W4.6 no:
+Resultado:
 
-- modifica `main`;
-- modifica `stable`;
-- cambia `version.json`;
-- cambia sitemap/robots/Home;
-- cambia canonical legacy;
-- indexa targets;
-- cambia producción;
-- ejecuta Pages deploy;
-- publica RC02;
-- realiza todavía el canonical handoff.
+- `validate_site.py`: PASS con 49 páginas;
+- catálogo, UX, calidad, operación, producción, CRO, autoridad, CI, gobernanza, conversión, handoff, narrativa, contexto y visuales: PASS;
+- JavaScript Pages: PASS;
+- Pages artifact simulation: PASS.
 
-## Gate de salida
+## Pages artifact simulation
 
-W4.6 termina únicamente si:
+El artefacto simulado contiene los tres targets físicos y comprueba que continúan:
 
-1. W4.5 sigue PASS;
-2. strict legacy projection PASS;
-3. Builder simulation idempotente PASS;
-4. Builder no modifica los tres targets v8;
-5. Pages quality suite PASS sobre 49 HTML;
-6. Pages artifact simulation PASS;
-7. main/stable continúan en baseline productiva.
+- `noindex,follow`;
+- fuera del sitemap;
+- fuera de activación pública.
 
-La siguiente wave podrá decidir la integración controlada de este adapter en Builder/Pages reales o avanzar a un candidate deployment aislado, pero W4.6 por sí sola no despliega.
+No se invocó `upload-pages-artifact` ni `deploy-pages`.
+
+## Resultado definitivo
+
+Run `32908333460`, job `97997137990`: **SUCCESS**.
+
+Secuencia final:
+
+1. W4.5 + strict projection: PASS.
+2. Builder projection: PASS.
+3. Real checkout untouched: PASS.
+4. Pages Quality dual-view: PASS.
+5. JavaScript: PASS.
+6. Pages artifact simulation: PASS.
+
+## Boundary
+
+W4.6 no modifica:
+
+- `main`;
+- `stable`;
+- `version.json`;
+- sitemap;
+- robots;
+- Home/navigation;
+- canonical legacy;
+- producción;
+- RC02.
+
+Tampoco modifica todavía los workflows productivos `build-canonical.yml` o `pages.yml`; demuestra primero el adapter en un workflow candidate aislado.
+
+## Siguiente frente
+
+W4.7 debe integrar de forma controlada este adapter dual-view en el **contrato candidate de Builder/Pages**, manteniendo deploy deshabilitado hasta demostrar equivalencia entre el pipeline integrado y W4.6.
