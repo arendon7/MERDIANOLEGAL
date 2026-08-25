@@ -102,6 +102,11 @@ def validate_workflow(text: str) -> None:
         "w49-builder-shadow-site",
         "w49-pages-quality-shadow-site",
         "w49-integrated-pages-shadow",
+        "(cd /tmp && sha256sum w49-builder-shadow-site.tar.gz > w49-builder-shadow-site.sha256)",
+        "(cd /tmp/w49-builder-download && sha256sum -c w49-builder-shadow-site.sha256)",
+        "(cd /tmp && sha256sum w49-pages-quality-shadow-site.tar.gz > w49-pages-quality-shadow-site.sha256)",
+        "(cd /tmp/w49-quality-download && sha256sum -c w49-pages-quality-shadow-site.sha256)",
+        "(cd /tmp && sha256sum w49-integrated-pages-shadow.tar.gz > w49-integrated-pages-shadow.sha256)",
     ):
         if marker not in text:
             fail(f"shadow workflow missing {marker!r}")
@@ -115,10 +120,13 @@ def validate_workflow(text: str) -> None:
         "pages: write",
         "id-token: write",
         "contents: write",
+        "sha256sum /tmp/w49-builder-shadow-site.tar.gz > /tmp/w49-builder-shadow-site.sha256",
+        "sha256sum /tmp/w49-pages-quality-shadow-site.tar.gz > /tmp/w49-pages-quality-shadow-site.sha256",
+        "sha256sum /tmp/w49-integrated-pages-shadow.tar.gz > /tmp/w49-integrated-pages-shadow.sha256",
     )
     for marker in forbidden:
         if marker in text:
-            fail(f"shadow workflow contains forbidden production primitive {marker!r}")
+            fail(f"shadow workflow contains forbidden production/portability primitive {marker!r}")
 
     if "actions: read" not in text:
         fail("shadow workflow requires actions: read for artifact handoff")
@@ -137,8 +145,8 @@ def main() -> int:
     # Re-prove the exact W4.8 committed integration before shadowing it.
     run([sys.executable, "scripts/validate_v8_workflow_integration.py"])
     print(
-        "VALIDATE V8 PIPELINE SHADOW OK: three-stage artifact handoff is defined without main push, "
-        "Pages deploy primitive or stable movement; W4.8 integration remains certified."
+        "VALIDATE V8 PIPELINE SHADOW OK: three-stage artifact handoff is portable across runners and "
+        "defined without main push, Pages deploy primitive or stable movement; W4.8 integration remains certified."
     )
     return 0
 
