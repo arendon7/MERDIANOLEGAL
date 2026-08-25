@@ -212,9 +212,7 @@ jobs:
           python3 scripts/apply_handoff_v517.py
           python3 scripts/validate_handoff_v517.py
       - name: Validate handoff observability v5.18+
-        run: |
-          python3 scripts/apply_handoff_observability_v518.py
-          python3 scripts/validate_handoff_observability_v518.py
+        run: python3 scripts/run_v8_historical_gate_compat.py handoff-observability
       - name: Validate offer narrative v5.22
         run: python3 scripts/validate_offer_narrative_v522.py
       - name: Validate contact compression v5.23
