@@ -1,0 +1,120 @@
+name: V8.0 pilot materialization candidate
+
+on:
+  pull_request:
+    branches:
+      - main
+      - design/v8-client-architecture-w41
+      - design/v8-route-compat-w42
+      - design/v8-pilot-infrastructure-w43
+    paths:
+      - assets/data/v8/**
+      - assets/css/v8/**
+      - scripts/render_v8_pilot.py
+      - scripts/materialize_v8_pilot.py
+      - scripts/validate_v8_pilot_infra.py
+      - scripts/validate_v8_pilot_materialized.py
+      - scripts/validate_route_contract_v80.py
+      - tests/e2e/v8-pilot-materialization.spec.mjs
+      - playwright.config.mjs
+      - package.json
+      - package-lock.json
+      - .github/workflows/v80-pilot-materialization-candidate.yml
+  workflow_dispatch:
+
+concurrency:
+  group: meridiano-v80-pilot-materialization-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  browser:
+    name: Materialize and test three non-public v8 targets
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      MERIDIANO_BASE_URL: http://127.0.0.1:8000/
+    steps:
+      - name: Checkout candidate
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.12'
+      - name: Setup Node.js with npm cache
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+      - name: Compile W4.4 contracts
+        run: |
+          python3 -m py_compile scripts/render_v8_pilot.py scripts/materialize_v8_pilot.py scripts/validate_v8_pilot_infra.py scripts/validate_v8_pilot_materialized.py scripts/validate_route_contract_v80.py
+      - name: Revalidate W4.2 and W4.3 before materialization
+        run: |
+          python3 scripts/validate_route_contract_v80.py
+          python3 scripts/validate_v8_pilot_infra.py
+          python3 scripts/canonical_pipeline_v524.py validate
+      - name: Materialize three targets only in ephemeral checkout
+        run: python3 scripts/materialize_v8_pilot.py --root . --allow-working-tree
+      - name: Validate ephemeral 49-page topology
+        run: python3 scripts/validate_v8_pilot_materialized.py
+      - name: Prove certified legacy pilots were not rewritten
+        run: |
+          git diff --exit-code -- \
+            productos/sistema-contractual-empresarial.html \
+            servicios/sociedades-gobierno-inversion.html \
+            servicios/direccion-juridica-externa.html
+      - name: Validate E2E syntax
+        run: |
+          node --check playwright.config.mjs
+          node --check tests/e2e/v8-pilot-materialization.spec.mjs
+      - name: Install locked QA dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Prefer official Ubuntu mirrors for browser dependencies
+        run: |
+          if [ -f /etc/apt/apt-mirrors.txt ]; then
+            printf 'https://archive.ubuntu.com/ubuntu/\tpriority:1\nhttps://security.ubuntu.com/ubuntu/\tpriority:2\n' \
+              | sudo tee /etc/apt/apt-mirrors.txt >/dev/null
+          fi
+          printf '%s\n' \
+            'Acquire::Retries "3";' \
+            'Acquire::http::Timeout "30";' \
+            'Acquire::https::Timeout "30";' \
+            | sudo tee /etc/apt/apt.conf.d/80meridiano-network >/dev/null
+      - name: Install Chromium and WebKit
+        run: timeout 900s npx playwright install --with-deps chromium webkit
+      - name: Start local candidate server
+        run: |
+          python3 -m http.server 8000 --bind 127.0.0.1 > /tmp/meridiano-v8-http.log 2>&1 &
+          echo $! > /tmp/meridiano-v8-http.pid
+          for i in {1..20}; do
+            if curl --fail --silent http://127.0.0.1:8000/.v8-pilot-materialization.json > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/meridiano-v8-http.log >&2 || true
+          exit 1
+      - name: Run v8 pilot desktop mobile WebKit and axe checks
+        run: |
+          npx playwright test tests/e2e/v8-pilot-materialization.spec.mjs \
+            --project=chromium-desktop \
+            --project=chromium-mobile \
+            --project=webkit-desktop
+      - name: Upload pilot failure artifacts
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: v8-pilot-materialization-failure-artifacts
+          path: |
+            playwright-report
+            test-results
+            /tmp/meridiano-v8-http.log
+            .v8-pilot-materialization.json
+          if-no-files-found: ignore
+          retention-days: 7
