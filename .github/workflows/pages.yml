@@ -31,6 +31,11 @@ jobs:
           persist-credentials: false
       - name: Check canonical generators are idempotent
         run: |
+          if [ -f assets/data/v8/pipeline-compat-v80.json ] && [ -f soluciones/sistema-contractual-empresarial.html ] && [ -f practicas/corporativo-societario-gobierno.html ] && [ -f servicios-continuos/direccion-juridica-externa.html ]; then
+            echo 'MERIDIANO_V8_PIPELINE_COMPAT=true' >> "$GITHUB_ENV"
+            python3 scripts/apply_v8_builder_compat.py --check
+          else
+            echo 'MERIDIANO_V8_PIPELINE_COMPAT=false' >> "$GITHUB_ENV"
           if grep -q 'data-experience-system="v6"' index.html; then
             MERIDIANO_CANONICAL_V6=true
             echo "Experience System v6 baseline detected; legacy HTML materializers are skipped."
@@ -94,6 +99,7 @@ jobs:
           if [ -f assets/data/v6/fit-scope-clarity-v64.json ]; then
             python3 scripts/validate_fit_scope_clarity_v64.py
           fi
+          fi
           git diff --exit-code -- index.html catalog-home-v32.js decision-flow.js site-v3.js page-context.js sitemap.xml robots.txt runtime-config.js site-status.json servicios productos firma.html perspectivas perspectivas.html sectores soluciones experiencia.html demo.html 404.html aviso-legal.html privacidad.html terminos.html manifest.webmanifest CNAME scripts/build_catalog_shells.py
       - name: Validate HTML and local resources
         run: python3 scripts/validate_site.py
@@ -114,7 +120,12 @@ jobs:
       - name: Validate production configuration v5.0
         run: python3 scripts/validate_production_v50.py
       - name: Validate growth and decision routes v5.1
-        run: python3 scripts/validate_growth_v51.py
+        run: |
+          if [ "$MERIDIANO_V8_PIPELINE_COMPAT" = "true" ]; then
+            python3 scripts/validate_v8_pipeline_compat.py
+          else
+            python3 scripts/validate_growth_v51.py
+          fi
       - name: Validate CRO and search-intent v5.2
         run: python3 scripts/validate_cro_v52.py
       - name: Validate authority, discovery and measurement v5.3
