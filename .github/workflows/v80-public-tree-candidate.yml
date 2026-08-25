@@ -31,7 +31,7 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   candidate:
@@ -41,10 +41,11 @@ jobs:
     env:
       MERIDIANO_BASE_URL: http://127.0.0.1:8000/
     steps:
-      - name: Checkout candidate
+      - name: Checkout candidate head
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
-          persist-credentials: false
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: true
           fetch-depth: 0
       - name: Setup Python
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
@@ -183,6 +184,29 @@ jobs:
           path: w45-bootstrap-artifact
           if-no-files-found: error
           retention-days: 7
+      - name: Persist certified bootstrap targets atomically
+        if: env.W45_MODE == 'bootstrap' && success() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        shell: bash
+        run: |
+          test "$(git rev-parse HEAD)" = '${{ github.event.pull_request.head.sha }}'
+          mkdir -p soluciones practicas servicios-continuos
+          cp /tmp/meridiano-v45-generated/soluciones/sistema-contractual-empresarial.html soluciones/sistema-contractual-empresarial.html
+          cp /tmp/meridiano-v45-generated/practicas/corporativo-societario-gobierno.html practicas/corporativo-societario-gobierno.html
+          cp /tmp/meridiano-v45-generated/servicios-continuos/direccion-juridica-externa.html servicios-continuos/direccion-juridica-externa.html
+          git add -- \
+            soluciones/sistema-contractual-empresarial.html \
+            practicas/corporativo-societario-gobierno.html \
+            servicios-continuos/direccion-juridica-externa.html
+          expected=$(printf '%s\n' \
+            practicas/corporativo-societario-gobierno.html \
+            servicios-continuos/direccion-juridica-externa.html \
+            soluciones/sistema-contractual-empresarial.html | sort)
+          staged=$(git diff --cached --name-only | sort)
+          test "$staged" = "$expected"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'build(v8): persist W4.5 certified pilot targets'
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
       - name: Upload failure artifacts
         if: failure()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
