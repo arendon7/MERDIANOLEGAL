@@ -1,0 +1,359 @@
+name: V8.0 integrated pipeline shadow
+
+on:
+  pull_request:
+    branches:
+      - design/v8-workflow-integration-w48
+      - main
+    paths:
+      - assets/data/v8/**
+      - scripts/apply_v8_builder_compat.py
+      - scripts/validate_v8_pipeline_shadow.py
+      - scripts/validate_v8_workflow_integration.py
+      - scripts/validate_v8_pipeline_compat.py
+      - scripts/run_v8_pages_quality_compat.py
+      - .github/workflows/build-canonical.yml
+      - .github/workflows/pages.yml
+      - .github/workflows/v80-integrated-pipeline-shadow.yml
+  workflow_dispatch:
+
+concurrency:
+  group: meridiano-v80-integrated-shadow-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  builder_shadow:
+    name: Builder shadow without commit or push
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout W4.9 candidate
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.12'
+
+      - name: Setup Node.js with npm cache
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Validate W4.9 safety and W4.8 integration baseline
+        run: |
+          python3 -m py_compile scripts/validate_v8_pipeline_shadow.py scripts/apply_v8_builder_compat.py
+          python3 -m json.tool assets/data/v8/pipeline-shadow-v80.json > /dev/null
+          python3 scripts/validate_v8_pipeline_shadow.py
+
+      - name: Create detached git Builder shadow worktree
+        shell: bash
+        run: |
+          rm -rf /tmp/meridiano-w49-builder
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            SHADOW_SHA='${{ github.event.pull_request.head.sha }}'
+          else
+            SHADOW_SHA='${{ github.sha }}'
+          fi
+          git worktree add --detach /tmp/meridiano-w49-builder "$SHADOW_SHA"
+          echo "W49_SHADOW_SHA=$SHADOW_SHA" >> "$GITHUB_ENV"
+
+      - name: Execute integrated Builder shadow
+        working-directory: /tmp/meridiano-w49-builder
+        run: |
+          npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+          test -f assets/data/v8/pipeline-compat-v80.json
+          test -f soluciones/sistema-contractual-empresarial.html
+          test -f practicas/corporativo-societario-gobierno.html
+          test -f servicios-continuos/direccion-juridica-externa.html
+          python3 scripts/apply_v8_builder_compat.py
+          python3 scripts/validate_v8_workflow_integration.py
+          git diff --exit-code
+          test "$(git rev-parse HEAD)" = "$W49_SHADOW_SHA"
+          echo 'W4.9 BUILDER SHADOW PASS: integrated Builder produces no commit-worthy drift.'
+
+      - name: Package Builder shadow handoff
+        run: |
+          tar \
+            --exclude='.git' \
+            --exclude='node_modules' \
+            --exclude='__pycache__' \
+            --exclude='playwright-report' \
+            --exclude='test-results' \
+            -czf /tmp/w49-builder-shadow-site.tar.gz \
+            -C /tmp/meridiano-w49-builder .
+          sha256sum /tmp/w49-builder-shadow-site.tar.gz > /tmp/w49-builder-shadow-site.sha256
+
+      - name: Upload Builder shadow site
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: w49-builder-shadow-site
+          path: |
+            /tmp/w49-builder-shadow-site.tar.gz
+            /tmp/w49-builder-shadow-site.sha256
+          if-no-files-found: error
+          retention-days: 7
+
+  pages_quality_shadow:
+    name: Pages Quality shadow from Builder artifact
+    needs: builder_shadow
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout only for authenticated artifact handoff
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.12'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22'
+
+      - name: Download Builder shadow artifact from same run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          rm -rf /tmp/w49-builder-download /tmp/meridiano-w49-pages
+          mkdir -p /tmp/w49-builder-download /tmp/meridiano-w49-pages
+          gh run download "$GITHUB_RUN_ID" \
+            --repo "$GITHUB_REPOSITORY" \
+            --name w49-builder-shadow-site \
+            --dir /tmp/w49-builder-download
+          sha256sum -c /tmp/w49-builder-download/w49-builder-shadow-site.sha256
+          tar -xzf /tmp/w49-builder-download/w49-builder-shadow-site.tar.gz \
+            -C /tmp/meridiano-w49-pages
+
+      - name: Capture immutable Pages Quality input manifest
+        working-directory: /tmp/meridiano-w49-pages
+        run: |
+          find . -type f \
+            ! -path './__pycache__/*' \
+            ! -path '*/__pycache__/*' \
+            ! -name '*.pyc' \
+            -print0 \
+            | sort -z \
+            | xargs -0 sha256sum > /tmp/w49-pages-before.sha256
+
+      - name: Execute integrated Pages Quality shadow
+        working-directory: /tmp/meridiano-w49-pages
+        run: |
+          python3 scripts/apply_v8_builder_compat.py --check
+          python3 scripts/run_v8_pages_quality_compat.py
+
+      - name: Validate JavaScript syntax from Pages contract
+        working-directory: /tmp/meridiano-w49-pages
+        run: |
+          node --check site-v3.js
+          node --check catalog-v32.js
+          node --check catalog-page.js
+          node --check catalog-home-v32.js
+          node --check commercial-conversion-v44.js
+          node --check decision-flow.js
+          node --check page-context.js
+          node --check experiencia.js
+          node --check demo.js
+          node --check visual-v39.js
+          node --check detail-v46.js
+          node --check editorial-v47.js
+          node --check runtime-config.js
+          node --check telemetry-v50.js
+          node --check measurement-v53.js
+          node --check commercial-intake-v59.js
+          node --check conversion-close-v510.js
+          node --check commercial-brief-v513.js
+          node --check recommendation-v514.js
+          node --check decision-action-v515.js
+          node --check handoff-continuity-v517.js
+          node --check handoff-observability-v518.js
+          node --check playwright.config.mjs
+          node --check tests/e2e/helpers.mjs
+          node --check tests/e2e/public-site.spec.mjs
+          node --check tests/e2e/demo.spec.mjs
+          node --check tests/e2e/accessibility.spec.mjs
+          node --check tests/e2e/capability-truth.spec.mjs
+          node --check tests/e2e/offer-narrative.spec.mjs
+          node --check tests/e2e/fit-scope-clarity-v64.spec.mjs
+          node --check tests/e2e/ci-summary-reporter.mjs
+          node --check scripts/run_quality_v55.mjs
+          node --check scripts/render_catalog_static.mjs
+          node --check scripts/render_services_v42.mjs
+
+      - name: Validate JSON metadata from Pages contract
+        working-directory: /tmp/meridiano-w49-pages
+        run: |
+          python3 -m json.tool manifest.webmanifest > /dev/null
+          python3 -m json.tool version.json > /dev/null
+          python3 -m json.tool site-config.json > /dev/null
+          python3 -m json.tool site-status.json > /dev/null
+          python3 -m json.tool package.json > /dev/null
+          python3 -m json.tool package-lock.json > /dev/null
+          python3 -m json.tool quality-budgets-v55.json > /dev/null
+          python3 -m json.tool ci-baseline-v56.json > /dev/null
+          python3 -m json.tool release-governance-v57.json > /dev/null
+          python3 -m json.tool growth-solutions-v51.json > /dev/null
+          python3 -m json.tool cro-solutions-v52.json > /dev/null
+          python3 -m json.tool authority-v53.json > /dev/null
+          python3 -m json.tool measurement-contract-v53.json > /dev/null
+          python3 -m json.tool assets/data/v6/fit-scope-clarity-v64.json > /dev/null
+          python3 -m json.tool commercial-intake-v59.json > /dev/null
+          python3 -m json.tool conversion-close-v510.json > /dev/null
+          python3 -m json.tool recommendation-v514.json > /dev/null
+          python3 -m json.tool handoff-observability-v518.json > /dev/null
+          python3 -m json.tool offer-narrative-v522.json > /dev/null
+          python3 -m json.tool experience-system-v60.json > /dev/null
+          python3 -m json.tool experience-content-v60.json > /dev/null
+          for f in catalog-services-v42/*.json; do python3 -m json.tool "$f" > /dev/null; done
+          for f in catalog-products-v41/*.json; do python3 -m json.tool "$f" > /dev/null; done
+
+      - name: Prove Pages Quality shadow did not mutate site
+        working-directory: /tmp/meridiano-w49-pages
+        run: |
+          find . -type d -name '__pycache__' -prune -exec rm -rf {} +
+          find . -type f -name '*.pyc' -delete
+          sha256sum -c /tmp/w49-pages-before.sha256
+          current_count="$(find . -type f ! -path '*/__pycache__/*' ! -name '*.pyc' | wc -l | tr -d ' ')"
+          before_count="$(wc -l < /tmp/w49-pages-before.sha256 | tr -d ' ')"
+          test "$current_count" = "$before_count"
+          echo 'W4.9 PAGES QUALITY SHADOW PASS: Builder artifact stayed byte-immutable.'
+
+      - name: Package Pages Quality shadow handoff
+        run: |
+          tar \
+            --exclude='node_modules' \
+            --exclude='__pycache__' \
+            -czf /tmp/w49-pages-quality-shadow-site.tar.gz \
+            -C /tmp/meridiano-w49-pages .
+          sha256sum /tmp/w49-pages-quality-shadow-site.tar.gz > /tmp/w49-pages-quality-shadow-site.sha256
+
+      - name: Upload Pages Quality shadow site
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: w49-pages-quality-shadow-site
+          path: |
+            /tmp/w49-pages-quality-shadow-site.tar.gz
+            /tmp/w49-pages-quality-shadow-site.sha256
+          if-no-files-found: error
+          retention-days: 7
+
+  pages_artifact_shadow:
+    name: Pages artifact and local HTTP shadow
+    needs: pages_quality_shadow
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout only for authenticated artifact handoff
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.12'
+
+      - name: Download Pages Quality artifact from same run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          rm -rf /tmp/w49-quality-download /tmp/meridiano-w49-artifact
+          mkdir -p /tmp/w49-quality-download /tmp/meridiano-w49-artifact
+          gh run download "$GITHUB_RUN_ID" \
+            --repo "$GITHUB_REPOSITORY" \
+            --name w49-pages-quality-shadow-site \
+            --dir /tmp/w49-quality-download
+          sha256sum -c /tmp/w49-quality-download/w49-pages-quality-shadow-site.sha256
+          tar -xzf /tmp/w49-quality-download/w49-pages-quality-shadow-site.tar.gz \
+            -C /tmp/meridiano-w49-artifact
+
+      - name: Validate exact Pages-like artifact topology
+        working-directory: /tmp/meridiano-w49-artifact
+        run: |
+          test "$(find . -name '*.html' -type f | wc -l | tr -d ' ')" = '49'
+          python3 scripts/validate_v8_public_tree.py
+          grep -Fq '<meta name="robots" content="noindex,follow">' soluciones/sistema-contractual-empresarial.html
+          grep -Fq '<meta name="robots" content="noindex,follow">' practicas/corporativo-societario-gobierno.html
+          grep -Fq '<meta name="robots" content="noindex,follow">' servicios-continuos/direccion-juridica-externa.html
+          ! grep -Fq '/soluciones/sistema-contractual-empresarial.html' sitemap.xml
+          ! grep -Fq '/practicas/corporativo-societario-gobierno.html' sitemap.xml
+          ! grep -Fq '/servicios-continuos/direccion-juridica-externa.html' sitemap.xml
+          ! grep -Fq '/soluciones/sistema-contractual-empresarial.html' index.html
+          ! grep -Fq '/practicas/corporativo-societario-gobierno.html' index.html
+          ! grep -Fq '/servicios-continuos/direccion-juridica-externa.html' index.html
+
+      - name: Serve Pages-like artifact locally and smoke routes
+        working-directory: /tmp/meridiano-w49-artifact
+        run: |
+          python3 -m http.server 8000 --bind 127.0.0.1 > /tmp/w49-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for i in {1..20}; do
+            if curl --fail --silent http://127.0.0.1:8000/index.html > /dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          curl --fail --silent http://127.0.0.1:8000/soluciones/sistema-contractual-empresarial.html > /dev/null
+          curl --fail --silent http://127.0.0.1:8000/practicas/corporativo-societario-gobierno.html > /dev/null
+          curl --fail --silent http://127.0.0.1:8000/servicios-continuos/direccion-juridica-externa.html > /dev/null
+          curl --fail --silent http://127.0.0.1:8000/productos/sistema-contractual-empresarial.html > /dev/null
+          curl --fail --silent http://127.0.0.1:8000/servicios/sociedades-gobierno-inversion.html > /dev/null
+          curl --fail --silent http://127.0.0.1:8000/servicios/direccion-juridica-externa.html > /dev/null
+          echo 'W4.9 LOCAL HTTP SHADOW PASS: v8 candidates and legacy pilots all return 200.'
+
+      - name: Build final shadow manifest and site package
+        working-directory: /tmp/meridiano-w49-artifact
+        run: |
+          builder_sha="$(sha256sum .github/workflows/build-canonical.yml | awk '{print $1}')"
+          pages_sha="$(sha256sum .github/workflows/pages.yml | awk '{print $1}')"
+          so07_sha="$(sha256sum soluciones/sistema-contractual-empresarial.html | awk '{print $1}')"
+          pr02_sha="$(sha256sum practicas/corporativo-societario-gobierno.html | awk '{print $1}')"
+          rc01_sha="$(sha256sum servicios-continuos/direccion-juridica-externa.html | awk '{print $1}')"
+          cat > /tmp/w49-shadow-manifest.json <<EOF
+          {
+            "contract": "v8-integrated-pipeline-shadow-result",
+            "status": "shadow-pass-candidate",
+            "source_run_id": "${GITHUB_RUN_ID}",
+            "source_sha": "${GITHUB_SHA}",
+            "html_count": 49,
+            "deploy_executed": false,
+            "stable_moved": false,
+            "builder_workflow_sha256": "${builder_sha}",
+            "pages_workflow_sha256": "${pages_sha}",
+            "targets": {
+              "SO07": "${so07_sha}",
+              "PR02": "${pr02_sha}",
+              "RC01": "${rc01_sha}"
+            }
+          }
+          EOF
+          tar \
+            --exclude='node_modules' \
+            --exclude='__pycache__' \
+            -czf /tmp/w49-integrated-pages-shadow.tar.gz .
+          sha256sum /tmp/w49-integrated-pages-shadow.tar.gz > /tmp/w49-integrated-pages-shadow.sha256
+
+      - name: Upload final integrated Pages shadow
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: w49-integrated-pages-shadow
+          path: |
+            /tmp/w49-integrated-pages-shadow.tar.gz
+            /tmp/w49-integrated-pages-shadow.sha256
+            /tmp/w49-shadow-manifest.json
+          if-no-files-found: error
+          retention-days: 7
