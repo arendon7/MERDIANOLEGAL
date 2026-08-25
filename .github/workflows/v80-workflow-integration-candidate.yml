@@ -1,0 +1,108 @@
+name: V8.0 committed workflow integration candidate
+
+on:
+  pull_request:
+    branches:
+      - design/v8-pipeline-integration-w47
+      - main
+    paths:
+      - .github/workflows/build-canonical.yml
+      - .github/workflows/pages.yml
+      - .github/workflows/v80-workflow-integration-candidate.yml
+      - assets/data/v8/**
+      - scripts/apply_v8_builder_compat.py
+      - scripts/materialize_v8_pipeline_integration_candidate.py
+      - scripts/validate_v8_workflow_integration.py
+      - scripts/validate_v8_pipeline_compat.py
+      - scripts/run_v8_pages_quality_compat.py
+  workflow_dispatch:
+
+concurrency:
+  group: meridiano-v80-workflow-integration-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  committed:
+    name: Certify committed Builder Pages integration without deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout W4.8 candidate
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.12'
+
+      - name: Compile W4.8 contracts
+        run: |
+          python3 -m py_compile \
+            scripts/apply_v8_builder_compat.py \
+            scripts/materialize_v8_pipeline_integration_candidate.py \
+            scripts/validate_v8_workflow_integration.py \
+            scripts/validate_v8_pipeline_compat.py \
+            scripts/run_v8_pages_quality_compat.py
+          python3 -m json.tool assets/data/v8/workflow-integration-v80.json > /dev/null
+
+      - name: Verify committed workflow bytes against W4.7 artifact contract
+        run: |
+          printf '%s  %s\n' \
+            '6a002a1e6f9049bc9c98ad767c6aca9083c92f6847af3bc8ec78af534b5345ea' \
+            '.github/workflows/build-canonical.yml' \
+            | sha256sum -c -
+          printf '%s  %s\n' \
+            '3e3ab999ead2f094d7a0b26b2d430dd1bf5e414b224f9e6275f961000e25be01' \
+            '.github/workflows/pages.yml' \
+            | sha256sum -c -
+
+      - name: Regenerate W4.7 expected workflows from PR base
+        if: github.event_name == 'pull_request'
+        run: |
+          rm -rf /tmp/meridiano-w48-base
+          git worktree add --detach /tmp/meridiano-w48-base '${{ github.event.pull_request.base.sha }}'
+          python3 scripts/materialize_v8_pipeline_integration_candidate.py \
+            --root /tmp/meridiano-w48-base
+          cmp --silent \
+            /tmp/meridiano-w48-base/.github/workflows/build-canonical.yml \
+            .github/workflows/build-canonical.yml
+          cmp --silent \
+            /tmp/meridiano-w48-base/.github/workflows/pages.yml \
+            .github/workflows/pages.yml
+          echo 'W4.8 BASE REGENERATION PARITY PASS: committed workflows equal freshly generated W4.7 candidate.'
+
+      - name: Parse committed workflows as YAML
+        run: |
+          ruby -e "require 'yaml'; YAML.load_file('.github/workflows/build-canonical.yml'); YAML.load_file('.github/workflows/pages.yml'); puts 'W4.8 YAML syntax OK'"
+
+      - name: Validate committed integration end to end
+        run: python3 scripts/validate_v8_workflow_integration.py
+
+      - name: Prove checkout is idempotent after all validation
+        run: git diff --exit-code
+
+      - name: Prepare W4.8 certification artifact
+        run: |
+          rm -rf w48-workflow-integration-certified
+          mkdir -p w48-workflow-integration-certified
+          cp .github/workflows/build-canonical.yml w48-workflow-integration-certified/
+          cp .github/workflows/pages.yml w48-workflow-integration-certified/
+          cp assets/data/v8/workflow-integration-v80.json w48-workflow-integration-certified/
+          if [ -f /tmp/meridiano-w48-base/.v8-pipeline-integration-candidate.json ]; then
+            cp /tmp/meridiano-w48-base/.v8-pipeline-integration-candidate.json \
+              w48-workflow-integration-certified/regenerated-w47-manifest.json
+          fi
+
+      - name: Upload W4.8 certification artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: w48-v8-workflow-integration-certified
+          path: w48-workflow-integration-certified
+          if-no-files-found: error
+          retention-days: 7
