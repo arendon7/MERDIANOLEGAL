@@ -6,6 +6,9 @@ El renderer conserva la arquitectura target v8; este materializador aplica una
 compatibilidad transicional: un link relacionado solo apunta a target v8 si ese
 target pertenece al conjunto materializado en esta wave. Cuando el target futuro
 aún no existe, conserva la ruta legacy física y válida para evitar 404.
+
+El cierre W4.5 exige un run posterior sobre los targets ya persistidos; el commit
+del bot que materializa o refresca bytes no sustituye esa certificación final.
 """
 from __future__ import annotations
 
