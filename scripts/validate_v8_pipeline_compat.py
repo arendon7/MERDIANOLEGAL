@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 """W4.6 pipeline compatibility gate for additive v8 candidate targets.
 
-This validator keeps the v6 contract strict. Where a historical validator owns a
-closed topology (currently the six v6 solution routes), W4.6 executes that
-validator against a temporary 46-page legacy projection. The real 49-page tree
-is then validated independently by the v8 contracts.
+Historical v6 validators remain strict. W4.6 executes closed-topology validators
+against an ephemeral 46-page legacy projection while validating the real
+49-page candidate independently with the v8 contracts.
 """
 from __future__ import annotations
 
@@ -68,6 +67,15 @@ def validate_contract(contract: dict) -> list[str]:
     if targets != expected:
         fail(f"additive targets differ from certified W4.5 set: {targets}")
 
+    projection = contract.get("legacy_projection") or {}
+    if projection.get("strict_validators") != [
+        "scripts/validate_experience_v60.py",
+        "scripts/validate_experience_solutions_v60.py",
+    ]:
+        fail("W4.6 strict validator allowlist changed unexpectedly")
+    if projection.get("builder_strategy") != "run-v6-in-projection-then-prove-real-legacy-equivalence":
+        fail("W4.6 builder projection strategy changed unexpectedly")
+
     policy = contract.get("candidate_policy") or {}
     required_policy = {
         "targets_noindex": True,
@@ -88,6 +96,7 @@ def validate_contract(contract: dict) -> list[str]:
     required_pipeline = {
         "legacy_validators_remain_strict": True,
         "candidate_validated_additively": True,
+        "builder_runs_in_legacy_projection": True,
         "builder_must_not_rewrite_v8_targets": True,
         "pages_artifact_may_include_noindex_targets": True,
         "production_activation_requires_later_wave": True,
@@ -133,9 +142,6 @@ def validate_real_candidate(targets: list[str]) -> dict[str, str]:
 def validate_legacy_projection(contract: dict, target_hashes: dict[str, str]) -> None:
     projection = contract.get("legacy_projection") or {}
     validators = projection.get("strict_validators") or []
-    if validators != ["scripts/validate_experience_solutions_v60.py"]:
-        fail("W4.6 strict validator allowlist changed unexpectedly")
-
     removals = projection.get("remove_before_strict_validation") or []
     if sorted(removals) != sorted(target_hashes):
         fail("legacy projection removal set must equal the three additive targets")
@@ -173,7 +179,7 @@ def main() -> int:
     validate_legacy_projection(contract, target_hashes)
     print(
         "VALIDATE V8 PIPELINE COMPAT OK: real 49-page candidate + strict 46-page v6 projection; "
-        "no activation and no target mutation."
+        "Experience baseline/solutions remain strict with no activation or target mutation."
     )
     return 0
 
