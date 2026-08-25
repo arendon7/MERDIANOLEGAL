@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """W4.6 pipeline compatibility gate for additive v8 candidate targets.
 
-Historical v6 validators remain strict. W4.6 executes closed-topology validators
+Historical validators with closed topologies remain strict. W4.6 executes them
 against an ephemeral 46-page legacy projection while validating the real
 49-page candidate independently with the v8 contracts.
 """
@@ -71,6 +71,7 @@ def validate_contract(contract: dict) -> list[str]:
     if projection.get("strict_validators") != [
         "scripts/validate_experience_v60.py",
         "scripts/validate_experience_solutions_v60.py",
+        "scripts/validate_growth_v51.py",
     ]:
         fail("W4.6 strict validator allowlist changed unexpectedly")
     if projection.get("builder_strategy") != "run-v6-in-projection-then-prove-real-legacy-equivalence":
@@ -178,8 +179,8 @@ def main() -> int:
     target_hashes = validate_real_candidate(targets)
     validate_legacy_projection(contract, target_hashes)
     print(
-        "VALIDATE V8 PIPELINE COMPAT OK: real 49-page candidate + strict 46-page v6 projection; "
-        "Experience baseline/solutions remain strict with no activation or target mutation."
+        "VALIDATE V8 PIPELINE COMPAT OK: real 49-page candidate + strict 46-page legacy projection; "
+        "Experience and Growth closed topologies remain strict with no activation or target mutation."
     )
     return 0
 
