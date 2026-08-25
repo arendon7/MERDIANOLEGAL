@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0.0",
+  "contract": "v8-pipeline-integration",
+  "status": "candidate",
+  "depends_on": "v8-pipeline-compat",
+  "builder": {
+    "named_step_count_must_remain": 30,
+    "adapter": "scripts/apply_v8_builder_compat.py",
+    "integration_point": "Generate QA dependency lockfile v5.5+",
+    "legacy_extension_skipped_when_adapter_active": true,
+    "canonical_output_commit_unchanged": true
+  },
+  "pages": {
+    "adapter_check": "python3 scripts/apply_v8_builder_compat.py --check",
+    "integration_point": "Check canonical generators are idempotent",
+    "growth_v51_uses_strict_projection_when_adapter_active": true,
+    "deploy_section_unchanged": true
+  },
+  "governance": {
+    "canonical_pipeline_manifest_must_pass": true,
+    "pages_trigger_validator_must_pass": true,
+    "ci_validator_must_pass": true,
+    "w46_compatibility_must_pass": true,
+    "production_workflows_modified_in_w47": false,
+    "deploy_executed_in_w47": false,
+    "main_modified": false,
+    "stable_modified": false
+  }
+}
