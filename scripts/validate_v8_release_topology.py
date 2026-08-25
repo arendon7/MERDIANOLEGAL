@@ -18,6 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CONTRACT_PATH = ROOT / "assets/data/v8/release-topology-v80.json"
 BUILD = ROOT / ".github/workflows/build-canonical.yml"
 PAGES = ROOT / ".github/workflows/pages.yml"
+RELEASE_WORKFLOW = ROOT / ".github/workflows/v80-release-topology-candidate.yml"
 
 
 def fail(message: str) -> None:
@@ -229,7 +230,6 @@ def validate_pages(pages: str) -> None:
     if "contents: write" not in snapshot or "actions: read" not in snapshot:
         fail("snapshot permissions changed unexpectedly")
 
-    # Truth-table for the textual quality condition we require.
     prefix = "build: sincroniza sitio público canónico"
     cases = {
         ("workflow_run", "success", "release: v8 candidate"): True,
@@ -245,6 +245,40 @@ def validate_pages(pages: str) -> None:
             fail(f"internal Pages trigger truth-table mismatch for {(event, conclusion, message)}")
 
 
+def validate_certification_workflow() -> None:
+    if not RELEASE_WORKFLOW.exists():
+        fail("W4.10 certification workflow is missing")
+    text = RELEASE_WORKFLOW.read_text(encoding="utf-8")
+    for marker in (
+        "contents: read",
+        "actions: read",
+        "python3 scripts/validate_v8_release_topology.py",
+        "python3 scripts/apply_v8_builder_compat.py",
+        "python3 scripts/apply_v8_builder_compat.py --check",
+        "python3 scripts/run_v8_pages_quality_compat.py",
+        "production_merge_executed\": false",
+        "production_deploy_executed\": false",
+        "stable_moved\": false",
+    ):
+        if marker not in text:
+            fail(f"W4.10 certification workflow missing {marker!r}")
+
+    forbidden_literals = (
+        "actions/upload-pages-artifact@",
+        "actions/deploy-pages@",
+        "pages: write",
+        "id-token: write",
+        "contents: write",
+    )
+    for marker in forbidden_literals:
+        if marker in text:
+            fail(f"W4.10 certification workflow contains forbidden primitive {marker!r}")
+    if re.search(r"(?m)^\s+git\s+push\b", text):
+        fail("W4.10 certification workflow must never execute git push")
+    if re.search(r"(?m)^\s+environment:\s*$", text):
+        fail("W4.10 certification workflow must not target a deployment environment")
+
+
 def main() -> int:
     contract = load_json(CONTRACT_PATH)
     main_sha, stable_sha = validate_contract(contract)
@@ -253,10 +287,11 @@ def main() -> int:
     pages = PAGES.read_text(encoding="utf-8")
     validate_builder(build, changed)
     validate_pages(pages)
+    validate_certification_workflow()
 
     print(
         "VALIDATE V8 RELEASE TOPOLOGY OK: candidate is linear from production main, Builder push will trigger, "
-        "Pages workflow_run is single-release aware, and stable remains fail-closed behind quality/deploy/smoke/E2E/Lighthouse."
+        "Pages workflow_run is single-release aware, stable remains fail-closed, and W4.10 itself is read-only."
     )
     return 0
 
