@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
 """Valida W4.5: tres targets v8 persistidos sin activar descubrimiento público.
 
-El validador admite dos estados explícitos:
+Estados permitidos:
 - bootstrap: 0/3 targets, baseline físico de 46 HTML;
 - persisted: 3/3 targets, candidate físico de 49 HTML.
 
-Cualquier estado parcial falla.
+Cualquier estado parcial falla. En persisted, todos los enlaces locales visibles
+de los targets deben resolver físicamente: durante rollout parcial se admite
+fallback a legacy, pero nunca una ruta v8 futura inexistente.
 """
 from __future__ import annotations
 
 from pathlib import Path
-from urllib.parse import urlsplit
+from urllib.parse import unquote, urlsplit
 import json
 import re
 import sys
@@ -50,6 +52,28 @@ def physical_path(route: str) -> Path:
 def canonical_from_html(html: str) -> str | None:
     match = re.search(r'<link\s+rel="canonical"\s+href="([^"]+)"', html)
     return match.group(1) if match else None
+
+
+def validate_local_links(page: Path, html: str, pilot_id: str) -> None:
+    hrefs = re.findall(r'<a\b[^>]*\bhref="([^"]+)"', html, flags=re.I)
+    if not hrefs:
+        fail(f"{pilot_id}: target no contiene enlaces")
+    for href in hrefs:
+        if href.startswith(("#", "mailto:", "tel:", "javascript:", "data:")):
+            continue
+        parsed = urlsplit(href)
+        if parsed.scheme or parsed.netloc:
+            continue
+        path = unquote(parsed.path)
+        if not path:
+            continue
+        resolved = (page.parent / path).resolve()
+        try:
+            resolved.relative_to(ROOT.resolve())
+        except ValueError as exc:
+            raise AssertionError(f"{pilot_id}: link sale del repositorio {href}") from exc
+        if not resolved.exists():
+            fail(f"{pilot_id}: enlace local roto {href} -> {resolved.relative_to(ROOT)}")
 
 
 def validate_non_activation(pilots: list[dict], route_contract: dict) -> None:
@@ -134,8 +158,7 @@ def validate_persisted(pilots: list[dict], base_url: str) -> None:
             fail(f"{pilot['id']}: target debe tener exactamente un H1")
         if re.search(r"<form\b", html, flags=re.I):
             fail(f"{pilot['id']}: target no puede crear form físico")
-        if re.search(r'href="(?:\.\./)?(?:productos|servicios)/', html):
-            fail(f"{pilot['id']}: target conserva internal link a familia legacy")
+        validate_local_links(path, html, pilot["id"])
 
 
 def main() -> int:
@@ -167,7 +190,7 @@ def main() -> int:
         return 0
 
     validate_persisted(pilots, base_url)
-    print("VALIDATE V8 PUBLIC TREE PERSISTED OK: 49 HTML = 46 legacy + 3 targets noindex, sin activación pública.")
+    print("VALIDATE V8 PUBLIC TREE PERSISTED OK: 49 HTML = 46 legacy + 3 targets noindex, sin activación pública y sin links locales rotos.")
     return 0
 
 
