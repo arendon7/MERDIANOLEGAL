@@ -2,10 +2,10 @@
 """Stage-aware compatibility runner for historical CI gates on the final v8 candidate.
 
 Historical validators are never weakened. When the persisted v8 candidate is
-present (46 legacy + the exact three additive targets), validators whose original
-contract requires the earlier 46-page stage run in an ephemeral projection where
-only those three targets are removed. Other historical stages retain their
-original direct behavior.
+present (46 legacy + the exact three additive targets), validators/materializers
+whose original contract requires the earlier 46-page stage run in an ephemeral
+projection where only those three targets are removed. Other historical stages
+retain their original direct behavior.
 """
 from __future__ import annotations
 
@@ -148,13 +148,33 @@ def mode_v6_closed_check(is_final: bool) -> None:
     run([sys.executable, "scripts/validate_experience_solutions_v60.py"])
 
 
+def mode_handoff_observability(is_final: bool) -> None:
+    if not is_final:
+        run([sys.executable, "scripts/apply_handoff_observability_v518.py"])
+        run([sys.executable, "scripts/validate_handoff_observability_v518.py"])
+        return
+    holder, projected = projection()
+    try:
+        run([sys.executable, "scripts/apply_handoff_observability_v518.py"], cwd=projected)
+        run([sys.executable, "scripts/validate_handoff_observability_v518.py"], cwd=projected)
+    finally:
+        holder.cleanup()
+    run([sys.executable, "scripts/validate_handoff_observability_v518.py"])
+    print(
+        "HISTORICAL GATE COMPAT handoff-observability PASS: v5.18→v5.31 materializers remained strict "
+        "inside the 46-page projection and v5.18 validates on the real candidate."
+    )
+
+
 def main() -> int:
-    if len(sys.argv) != 2 or sys.argv[1] not in {
-        "detect", "route-contract", "pilot-infra", "growth", "v6-apply", "v6-closed-check"
-    }:
+    allowed = {
+        "detect", "route-contract", "pilot-infra", "growth", "v6-apply", "v6-closed-check",
+        "handoff-observability"
+    }
+    if len(sys.argv) != 2 or sys.argv[1] not in allowed:
         raise SystemExit(
             "usage: run_v8_historical_gate_compat.py "
-            "[detect|route-contract|pilot-infra|growth|v6-apply|v6-closed-check]"
+            "[detect|route-contract|pilot-infra|growth|v6-apply|v6-closed-check|handoff-observability]"
         )
     mode = sys.argv[1]
     is_final = final_candidate()
@@ -167,6 +187,7 @@ def main() -> int:
         "growth": mode_growth,
         "v6-apply": mode_v6_apply,
         "v6-closed-check": mode_v6_closed_check,
+        "handoff-observability": mode_handoff_observability,
     }[mode](is_final)
     return 0
 
