@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0.0",
+  "contract": "v8-pipeline-compat",
+  "status": "candidate",
+  "baseline_version": "7.4.0",
+  "public_tree": {
+    "legacy_html_count": 46,
+    "candidate_html_count": 49,
+    "additive_targets": [
+      "/soluciones/sistema-contractual-empresarial.html",
+      "/practicas/corporativo-societario-gobierno.html",
+      "/servicios-continuos/direccion-juridica-externa.html"
+    ]
+  },
+  "legacy_projection": {
+    "strict_validators": [
+      "scripts/validate_experience_solutions_v60.py"
+    ],
+    "remove_before_strict_validation": [
+      "soluciones/sistema-contractual-empresarial.html",
+      "practicas/corporativo-societario-gobierno.html",
+      "servicios-continuos/direccion-juridica-externa.html"
+    ]
+  },
+  "candidate_policy": {
+    "targets_noindex": true,
+    "targets_in_sitemap": false,
+    "targets_in_home_navigation": false,
+    "legacy_self_canonical": true,
+    "version_bump": false,
+    "canonical_handoff": false,
+    "pages_deploy": false,
+    "stable_move": false,
+    "rc02_meridiano_contratos": false
+  },
+  "pipeline_policy": {
+    "legacy_validators_remain_strict": true,
+    "candidate_validated_additively": true,
+    "builder_must_not_rewrite_v8_targets": true,
+    "pages_artifact_may_include_noindex_targets": true,
+    "production_activation_requires_later_wave": true
+  }
+}
