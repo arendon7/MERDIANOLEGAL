@@ -14,6 +14,7 @@ on:
       - scripts/materialize_v8_pilot.py
       - scripts/validate_v8_pilot_infra.py
       - scripts/validate_v8_pilot_materialized.py
+      - scripts/validate_v8_contrast_tokens.py
       - scripts/validate_route_contract_v80.py
       - tests/e2e/v8-pilot-materialization.spec.mjs
       - playwright.config.mjs
@@ -53,11 +54,12 @@ jobs:
           cache-dependency-path: package-lock.json
       - name: Compile W4.4 contracts
         run: |
-          python3 -m py_compile scripts/render_v8_pilot.py scripts/materialize_v8_pilot.py scripts/validate_v8_pilot_infra.py scripts/validate_v8_pilot_materialized.py scripts/validate_route_contract_v80.py
+          python3 -m py_compile scripts/render_v8_pilot.py scripts/materialize_v8_pilot.py scripts/validate_v8_pilot_infra.py scripts/validate_v8_pilot_materialized.py scripts/validate_v8_contrast_tokens.py scripts/validate_route_contract_v80.py
       - name: Revalidate W4.2 and W4.3 before materialization
         run: |
           python3 scripts/validate_route_contract_v80.py
           python3 scripts/validate_v8_pilot_infra.py
+          python3 scripts/validate_v8_contrast_tokens.py
           python3 scripts/canonical_pipeline_v524.py validate
       - name: Materialize three targets only in ephemeral checkout
         run: python3 scripts/materialize_v8_pilot.py --root . --allow-working-tree
