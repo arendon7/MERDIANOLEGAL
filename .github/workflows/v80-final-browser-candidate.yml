@@ -1,0 +1,110 @@
+name: V8.0 final browser candidate
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '**/*.html'
+      - assets/**
+      - '*.css'
+      - '*.js'
+      - tests/e2e/**
+      - playwright.config.mjs
+      - package.json
+      - package-lock.json
+      - scripts/apply_v8_builder_compat.py
+      - scripts/validate_v8_pipeline_compat.py
+      - scripts/run_v8_historical_gate_compat.py
+      - .github/workflows/v80-final-browser-candidate.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: meridiano-v80-final-browser-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  browser:
+    name: Browser E2E axe on final 49-page candidate
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      MERIDIANO_BASE_URL: http://127.0.0.1:8000/
+    steps:
+      - name: Checkout final candidate
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.12'
+
+      - name: Setup Node.js with npm cache
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Validate final candidate before browser execution
+        run: |
+          test "$(python3 scripts/run_v8_historical_gate_compat.py detect)" = 'v8-final'
+          python3 scripts/apply_v8_builder_compat.py --check
+          python3 scripts/validate_v8_pipeline_compat.py
+          python3 scripts/validate_v8_public_tree.py
+
+      - name: Validate E2E JavaScript syntax
+        run: |
+          node --check playwright.config.mjs
+          node --check tests/e2e/helpers.mjs
+          for f in tests/e2e/*.mjs; do node --check "$f"; done
+
+      - name: Install locked QA dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Prefer official Ubuntu mirrors for browser dependencies
+        run: |
+          if [ -f /etc/apt/apt-mirrors.txt ]; then
+            printf 'https://archive.ubuntu.com/ubuntu/\tpriority:1\nhttps://security.ubuntu.com/ubuntu/\tpriority:2\n' \
+              | sudo tee /etc/apt/apt-mirrors.txt >/dev/null
+          fi
+          printf '%s\n' \
+            'Acquire::Retries "3";' \
+            'Acquire::http::Timeout "30";' \
+            'Acquire::https::Timeout "30";' \
+            | sudo tee /etc/apt/apt.conf.d/80meridiano-network >/dev/null
+
+      - name: Install Chromium and WebKit
+        run: timeout 900s npx playwright install --with-deps chromium webkit
+
+      - name: Start local final candidate server
+        run: |
+          python3 -m http.server 8000 --bind 127.0.0.1 > /tmp/meridiano-v80-final-http.log 2>&1 &
+          echo $! > /tmp/meridiano-v80-final-http.pid
+          for i in {1..20}; do
+            if curl --fail --silent http://127.0.0.1:8000/version.json > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/meridiano-v80-final-http.log >&2 || true
+          exit 1
+
+      - name: Run full browser E2E suite
+        run: npm run test:e2e
+
+      - name: Upload browser failure artifacts
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: v80-final-browser-failure-artifacts
+          path: |
+            playwright-report
+            test-results
+            /tmp/meridiano-v80-final-http.log
+          if-no-files-found: ignore
+          retention-days: 7
