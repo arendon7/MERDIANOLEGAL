@@ -4,168 +4,135 @@ Actualizado: 2026-08-25.
 
 ## Baseline certificado
 
-- Repositorio: `arendon7/MERDIANOLEGAL`.
 - `main == stable == 86813813e29dd6b47105ba7fb6259630fcd9cb5b`.
 - Release productiva: **v7.4.0 — Commercial Evidence Readiness**.
-- Analytics: `readiness-disabled`.
-- Capability truth v7.4 permanece vigente.
+- Capability truth v7.4 continúa vigente.
 - `stable` no se modifica manualmente.
 
-## Stack v8 abierto
+## Stack v8
 
 ### W4.1 — Client Architecture & Taxonomy
+- PR draft #183.
+- 46/46 superficies mapeadas.
+- 6 prácticas + 8 soluciones + servicios continuos.
 
-- rama: `design/v8-client-architecture-w41`;
-- PR draft: #183;
-- 46/46 superficies clasificadas;
-- 6 prácticas + 8 soluciones + servicios continuos;
-- ADR-008;
-- RC02 Meridiano Contratos bloqueado hasta capability contract verificable.
+### W4.2 — Route Compatibility & SEO
+- PR draft #184.
+- route contract 46/46 + sitemap 43/43.
+- CI PASS: run `32904478022`.
+- `experiencia.html` modelada correctamente como `noindex`, coherente con v7.4.
 
-### W4.2 — Route Compatibility & SEO Contract
-
-- rama: `design/v8-route-compat-w42`;
-- PR draft: #184, apilado sobre W4.1;
-- `assets/data/v8/route-contract-v80.json`;
-- 46 legacy routes + 43 sitemap URLs modeladas;
-- canonical/alias/sitemap policy;
-- `scripts/validate_route_contract_v80.py`;
-- workflow candidate dedicado.
-
-El workflow W4.2 aún no registra una ejecución en el SHA del PR apilado; no se declara PASS sin evidencia.
+### W4.3 — Renderer & Design-System Pilot Infrastructure
+- PR draft #185.
+- renderer source-driven sin escritura pública.
+- truth parity en memoria para SO07 + PR02 + RC01.
+- CSS v8 consolidado.
+- gate de no activación: 46 HTML, 0 targets físicos, 0 HTML cargando CSS v8.
+- CI PASS completo: run `32904520736`.
 
 ## Frente vigente
 
-**W4.3 — v8 Renderer & Design-System Pilot Infrastructure.**
+**W4.4 — Pilot Materialization Candidate.**
 
-Rama: `design/v8-pilot-infrastructure-w43`.
-Base lógica: W4.2.
+Rama: `design/v8-pilot-materialization-w44`.
+Base lógica: W4.3.
 
-W4.3 prepara el renderer y sistema visual sin activar nuevas superficies públicas.
+Objetivo: probar targets HTML reales sin publicarlos ni comprometerlos todavía en el árbol canónico.
 
-## Pilotos exactos
+## Estrategia
 
-1. **SO07 — Sistema Contractual Empresarial**
-   - fuente: `catalog-products-v41/p07-contractual.json`;
-   - legacy: `/productos/sistema-contractual-empresarial.html`;
-   - target futuro: `/soluciones/sistema-contractual-empresarial.html`.
+CI materializa efímeramente tres targets dentro del checkout desechable:
 
-2. **PR02 — Corporativo, Societario y Gobierno**
-   - fuente: `catalog-services-v42/s04-societario.json`;
-   - legacy: `/servicios/sociedades-gobierno-inversion.html`;
-   - target futuro: `/practicas/corporativo-societario-gobierno.html`.
+1. `/soluciones/sistema-contractual-empresarial.html` — SO07.
+2. `/practicas/corporativo-societario-gobierno.html` — PR02.
+3. `/servicios-continuos/direccion-juridica-externa.html` — RC01.
 
-3. **RC01 — Dirección Jurídica Externa**
-   - fuente: `catalog-services-v42/s02-direccion.json`;
-   - legacy: `/servicios/direccion-juridica-externa.html`;
-   - target futuro: `/servicios-continuos/direccion-juridica-externa.html`.
+Durante el job:
 
-RC02 Meridiano Contratos está fuera de W4.3.
+- topología temporal = 49 HTML (46 legacy + 3 targets);
+- targets = `noindex,follow`;
+- legacy pilots permanecen sin cambios;
+- no se modifica sitemap;
+- no hay canonical handoff;
+- no hay deploy.
 
-## Evidencia W4.3 materializada
+## Evidencia W4.4
 
-### Experience model
+### Materializador
+`scripts/materialize_v8_pilot.py`
 
-`assets/data/v8/experience-model-v80.json`
+- requiere raíz explícita;
+- escribir en checkout exige `--allow-working-tree`;
+- materializa solo tres targets;
+- no sobrescribe targets existentes;
+- genera `.v8-pilot-materialization.json`.
 
-- referencia fuentes canónicas, no duplica contenido;
-- diferencia `solution`, `practice`, `recurring`;
-- preserva commercial intent/modality histórico de los tres pilotos;
-- `commit_target_html=false`;
-- `candidate_indexing=noindex`;
-- `legacy_routes_unchanged=true`.
-
-### Renderer
-
-`scripts/render_v8_pilot.py`
-
-- `--check`: render doble determinista + truth parity completa en memoria;
-- `--preview SO07|PR02|RC01`: HTML a stdout;
-- no tiene modo de escritura pública;
-- traduce relacionados legacy usando el route contract;
-- no crea segundo formulario;
-- mantiene targets como `noindex` durante piloto.
-
-### Design system
-
-`assets/css/v8/`:
-
-- `tokens.css`;
-- `base.css`;
-- `components.css`;
-- `surfaces.css`.
-
-Consolida identidad v6 en una gramática semántica y distingue solución/práctica/recurrente sin crear marcas separadas.
-
-### Gate de no activación
-
-`scripts/validate_v8_pilot_infra.py`
+### Validator materializado
+`scripts/validate_v8_pilot_materialized.py`
 
 Exige:
 
-- tres pilotos exactos;
-- cuatro CSS v8;
-- 46 HTML legacy intactos;
-- targets v8 físicamente ausentes;
-- cero HTML actual cargando CSS v8;
-- renderer compilable;
-- renderer `--check` PASS cuando CI pueda ejecutarlo.
+- manifest efímero;
+- 3 targets exactos;
+- 49 HTML temporales;
+- canonical target;
+- `noindex,follow`;
+- 4 CSS v8;
+- un H1;
+- cero forms;
+- cero internal links a `/productos/` o `/servicios/` desde targets;
+- tres legacy pilots todavía disponibles.
+
+### Browser E2E
+`tests/e2e/v8-pilot-materialization.spec.mjs`
+
+Comprueba en los tres targets:
+
+- HTTP 200;
+- semántica de familia;
+- fuente canónica declarada;
+- metadata/candidate boundary;
+- CTA al formulario canónico;
+- relacionados target;
+- disclosure por teclado;
+- no horizontal overflow;
+- axe WCAG 2.1 AA sin serious/critical.
+
+También comprueba 200 en los tres legacy pilots.
 
 ### CI
+`.github/workflows/v80-pilot-materialization-candidate.yml`
 
-`.github/workflows/v80-pilot-infra-candidate.yml`
-
-Valida:
+Orden:
 
 1. compile;
-2. W4.2 route contract;
-3. W4.3 pilot infra;
-4. canonical pipeline manifest.
+2. revalidar W4.2/W4.3 sobre 46 páginas;
+3. materializar 3 targets efímeros;
+4. validar topología temporal 49;
+5. probar que los legacy no fueron reescritos;
+6. npm locked dependencies;
+7. Chromium + WebKit;
+8. server local;
+9. Playwright desktop/mobile/WebKit + axe.
 
-No construye ni despliega.
+## Boundary
 
-## Boundary W4.3
+W4.4 todavía NO:
 
-No se modifica:
+- commitea target HTML;
+- cambia `version.json`;
+- cambia sitemap/robots;
+- cambia Home/navigation;
+- cambia canonical legacy;
+- cambia Builder/Pages;
+- despliega;
+- habilita RC02 Meridiano Contratos;
+- mueve `stable`.
 
-- ningún HTML público;
-- `index.html`;
-- sitemap/robots/version;
-- catálogos;
-- CSS v6/v7;
-- runtime JS;
-- formulario;
-- analítica/privacidad;
-- Builder/Pages;
-- `stable`.
+## Siguiente decisión
 
-## Siguiente frente — W4.4
+Solo si W4.4 CI es PASS:
 
-**Pilot Materialization Candidate**, condicionado a evidencia CI real de W4.2/W4.3.
+**W4.5 — Pilot Public-Tree Candidate** podrá evaluar comprometer los tres targets `noindex` en rama candidate, incorporar version-gating estructural y probar el builder sobre la topología nueva.
 
-W4.4 deberá:
-
-1. introducir version-gate v8 controlado;
-2. materializar solo SO07, PR02 y RC01;
-3. mantener los tres legacy completos;
-4. targets `noindex` durante comparación;
-5. añadir E2E target + smoke legacy;
-6. validar desktop/mobile/keyboard/axe;
-7. probar truth parity DOM;
-8. probar dos pasadas idempotentes;
-9. ejecutar crítica independiente;
-10. solo después decidir canonical handoff.
-
-## Definition of Done W4.3
-
-- experience model source-driven;
-- renderer no destructivo;
-- truth parity en memoria como contrato;
-- 4 CSS v8 consolidados;
-- gate de no activación;
-- CI candidate dedicado;
-- 46 HTML productivos intactos;
-- 0 targets físicos;
-- RC02 fuera de scope;
-- `stable` intacta;
-- PR draft apilado abierto para revisión.
+Si browser/axe falla, corregir primero renderer/design system y repetir W4.4.
