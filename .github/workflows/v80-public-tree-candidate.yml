@@ -35,7 +35,7 @@ permissions:
 
 jobs:
   candidate:
-    name: Bootstrap or validate persisted v8 public tree
+    name: Bootstrap, refresh or validate persisted v8 public tree
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
@@ -57,7 +57,7 @@ jobs:
           node-version: '22'
           cache: 'npm'
           cache-dependency-path: package-lock.json
-      - name: Detect W4.5 mode
+      - name: Detect W4.5 physical mode
         shell: bash
         run: |
           targets=(
@@ -74,7 +74,7 @@ jobs:
             echo 'W4.5 bootstrap: 0/3 targets persisted.'
           elif [ "$count" -eq 3 ]; then
             echo 'W45_MODE=persisted' >> "$GITHUB_ENV"
-            echo 'W4.5 persisted candidate: 3/3 targets present.'
+            echo 'W4.5 persisted physical tree: 3/3 targets present.'
           else
             echo "Partial public tree is forbidden: $count/3 targets." >&2
             exit 1
@@ -87,11 +87,11 @@ jobs:
             scripts/validate_v8_pilot_materialized.py \
             scripts/validate_v8_public_tree.py \
             scripts/validate_v8_contrast_tokens.py
-      - name: Validate source truth and no activation
+      - name: Validate source truth and no-activation preflight
         run: |
           python3 scripts/render_v8_pilot.py --check
           python3 scripts/validate_v8_contrast_tokens.py
-          python3 scripts/validate_v8_public_tree.py
+          python3 scripts/validate_v8_public_tree.py --preflight
           python3 scripts/canonical_pipeline_v524.py validate
       - name: Prove protected public surfaces did not change
         if: github.event_name == 'pull_request'
@@ -115,24 +115,38 @@ jobs:
           cd /tmp/meridiano-v45-generated
           python3 scripts/materialize_v8_pilot.py --root . --allow-working-tree
           python3 scripts/validate_v8_pilot_materialized.py
-      - name: Enforce generated and persisted byte parity
-        if: env.W45_MODE == 'persisted'
+      - name: Detect generated and persisted byte parity
+        shell: bash
         run: |
-          cmp --silent /tmp/meridiano-v45-generated/soluciones/sistema-contractual-empresarial.html soluciones/sistema-contractual-empresarial.html
-          cmp --silent /tmp/meridiano-v45-generated/practicas/corporativo-societario-gobierno.html practicas/corporativo-societario-gobierno.html
-          cmp --silent /tmp/meridiano-v45-generated/servicios-continuos/direccion-juridica-externa.html servicios-continuos/direccion-juridica-externa.html
-          echo 'BYTE PARITY PASS: persisted targets exactly match renderer output.'
-      - name: Prepare bootstrap artifact
-        if: env.W45_MODE == 'bootstrap'
+          if [ "$W45_MODE" = 'bootstrap' ]; then
+            echo 'W45_PARITY=bootstrap' >> "$GITHUB_ENV"
+            echo 'No persisted targets yet; bootstrap write required after PASS.'
+            exit 0
+          fi
+          if \
+            cmp --silent /tmp/meridiano-v45-generated/soluciones/sistema-contractual-empresarial.html soluciones/sistema-contractual-empresarial.html && \
+            cmp --silent /tmp/meridiano-v45-generated/practicas/corporativo-societario-gobierno.html practicas/corporativo-societario-gobierno.html && \
+            cmp --silent /tmp/meridiano-v45-generated/servicios-continuos/direccion-juridica-externa.html servicios-continuos/direccion-juridica-externa.html; then
+            echo 'W45_PARITY=match' >> "$GITHUB_ENV"
+            echo 'BYTE PARITY MATCH: persisted targets exactly match current generated outputs.'
+          else
+            echo 'W45_PARITY=refresh' >> "$GITHUB_ENV"
+            echo 'BYTE PARITY REFRESH: persisted targets are stale and will only be replaced after generated Browser/Axe PASS.'
+          fi
+      - name: Validate final persisted tree when parity matches
+        if: env.W45_PARITY == 'match'
+        run: python3 scripts/validate_v8_public_tree.py
+      - name: Prepare generated target artifact
+        if: env.W45_PARITY != 'match'
         run: |
-          rm -rf w45-bootstrap-artifact
-          mkdir -p w45-bootstrap-artifact/soluciones w45-bootstrap-artifact/practicas w45-bootstrap-artifact/servicios-continuos
-          cp /tmp/meridiano-v45-generated/soluciones/sistema-contractual-empresarial.html w45-bootstrap-artifact/soluciones/
-          cp /tmp/meridiano-v45-generated/practicas/corporativo-societario-gobierno.html w45-bootstrap-artifact/practicas/
-          cp /tmp/meridiano-v45-generated/servicios-continuos/direccion-juridica-externa.html w45-bootstrap-artifact/servicios-continuos/
+          rm -rf w45-generated-artifact
+          mkdir -p w45-generated-artifact/soluciones w45-generated-artifact/practicas w45-generated-artifact/servicios-continuos
+          cp /tmp/meridiano-v45-generated/soluciones/sistema-contractual-empresarial.html w45-generated-artifact/soluciones/
+          cp /tmp/meridiano-v45-generated/practicas/corporativo-societario-gobierno.html w45-generated-artifact/practicas/
+          cp /tmp/meridiano-v45-generated/servicios-continuos/direccion-juridica-externa.html w45-generated-artifact/servicios-continuos/
       - name: Select browser root
         run: |
-          if [ "$W45_MODE" = 'persisted' ]; then
+          if [ "$W45_PARITY" = 'match' ]; then
             echo "W45_SERVE_ROOT=$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
           else
             echo 'W45_SERVE_ROOT=/tmp/meridiano-v45-generated' >> "$GITHUB_ENV"
@@ -170,22 +184,22 @@ jobs:
           done
           cat /tmp/meridiano-v45-http.log >&2 || true
           exit 1
-      - name: Run persisted-equivalent Browser and axe gate
+      - name: Run candidate Browser, link integrity and axe gate
         run: |
           npx playwright test tests/e2e/v8-pilot-materialization.spec.mjs \
             --project=chromium-desktop \
             --project=chromium-mobile \
             --project=webkit-desktop
-      - name: Upload bootstrap target bytes
-        if: env.W45_MODE == 'bootstrap' && success()
+      - name: Upload generated target bytes
+        if: env.W45_PARITY != 'match' && success()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
-          name: w45-v8-public-tree-bootstrap-targets
-          path: w45-bootstrap-artifact
+          name: w45-v8-public-tree-generated-targets
+          path: w45-generated-artifact
           if-no-files-found: error
           retention-days: 7
-      - name: Persist certified bootstrap targets atomically
-        if: env.W45_MODE == 'bootstrap' && success() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+      - name: Persist or refresh certified targets atomically
+        if: env.W45_PARITY != 'match' && success() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
         shell: bash
         run: |
           test "$(git rev-parse HEAD)" = '${{ github.event.pull_request.head.sha }}'
@@ -205,7 +219,12 @@ jobs:
           test "$staged" = "$expected"
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git commit -m 'build(v8): persist W4.5 certified pilot targets'
+          if [ "$W45_PARITY" = 'bootstrap' ]; then
+            message='build(v8): persist W4.5 certified pilot targets'
+          else
+            message='build(v8): refresh W4.5 certified pilot targets'
+          fi
+          git commit -m "$message"
           git push origin HEAD:${{ github.event.pull_request.head.ref }}
       - name: Upload failure artifacts
         if: failure()
