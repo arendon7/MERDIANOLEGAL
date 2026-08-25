@@ -5,12 +5,14 @@ Estados permitidos:
 - bootstrap: 0/3 targets, baseline físico de 46 HTML;
 - persisted: 3/3 targets, candidate físico de 49 HTML.
 
-Cualquier estado parcial falla. En persisted, todos los enlaces locales visibles
-de los targets deben resolver físicamente: durante rollout parcial se admite
-fallback a legacy, pero nunca una ruta v8 futura inexistente.
+Cualquier estado parcial falla. `--preflight` valida topología, SEO boundary,
+legacy y estructura target, pero permite que un target persistido esté stale
+respecto a la política actual de links mientras CI prepara un refresh. El gate
+final sin `--preflight` exige además cero enlaces locales rotos.
 """
 from __future__ import annotations
 
+from argparse import ArgumentParser
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
 import json
@@ -79,9 +81,8 @@ def validate_local_links(page: Path, html: str, pilot_id: str) -> None:
 def validate_non_activation(pilots: list[dict], route_contract: dict) -> None:
     sitemap = SITEMAP.read_text(encoding="utf-8")
     home = HOME.read_text(encoding="utf-8")
-    target_routes = [pilot["target_route"] for pilot in pilots]
-
-    for route in target_routes:
+    for pilot in pilots:
+        route = pilot["target_route"]
         if route in sitemap:
             fail(f"target v8 apareció prematuramente en sitemap: {route}")
         if route in home:
@@ -103,8 +104,7 @@ def validate_legacy(route_contract: dict, base_url: str) -> None:
     if len(rows) != 46:
         fail(f"route contract legacy debe conservar 46 filas; encontró {len(rows)}")
     index = {name: idx for idx, name in enumerate(fields)}
-    required = {"id", "current", "indexed"}
-    if not required.issubset(index):
+    if not {"id", "current", "indexed"}.issubset(index):
         fail("route contract carece de campos legacy requeridos")
 
     for row in rows:
@@ -130,7 +130,7 @@ def validate_legacy(route_contract: dict, base_url: str) -> None:
                 fail(f"{route_id}: canonical legacy cambió {canonical!r} != {expected!r}")
 
 
-def validate_persisted(pilots: list[dict], base_url: str) -> None:
+def validate_persisted(pilots: list[dict], base_url: str, *, check_links: bool) -> None:
     html_files = sorted(ROOT.rglob("*.html"))
     if len(html_files) != 49:
         fail(f"persisted candidate debe tener 49 HTML (46+3); encontró {len(html_files)}")
@@ -158,10 +158,11 @@ def validate_persisted(pilots: list[dict], base_url: str) -> None:
             fail(f"{pilot['id']}: target debe tener exactamente un H1")
         if re.search(r"<form\b", html, flags=re.I):
             fail(f"{pilot['id']}: target no puede crear form físico")
-        validate_local_links(path, html, pilot["id"])
+        if check_links:
+            validate_local_links(path, html, pilot["id"])
 
 
-def main() -> int:
+def run(*, preflight: bool) -> int:
     model = load(MODEL)
     route_contract = load(ROUTES)
     site = load(SITE)
@@ -189,9 +190,19 @@ def main() -> int:
         print("VALIDATE V8 PUBLIC TREE BOOTSTRAP OK: 46 legacy intactos, 0/3 targets y cero activación v8.")
         return 0
 
-    validate_persisted(pilots, base_url)
-    print("VALIDATE V8 PUBLIC TREE PERSISTED OK: 49 HTML = 46 legacy + 3 targets noindex, sin activación pública y sin links locales rotos.")
+    validate_persisted(pilots, base_url, check_links=not preflight)
+    if preflight:
+        print("VALIDATE V8 PUBLIC TREE PREFLIGHT OK: 49 HTML, SEO boundary y legacy íntegros; link parity se valida tras refresh.")
+    else:
+        print("VALIDATE V8 PUBLIC TREE PERSISTED OK: 49 HTML = 46 legacy + 3 targets noindex, sin activación pública y sin links locales rotos.")
     return 0
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = ArgumentParser()
+    parser.add_argument("--preflight", action="store_true")
+    args = parser.parse_args(argv)
+    return run(preflight=args.preflight)
 
 
 if __name__ == "__main__":
