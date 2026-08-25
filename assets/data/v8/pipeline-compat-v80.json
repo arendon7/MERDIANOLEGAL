@@ -15,7 +15,8 @@
   "legacy_projection": {
     "strict_validators": [
       "scripts/validate_experience_v60.py",
-      "scripts/validate_experience_solutions_v60.py"
+      "scripts/validate_experience_solutions_v60.py",
+      "scripts/validate_growth_v51.py"
     ],
     "remove_before_strict_validation": [
       "soluciones/sistema-contractual-empresarial.html",
