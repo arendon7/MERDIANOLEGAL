@@ -2,26 +2,12 @@
   "schema_version": "1.0.0",
   "contract": "v8-route-compatibility",
   "status": "planning",
-  "baseline": [
-    "7.4.0",
-    "86813813e29dd6b47105ba7fb6259630fcd9cb5b",
-    46,
-    43
-  ],
-  "legacy_route_fields": [
-    "id",
-    "current",
-    "target",
-    "action",
-    "family",
-    "indexed",
-    "sitemap",
-    "priority"
-  ],
+  "baseline": ["7.4.0","86813813e29dd6b47105ba7fb6259630fcd9cb5b",46,43],
+  "legacy_route_fields": ["id","current","target","action","family","indexed","sitemap","priority"],
   "legacy_routes": [
     ["T01","/","/","KEEP","home",true,true,"P0"],
     ["T02","/firma.html","/firma.html","KEEP","firm",true,true,"P2"],
-    ["T03","/experiencia.html","/experiencia.html","RENAME","method",true,false,"P2"],
+    ["T03","/experiencia.html","/experiencia.html","RENAME","method",false,false,"P2"],
     ["T04","/demo.html","/demo.html","KEEP","demo",false,false,"P2"],
     ["T05","/perspectivas.html","/perspectivas.html","KEEP","insights",true,true,"P2"],
     ["T06","/aviso-legal.html","/aviso-legal.html","KEEP","legal",true,true,"P3"],
@@ -67,28 +53,9 @@
     ["I06","/perspectivas/socios-inversion-gobierno.html","/perspectivas/socios-inversion-gobierno.html","KEEP","insight",true,true,"P2"]
   ],
   "target_families": {
-    "practices": [
-      ["PR01","/practicas/contratacion-negocios.html"],
-      ["PR02","/practicas/corporativo-societario-gobierno.html"],
-      ["PR03","/practicas/propiedad-intelectual-activos-intangibles.html"],
-      ["PR04","/practicas/tecnologia-datos-inteligencia-artificial.html"],
-      ["PR05","/practicas/regulacion-infraestructura-proyectos.html"],
-      ["PR06","/practicas/legal-operations-transformacion-juridica.html"]
-    ],
-    "solutions": [
-      ["SO01","/soluciones/diagnostico-juridico-empresarial.html"],
-      ["SO02","/soluciones/empresa-juridicamente-organizada.html"],
-      ["SO03","/soluciones/sistema-proteccion-activos-intangibles.html"],
-      ["SO04","/soluciones/empresa-lista-para-inversion.html"],
-      ["SO05","/soluciones/programa-gobernanza-ia.html"],
-      ["SO06","/soluciones/proyecto-regulado-estructurado.html"],
-      ["SO07","/soluciones/sistema-contractual-empresarial.html"],
-      ["SO08","/soluciones/programa-cumplimiento-digital.html"]
-    ],
-    "recurring": [
-      ["RC01","/servicios-continuos/direccion-juridica-externa.html",true],
-      ["RC02","/servicios-continuos/meridiano-contratos.html",false]
-    ]
+    "practices": [["PR01","/practicas/contratacion-negocios.html"],["PR02","/practicas/corporativo-societario-gobierno.html"],["PR03","/practicas/propiedad-intelectual-activos-intangibles.html"],["PR04","/practicas/tecnologia-datos-inteligencia-artificial.html"],["PR05","/practicas/regulacion-infraestructura-proyectos.html"],["PR06","/practicas/legal-operations-transformacion-juridica.html"]],
+    "solutions": [["SO01","/soluciones/diagnostico-juridico-empresarial.html"],["SO02","/soluciones/empresa-juridicamente-organizada.html"],["SO03","/soluciones/sistema-proteccion-activos-intangibles.html"],["SO04","/soluciones/empresa-lista-para-inversion.html"],["SO05","/soluciones/programa-gobernanza-ia.html"],["SO06","/soluciones/proyecto-regulado-estructurado.html"],["SO07","/soluciones/sistema-contractual-empresarial.html"],["SO08","/soluciones/programa-cumplimiento-digital.html"]],
+    "recurring": [["RC01","/servicios-continuos/direccion-juridica-externa.html",true],["RC02","/servicios-continuos/meridiano-contratos.html",false]]
   },
   "policies": {
     "legacy_removal": "forbidden_until_w42_certified",
