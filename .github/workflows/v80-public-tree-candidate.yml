@@ -1,0 +1,239 @@
+name: V8.0 public-tree candidate
+
+on:
+  pull_request:
+    branches:
+      - design/v8-pilot-materialization-w44
+      - main
+    paths:
+      - assets/data/v8/**
+      - assets/css/v8/**
+      - catalog-products-v41/**
+      - catalog-services-v42/**
+      - soluciones/sistema-contractual-empresarial.html
+      - practicas/corporativo-societario-gobierno.html
+      - servicios-continuos/direccion-juridica-externa.html
+      - scripts/render_v8_pilot.py
+      - scripts/materialize_v8_pilot.py
+      - scripts/validate_v8_pilot_materialized.py
+      - scripts/validate_v8_public_tree.py
+      - scripts/validate_v8_contrast_tokens.py
+      - tests/e2e/v8-pilot-materialization.spec.mjs
+      - sitemap.xml
+      - index.html
+      - robots.txt
+      - version.json
+      - .github/workflows/v80-public-tree-candidate.yml
+  workflow_dispatch:
+
+concurrency:
+  group: meridiano-v80-public-tree-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  candidate:
+    name: Bootstrap, refresh or validate persisted v8 public tree
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      MERIDIANO_BASE_URL: http://127.0.0.1:8000/
+    steps:
+      - name: Checkout candidate head
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: true
+          fetch-depth: 0
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.12'
+      - name: Setup Node.js with npm cache
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+      - name: Detect W4.5 physical mode
+        shell: bash
+        run: |
+          targets=(
+            soluciones/sistema-contractual-empresarial.html
+            practicas/corporativo-societario-gobierno.html
+            servicios-continuos/direccion-juridica-externa.html
+          )
+          count=0
+          for target in "${targets[@]}"; do
+            if [ -f "$target" ]; then count=$((count + 1)); fi
+          done
+          if [ "$count" -eq 0 ]; then
+            echo 'W45_MODE=bootstrap' >> "$GITHUB_ENV"
+            echo 'W4.5 bootstrap: 0/3 targets persisted.'
+          elif [ "$count" -eq 3 ]; then
+            echo 'W45_MODE=persisted' >> "$GITHUB_ENV"
+            echo 'W4.5 persisted physical tree: 3/3 targets present.'
+          else
+            echo "Partial public tree is forbidden: $count/3 targets." >&2
+            exit 1
+          fi
+      - name: Compile W4.5 contracts
+        run: |
+          python3 -m py_compile \
+            scripts/render_v8_pilot.py \
+            scripts/materialize_v8_pilot.py \
+            scripts/validate_v8_pilot_materialized.py \
+            scripts/validate_v8_public_tree.py \
+            scripts/validate_v8_contrast_tokens.py
+      - name: Validate source truth and no-activation preflight
+        run: |
+          python3 scripts/render_v8_pilot.py --check
+          python3 scripts/validate_v8_contrast_tokens.py
+          python3 scripts/validate_v8_public_tree.py --preflight
+          python3 scripts/canonical_pipeline_v524.py validate
+      - name: Prove protected public surfaces did not change
+        if: github.event_name == 'pull_request'
+        run: |
+          base='${{ github.event.pull_request.base.sha }}'
+          git diff --exit-code "$base" -- \
+            index.html sitemap.xml robots.txt version.json \
+            productos/sistema-contractual-empresarial.html \
+            servicios/sociedades-gobierno-inversion.html \
+            servicios/direccion-juridica-externa.html
+      - name: Build clean generated candidate
+        shell: bash
+        run: |
+          rm -rf /tmp/meridiano-v45-generated
+          cp -a . /tmp/meridiano-v45-generated
+          rm -f \
+            /tmp/meridiano-v45-generated/soluciones/sistema-contractual-empresarial.html \
+            /tmp/meridiano-v45-generated/practicas/corporativo-societario-gobierno.html \
+            /tmp/meridiano-v45-generated/servicios-continuos/direccion-juridica-externa.html \
+            /tmp/meridiano-v45-generated/.v8-pilot-materialization.json
+          cd /tmp/meridiano-v45-generated
+          python3 scripts/materialize_v8_pilot.py --root . --allow-working-tree
+          python3 scripts/validate_v8_pilot_materialized.py
+      - name: Detect generated and persisted byte parity
+        shell: bash
+        run: |
+          if [ "$W45_MODE" = 'bootstrap' ]; then
+            echo 'W45_PARITY=bootstrap' >> "$GITHUB_ENV"
+            echo 'No persisted targets yet; bootstrap write required after PASS.'
+            exit 0
+          fi
+          if \
+            cmp --silent /tmp/meridiano-v45-generated/soluciones/sistema-contractual-empresarial.html soluciones/sistema-contractual-empresarial.html && \
+            cmp --silent /tmp/meridiano-v45-generated/practicas/corporativo-societario-gobierno.html practicas/corporativo-societario-gobierno.html && \
+            cmp --silent /tmp/meridiano-v45-generated/servicios-continuos/direccion-juridica-externa.html servicios-continuos/direccion-juridica-externa.html; then
+            echo 'W45_PARITY=match' >> "$GITHUB_ENV"
+            echo 'BYTE PARITY MATCH: persisted targets exactly match current generated outputs.'
+          else
+            echo 'W45_PARITY=refresh' >> "$GITHUB_ENV"
+            echo 'BYTE PARITY REFRESH: persisted targets are stale and will only be replaced after generated Browser/Axe PASS.'
+          fi
+      - name: Validate final persisted tree when parity matches
+        if: env.W45_PARITY == 'match'
+        run: python3 scripts/validate_v8_public_tree.py
+      - name: Prepare generated target artifact
+        if: env.W45_PARITY != 'match'
+        run: |
+          rm -rf w45-generated-artifact
+          mkdir -p w45-generated-artifact/soluciones w45-generated-artifact/practicas w45-generated-artifact/servicios-continuos
+          cp /tmp/meridiano-v45-generated/soluciones/sistema-contractual-empresarial.html w45-generated-artifact/soluciones/
+          cp /tmp/meridiano-v45-generated/practicas/corporativo-societario-gobierno.html w45-generated-artifact/practicas/
+          cp /tmp/meridiano-v45-generated/servicios-continuos/direccion-juridica-externa.html w45-generated-artifact/servicios-continuos/
+      - name: Select browser root
+        run: |
+          if [ "$W45_PARITY" = 'match' ]; then
+            echo "W45_SERVE_ROOT=$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+          else
+            echo 'W45_SERVE_ROOT=/tmp/meridiano-v45-generated' >> "$GITHUB_ENV"
+          fi
+      - name: Validate E2E syntax
+        run: |
+          node --check playwright.config.mjs
+          node --check tests/e2e/v8-pilot-materialization.spec.mjs
+      - name: Install locked QA dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Prefer official Ubuntu mirrors for browser dependencies
+        run: |
+          if [ -f /etc/apt/apt-mirrors.txt ]; then
+            printf 'https://archive.ubuntu.com/ubuntu/\tpriority:1\nhttps://security.ubuntu.com/ubuntu/\tpriority:2\n' \
+              | sudo tee /etc/apt/apt-mirrors.txt >/dev/null
+          fi
+          printf '%s\n' \
+            'Acquire::Retries "3";' \
+            'Acquire::http::Timeout "30";' \
+            'Acquire::https::Timeout "30";' \
+            | sudo tee /etc/apt/apt.conf.d/80meridiano-network >/dev/null
+      - name: Install Chromium and WebKit
+        run: timeout 900s npx playwright install --with-deps chromium webkit
+      - name: Start local candidate server
+        shell: bash
+        run: |
+          cd "$W45_SERVE_ROOT"
+          python3 -m http.server 8000 --bind 127.0.0.1 > /tmp/meridiano-v45-http.log 2>&1 &
+          echo $! > /tmp/meridiano-v45-http.pid
+          for i in {1..20}; do
+            if curl --fail --silent http://127.0.0.1:8000/soluciones/sistema-contractual-empresarial.html > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/meridiano-v45-http.log >&2 || true
+          exit 1
+      - name: Run candidate Browser, link integrity and axe gate
+        run: |
+          npx playwright test tests/e2e/v8-pilot-materialization.spec.mjs \
+            --project=chromium-desktop \
+            --project=chromium-mobile \
+            --project=webkit-desktop
+      - name: Upload generated target bytes
+        if: env.W45_PARITY != 'match' && success()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: w45-v8-public-tree-generated-targets
+          path: w45-generated-artifact
+          if-no-files-found: error
+          retention-days: 7
+      - name: Persist or refresh certified targets atomically
+        if: env.W45_PARITY != 'match' && success() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        shell: bash
+        run: |
+          test "$(git rev-parse HEAD)" = '${{ github.event.pull_request.head.sha }}'
+          mkdir -p soluciones practicas servicios-continuos
+          cp /tmp/meridiano-v45-generated/soluciones/sistema-contractual-empresarial.html soluciones/sistema-contractual-empresarial.html
+          cp /tmp/meridiano-v45-generated/practicas/corporativo-societario-gobierno.html practicas/corporativo-societario-gobierno.html
+          cp /tmp/meridiano-v45-generated/servicios-continuos/direccion-juridica-externa.html servicios-continuos/direccion-juridica-externa.html
+          git add -- \
+            soluciones/sistema-contractual-empresarial.html \
+            practicas/corporativo-societario-gobierno.html \
+            servicios-continuos/direccion-juridica-externa.html
+          expected=$(printf '%s\n' \
+            practicas/corporativo-societario-gobierno.html \
+            servicios-continuos/direccion-juridica-externa.html \
+            soluciones/sistema-contractual-empresarial.html | sort)
+          staged=$(git diff --cached --name-only | sort)
+          test "$staged" = "$expected"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          if [ "$W45_PARITY" = 'bootstrap' ]; then
+            message='build(v8): persist W4.5 certified pilot targets'
+          else
+            message='build(v8): refresh W4.5 certified pilot targets'
+          fi
+          git commit -m "$message"
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
+      - name: Upload failure artifacts
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: w45-v8-public-tree-failure-artifacts
+          path: |
+            playwright-report
+            test-results
+            /tmp/meridiano-v45-http.log
+          if-no-files-found: ignore
+          retention-days: 7
