@@ -9,107 +9,164 @@ Actualizado: 2026-08-25.
 - Release productiva: **v7.4.0 — Commercial Evidence Readiness**.
 - Analytics: `readiness-disabled`.
 - Capability truth v7.4 permanece vigente mientras v8 está en diseño.
+- `stable` no se modifica manualmente.
 
 ## Frente vigente
 
-**W4.1 — v8 Client Architecture & Taxonomy.**
+**W4.2 — v8 Route Compatibility & SEO Contract.**
 
-Rama: `design/v8-client-architecture-w41`.
+Rama: `design/v8-route-compat-w42`.
+Base lógica: `design/v8-client-architecture-w41`.
 
-Este frente es exclusivamente de arquitectura, truth mapping y migración. No modifica todavía HTML público, CSS, JS, sitemap, formularios, precios, analítica ni `stable`.
+W4.2 convierte la arquitectura W4.1 en un contrato técnico verificable. No activa todavía nuevas rutas públicas ni mueve páginas históricas.
 
-## Problema observable
+## W4.1 — estado
 
-La oferta certificada expone simultáneamente `productos`, `servicios` y `soluciones/necesidades`. Existen intenciones de compra solapadas entre estas familias y el visitante debe comprender la taxonomía interna antes de reconocer la intervención adecuada.
+PR draft #183 contra `main`:
 
-La profundidad jurídica/comercial de catálogos v4.1/v4.2 se preserva; el problema a resolver es descubrimiento, jerarquía y arquitectura de compra.
+- ADR-008 de arquitectura/taxonomía;
+- matriz 46/46;
+- canon de 6 prácticas, 8 soluciones y servicios continuos;
+- Meridiano Contratos bloqueado hasta capability contract verificable.
 
-## Decisión v8 propuesta
+## Evidencia W4.2 materializada
 
-Tres familias públicas:
+### 1. Route contract estructurado
 
-1. **Prácticas** — 6 dominios de expertise.
-2. **Soluciones** — 8 intervenciones de alcance definido.
-3. **Servicios continuos** — Dirección Jurídica Externa y, solo tras capability contract, Meridiano Contratos.
+`assets/data/v8/route-contract-v80.json`
 
-La cifra de 46 HTML pasa de invariante de producto a baseline histórico de migración. Ninguna URL legacy se elimina sin mapping, compatibilidad y gates.
+Declara:
 
-## Evidencia W4.1 ya materializada
+- baseline v7.4;
+- 46 legacy routes;
+- 43 URLs del sitemap baseline;
+- current → target;
+- acción KEEP/RENAME/MOVE/MERGE;
+- familia;
+- indexación;
+- sitemap;
+- prioridad;
+- 6 prácticas target;
+- 8 soluciones target;
+- 2 recurrentes target;
+- RC02 Meridiano Contratos `publishable=false`.
 
-1. `knowledge/10_DECISIONES/ADR-008-v8-client-architecture-taxonomy.md`
-   - define la nueva taxonomía;
-   - cambia el tratamiento del invariante 46 HTML;
-   - fija capability boundary de Meridiano Contratos;
-   - define rollout y no objetivos.
+### 2. Validator
 
-2. `knowledge/20_DESIGN/V8-ROUTE-MIGRATION-MATRIX.md`
-   - top-level 9/9;
-   - productos 8/8;
-   - servicios 8/8;
-   - soluciones/necesidades 7/7;
-   - sectores 8/8;
-   - perspectivas 6/6;
-   - cobertura total 46/46.
+`scripts/validate_route_contract_v80.py`
 
-3. `knowledge/20_DESIGN/V8-OFFER-CANON.md`
-   - 6 prácticas con fuentes;
-   - 8 soluciones con fuentes;
-   - Dirección Jurídica Externa preservada;
-   - Meridiano Contratos mantenido como hipótesis pendiente de contrato verificable;
-   - relación práctica → solución → continuidad.
+Debe demostrar:
 
-## Riesgos abiertos
+- 46/46 rutas legacy cubiertas;
+- árbol físico == contrato;
+- 43/43 sitemap URLs == contrato baseline;
+- self-canonical baseline para indexables;
+- demo/404 noindex;
+- 6 prácticas;
+- 8 soluciones;
+- 2 recurrentes;
+- RC02 bloqueado;
+- legacy removal prohibido antes de certificación;
+- no asumir redirects de servidor en GitHub Pages.
 
-### R1 — P01/S01
+### 3. Contrato técnico SEO/compatibilidad
 
-Diagnóstico Jurídico Empresarial existe hoy como producto y servicio. Antes del merge semántico debe construirse una parity matrix de alcance, entregables, perímetro, tiempos y límites.
+`knowledge/20_DESIGN/V8-ROUTE-COMPATIBILITY-SEO.md`
 
-### R2 — GitHub Pages / aliases
+Define:
 
-No asumir redirects de servidor. W4.2 debe definir y probar estrategia real de aliases/canonical para rutas legacy.
+- estrategia dual-route → canonical handoff → legacy alias;
+- canonical policy;
+- sitemap generado desde route contract al activar v8;
+- breadcrumbs/schema por familia;
+- internal linking a target routes;
+- inventario de materializadores/validators afectados;
+- nuevos invariantes v8;
+- rollback a v7.4.
 
-### R3 — validators estructurales
+### 4. Gate CI
 
-Los validators actuales esperan 46 HTML y 8 productos + 8 servicios. No se cambian hasta existir contrato técnico v8 y pruebas equivalentes o más estrictas.
+`.github/workflows/v80-route-contract-candidate.yml`
 
-### R4 — Meridiano Contratos
+Ejecuta únicamente:
 
-No publicar como plataforma/portal/producto cerrado hasta documentar:
+1. compilación del validator;
+2. `validate_route_contract_v80.py`;
+3. `canonical_pipeline_v524.py validate`.
 
-- unidad comercial;
-- intake y workflow;
-- revisión humana;
-- tecnología real;
-- autenticación/almacenamiento si existen;
-- seguridad;
-- versionado;
-- mantenimiento;
-- SLA/soporte si se prometen;
-- límites y suplementos.
+No construye, despliega ni promueve `stable`.
 
-## Siguiente subfrente — W4.2
+## Hallazgos técnicos W4.2
 
-**Route Compatibility & SEO Contract.**
+### H1 — `validate_site.py`
 
-Debe producir:
+Hardcodea topología v7: 16 fichas, 6 perspectivas, 8 sectores y rutas históricas.
 
-1. estrategia GitHub Pages para legacy routes;
-2. canonical policy;
-3. sitemap target;
-4. breadcrumb target;
-5. aliases vs intent landings;
-6. inventario de validators/tests afectados;
-7. diseño de nuevos invariantes estructurales;
-8. plan de rollback a v7.4;
-9. smoke contract para legacy URLs;
-10. candidate de migración sin tocar `stable`.
+### H2 — materializadores de catálogo
 
-## Definition of Done W4.1
+`build_catalog_shells.py` y `render_services_v42.mjs` dependen de `/productos/` y `/servicios/`.
 
-- ADR-008 escrito;
-- matriz 46/46 completa;
-- canon 6 prácticas / 8 soluciones / recurrentes documentado;
-- fuentes de verdad identificadas;
-- nuevos claims bloqueados donde no existe evidencia;
-- `stable` intacta;
-- PR de planificación abierto contra `main` para revisión.
+### H3 — `/soluciones/`
+
+Experience v6 trata esa carpeta como exactamente seis rutas de necesidad + hub. v8 la redefine como ocho soluciones canónicas, por lo que requiere version-gating y renderer v8.
+
+### H4 — producción/SEO
+
+`apply_production_v50.py` no recorre `soluciones/` ni futuras `practicas/` o `servicios-continuos/`; además no genera el sitemap, solo normaliza base URL.
+
+### H5 — E2E
+
+`public-site.spec.mjs` fija 16 fichas y old routes. No debe silenciarse: v8 necesita nuevos contratos y smoke legacy paralelo.
+
+### H6 — pipeline
+
+El pipeline conserva 30 pasos históricos y una extensión v6. W4.3 debe incorporar v8 mediante version-gating/extensión compartida Builder == Pages, sin inventar un paso histórico 31.
+
+## Piloto definido para W4.3
+
+Tres superficies representativas:
+
+1. **SO07 — Sistema Contractual Empresarial**
+   - legacy: `/productos/sistema-contractual-empresarial.html`;
+   - target: `/soluciones/sistema-contractual-empresarial.html`.
+
+2. **PR02 — Corporativo, Societario y Gobierno**
+   - legacy: `/servicios/sociedades-gobierno-inversion.html`;
+   - target: `/practicas/corporativo-societario-gobierno.html`.
+
+3. **RC01 — Dirección Jurídica Externa**
+   - legacy: `/servicios/direccion-juridica-externa.html`;
+   - target: `/servicios-continuos/direccion-juridica-externa.html`.
+
+RC02 Meridiano Contratos queda fuera del piloto.
+
+## Siguiente frente — W4.3
+
+**v8 Renderer & Design-System Pilot Infrastructure.**
+
+Debe crear, antes de mover producción:
+
+1. experience model v8 para las tres familias;
+2. renderer v8 source-driven;
+3. design tokens/componentes consolidados;
+4. version gate en pipeline/materializadores históricos;
+5. validator de truth parity para los tres pilotos;
+6. target pages en candidate;
+7. E2E target + smoke legacy;
+8. desktop/mobile/keyboard/axe;
+9. idempotencia;
+10. rollback completo a v7.4.
+
+## Definition of Done W4.2
+
+- route contract estructurado;
+- 46/46 legacy routes clasificadas y verificables;
+- 43/43 sitemap baseline modelado;
+- canonical/alias policy definida;
+- sitemap target policy definida;
+- validators/materializadores afectados inventariados;
+- nuevos invariantes definidos;
+- gate CI dedicado creado;
+- piloto W4.3 seleccionado;
+- RC02 bloqueado;
+- `stable` intacta.
