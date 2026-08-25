@@ -8,165 +8,164 @@ Actualizado: 2026-08-25.
 - `main == stable == 86813813e29dd6b47105ba7fb6259630fcd9cb5b`.
 - Release productiva: **v7.4.0 — Commercial Evidence Readiness**.
 - Analytics: `readiness-disabled`.
-- Capability truth v7.4 permanece vigente mientras v8 está en diseño.
+- Capability truth v7.4 permanece vigente.
 - `stable` no se modifica manualmente.
+
+## Stack v8 abierto
+
+### W4.1 — Client Architecture & Taxonomy
+
+- rama: `design/v8-client-architecture-w41`;
+- PR draft: #183;
+- 46/46 superficies clasificadas;
+- 6 prácticas + 8 soluciones + servicios continuos;
+- ADR-008;
+- RC02 Meridiano Contratos bloqueado hasta capability contract verificable.
+
+### W4.2 — Route Compatibility & SEO Contract
+
+- rama: `design/v8-route-compat-w42`;
+- PR draft: #184, apilado sobre W4.1;
+- `assets/data/v8/route-contract-v80.json`;
+- 46 legacy routes + 43 sitemap URLs modeladas;
+- canonical/alias/sitemap policy;
+- `scripts/validate_route_contract_v80.py`;
+- workflow candidate dedicado.
+
+El workflow W4.2 aún no registra una ejecución en el SHA del PR apilado; no se declara PASS sin evidencia.
 
 ## Frente vigente
 
-**W4.2 — v8 Route Compatibility & SEO Contract.**
+**W4.3 — v8 Renderer & Design-System Pilot Infrastructure.**
 
-Rama: `design/v8-route-compat-w42`.
-Base lógica: `design/v8-client-architecture-w41`.
+Rama: `design/v8-pilot-infrastructure-w43`.
+Base lógica: W4.2.
 
-W4.2 convierte la arquitectura W4.1 en un contrato técnico verificable. No activa todavía nuevas rutas públicas ni mueve páginas históricas.
+W4.3 prepara el renderer y sistema visual sin activar nuevas superficies públicas.
 
-## W4.1 — estado
-
-PR draft #183 contra `main`:
-
-- ADR-008 de arquitectura/taxonomía;
-- matriz 46/46;
-- canon de 6 prácticas, 8 soluciones y servicios continuos;
-- Meridiano Contratos bloqueado hasta capability contract verificable.
-
-## Evidencia W4.2 materializada
-
-### 1. Route contract estructurado
-
-`assets/data/v8/route-contract-v80.json`
-
-Declara:
-
-- baseline v7.4;
-- 46 legacy routes;
-- 43 URLs del sitemap baseline;
-- current → target;
-- acción KEEP/RENAME/MOVE/MERGE;
-- familia;
-- indexación;
-- sitemap;
-- prioridad;
-- 6 prácticas target;
-- 8 soluciones target;
-- 2 recurrentes target;
-- RC02 Meridiano Contratos `publishable=false`.
-
-### 2. Validator
-
-`scripts/validate_route_contract_v80.py`
-
-Debe demostrar:
-
-- 46/46 rutas legacy cubiertas;
-- árbol físico == contrato;
-- 43/43 sitemap URLs == contrato baseline;
-- self-canonical baseline para indexables;
-- demo/404 noindex;
-- 6 prácticas;
-- 8 soluciones;
-- 2 recurrentes;
-- RC02 bloqueado;
-- legacy removal prohibido antes de certificación;
-- no asumir redirects de servidor en GitHub Pages.
-
-### 3. Contrato técnico SEO/compatibilidad
-
-`knowledge/20_DESIGN/V8-ROUTE-COMPATIBILITY-SEO.md`
-
-Define:
-
-- estrategia dual-route → canonical handoff → legacy alias;
-- canonical policy;
-- sitemap generado desde route contract al activar v8;
-- breadcrumbs/schema por familia;
-- internal linking a target routes;
-- inventario de materializadores/validators afectados;
-- nuevos invariantes v8;
-- rollback a v7.4.
-
-### 4. Gate CI
-
-`.github/workflows/v80-route-contract-candidate.yml`
-
-Ejecuta únicamente:
-
-1. compilación del validator;
-2. `validate_route_contract_v80.py`;
-3. `canonical_pipeline_v524.py validate`.
-
-No construye, despliega ni promueve `stable`.
-
-## Hallazgos técnicos W4.2
-
-### H1 — `validate_site.py`
-
-Hardcodea topología v7: 16 fichas, 6 perspectivas, 8 sectores y rutas históricas.
-
-### H2 — materializadores de catálogo
-
-`build_catalog_shells.py` y `render_services_v42.mjs` dependen de `/productos/` y `/servicios/`.
-
-### H3 — `/soluciones/`
-
-Experience v6 trata esa carpeta como exactamente seis rutas de necesidad + hub. v8 la redefine como ocho soluciones canónicas, por lo que requiere version-gating y renderer v8.
-
-### H4 — producción/SEO
-
-`apply_production_v50.py` no recorre `soluciones/` ni futuras `practicas/` o `servicios-continuos/`; además no genera el sitemap, solo normaliza base URL.
-
-### H5 — E2E
-
-`public-site.spec.mjs` fija 16 fichas y old routes. No debe silenciarse: v8 necesita nuevos contratos y smoke legacy paralelo.
-
-### H6 — pipeline
-
-El pipeline conserva 30 pasos históricos y una extensión v6. W4.3 debe incorporar v8 mediante version-gating/extensión compartida Builder == Pages, sin inventar un paso histórico 31.
-
-## Piloto definido para W4.3
-
-Tres superficies representativas:
+## Pilotos exactos
 
 1. **SO07 — Sistema Contractual Empresarial**
+   - fuente: `catalog-products-v41/p07-contractual.json`;
    - legacy: `/productos/sistema-contractual-empresarial.html`;
-   - target: `/soluciones/sistema-contractual-empresarial.html`.
+   - target futuro: `/soluciones/sistema-contractual-empresarial.html`.
 
 2. **PR02 — Corporativo, Societario y Gobierno**
+   - fuente: `catalog-services-v42/s04-societario.json`;
    - legacy: `/servicios/sociedades-gobierno-inversion.html`;
-   - target: `/practicas/corporativo-societario-gobierno.html`.
+   - target futuro: `/practicas/corporativo-societario-gobierno.html`.
 
 3. **RC01 — Dirección Jurídica Externa**
+   - fuente: `catalog-services-v42/s02-direccion.json`;
    - legacy: `/servicios/direccion-juridica-externa.html`;
-   - target: `/servicios-continuos/direccion-juridica-externa.html`.
+   - target futuro: `/servicios-continuos/direccion-juridica-externa.html`.
 
-RC02 Meridiano Contratos queda fuera del piloto.
+RC02 Meridiano Contratos está fuera de W4.3.
 
-## Siguiente frente — W4.3
+## Evidencia W4.3 materializada
 
-**v8 Renderer & Design-System Pilot Infrastructure.**
+### Experience model
 
-Debe crear, antes de mover producción:
+`assets/data/v8/experience-model-v80.json`
 
-1. experience model v8 para las tres familias;
-2. renderer v8 source-driven;
-3. design tokens/componentes consolidados;
-4. version gate en pipeline/materializadores históricos;
-5. validator de truth parity para los tres pilotos;
-6. target pages en candidate;
-7. E2E target + smoke legacy;
-8. desktop/mobile/keyboard/axe;
-9. idempotencia;
-10. rollback completo a v7.4.
+- referencia fuentes canónicas, no duplica contenido;
+- diferencia `solution`, `practice`, `recurring`;
+- preserva commercial intent/modality histórico de los tres pilotos;
+- `commit_target_html=false`;
+- `candidate_indexing=noindex`;
+- `legacy_routes_unchanged=true`.
 
-## Definition of Done W4.2
+### Renderer
 
-- route contract estructurado;
-- 46/46 legacy routes clasificadas y verificables;
-- 43/43 sitemap baseline modelado;
-- canonical/alias policy definida;
-- sitemap target policy definida;
-- validators/materializadores afectados inventariados;
-- nuevos invariantes definidos;
-- gate CI dedicado creado;
-- piloto W4.3 seleccionado;
-- RC02 bloqueado;
-- `stable` intacta.
+`scripts/render_v8_pilot.py`
+
+- `--check`: render doble determinista + truth parity completa en memoria;
+- `--preview SO07|PR02|RC01`: HTML a stdout;
+- no tiene modo de escritura pública;
+- traduce relacionados legacy usando el route contract;
+- no crea segundo formulario;
+- mantiene targets como `noindex` durante piloto.
+
+### Design system
+
+`assets/css/v8/`:
+
+- `tokens.css`;
+- `base.css`;
+- `components.css`;
+- `surfaces.css`.
+
+Consolida identidad v6 en una gramática semántica y distingue solución/práctica/recurrente sin crear marcas separadas.
+
+### Gate de no activación
+
+`scripts/validate_v8_pilot_infra.py`
+
+Exige:
+
+- tres pilotos exactos;
+- cuatro CSS v8;
+- 46 HTML legacy intactos;
+- targets v8 físicamente ausentes;
+- cero HTML actual cargando CSS v8;
+- renderer compilable;
+- renderer `--check` PASS cuando CI pueda ejecutarlo.
+
+### CI
+
+`.github/workflows/v80-pilot-infra-candidate.yml`
+
+Valida:
+
+1. compile;
+2. W4.2 route contract;
+3. W4.3 pilot infra;
+4. canonical pipeline manifest.
+
+No construye ni despliega.
+
+## Boundary W4.3
+
+No se modifica:
+
+- ningún HTML público;
+- `index.html`;
+- sitemap/robots/version;
+- catálogos;
+- CSS v6/v7;
+- runtime JS;
+- formulario;
+- analítica/privacidad;
+- Builder/Pages;
+- `stable`.
+
+## Siguiente frente — W4.4
+
+**Pilot Materialization Candidate**, condicionado a evidencia CI real de W4.2/W4.3.
+
+W4.4 deberá:
+
+1. introducir version-gate v8 controlado;
+2. materializar solo SO07, PR02 y RC01;
+3. mantener los tres legacy completos;
+4. targets `noindex` durante comparación;
+5. añadir E2E target + smoke legacy;
+6. validar desktop/mobile/keyboard/axe;
+7. probar truth parity DOM;
+8. probar dos pasadas idempotentes;
+9. ejecutar crítica independiente;
+10. solo después decidir canonical handoff.
+
+## Definition of Done W4.3
+
+- experience model source-driven;
+- renderer no destructivo;
+- truth parity en memoria como contrato;
+- 4 CSS v8 consolidados;
+- gate de no activación;
+- CI candidate dedicado;
+- 46 HTML productivos intactos;
+- 0 targets físicos;
+- RC02 fuera de scope;
+- `stable` intacta;
+- PR draft apilado abierto para revisión.

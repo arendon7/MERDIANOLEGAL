@@ -1,0 +1,155 @@
+{
+  "schema_version": "1.0.0",
+  "contract": "v8-experience-model",
+  "status": "infrastructure",
+  "truth_policy": {
+    "duplicate_legal_content": false,
+    "source_required": true,
+    "preserve_material_fields": [
+      "summary",
+      "duration",
+      "modality",
+      "audience",
+      "question",
+      "result",
+      "situations",
+      "scope",
+      "perimeter",
+      "method",
+      "deliverables",
+      "formats",
+      "timeline",
+      "requirements",
+      "responsibilities",
+      "acceptance",
+      "limits",
+      "supplements",
+      "related"
+    ]
+  },
+  "families": {
+    "solution": {
+      "label": "Solución Meridiano",
+      "purpose": "Intervención de alcance definido orientada a instalar un resultado verificable.",
+      "first_layer": [
+        "decision",
+        "outcome",
+        "fit",
+        "deliverables",
+        "perimeter",
+        "process",
+        "client_participation",
+        "timeline",
+        "acceptance",
+        "boundaries",
+        "next_step"
+      ],
+      "deep_layer": [
+        "scope",
+        "formats",
+        "responsibilities",
+        "supplements",
+        "related"
+      ]
+    },
+    "practice": {
+      "label": "Práctica",
+      "purpose": "Dominio de expertise para decisiones que requieren adaptación profesional al contexto.",
+      "first_layer": [
+        "decision",
+        "outcome",
+        "fit",
+        "scope",
+        "process",
+        "deliverables",
+        "perimeter",
+        "client_participation",
+        "boundaries",
+        "next_step"
+      ],
+      "deep_layer": [
+        "formats",
+        "timeline",
+        "responsibilities",
+        "acceptance",
+        "supplements",
+        "related"
+      ]
+    },
+    "recurring": {
+      "label": "Servicio continuo",
+      "purpose": "Capacidad jurídica recurrente con gobierno, volumen, canales, seguimiento y escalamiento pactados.",
+      "first_layer": [
+        "decision",
+        "outcome",
+        "fit",
+        "governance",
+        "perimeter",
+        "process",
+        "deliverables",
+        "service_cadence",
+        "client_participation",
+        "acceptance",
+        "boundaries",
+        "next_step"
+      ],
+      "deep_layer": [
+        "scope",
+        "formats",
+        "responsibilities",
+        "supplements",
+        "related"
+      ]
+    }
+  },
+  "pilots": [
+    {
+      "id": "SO07",
+      "family": "solution",
+      "public_title": "Sistema Contractual Empresarial",
+      "source": "catalog-products-v41/p07-contractual.json",
+      "catalog_id": "product-contract-system",
+      "legacy_route": "/productos/sistema-contractual-empresarial.html",
+      "target_route": "/soluciones/sistema-contractual-empresarial.html",
+      "legacy_commercial_contract": {
+        "intent": "proposal",
+        "modality": "product"
+      }
+    },
+    {
+      "id": "PR02",
+      "family": "practice",
+      "public_title": "Corporativo, Societario y Gobierno",
+      "source": "catalog-services-v42/s04-societario.json",
+      "catalog_id": "service-corporate",
+      "legacy_route": "/servicios/sociedades-gobierno-inversion.html",
+      "target_route": "/practicas/corporativo-societario-gobierno.html",
+      "legacy_commercial_contract": {
+        "intent": "scope",
+        "modality": "specialist"
+      }
+    },
+    {
+      "id": "RC01",
+      "family": "recurring",
+      "public_title": "Dirección Jurídica Externa",
+      "source": "catalog-services-v42/s02-direccion.json",
+      "catalog_id": "service-direction",
+      "legacy_route": "/servicios/direccion-juridica-externa.html",
+      "target_route": "/servicios-continuos/direccion-juridica-externa.html",
+      "legacy_commercial_contract": {
+        "intent": "scope",
+        "modality": "recurring"
+      }
+    }
+  ],
+  "pilot_policy": {
+    "commit_target_html": false,
+    "candidate_indexing": "noindex",
+    "legacy_routes_unchanged": true,
+    "new_portal_claims": false,
+    "new_pricing_claims": false,
+    "runtime_required": false,
+    "rc02_meridiano_contratos_in_scope": false
+  }
+}
