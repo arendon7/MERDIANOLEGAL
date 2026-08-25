@@ -1,0 +1,68 @@
+name: V8.0 final candidate validation
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - assets/data/v8/**
+      - assets/css/v8/**
+      - '**/*.html'
+      - scripts/**
+      - .github/workflows/build-canonical.yml
+      - .github/workflows/pages.yml
+      - .github/workflows/v80-*.yml
+      - version.json
+      - sitemap.xml
+      - robots.txt
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: meridiano-v80-final-candidate-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate final 49-page v8 candidate
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout final candidate
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.12'
+
+      - name: Require complete v8 final stage
+        run: |
+          test "$(python3 scripts/run_v8_historical_gate_compat.py detect)" = 'v8-final'
+          python3 -m py_compile \
+            scripts/run_v8_historical_gate_compat.py \
+            scripts/apply_v8_builder_compat.py \
+            scripts/validate_v8_pipeline_compat.py \
+            scripts/validate_v8_workflow_integration.py \
+            scripts/run_v8_pages_quality_compat.py
+
+      - name: Validate persisted public tree and strict historical projections
+        run: |
+          python3 scripts/validate_v8_public_tree.py
+          python3 scripts/run_v8_historical_gate_compat.py route-contract
+          python3 scripts/run_v8_historical_gate_compat.py pilot-infra
+          python3 scripts/run_v8_historical_gate_compat.py growth
+          python3 scripts/run_v8_historical_gate_compat.py v6-closed-check
+
+      - name: Validate committed Builder Pages integration
+        run: |
+          python3 scripts/apply_v8_builder_compat.py --check
+          python3 scripts/validate_v8_workflow_integration.py
+          python3 scripts/run_v8_pages_quality_compat.py
+
+      - name: Prove final candidate validation is non-mutating
+        run: git diff --exit-code
