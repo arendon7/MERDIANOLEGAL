@@ -12,7 +12,9 @@ on:
       - practicas/corporativo-societario-gobierno.html
       - servicios-continuos/direccion-juridica-externa.html
       - scripts/validate_v8_pipeline_compat.py
+      - scripts/simulate_v8_builder_projection.py
       - scripts/validate_v8_public_tree.py
+      - scripts/validate_experience_v60.py
       - scripts/validate_experience_solutions_v60.py
       - scripts/apply_experience_solutions_v60.py
       - scripts/apply_experience_v60.py
@@ -60,6 +62,7 @@ jobs:
         run: |
           python3 -m py_compile \
             scripts/validate_v8_pipeline_compat.py \
+            scripts/simulate_v8_builder_projection.py \
             scripts/validate_v8_public_tree.py \
             scripts/render_v8_pilot.py \
             scripts/materialize_v8_pilot.py
@@ -70,7 +73,7 @@ jobs:
           python3 scripts/validate_v8_pipeline_compat.py
           python3 scripts/canonical_pipeline_v524.py validate
 
-      - name: Capture additive target hashes before Builder simulation
+      - name: Capture additive target hashes before Builder projection
         run: |
           sha256sum \
             soluciones/sistema-contractual-empresarial.html \
@@ -78,47 +81,14 @@ jobs:
             servicios-continuos/direccion-juridica-externa.html \
             > /tmp/w46-targets-before.sha256
 
-      - name: Simulate canonical Builder extensions on 49-page tree
-        run: |
-          python3 scripts/sync_public_version.py
-          python3 scripts/apply_experience_v60.py
-          python3 scripts/apply_experience_solutions_v60.py
-          python3 scripts/apply_experience_sectors_v60.py
-          python3 scripts/apply_experience_perspectives_v60.py
-          python3 scripts/apply_experience_final_v60.py
-          python3 scripts/apply_funnel_trust_v529.py
-          python3 scripts/normalize_experience_compat_v60.py
-          if [ -f assets/data/v6/fit-scope-clarity-v64.json ]; then
-            python3 scripts/apply_fit_scope_clarity_v64.py
-          fi
+      - name: Simulate canonical Builder in strict 46-page legacy projection
+        run: python3 scripts/simulate_v8_builder_projection.py
 
-      - name: Prove Builder does not rewrite v8 additive targets
+      - name: Prove Builder projection left real 49-page checkout untouched
         run: |
           sha256sum -c /tmp/w46-targets-before.sha256
-          git diff --exit-code -- \
-            soluciones/sistema-contractual-empresarial.html \
-            practicas/corporativo-societario-gobierno.html \
-            servicios-continuos/direccion-juridica-externa.html
-
-      - name: Validate Builder output with additive compatibility contract
-        run: |
-          python3 scripts/validate_experience_v60.py
-          python3 scripts/validate_experience_sectors_v60.py
-          python3 scripts/validate_experience_perspectives_v60.py
-          python3 scripts/validate_experience_final_v60.py
-          python3 scripts/validate_funnel_trust_v529.py
-          python3 scripts/validate_proof_v512.py
-          python3 scripts/validate_capability_truth_v521.py
-          python3 scripts/validate_editorial_context.py
-          if [ -f assets/data/v6/fit-scope-clarity-v64.json ]; then
-            python3 scripts/validate_fit_scope_clarity_v64.py
-            python3 scripts/apply_fit_scope_clarity_v64.py --check
-          fi
-          python3 scripts/validate_v8_pipeline_compat.py
-
-      - name: Prove Builder simulation is idempotent
-        run: |
           git diff --exit-code
+          python3 scripts/validate_v8_pipeline_compat.py
 
       - name: Simulate Pages quality validators on 49-page tree
         run: |
