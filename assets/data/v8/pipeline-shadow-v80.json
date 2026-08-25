@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0.0",
+  "contract": "v8-integrated-pipeline-shadow",
+  "status": "candidate",
+  "depends_on": "v8-workflow-integration",
+  "stages": [
+    "builder-shadow",
+    "pages-quality-shadow",
+    "pages-artifact-shadow"
+  ],
+  "builder": {
+    "real_git_worktree": true,
+    "npm_lockfile_step": true,
+    "adapter_mode": "apply",
+    "git_diff_must_be_clean": true,
+    "push": false
+  },
+  "pages_quality": {
+    "consume_builder_artifact": true,
+    "adapter_mode": "check",
+    "dual_view_quality": true,
+    "javascript_syntax": true,
+    "tree_must_remain_immutable": true
+  },
+  "pages_artifact": {
+    "consume_quality_artifact": true,
+    "html_count": 49,
+    "local_http_smoke": true,
+    "upload_pages_artifact": false,
+    "deploy_pages": false,
+    "stable_move": false
+  },
+  "protected": {
+    "main_modified": false,
+    "stable_modified": false,
+    "version_bump": false,
+    "sitemap_activation": false,
+    "home_activation": false,
+    "canonical_handoff": false,
+    "rc02": false
+  }
+}
