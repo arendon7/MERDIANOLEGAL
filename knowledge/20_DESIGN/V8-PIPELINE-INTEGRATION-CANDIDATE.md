@@ -2,7 +2,9 @@
 
 Fecha: 2026-08-25
 Dependencia: W4.6 Pipeline Compatibility PASS (`32908333460`).
-Estado inicial: candidate derivado; producción intacta.
+Estado final: **PASS**; producción intacta.
+Run final: `32908858494`.
+Job final: `97998709785`.
 
 ## Objetivo
 
@@ -19,31 +21,31 @@ Opera en dos modos:
 
 Siempre preserva por hash los tres targets v8 aditivos.
 
-## Integración derivada
+## Integración derivada certificada
 
 `scripts/materialize_v8_pipeline_integration_candidate.py`
 
 Solo puede escribir en una raíz desechable distinta del checkout activo.
 
-En Builder candidate:
+Builder candidate:
 
-- conserva exactamente 30 pasos nombrados;
+- mantiene exactamente 30 pasos nombrados;
 - detecta contrato + 3 targets dentro del paso existente de lockfile;
-- ejecuta `apply_v8_builder_compat.py` en modo candidate;
+- invoca el adapter `apply`;
 - evita repetir `sync_public_version` y extensión v6 directa cuando el adapter está activo;
 - conserva textualmente la secuencia histórica como fallback;
-- conserva intacta la sección final de commit/push.
+- conserva byte-identical la sección final de commit/push.
 
-En Pages candidate:
+Pages candidate:
 
-- integra `apply_v8_builder_compat.py --check` dentro del paso existente de idempotencia;
-- conserva textualmente toda la secuencia histórica como fallback;
-- Growth v5.1 pasa por `validate_v8_pipeline_compat.py` cuando candidate está activo;
-- conserva intacta toda la sección `deploy:` y release posterior.
+- integra `apply_v8_builder_compat.py --check` dentro del paso de idempotencia;
+- conserva textualmente la secuencia histórica como fallback;
+- Growth v5.1 usa el strict projection cuando v8 candidate está activo;
+- conserva byte-identical toda la sección `deploy:` y release posterior.
 
-## Gobernanza
+## Gobernanza certificada
 
-El candidate debe seguir pasando, sin modificar los validators históricos:
+Sobre las copias integradas pasaron sin modificación los validators históricos:
 
 - `canonical_pipeline_v524.py validate`;
 - `validate_pages_trigger_v511.py`;
@@ -52,9 +54,25 @@ El candidate debe seguir pasando, sin modificar los validators históricos:
 - Builder adapter `--check`;
 - Pages Quality dual-view.
 
+También pasó el parse YAML de ambos workflows candidate.
+
+## Resultado definitivo
+
+Run `32908858494`, job `97998709785`: **SUCCESS**.
+
+- W4.6 revalidation: PASS.
+- Workflows productivos sin diff: PASS.
+- Materialización integrada en `/tmp`: PASS.
+- YAML parse: PASS.
+- End-to-end governance: PASS.
+- Checkout fuente sin diff: PASS.
+- Artefacto `w47-v8-pipeline-integration-candidate`: publicado.
+- Artifact id: `9585803169`.
+- Artifact digest: `sha256:05b5fffb77a40b9726c23536dfad28e5ea3b2151fed870c2746f31424ce18dd1`.
+
 ## Boundary
 
-W4.7 no modifica todavía:
+W4.7 no modifica:
 
 - `.github/workflows/build-canonical.yml`;
 - `.github/workflows/pages.yml`;
@@ -66,19 +84,6 @@ W4.7 no modifica todavía:
 - deploy;
 - RC02.
 
-Las dos versiones integradas se generan en `/tmp`, se validan y se publican únicamente como artefacto de revisión.
+## Siguiente frente
 
-## Gate de salida
-
-1. W4.6 PASS.
-2. Workflows productivos sin diff contra base.
-3. Materialización candidate PASS.
-4. YAML parse PASS.
-5. Builder mantiene 30 pasos.
-6. Manifiesto canónico Builder==Pages PASS.
-7. Trigger Pages PASS.
-8. CI v5.6 PASS.
-9. Adapter `--check` PASS.
-10. Pages Quality dual-view PASS.
-11. Builder commit/push y Pages deploy byte-identical respecto a producción.
-12. Artefacto candidate publicado.
+W4.8 puede aplicar **exactamente el diff integrado certificado en W4.7** a Builder y Pages dentro de una nueva rama candidate. W4.8 deberá regenerar el W4.7 expected workflow desde su base y exigir byte parity con los workflows realmente committeados antes de cualquier consideración de merge o deploy.
