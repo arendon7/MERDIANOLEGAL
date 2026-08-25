@@ -4,7 +4,6 @@ on:
   pull_request:
     branches:
       - design/v8-pipeline-compat-w46
-      - main
     paths:
       - assets/data/v8/**
       - scripts/apply_v8_builder_compat.py
