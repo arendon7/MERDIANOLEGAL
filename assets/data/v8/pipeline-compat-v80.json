@@ -14,13 +14,15 @@
   },
   "legacy_projection": {
     "strict_validators": [
+      "scripts/validate_experience_v60.py",
       "scripts/validate_experience_solutions_v60.py"
     ],
     "remove_before_strict_validation": [
       "soluciones/sistema-contractual-empresarial.html",
       "practicas/corporativo-societario-gobierno.html",
       "servicios-continuos/direccion-juridica-externa.html"
-    ]
+    ],
+    "builder_strategy": "run-v6-in-projection-then-prove-real-legacy-equivalence"
   },
   "candidate_policy": {
     "targets_noindex": true,
@@ -36,6 +38,7 @@
   "pipeline_policy": {
     "legacy_validators_remain_strict": true,
     "candidate_validated_additively": true,
+    "builder_runs_in_legacy_projection": true,
     "builder_must_not_rewrite_v8_targets": true,
     "pages_artifact_may_include_noindex_targets": true,
     "production_activation_requires_later_wave": true
