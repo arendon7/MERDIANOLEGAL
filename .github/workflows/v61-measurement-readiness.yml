@@ -158,10 +158,23 @@ jobs:
           done
           cat /tmp/meridiano-v61-http.log >&2 || true
           exit 1
-      - name: Run full browser E2E suite
+      - name: Run full historical browser E2E suite in 46-page projection
         run: |
           cd "$MERIDIANO_V61_ROOT"
-          npm run test:e2e
+          mapfile -t LEGACY_SPECS < <(
+            find tests/e2e -maxdepth 1 -type f -name '*.spec.mjs' ! -name 'v8-*.spec.mjs' -print | sort
+          )
+          if [ "${#LEGACY_SPECS[@]}" -lt 20 ]; then
+            echo "V6.1 historical E2E scope unexpectedly small: ${#LEGACY_SPECS[@]} specs" >&2
+            exit 1
+          fi
+          printf '%s\n' "${LEGACY_SPECS[@]}" | grep -qx 'tests/e2e/measurement-readiness-v61.spec.mjs'
+          if printf '%s\n' "${LEGACY_SPECS[@]}" | grep -Eq '(^|/)v8-'; then
+            echo "V6.1 legacy projection must not execute v8-only specs" >&2
+            exit 1
+          fi
+          printf 'V6.1 historical E2E scope: %s specs; additive v8 specs excluded by topology boundary.\n' "${#LEGACY_SPECS[@]}"
+          npx playwright test "${LEGACY_SPECS[@]}"
       - name: Upload measurement failure artifacts
         if: failure()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
