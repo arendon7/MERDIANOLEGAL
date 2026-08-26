@@ -1,0 +1,55 @@
+name: V8.0 W5 home shell candidate
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - assets/data/v8/home-shell-v80.json
+      - scripts/validate_v8_home_shell.py
+      - knowledge/20_DESIGN/W50-HOME-NAVIGATION-CONTRACT.md
+      - knowledge/10_DECISIONES/ADR-009-v8-w5-home-shell-rc02.md
+      - .github/workflows/v80-home-shell-candidate.yml
+      - assets/data/v8/route-contract-v80.json
+      - assets/data/v8/experience-model-v80.json
+      - index.html
+      - sitemap.xml
+      - soluciones/sistema-contractual-empresarial.html
+      - practicas/corporativo-societario-gobierno.html
+      - servicios-continuos/direccion-juridica-externa.html
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: meridiano-v80-w5-home-shell-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate W5 source-driven Home shell
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout W5 candidate
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.12'
+
+      - name: Compile W5 validator
+        run: python3 -m py_compile scripts/validate_v8_home_shell.py
+
+      - name: Validate W5 Home/navigation model and activation boundary
+        run: python3 scripts/validate_v8_home_shell.py
+
+      - name: Preserve certified W4.13 public tree
+        run: python3 scripts/validate_v8_public_tree.py
+
+      - name: Prove validation is non-mutating
+        run: git diff --exit-code
