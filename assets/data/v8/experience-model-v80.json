@@ -5,6 +5,7 @@
   "truth_policy": {
     "duplicate_legal_content": false,
     "source_required": true,
+    "presentation_overrides": "explicit-exact-source-replacement",
     "preserve_material_fields": [
       "summary",
       "duration",
@@ -78,7 +79,7 @@
     },
     "recurring": {
       "label": "Servicio continuo",
-      "purpose": "Capacidad jurídica recurrente con gobierno, volumen, canales, seguimiento y escalamiento pactados.",
+      "purpose": "Capacidad jurídica recurrente con gobierno, cobertura, canales, seguimiento y escalamiento pactados.",
       "first_layer": [
         "decision",
         "outcome",
@@ -140,6 +141,66 @@
       "legacy_commercial_contract": {
         "intent": "scope",
         "modality": "recurring"
+      },
+      "presentation_overrides": {
+        "policy": "commercial-framing-only",
+        "replacements": [
+          {
+            "path": ["scope", 2, 1],
+            "from": "Revisión, negociación, conceptos y acompañamiento dentro del volumen contratado.",
+            "to": "Revisión, negociación, conceptos y acompañamientos dentro de la cobertura y reglas de priorización pactadas."
+          },
+          {
+            "path": ["perimeter", 2, 0],
+            "from": "Bolsa mensual definida",
+            "to": "Cobertura mensual definida"
+          },
+          {
+            "path": ["perimeter", 2, 1],
+            "from": "Horas, asuntos o unidades de servicio pactadas según complejidad y demanda.",
+            "to": "Tipologías de asuntos, niveles de complejidad, prioridad, SLA y reglas de escalamiento pactadas."
+          },
+          {
+            "path": ["method", 0, 1],
+            "from": "Definir usuarios, demanda, prioridades, SLA, canales, volumen y exclusiones.",
+            "to": "Definir usuarios, demanda, prioridades, SLA, canales, cobertura y exclusiones."
+          },
+          {
+            "path": ["deliverables", 2, 0],
+            "from": "Atención dentro de la bolsa",
+            "to": "Atención dentro de la cobertura"
+          },
+          {
+            "path": ["deliverables", 2, 1],
+            "from": "Conceptos, revisiones, negociaciones y acompañamientos conforme al volumen pactado.",
+            "to": "Conceptos, revisiones, negociaciones y acompañamientos conforme a las categorías y niveles de servicio pactados."
+          },
+          {
+            "path": ["requirements", 2, 0],
+            "from": "Volumen estimado",
+            "to": "Demanda estimada"
+          },
+          {
+            "path": ["requirements", 2, 1],
+            "from": "Tipos de asuntos, frecuencia, usuarios y tiempos esperados.",
+            "to": "Tipologías de asuntos, frecuencia, complejidad, usuarios y prioridades esperadas."
+          },
+          {
+            "path": ["limits", 2],
+            "from": "La capacidad mensual, tiempos, revisiones y canales deben pactarse expresamente.",
+            "to": "La cobertura mensual, tiempos, revisiones, prioridades y canales deben pactarse expresamente."
+          },
+          {
+            "path": ["supplements", 0, 0],
+            "from": "Bolsa adicional",
+            "to": "Capacidad adicional"
+          },
+          {
+            "path": ["supplements", 0, 1],
+            "from": "Capacidad extra para picos de demanda sin alterar el plan base.",
+            "to": "Ampliación temporal de cobertura para picos de demanda o frentes adicionales, sin alterar el plan base."
+          }
+        ]
       }
     }
   ],
