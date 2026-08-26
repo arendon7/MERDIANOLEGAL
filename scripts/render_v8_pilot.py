@@ -12,6 +12,7 @@ contrato y sus gates estén certificados.
 from __future__ import annotations
 
 from argparse import ArgumentParser
+from copy import deepcopy
 from html import escape
 from pathlib import Path, PurePosixPath
 from urllib.parse import urlencode
@@ -30,6 +31,10 @@ REQUIRED_SOURCE_FIELDS = {
     "situations", "scope", "perimeter", "method", "deliverables", "formats",
     "timeline", "requirements", "responsibilities", "acceptance", "limits",
     "supplements", "related",
+}
+
+PRESENTATION_OVERRIDE_FIELDS = {
+    "scope", "perimeter", "method", "deliverables", "requirements", "limits", "supplements",
 }
 
 FAMILY_LABELS = {
@@ -72,6 +77,89 @@ def load_source(pilot: dict) -> dict:
     if pilot["family"] in {"practice", "recurring"} and not entry.get("serviceV42"):
         fail(f"{pilot['id']}: práctica/recurrente piloto debe provenir de servicio v4.2")
     return entry
+
+
+def _resolve_override_parent(container: object, path: list[object], pilot_id: str) -> tuple[object, object]:
+    if not path:
+        fail(f"{pilot_id}: presentation override sin path")
+    cursor = container
+    for part in path[:-1]:
+        if isinstance(part, str):
+            if not isinstance(cursor, dict) or part not in cursor:
+                fail(f"{pilot_id}: path de presentation override inválido en {part!r}")
+            cursor = cursor[part]
+        elif isinstance(part, int):
+            if not isinstance(cursor, list) or part < 0 or part >= len(cursor):
+                fail(f"{pilot_id}: índice de presentation override inválido en {part}")
+            cursor = cursor[part]
+        else:
+            fail(f"{pilot_id}: segmento de presentation override inválido {part!r}")
+    return cursor, path[-1]
+
+
+def apply_presentation_overrides(pilot: dict, source: dict) -> dict:
+    """Aplica únicamente overrides v8 explícitos y auditables sobre una copia de truth legacy.
+
+    Cada reemplazo debe declarar path exacto, valor histórico esperado (`from`) y
+    framing v8 (`to`). Si la truth histórica cambia, el renderer falla cerrado en
+    lugar de aplicar una sustitución silenciosa sobre contenido nuevo.
+    """
+    effective = deepcopy(source)
+    contract = pilot.get("presentation_overrides")
+    if contract is None:
+        return effective
+
+    if pilot.get("id") != "RC01" or pilot.get("family") != "recurring":
+        fail(f"{pilot['id']}: presentation_overrides solo están autorizados para RC01 en W4.12")
+    if contract.get("policy") != "commercial-framing-only":
+        fail(f"{pilot['id']}: presentation override policy inválida")
+    replacements = contract.get("replacements")
+    if not isinstance(replacements, list) or not replacements:
+        fail(f"{pilot['id']}: presentation_overrides requiere replacements")
+
+    seen_paths: set[tuple[object, ...]] = set()
+    for replacement in replacements:
+        if not isinstance(replacement, dict):
+            fail(f"{pilot['id']}: replacement inválido")
+        path = replacement.get("path")
+        expected = replacement.get("from")
+        target = replacement.get("to")
+        if not isinstance(path, list) or not path or not isinstance(path[0], str):
+            fail(f"{pilot['id']}: replacement path inválido")
+        if path[0] not in PRESENTATION_OVERRIDE_FIELDS:
+            fail(f"{pilot['id']}: override fuera de campos permitidos: {path[0]}")
+        path_key = tuple(path)
+        if path_key in seen_paths:
+            fail(f"{pilot['id']}: override duplicado en {path}")
+        seen_paths.add(path_key)
+        if not isinstance(expected, str) or not isinstance(target, str) or not target.strip():
+            fail(f"{pilot['id']}: from/to deben ser strings no vacíos")
+
+        parent, leaf = _resolve_override_parent(effective, path, pilot["id"])
+        if isinstance(leaf, str):
+            if not isinstance(parent, dict) or leaf not in parent:
+                fail(f"{pilot['id']}: leaf inválido en {path}")
+            current = parent[leaf]
+            if current != expected:
+                fail(f"{pilot['id']}: truth source cambió en {path}; esperado {expected!r}, encontró {current!r}")
+            parent[leaf] = target
+        elif isinstance(leaf, int):
+            if not isinstance(parent, list) or leaf < 0 or leaf >= len(parent):
+                fail(f"{pilot['id']}: leaf index inválido en {path}")
+            current = parent[leaf]
+            if current != expected:
+                fail(f"{pilot['id']}: truth source cambió en {path}; esperado {expected!r}, encontró {current!r}")
+            parent[leaf] = target
+        else:
+            fail(f"{pilot['id']}: leaf de override inválido en {path}")
+
+    effective_text = json.dumps(effective, ensure_ascii=False).lower()
+    for forbidden in ("bolsa mensual", "atención dentro de la bolsa", "bolsa adicional"):
+        if forbidden in effective_text:
+            fail(f"{pilot['id']}: framing por bolsa persiste después del override: {forbidden!r}")
+    if re.search(r"\bhoras?\b", effective_text):
+        fail(f"{pilot['id']}: framing público por horas persiste después del override")
+    return effective
 
 
 def resolve_related_href(pilot: dict, href: str, route_map: dict[str, str]) -> str:
@@ -209,11 +297,11 @@ def section(section_id: str, eyebrow: str, title: str, body: str, modifier: str 
 
 
 def governance(source: dict) -> str:
-    # No inventa un SLA concreto: usa únicamente categorías presentes en source.
+    # No inventa un SLA concreto: usa únicamente categorías presentes en source/override gobernado.
     items = [
         ("Perímetro", source["perimeter"][0][0]),
         ("Usuarios / capacidad", source["perimeter"][1][0]),
-        ("Volumen", source["perimeter"][2][0]),
+        ("Cobertura", source["perimeter"][2][0]),
         ("Cadencia", source["timeline"][2][0] if len(source["timeline"]) > 2 else source["duration"]),
     ]
     return '<div class="ml-recurring-governance">' + "".join(
@@ -305,6 +393,9 @@ def validate_model(model: dict, route_contract: dict) -> tuple[list[dict], dict[
         fail("experience model inválido")
     if model.get("status") != "infrastructure":
         fail("W4.3 espera experience model status=infrastructure")
+    truth_policy = model.get("truth_policy") or {}
+    if truth_policy.get("presentation_overrides") != "explicit-exact-source-replacement":
+        fail("W4.12 requiere presentation_overrides fail-closed")
     policy = model.get("pilot_policy") or {}
     required_policy = {
         "commit_target_html": False,
@@ -344,7 +435,8 @@ def check() -> int:
         fail("preserve_material_fields debe coincidir con el contrato material W4.3")
 
     for pilot in pilots:
-        source = load_source(pilot)
+        raw_source = load_source(pilot)
+        source = apply_presentation_overrides(pilot, raw_source)
         first = render(pilot, source, route_map, base_url)
         second = render(pilot, source, route_map, base_url)
         if first != second:
@@ -358,7 +450,7 @@ def check() -> int:
                 fail(f"{pilot['id']}: claim prohibido {forbidden!r}")
         missing_truth = [value for value in truth_strings(source, preserve) if e(value) not in first]
         if missing_truth:
-            fail(f"{pilot['id']}: truth parity incompleta; faltan {missing_truth[:5]}")
+            fail(f"{pilot['id']}: truth parity efectiva incompleta; faltan {missing_truth[:5]}")
         if pilot["target_route"] not in first:
             fail(f"{pilot['id']}: canonical target ausente del render")
         # Todos los relacionados legacy conocidos deben traducirse al target v8.
@@ -367,7 +459,7 @@ def check() -> int:
             if f'href="{e(resolved)}"' not in first:
                 fail(f"{pilot['id']}: relacionado no resuelto {item[3]} -> {resolved}")
 
-    print("RENDER V8 PILOT CHECK OK: SO07 + PR02 + RC01 source-driven, deterministas, noindex y con truth parity completa en memoria.")
+    print("RENDER V8 PILOT CHECK OK: SO07 + PR02 + RC01 source-driven, overrides explícitos fail-closed, deterministas, noindex y con truth parity efectiva completa en memoria.")
     return 0
 
 
@@ -379,7 +471,9 @@ def preview(pilot_id: str) -> int:
     pilot = next((item for item in pilots if item["id"] == pilot_id), None)
     if pilot is None:
         fail(f"piloto desconocido {pilot_id!r}")
-    print(render(pilot, load_source(pilot), route_map, site["base_url"]))
+    raw_source = load_source(pilot)
+    source = apply_presentation_overrides(pilot, raw_source)
+    print(render(pilot, source, route_map, site["base_url"]))
     return 0
 
 

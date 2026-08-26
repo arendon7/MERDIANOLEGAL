@@ -211,12 +211,22 @@ jobs:
             soluciones/sistema-contractual-empresarial.html \
             practicas/corporativo-societario-gobierno.html \
             servicios-continuos/direccion-juridica-externa.html
-          expected=$(printf '%s\n' \
+          allowed=$(printf '%s\n' \
             practicas/corporativo-societario-gobierno.html \
             servicios-continuos/direccion-juridica-externa.html \
             soluciones/sistema-contractual-empresarial.html | sort)
           staged=$(git diff --cached --name-only | sort)
-          test "$staged" = "$expected"
+          test -n "$staged"
+          while IFS= read -r path; do
+            case "$path" in
+              practicas/corporativo-societario-gobierno.html|servicios-continuos/direccion-juridica-externa.html|soluciones/sistema-contractual-empresarial.html) ;;
+              *) echo "Unexpected staged path during W4.5 persistence: $path" >&2; exit 1 ;;
+            esac
+          done <<< "$staged"
+          if [ "$W45_PARITY" = 'bootstrap' ]; then
+            test "$staged" = "$allowed"
+          fi
+          git diff --cached --check
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           if [ "$W45_PARITY" = 'bootstrap' ]; then

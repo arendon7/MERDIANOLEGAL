@@ -96,7 +96,8 @@ def main(argv: list[str] | None = None) -> int:
         path = output_path(target_root, pilot["target_route"])
         if path.exists():
             fail(f"target ya existe; materializador no sobrescribe: {path}")
-        source = renderer.load_source(pilot)
+        raw_source = renderer.load_source(pilot)
+        source = renderer.apply_presentation_overrides(pilot, raw_source)
         html = renderer.render(pilot, source, route_map, site["base_url"])
         html = preserve_available_related_links(
             html, pilot, source, route_map, available_targets

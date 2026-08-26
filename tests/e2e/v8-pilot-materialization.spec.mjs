@@ -93,6 +93,19 @@ for (const pilot of pilots) {
   });
 }
 
+test('RC01 vende cobertura y nivel de servicio, no una bolsa pública de horas', async ({ page }) => {
+  const response = await page.goto('./servicios-continuos/direccion-juridica-externa.html');
+  expect(response?.status()).toBe(200);
+
+  await expect(page.locator('#ml-governance')).toContainText('Cobertura');
+  await expect(page.locator('#ml-governance')).toContainText('Cobertura mensual definida');
+
+  const publicText = (await page.locator('body').innerText()).toLowerCase();
+  expect(publicText).not.toContain('bolsa mensual');
+  expect(publicText).not.toContain('atención dentro de la bolsa');
+  expect(publicText).not.toMatch(/\bhoras?\b/);
+});
+
 test('pilotos v8 mantienen los tres legacy certificados disponibles en paralelo', async ({ page }) => {
   const legacy = [
     './productos/sistema-contractual-empresarial.html',

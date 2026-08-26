@@ -1,0 +1,147 @@
+name: V8.0 release topology candidate
+
+on:
+  pull_request:
+    branches:
+      - design/v8-integrated-shadow-w49
+      - main
+    paths:
+      - assets/data/v8/**
+      - scripts/validate_v8_release_topology.py
+      - scripts/apply_v8_builder_compat.py
+      - scripts/run_v8_pages_quality_compat.py
+      - .github/workflows/build-canonical.yml
+      - .github/workflows/pages.yml
+      - .github/workflows/v80-release-topology-candidate.yml
+  workflow_dispatch:
+
+concurrency:
+  group: meridiano-v80-release-topology-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  certify_release_topology:
+    name: Certify main promotion topology without merge or deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout exact W4.10 candidate head
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.12'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Fetch immutable production anchors
+        run: |
+          git fetch origin \
+            main:refs/remotes/origin/main \
+            stable:refs/remotes/origin/stable
+          test "$(git rev-parse refs/remotes/origin/main)" = '86813813e29dd6b47105ba7fb6259630fcd9cb5b'
+          test "$(git rev-parse refs/remotes/origin/stable)" = '86813813e29dd6b47105ba7fb6259630fcd9cb5b'
+
+      - name: Validate release topology and previous certification chain
+        run: |
+          python3 -m py_compile scripts/validate_v8_release_topology.py
+          python3 -m json.tool assets/data/v8/release-topology-v80.json > /dev/null
+          python3 scripts/validate_v8_release_topology.py
+          python3 scripts/validate_v8_pipeline_shadow.py
+          python3 scripts/validate_v8_workflow_integration.py
+          python3 scripts/validate_pages_trigger_v511.py
+          python3 scripts/validate_ci_v56.py
+
+      - name: Create synthetic promoted-main worktree
+        run: |
+          rm -rf /tmp/meridiano-w410-promoted-main
+          candidate_sha="$(git rev-parse HEAD)"
+          git worktree add --detach /tmp/meridiano-w410-promoted-main "$candidate_sha"
+          echo "W410_CANDIDATE_SHA=$candidate_sha" >> "$GITHUB_ENV"
+
+      - name: Execute expected Builder result on synthetic promoted main
+        working-directory: /tmp/meridiano-w410-promoted-main
+        run: |
+          npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+          python3 scripts/apply_v8_builder_compat.py
+          python3 scripts/validate_v8_workflow_integration.py
+          git diff --exit-code
+          test "$(git rev-parse HEAD)" = "$W410_CANDIDATE_SHA"
+          echo 'W4.10 BUILDER PROMOTION MODEL PASS: candidate promotion requires no generated canonical commit.'
+
+      - name: Execute Pages pre-deploy quality on synthetic promoted main
+        working-directory: /tmp/meridiano-w410-promoted-main
+        run: |
+          python3 scripts/apply_v8_builder_compat.py --check
+          python3 scripts/run_v8_pages_quality_compat.py
+          python3 scripts/validate_pages_trigger_v511.py
+          python3 scripts/validate_ci_v56.py
+          git diff --exit-code
+          echo 'W4.10 PAGES PRE-DEPLOY MODEL PASS: promoted tree is quality-ready without mutation.'
+
+      - name: Prove fail-closed release dependency graph
+        working-directory: /tmp/meridiano-w410-promoted-main
+        run: |
+          python3 scripts/validate_v8_release_topology.py
+          python3 - <<'PY'
+          from pathlib import Path
+          pages = Path('.github/workflows/pages.yml').read_text(encoding='utf-8')
+          required = {
+              'quality_to_deploy': 'needs: quality',
+              'deploy_to_smoke': 'needs: deploy',
+              'smoke_to_browser': 'needs: [deploy, live_smoke]',
+              'stable_dual_gate': 'needs: [browser_e2e, lighthouse_quality]',
+              'stable_move': 'git push origin HEAD:refs/heads/stable --force',
+          }
+          missing = [name for name, marker in required.items() if marker not in pages]
+          if missing:
+              raise SystemExit(f'W4.10 dependency graph missing: {missing}')
+          print('W4.10 FAIL-CLOSED MATRIX PASS: stable remains behind both deployed quality gates.')
+          PY
+
+      - name: Build promotion certification manifest
+        run: |
+          mkdir -p /tmp/w410-release-topology
+          head_sha="$(git rev-parse HEAD)"
+          ahead="$(git rev-list --count 86813813e29dd6b47105ba7fb6259630fcd9cb5b..HEAD)"
+          changed="$(git diff --name-only 86813813e29dd6b47105ba7fb6259630fcd9cb5b..HEAD | wc -l | tr -d ' ')"
+          cat > /tmp/w410-release-topology/manifest.json <<EOF
+          {
+            "contract": "v8-release-topology-result",
+            "status": "promotion-ready-candidate",
+            "source_run_id": "${GITHUB_RUN_ID}",
+            "candidate_sha": "${head_sha}",
+            "baseline_main_sha": "86813813e29dd6b47105ba7fb6259630fcd9cb5b",
+            "rollback_stable_sha": "86813813e29dd6b47105ba7fb6259630fcd9cb5b",
+            "ahead_commits": ${ahead},
+            "changed_files": ${changed},
+            "builder_generated_commit_expected": false,
+            "pages_quality_ready": true,
+            "production_merge_executed": false,
+            "production_deploy_executed": false,
+            "stable_moved": false
+          }
+          EOF
+          cat /tmp/w410-release-topology/manifest.json
+
+      - name: Upload W4.10 release topology evidence
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: w410-v8-release-topology-candidate
+          path: /tmp/w410-release-topology/manifest.json
+          if-no-files-found: error
+          retention-days: 14
