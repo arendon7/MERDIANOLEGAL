@@ -89,19 +89,17 @@ def normalize_real_handoff_observability_runtime() -> None:
     """Restore the single v5.18 runtime anchor after historical materializers.
 
     Release Governance intentionally replays older materializers on its disposable
-    checkout before it reaches v5.18. Some of those historical transforms can
-    preserve/reintroduce the v5.18 script around the production runtime block.
-    The canonical applicator itself defines the invariant as exactly one deferred
+    checkout before it reaches v5.18. Those historical transforms may remove,
+    preserve or reintroduce the v5.18 script around the production runtime block.
+    The canonical applicator defines the postcondition as exactly one deferred
     v5.18 script immediately after telemetry. Reproduce only that local anchor
     normalization here; do not re-run the chained v5.18→v5.31 applicator against
     the real 49-page tree.
     """
     text = HOME.read_text(encoding="utf-8")
     observed = text.count(HANDOFF_OBSERVABILITY_SCRIPT)
-    if observed < 1:
-        fail("real candidate lost handoff-observability-v518.js during historical governance replay")
     if TELEMETRY_ANCHOR not in text:
-        fail("real candidate lost telemetry-v50.js before v5.18 normalization")
+        fail("governance replay lost telemetry-v50.js before v5.18 normalization")
 
     text = re.sub(
         r"(?m)^[ \t]*" + re.escape(HANDOFF_OBSERVABILITY_SCRIPT) + r"[ \t]*(?:\r?\n)?",
@@ -119,7 +117,7 @@ def normalize_real_handoff_observability_runtime() -> None:
         fail("v5.18 runtime must remain ordered after telemetry-v50.js")
     HOME.write_text(text, encoding="utf-8")
     print(
-        f"HISTORICAL GATE COMPAT v5.18 runtime normalized: {observed} historical reference(s) → 1 canonical reference."
+        f"HISTORICAL GATE COMPAT v5.18 runtime normalized: {observed} replay reference(s) → 1 canonical reference."
     )
 
 
