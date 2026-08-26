@@ -1,0 +1,24 @@
+{
+  "project": "Meridiano Legal",
+  "source_commit": "619d11ce829ce251f02314a96201f5d0e7eb120e",
+  "version": "7.4.0",
+  "channel": "github-pages-production-commercial-evidence-readiness-certified",
+  "graphify_version": "0.9.26",
+  "generated_at_utc": "2026-08-26T01:54:03.104152+00:00",
+  "graph": {
+    "nodes": 1462,
+    "edges": 2833,
+    "wiki_notes": 154
+  },
+  "counts": {
+    "html_total": 47,
+    "products_source": 8,
+    "services_source": 8,
+    "solutions_html": 8,
+    "sectors_html": 8,
+    "perspectives_html": 6,
+    "python_scripts": 141,
+    "javascript_sources": 26,
+    "e2e_specs": 26
+  }
+}
