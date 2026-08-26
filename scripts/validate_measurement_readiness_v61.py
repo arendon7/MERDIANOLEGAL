@@ -162,9 +162,34 @@ for marker in (
     "tests/e2e/measurement-readiness-v61.spec.mjs",
     "python3 scripts/validate_release_governance_v57.py",
     "python3 scripts/validate_pages_trigger_v511.py",
-    "npm run test:e2e",
 ):
     require(marker in readiness_workflow, f"Gate v6.1 debe preservar cobertura: {marker}")
+
+historical_full_suite = "npm run test:e2e" in readiness_workflow
+projection_aware_markers = (
+    "MERIDIANO_V61_ROOT",
+    "Prepare strict 46-page legacy projection for additive v8 tree",
+    "Run full historical browser E2E suite in 46-page projection",
+    "find tests/e2e",
+    "! -name 'v8-*.spec.mjs'",
+    "V6.1 historical E2E scope unexpectedly small",
+    "V6.1 legacy projection must not execute v8-only specs",
+    'npx playwright test "${LEGACY_SPECS[@]}"',
+)
+projection_aware_suite = all(marker in readiness_workflow for marker in projection_aware_markers)
+require(
+    historical_full_suite or projection_aware_suite,
+    "Gate v6.1 debe ejecutar el E2E histórico completo o una proyección 46-páginas fail-closed que excluya solo specs v8 aditivos",
+)
+if projection_aware_suite:
+    require(
+        "tests/e2e/measurement-readiness-v61.spec.mjs" in readiness_workflow,
+        "La proyección v6.1 debe incluir explícitamente el spec de measurement readiness",
+    )
+    require(
+        "${#LEGACY_SPECS[@]}" in readiness_workflow,
+        "La proyección v6.1 debe comprobar que el conjunto histórico no quede vacío o degradado",
+    )
 
 instrumented_paths: set[str] = set()
 without_telemetry_paths: set[str] = set()
