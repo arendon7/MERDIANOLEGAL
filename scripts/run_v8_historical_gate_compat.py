@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from pathlib import Path
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -18,6 +19,9 @@ import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / "assets/data/v8/pipeline-compat-v80.json"
+HOME = ROOT / "index.html"
+HANDOFF_OBSERVABILITY_SCRIPT = '<script defer src="handoff-observability-v518.js"></script>'
+TELEMETRY_ANCHOR = '<script defer src="telemetry-v50.js"></script>'
 TARGETS = (
     "soluciones/sistema-contractual-empresarial.html",
     "practicas/corporativo-societario-gobierno.html",
@@ -79,6 +83,44 @@ def projection() -> tuple[tempfile.TemporaryDirectory[str], Path]:
         holder.cleanup()
         fail(f"historical projection must contain exactly 46 HTML; found {html_count}")
     return holder, projected
+
+
+def normalize_real_handoff_observability_runtime() -> None:
+    """Restore the single v5.18 runtime anchor after historical materializers.
+
+    Release Governance intentionally replays older materializers on its disposable
+    checkout before it reaches v5.18. Some of those historical transforms can
+    preserve/reintroduce the v5.18 script around the production runtime block.
+    The canonical applicator itself defines the invariant as exactly one deferred
+    v5.18 script immediately after telemetry. Reproduce only that local anchor
+    normalization here; do not re-run the chained v5.18→v5.31 applicator against
+    the real 49-page tree.
+    """
+    text = HOME.read_text(encoding="utf-8")
+    observed = text.count(HANDOFF_OBSERVABILITY_SCRIPT)
+    if observed < 1:
+        fail("real candidate lost handoff-observability-v518.js during historical governance replay")
+    if TELEMETRY_ANCHOR not in text:
+        fail("real candidate lost telemetry-v50.js before v5.18 normalization")
+
+    text = re.sub(
+        r"(?m)^[ \t]*" + re.escape(HANDOFF_OBSERVABILITY_SCRIPT) + r"[ \t]*(?:\r?\n)?",
+        "",
+        text,
+    )
+    text = text.replace(
+        TELEMETRY_ANCHOR,
+        TELEMETRY_ANCHOR + "\n  " + HANDOFF_OBSERVABILITY_SCRIPT,
+        1,
+    )
+    if text.count(HANDOFF_OBSERVABILITY_SCRIPT) != 1:
+        fail("v5.18 runtime normalization did not converge to exactly one script reference")
+    if text.find(TELEMETRY_ANCHOR) > text.find(HANDOFF_OBSERVABILITY_SCRIPT):
+        fail("v5.18 runtime must remain ordered after telemetry-v50.js")
+    HOME.write_text(text, encoding="utf-8")
+    print(
+        f"HISTORICAL GATE COMPAT v5.18 runtime normalized: {observed} historical reference(s) → 1 canonical reference."
+    )
 
 
 def mode_route_contract(is_final: bool) -> None:
@@ -159,10 +201,14 @@ def mode_handoff_observability(is_final: bool) -> None:
         run([sys.executable, "scripts/validate_handoff_observability_v518.py"], cwd=projected)
     finally:
         holder.cleanup()
+
+    normalize_real_handoff_observability_runtime()
     run([sys.executable, "scripts/validate_handoff_observability_v518.py"])
+    run([sys.executable, "scripts/validate_v8_public_tree.py"])
     print(
         "HISTORICAL GATE COMPAT handoff-observability PASS: v5.18→v5.31 materializers remained strict "
-        "inside the 46-page projection and v5.18 validates on the real candidate."
+        "inside the 46-page projection; the disposable governance checkout was normalized back to the "
+        "single canonical v5.18 runtime anchor before real-tree validation."
     )
 
 
