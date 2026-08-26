@@ -5,6 +5,7 @@ const baseURL = configuredBase.endsWith('/') ? configuredBase : `${configuredBas
 const a11ySpec = /accessibility\.spec\.mjs$/;
 const w5HomeSpec = /v8-home-shell(?:\.accessibility)?\.spec\.mjs$/;
 const w5HomeCandidate = process.env.MERIDIANO_W5_HOME_CANDIDATE === '1';
+// v5.5 compatibility invariant: browser projects preserve the historical testIgnore: a11ySpec behavior while W5 adds its isolated spec family.
 const browserIgnore = w5HomeCandidate ? a11ySpec : [a11ySpec, w5HomeSpec];
 const accessibilityIgnore = w5HomeCandidate ? [] : [w5HomeSpec];
 
