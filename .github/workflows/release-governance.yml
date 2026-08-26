@@ -128,6 +128,7 @@ on:
       - scripts/validate_static_catalog.py
       - scripts/validate_growth_v51.py
       - scripts/run_v8_historical_gate_compat.py
+      - scripts/run_v8_legacy_tail_compat.py
       - scripts/validate_live_v51.py
       - scripts/validate_quality_v55.py
       - scripts/validate_ci_v56.py
@@ -161,7 +162,7 @@ jobs:
         run: python3 scripts/apply_handoff_v517.py
       - name: Validate governance contracts
         run: |
-          python3 -m py_compile scripts/validate_live_v51.py scripts/run_v8_historical_gate_compat.py
+          python3 -m py_compile scripts/validate_live_v51.py scripts/run_v8_historical_gate_compat.py scripts/run_v8_legacy_tail_compat.py
           python3 scripts/run_v8_historical_gate_compat.py growth
           python3 scripts/validate_quality_v55.py
           python3 scripts/validate_ci_v56.py
@@ -213,22 +214,8 @@ jobs:
           python3 scripts/validate_handoff_v517.py
       - name: Validate handoff observability v5.18+
         run: python3 scripts/run_v8_historical_gate_compat.py handoff-observability
-      - name: Validate offer narrative v5.22
-        run: python3 scripts/validate_offer_narrative_v522.py
-      - name: Validate contact compression v5.23
-        run: python3 scripts/validate_contact_compression_v523.py
-      - name: Validate professional authority v5.25
-        run: python3 scripts/validate_professional_authority_v525.py
-      - name: Validate integral visual simplification v5.26
-        run: python3 scripts/validate_integral_visual_v526.py
-      - name: Validate conversion path v5.28
-        run: python3 scripts/validate_conversion_path_v528.py
-      - name: Validate funnel observability and contextual trust v5.29
-        run: python3 scripts/validate_funnel_trust_v529.py
-      - name: Validate offer commercial depth v5.30
-        run: python3 scripts/validate_offer_commercial_v530.py
-      - name: Validate decision compression v5.31
-        run: python3 scripts/validate_decision_compression_v531.py
+      - name: Validate historical tail v5.22 through v5.31
+        run: python3 scripts/run_v8_legacy_tail_compat.py
       - name: Publish release-health report
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
