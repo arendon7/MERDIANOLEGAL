@@ -67,6 +67,9 @@ jobs:
       - name: Validate ephemeral W5 Home before materialization
         run: python3 scripts/validate_v8_home_preview.py
 
+      - name: Preserve certified W4.13 public tree
+        run: python3 scripts/validate_v8_public_tree.py
+
       - name: Render ephemeral W5 Home artifact
         run: |
           rm -rf .w5-preview
@@ -74,9 +77,6 @@ jobs:
           test -s .w5-preview/index.html
           grep -q 'data-v8-home-shell="candidate"' .w5-preview/index.html
           grep -q 'name="robots" content="noindex,nofollow"' .w5-preview/index.html
-
-      - name: Preserve certified W4.13 public tree
-        run: python3 scripts/validate_v8_public_tree.py
 
       - name: Upload W5 Home preview artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
