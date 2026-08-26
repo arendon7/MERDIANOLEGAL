@@ -213,7 +213,7 @@ def governance(source: dict) -> str:
     items = [
         ("Perímetro", source["perimeter"][0][0]),
         ("Usuarios / capacidad", source["perimeter"][1][0]),
-        ("Volumen", source["perimeter"][2][0]),
+        ("Cobertura", source["perimeter"][2][0]),
         ("Cadencia", source["timeline"][2][0] if len(source["timeline"]) > 2 else source["duration"]),
     ]
     return '<div class="ml-recurring-governance">' + "".join(
