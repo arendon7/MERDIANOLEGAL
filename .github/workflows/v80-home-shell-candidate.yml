@@ -89,5 +89,6 @@ jobs:
       - name: Prove validation is non-mutating
         run: |
           rm -rf .w5-preview
+          find . -type d -name __pycache__ -prune -exec rm -rf {} +
           git diff --exit-code
           test -z "$(git status --porcelain)"
