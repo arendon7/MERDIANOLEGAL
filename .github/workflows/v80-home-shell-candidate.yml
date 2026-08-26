@@ -5,7 +5,11 @@ on:
     branches: [main]
     paths:
       - assets/data/v8/home-shell-v80.json
+      - assets/css/v8/components.css
+      - assets/js/v8/navigation.js
+      - scripts/v8_shell.py
       - scripts/validate_v8_home_shell.py
+      - scripts/validate_v8_navigation_shell.py
       - knowledge/20_DESIGN/W50-HOME-NAVIGATION-CONTRACT.md
       - knowledge/10_DECISIONES/ADR-009-v8-w5-home-shell-rc02.md
       - .github/workflows/v80-home-shell-candidate.yml
@@ -42,11 +46,18 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Compile W5 validator
-        run: python3 -m py_compile scripts/validate_v8_home_shell.py
+      - name: Compile W5 validators and renderer
+        run: |
+          python3 -m py_compile \
+            scripts/v8_shell.py \
+            scripts/validate_v8_home_shell.py \
+            scripts/validate_v8_navigation_shell.py
 
-      - name: Validate W5 Home/navigation model and activation boundary
+      - name: Validate W5 Home model and activation boundary
         run: python3 scripts/validate_v8_home_shell.py
+
+      - name: Validate W5 global navigation shell
+        run: python3 scripts/validate_v8_navigation_shell.py
 
       - name: Preserve certified W4.13 public tree
         run: python3 scripts/validate_v8_public_tree.py
