@@ -8,6 +8,7 @@ on:
       - assets/js/v6/analytics-adapter-v61.js
       - assets/data/v6/measurement-readiness-v61.json
       - assets/data/v6/fit-scope-clarity-v64.json
+      - assets/data/v8/pipeline-compat-v80.json
       - assets/css/v6/fit-scope-clarity-v64.css
       - telemetry-v50.js
       - site-config.json
@@ -42,6 +43,7 @@ jobs:
     timeout-minutes: 30
     env:
       MERIDIANO_BASE_URL: http://127.0.0.1:8000/
+      MERIDIANO_V61_ROOT: /tmp/meridiano-v61-projection
     steps:
       - name: Checkout candidate
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -57,8 +59,41 @@ jobs:
           node-version: '22'
           cache: 'npm'
           cache-dependency-path: package-lock.json
+      - name: Prepare strict 46-page legacy projection for additive v8 tree
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          import os
+          import shutil
+
+          root = Path.cwd()
+          projected = Path(os.environ["MERIDIANO_V61_ROOT"])
+          contract = json.loads((root / "assets/data/v8/pipeline-compat-v80.json").read_text(encoding="utf-8"))
+          removals = list((contract.get("legacy_projection") or {}).get("remove_before_strict_validation") or [])
+          if len(removals) != 3:
+              raise SystemExit(f"V6.1 projection requires exactly 3 additive v8 removals; got {removals}")
+
+          shutil.rmtree(projected, ignore_errors=True)
+          shutil.copytree(
+              root,
+              projected,
+              ignore=shutil.ignore_patterns(".git", "node_modules", "playwright-report", "test-results", "__pycache__"),
+          )
+          for relative in removals:
+              target = projected / relative
+              if not target.is_file():
+                  raise SystemExit(f"V6.1 projection target missing before removal: {relative}")
+              target.unlink()
+
+          html_count = len(list(projected.rglob("*.html")))
+          if html_count != 46:
+              raise SystemExit(f"V6.1 projection must restore 46 HTML; found {html_count}")
+          print("V6.1 STRICT PROJECTION OK: 49-page additive tree -> isolated 46-page legacy measurement view.")
+          PY
       - name: Materialize canonical v6 with measurement readiness
         run: |
+          cd "$MERIDIANO_V61_ROOT"
           python3 scripts/sync_public_version.py
           python3 scripts/apply_experience_v60.py
           python3 scripts/apply_experience_solutions_v60.py
@@ -72,6 +107,7 @@ jobs:
           fi
       - name: Validate measurement privacy and release metadata
         run: |
+          cd "$MERIDIANO_V61_ROOT"
           python3 scripts/validate_production_v50.py
           python3 scripts/validate_measurement_readiness_v61.py
           python3 scripts/validate_release_governance_v57.py
@@ -91,7 +127,9 @@ jobs:
           fi
           python3 -m json.tool site-status.json > /dev/null
       - name: Install locked QA dependencies
-        run: npm ci --ignore-scripts --no-audit --no-fund
+        run: |
+          cd "$MERIDIANO_V61_ROOT"
+          npm ci --ignore-scripts --no-audit --no-fund
       - name: Prefer official Ubuntu mirrors for browser dependencies
         run: |
           if [ -f /etc/apt/apt-mirrors.txt ]; then
@@ -104,9 +142,12 @@ jobs:
             'Acquire::https::Timeout "30";' \
             | sudo tee /etc/apt/apt.conf.d/80meridiano-network >/dev/null
       - name: Install Chromium and WebKit
-        run: timeout 900s npx playwright install --with-deps chromium webkit
+        run: |
+          cd "$MERIDIANO_V61_ROOT"
+          timeout 900s npx playwright install --with-deps chromium webkit
       - name: Start local candidate server
         run: |
+          cd "$MERIDIANO_V61_ROOT"
           python3 -m http.server 8000 --bind 127.0.0.1 > /tmp/meridiano-v61-http.log 2>&1 &
           echo $! > /tmp/meridiano-v61-http.pid
           for i in {1..20}; do
@@ -118,15 +159,24 @@ jobs:
           cat /tmp/meridiano-v61-http.log >&2 || true
           exit 1
       - name: Run full browser E2E suite
-        run: npm run test:e2e
+        run: |
+          cd "$MERIDIANO_V61_ROOT"
+          npm run test:e2e
       - name: Upload measurement failure artifacts
         if: failure()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: v61-measurement-readiness-failure-artifacts
           path: |
-            playwright-report
-            test-results
+            /tmp/meridiano-v61-projection/playwright-report
+            /tmp/meridiano-v61-projection/test-results
             /tmp/meridiano-v61-http.log
           if-no-files-found: ignore
           retention-days: 7
+      - name: Prove real additive v8 tree remained untouched
+        if: success()
+        run: |
+          python3 scripts/validate_v8_public_tree.py
+          find . -type d -name __pycache__ -prune -exec rm -rf {} +
+          git diff --exit-code
+          test -z "$(git status --porcelain)"

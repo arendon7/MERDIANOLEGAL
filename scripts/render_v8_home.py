@@ -162,7 +162,7 @@ def render_practices(model: dict, home: dict, prefix: str) -> str:
 def render_method(home: dict) -> str:
     data = home["method"]
     steps = "".join(f'<li><span>{index:02d}</span><strong>{e(step)}</strong></li>' for index, step in enumerate(data["steps"], start=1))
-    return f'''<section class="ml-section ml-section--dark ml-home-method" data-v8-home-section="H06" aria-labelledby="ml-method-title">
+    return f'''<section class="ml-section ml-section--navy ml-home-method" data-v8-home-section="H06" aria-labelledby="ml-method-title">
   <div class="ml-container ml-home-method-grid">
     <div><p class="ml-eyebrow">MÉTODO</p><h2 id="ml-method-title">{e(data["title"])}</h2><p>El trabajo jurídico debe terminar en una estructura que la dirección pueda ejecutar, controlar y volver a consultar.</p></div>
     <ol>{steps}</ol>
@@ -221,7 +221,7 @@ def render_insights(home: dict, prefix: str) -> str:
 def render_final_cta(model: dict, home: dict, prefix: str, contact_href: str) -> str:
     data = home["final_cta"]
     diagnostic = next(row for row in model["navigation"]["actions"] if row[0] == "diagnostic")
-    return f'''<section class="ml-section ml-section--dark ml-home-final" data-v8-home-section="H12" aria-labelledby="ml-final-title"><div class="ml-container ml-home-final-grid"><div><p class="ml-eyebrow">SIGUIENTE PASO</p><h2 id="ml-final-title">{e(data["title"])}</h2><p>Puede empezar por una conversación o por el diagnóstico jurídico empresarial si todavía necesita ordenar prioridades.</p></div><div class="ml-actions"><a class="ml-btn ml-home-btn-light" href="{e(contact_href)}">Hablar con Meridiano</a><a class="ml-btn ml-btn--secondary ml-home-btn-outline" href="{e(prefixed(diagnostic[3], prefix))}">Solicitar diagnóstico</a></div></div></section>'''
+    return f'''<section class="ml-section ml-section--navy ml-home-final" data-v8-home-section="H12" aria-labelledby="ml-final-title"><div class="ml-container ml-home-final-grid"><div><p class="ml-eyebrow">SIGUIENTE PASO</p><h2 id="ml-final-title">{e(data["title"])}</h2><p>Puede empezar por una conversación o por el diagnóstico jurídico empresarial si todavía necesita ordenar prioridades.</p></div><div class="ml-actions"><a class="ml-btn ml-home-btn-light" href="{e(contact_href)}">Hablar con Meridiano</a><a class="ml-btn ml-btn--secondary ml-home-btn-outline" href="{e(prefixed(diagnostic[3], prefix))}">Solicitar diagnóstico</a></div></div></section>'''
 
 
 def render_home(model: dict, *, prefix: str = "../", contact_href: str = "../index.html#contacto") -> str:

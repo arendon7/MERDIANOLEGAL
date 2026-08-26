@@ -151,5 +151,6 @@ jobs:
         if: success()
         run: |
           rm -rf .w5-preview playwright-report test-results
+          find . -type d -name __pycache__ -prune -exec rm -rf {} +
           git diff --exit-code
           test -z "$(git status --porcelain)"

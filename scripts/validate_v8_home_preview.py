@@ -124,6 +124,18 @@ def main() -> int:
     if parser.inline_styles or parser.inline_scripts:
         fail("preview must not introduce inline style/script sedimentation")
 
+    # Dark Home sections must use the actual v8 navy primitive. A historical
+    # or invented dark class would silently fall back to a light background and
+    # can turn otherwise-accessible inverse/gold text into an axe violation.
+    if "ml-section--dark" in html:
+        fail("preview uses undefined ml-section--dark instead of canonical ml-section--navy")
+    for marker in (
+        'class="ml-section ml-section--navy ml-home-method"',
+        'class="ml-section ml-section--navy ml-home-final"',
+    ):
+        if marker not in html:
+            fail(f"preview dark-section primitive drifted: {marker}")
+
     visible = " ".join(parser.text)
     required_text = (
         "Derecho empresarial para decisiones que necesitan avanzar.",
@@ -189,7 +201,7 @@ def main() -> int:
     if len(list(ROOT.rglob("*.html"))) != 49:
         fail("W5.0C source tree must remain at the certified 49 HTML baseline")
 
-    print("VALIDATE V8 W5 HOME PREVIEW OK: H01-H12; one H1; no duplicate form; v8-only assets; all links resolve; RC02 non-linked; production Home untouched.")
+    print("VALIDATE V8 W5 HOME PREVIEW OK: H01-H12; canonical navy dark sections; one H1; no duplicate form; v8-only assets; all links resolve; RC02 non-linked; production Home untouched.")
     return 0
 
 
