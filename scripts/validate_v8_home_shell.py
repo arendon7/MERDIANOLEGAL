@@ -30,7 +30,7 @@ PILOT_ROUTES = (
     "servicios-continuos/direccion-juridica-externa.html",
 )
 HOME_ORDER = [f"H{i:02d}" for i in range(1, 13)]
-MOBILE_ORDER = ["H01", "H02", "H03", "H04", "H05", "H06", "H08", "H07", "H09", "H10", "H11", "H12"]
+MOBILE_ORDER = [f"H{i:02d}" for i in range(1, 13)]
 PRIMARY_LABELS = ["Qué hacemos", "Sectores", "Firma", "Insights", "Contacto"]
 ANALYTICS = ["cta_click", "solution_view", "practice_view", "diagnosis_start", "contact_submit", "portal_click"]
 

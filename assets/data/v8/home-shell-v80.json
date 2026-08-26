@@ -164,7 +164,7 @@
     }
   },
   "mobile": {
-    "section_order": ["H01", "H02", "H03", "H04", "H05", "H06", "H08", "H07", "H09", "H10", "H11", "H12"],
+    "section_order": ["H01", "H02", "H03", "H04", "H05", "H06", "H07", "H08", "H09", "H10", "H11", "H12"],
     "menu": "full_screen",
     "practice_presentation": "accordion_or_index",
     "sticky_cta": [true, "talk", ["menu_open", "form_visible", "final_cta_nearby"]],

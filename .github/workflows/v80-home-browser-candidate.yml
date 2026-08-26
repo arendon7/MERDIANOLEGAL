@@ -50,6 +50,7 @@ jobs:
     timeout-minutes: 30
     env:
       MERIDIANO_BASE_URL: http://127.0.0.1:8000/
+      MERIDIANO_W5_HOME_CANDIDATE: '1'
     steps:
       - name: Checkout W5 candidate
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6

@@ -168,9 +168,10 @@ def main() -> int:
     if 'data-v8-home-shell="candidate"' in canonical or model["home"]["hero"]["title"] in canonical:
         fail("W5 Home was persisted into index.html before Browser/Axe gate")
 
+    allowed_local_anchors = {"#contenido", "#soluciones", "#sectores"}
     for href in parser.links:
         if href.startswith("#"):
-            if href not in {"#soluciones", "#sectores"}:
+            if href not in allowed_local_anchors:
                 fail(f"unexpected preview-local anchor: {href}")
             continue
         target = local_target(href)
