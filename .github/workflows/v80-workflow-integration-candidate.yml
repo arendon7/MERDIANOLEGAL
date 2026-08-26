@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Checkout W4.8 candidate
+      - name: Checkout integration candidate
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           persist-credentials: false
@@ -41,7 +41,7 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Compile W4.8 contracts
+      - name: Compile integration contracts
         run: |
           python3 -m py_compile \
             scripts/apply_v8_builder_compat.py \
@@ -51,7 +51,7 @@ jobs:
             scripts/run_v8_pages_quality_compat.py
           python3 -m json.tool assets/data/v8/workflow-integration-v80.json > /dev/null
 
-      - name: Verify committed workflow bytes against W4.7 artifact contract
+      - name: Verify committed workflow bytes against certified artifact contract
         run: |
           printf '%s  %s\n' \
             '6a002a1e6f9049bc9c98ad767c6aca9083c92f6847af3bc8ec78af534b5345ea' \
@@ -62,24 +62,39 @@ jobs:
             '.github/workflows/pages.yml' \
             | sha256sum -c -
 
-      - name: Regenerate W4.7 expected workflows from PR base
+      - name: Prove PR-base integration parity
         if: github.event_name == 'pull_request'
         run: |
           rm -rf /tmp/meridiano-w48-base
           git worktree add --detach /tmp/meridiano-w48-base '${{ github.event.pull_request.base.sha }}'
-          python3 scripts/materialize_v8_pipeline_integration_candidate.py \
-            --root /tmp/meridiano-w48-base
-          cmp --silent \
-            /tmp/meridiano-w48-base/.github/workflows/build-canonical.yml \
-            .github/workflows/build-canonical.yml
-          cmp --silent \
-            /tmp/meridiano-w48-base/.github/workflows/pages.yml \
-            .github/workflows/pages.yml
-          echo 'W4.8 BASE REGENERATION PARITY PASS: committed workflows equal freshly generated W4.7 candidate.'
+
+          # Before W4.13, the base did not yet contain v8 integration and the
+          # expected workflows had to be materialized. After W4.13, production
+          # already contains the certified integration. In that state, trying
+          # to materialize again is itself an error; require exact byte parity
+          # with the committed production workflows instead.
+          if cmp --silent \
+              /tmp/meridiano-w48-base/.github/workflows/build-canonical.yml \
+              .github/workflows/build-canonical.yml \
+            && cmp --silent \
+              /tmp/meridiano-w48-base/.github/workflows/pages.yml \
+              .github/workflows/pages.yml; then
+            echo 'POST-PROMOTION PARITY PASS: PR base already contains certified Builder/Pages integration.'
+          else
+            python3 scripts/materialize_v8_pipeline_integration_candidate.py \
+              --root /tmp/meridiano-w48-base
+            cmp --silent \
+              /tmp/meridiano-w48-base/.github/workflows/build-canonical.yml \
+              .github/workflows/build-canonical.yml
+            cmp --silent \
+              /tmp/meridiano-w48-base/.github/workflows/pages.yml \
+              .github/workflows/pages.yml
+            echo 'PRE-PROMOTION REGENERATION PARITY PASS: committed workflows equal freshly materialized candidate.'
+          fi
 
       - name: Parse committed workflows as YAML
         run: |
-          ruby -e "require 'yaml'; YAML.load_file('.github/workflows/build-canonical.yml'); YAML.load_file('.github/workflows/pages.yml'); puts 'W4.8 YAML syntax OK'"
+          ruby -e "require 'yaml'; YAML.load_file('.github/workflows/build-canonical.yml'); YAML.load_file('.github/workflows/pages.yml'); puts 'V8 workflow YAML syntax OK'"
 
       - name: Validate committed integration end to end
         run: python3 scripts/validate_v8_workflow_integration.py
@@ -87,7 +102,7 @@ jobs:
       - name: Prove checkout is idempotent after all validation
         run: git diff --exit-code
 
-      - name: Prepare W4.8 certification artifact
+      - name: Prepare integration certification artifact
         run: |
           rm -rf w48-workflow-integration-certified
           mkdir -p w48-workflow-integration-certified
@@ -99,7 +114,7 @@ jobs:
               w48-workflow-integration-certified/regenerated-w47-manifest.json
           fi
 
-      - name: Upload W4.8 certification artifact
+      - name: Upload integration certification artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: w48-v8-workflow-integration-certified
