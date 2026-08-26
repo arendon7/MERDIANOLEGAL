@@ -1,0 +1,51 @@
+name: V8.0 pilot infrastructure candidate
+
+on:
+  pull_request:
+    branches:
+      - design/v8-client-architecture-w41
+      - design/v8-route-compat-w42
+    paths:
+      - assets/data/v8/**
+      - assets/css/v8/**
+      - scripts/render_v8_pilot.py
+      - scripts/validate_v8_pilot_infra.py
+      - scripts/validate_route_contract_v80.py
+      - catalog-products-v41/p07-contractual.json
+      - catalog-services-v42/s02-direccion.json
+      - catalog-services-v42/s04-societario.json
+      - knowledge/20_DESIGN/V8-*.md
+      - knowledge/00_CANON/TAREA_ACTIVA.md
+      - .github/workflows/v80-pilot-infra-candidate.yml
+  workflow_dispatch:
+
+concurrency:
+  group: meridiano-v80-pilot-infra-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate non-public v8 pilot infrastructure
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout candidate
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.12'
+      - name: Compile v8 infrastructure
+        run: |
+          python3 -m py_compile scripts/render_v8_pilot.py scripts/validate_v8_pilot_infra.py scripts/validate_route_contract_v80.py
+      - name: Validate W4.2 route contract remains intact
+        run: python3 scripts/validate_route_contract_v80.py
+      - name: Validate W4.3 pilot infrastructure
+        run: python3 scripts/validate_v8_pilot_infra.py
+      - name: Preserve canonical pipeline contract
+        run: python3 scripts/canonical_pipeline_v524.py validate

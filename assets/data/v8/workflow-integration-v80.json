@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0.0",
+  "contract": "v8-workflow-integration",
+  "status": "candidate",
+  "depends_on": "v8-pipeline-integration",
+  "w47_artifact": {
+    "id": 9585803169,
+    "digest": "sha256:05b5fffb77a40b9726c23536dfad28e5ea3b2151fed870c2746f31424ce18dd1",
+    "builder_sha256": "6a002a1e6f9049bc9c98ad767c6aca9083c92f6847af3bc8ec78af534b5345ea",
+    "pages_sha256": "3e3ab999ead2f094d7a0b26b2d430dd1bf5e414b224f9e6275f961000e25be01"
+  },
+  "integrated_files": [
+    ".github/workflows/build-canonical.yml",
+    ".github/workflows/pages.yml"
+  ],
+  "policy": {
+    "exact_w47_bytes_required": true,
+    "base_regeneration_parity_required": true,
+    "canonical_pipeline_governance_required": true,
+    "pages_trigger_governance_required": true,
+    "ci_governance_required": true,
+    "builder_adapter_check_required": true,
+    "pages_quality_dual_view_required": true,
+    "deploy_during_w48": false,
+    "main_modified": false,
+    "stable_modified": false,
+    "version_bump": false,
+    "canonical_handoff": false
+  }
+}

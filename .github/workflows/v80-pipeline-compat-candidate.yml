@@ -1,0 +1,140 @@
+name: V8.0 pipeline compatibility candidate
+
+on:
+  pull_request:
+    branches:
+      - design/v8-public-tree-w45
+      - main
+    paths:
+      - assets/data/v8/**
+      - assets/css/v8/**
+      - soluciones/sistema-contractual-empresarial.html
+      - practicas/corporativo-societario-gobierno.html
+      - servicios-continuos/direccion-juridica-externa.html
+      - scripts/validate_v8_pipeline_compat.py
+      - scripts/simulate_v8_builder_projection.py
+      - scripts/run_v8_pages_quality_compat.py
+      - scripts/validate_v8_public_tree.py
+      - scripts/validate_experience_v60.py
+      - scripts/validate_experience_solutions_v60.py
+      - scripts/validate_growth_v51.py
+      - scripts/apply_experience_solutions_v60.py
+      - scripts/apply_experience_v60.py
+      - scripts/apply_experience_sectors_v60.py
+      - scripts/apply_experience_perspectives_v60.py
+      - scripts/apply_experience_final_v60.py
+      - scripts/normalize_experience_compat_v60.py
+      - scripts/apply_funnel_trust_v529.py
+      - scripts/apply_fit_scope_clarity_v64.py
+      - .github/workflows/build-canonical.yml
+      - .github/workflows/pages.yml
+      - .github/workflows/v80-pipeline-compat-candidate.yml
+  workflow_dispatch:
+
+concurrency:
+  group: meridiano-v80-pipeline-compat-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  compat:
+    name: Prove Builder and Pages compatibility without deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout W4.6 candidate
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.12'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22'
+
+      - name: Compile W4.6 contracts
+        run: |
+          python3 -m py_compile \
+            scripts/validate_v8_pipeline_compat.py \
+            scripts/simulate_v8_builder_projection.py \
+            scripts/run_v8_pages_quality_compat.py \
+            scripts/validate_v8_public_tree.py \
+            scripts/render_v8_pilot.py \
+            scripts/materialize_v8_pilot.py
+          python3 -m json.tool assets/data/v8/pipeline-compat-v80.json > /dev/null
+
+      - name: Revalidate certified W4.5 public tree and strict legacy projection
+        run: |
+          python3 scripts/validate_v8_pipeline_compat.py
+          python3 scripts/canonical_pipeline_v524.py validate
+
+      - name: Capture additive target hashes before Builder projection
+        run: |
+          sha256sum \
+            soluciones/sistema-contractual-empresarial.html \
+            practicas/corporativo-societario-gobierno.html \
+            servicios-continuos/direccion-juridica-externa.html \
+            > /tmp/w46-targets-before.sha256
+
+      - name: Simulate canonical Builder in strict 46-page legacy projection
+        run: python3 scripts/simulate_v8_builder_projection.py
+
+      - name: Prove Builder projection left real 49-page checkout untouched
+        run: |
+          sha256sum -c /tmp/w46-targets-before.sha256
+          git diff --exit-code
+          python3 scripts/validate_v8_pipeline_compat.py
+
+      - name: Simulate Pages quality with dual-view compatibility contract
+        run: python3 scripts/run_v8_pages_quality_compat.py
+
+      - name: Validate JavaScript syntax used by Pages
+        run: |
+          node --check site-v3.js
+          node --check catalog-v32.js
+          node --check catalog-page.js
+          node --check catalog-home-v32.js
+          node --check commercial-conversion-v44.js
+          node --check decision-flow.js
+          node --check page-context.js
+          node --check experiencia.js
+          node --check demo.js
+          node --check visual-v39.js
+          node --check detail-v46.js
+          node --check editorial-v47.js
+          node --check runtime-config.js
+          node --check telemetry-v50.js
+          node --check measurement-v53.js
+          node --check commercial-intake-v59.js
+          node --check conversion-close-v510.js
+          node --check commercial-brief-v513.js
+          node --check recommendation-v514.js
+          node --check decision-action-v515.js
+          node --check handoff-continuity-v517.js
+          node --check handoff-observability-v518.js
+          node --check playwright.config.mjs
+
+      - name: Simulate Pages artifact inclusion without deployment
+        run: |
+          rm -rf /tmp/w46-pages-artifact
+          mkdir -p /tmp/w46-pages-artifact
+          cp -a . /tmp/w46-pages-artifact/site
+          rm -rf /tmp/w46-pages-artifact/site/.git /tmp/w46-pages-artifact/site/node_modules
+          test -f /tmp/w46-pages-artifact/site/soluciones/sistema-contractual-empresarial.html
+          test -f /tmp/w46-pages-artifact/site/practicas/corporativo-societario-gobierno.html
+          test -f /tmp/w46-pages-artifact/site/servicios-continuos/direccion-juridica-externa.html
+          grep -q '<meta name="robots" content="noindex,follow">' /tmp/w46-pages-artifact/site/soluciones/sistema-contractual-empresarial.html
+          grep -q '<meta name="robots" content="noindex,follow">' /tmp/w46-pages-artifact/site/practicas/corporativo-societario-gobierno.html
+          grep -q '<meta name="robots" content="noindex,follow">' /tmp/w46-pages-artifact/site/servicios-continuos/direccion-juridica-externa.html
+          ! grep -q '/soluciones/sistema-contractual-empresarial.html' sitemap.xml
+          ! grep -q '/practicas/corporativo-societario-gobierno.html' sitemap.xml
+          ! grep -q '/servicios-continuos/direccion-juridica-externa.html' sitemap.xml
+          echo 'PAGES ARTIFACT SIMULATION PASS: 49-page candidate can be packaged without activation.'

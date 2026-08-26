@@ -1,0 +1,56 @@
+{
+  "schema_version": "1.0.0",
+  "contract": "v8-release-topology",
+  "status": "candidate",
+  "depends_on": "v8-integrated-pipeline-shadow",
+  "baseline": {
+    "main_sha": "86813813e29dd6b47105ba7fb6259630fcd9cb5b",
+    "stable_sha": "86813813e29dd6b47105ba7fb6259630fcd9cb5b",
+    "version": "7.4.0"
+  },
+  "promotion": {
+    "topology": "single-linear-candidate-from-main",
+    "main_must_be_ancestor": true,
+    "candidate_must_not_be_behind_main": true,
+    "production_merge": false,
+    "production_deploy": false,
+    "stable_move": false
+  },
+  "builder": {
+    "trigger": "push-main",
+    "candidate_paths_must_trigger": true,
+    "expected_candidate_drift": false,
+    "generated_commit_prefix": "build: sincroniza sitio público canónico",
+    "generated_commit_is_fallback_only": true,
+    "candidate_adapter_apply": true
+  },
+  "pages": {
+    "trigger": "workflow_run-builder-completed",
+    "requires_builder_success": true,
+    "ignores_generated_build_commit_run": true,
+    "quality_checkout": "main",
+    "deploy_after_quality": true,
+    "live_smoke_after_deploy": true,
+    "browser_after_deploy_and_smoke": true,
+    "lighthouse_after_deploy_and_smoke": true,
+    "stable_after_browser_and_lighthouse": true
+  },
+  "fail_closed": {
+    "builder_failure_blocks_pages": true,
+    "quality_failure_blocks_deploy": true,
+    "deploy_failure_blocks_smoke": true,
+    "smoke_failure_blocks_browser_and_lighthouse": true,
+    "browser_failure_blocks_stable": true,
+    "lighthouse_failure_blocks_stable": true,
+    "rollback_anchor_is_pre_release_stable": true
+  },
+  "protected": {
+    "main_modified": false,
+    "stable_modified": false,
+    "version_bump": false,
+    "sitemap_activation": false,
+    "home_activation": false,
+    "canonical_handoff": false,
+    "rc02": false
+  }
+}

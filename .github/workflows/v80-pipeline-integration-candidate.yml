@@ -1,0 +1,106 @@
+name: V8.0 pipeline adapter integration candidate
+
+on:
+  pull_request:
+    branches:
+      - design/v8-pipeline-compat-w46
+    paths:
+      - assets/data/v8/**
+      - scripts/apply_v8_builder_compat.py
+      - scripts/materialize_v8_pipeline_integration_candidate.py
+      - scripts/validate_v8_pipeline_integration_candidate.py
+      - scripts/validate_v8_pipeline_compat.py
+      - scripts/run_v8_pages_quality_compat.py
+      - scripts/simulate_v8_builder_projection.py
+      - .github/workflows/build-canonical.yml
+      - .github/workflows/pages.yml
+      - .github/workflows/v80-pipeline-integration-candidate.yml
+  workflow_dispatch:
+
+concurrency:
+  group: meridiano-v80-pipeline-integration-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  integration:
+    name: Materialize and certify integrated Builder Pages adapters
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout W4.7 candidate
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.12'
+
+      - name: Compile W4.7 contracts
+        run: |
+          python3 -m py_compile \
+            scripts/apply_v8_builder_compat.py \
+            scripts/materialize_v8_pipeline_integration_candidate.py \
+            scripts/validate_v8_pipeline_integration_candidate.py \
+            scripts/validate_v8_pipeline_compat.py \
+            scripts/run_v8_pages_quality_compat.py
+          python3 -m json.tool assets/data/v8/pipeline-integration-v80.json > /dev/null
+          python3 -m json.tool assets/data/v8/pipeline-compat-v80.json > /dev/null
+
+      - name: Revalidate W4.6 certified compatibility baseline
+        run: |
+          python3 scripts/validate_v8_pipeline_compat.py
+          python3 scripts/simulate_v8_builder_projection.py
+          python3 scripts/run_v8_pages_quality_compat.py
+
+      - name: Prove production workflow files are untouched in W4.7 branch
+        if: github.event_name == 'pull_request'
+        run: |
+          base='${{ github.event.pull_request.base.sha }}'
+          git diff --exit-code "$base" -- \
+            .github/workflows/build-canonical.yml \
+            .github/workflows/pages.yml
+
+      - name: Materialize integrated workflow candidate in disposable checkout
+        run: |
+          rm -rf /tmp/meridiano-w47-integrated
+          cp -a . /tmp/meridiano-w47-integrated
+          rm -rf /tmp/meridiano-w47-integrated/.git /tmp/meridiano-w47-integrated/node_modules
+          python3 scripts/materialize_v8_pipeline_integration_candidate.py \
+            --root /tmp/meridiano-w47-integrated
+
+      - name: Parse integrated workflow candidates as YAML
+        run: |
+          ruby -e "require 'yaml'; YAML.load_file('/tmp/meridiano-w47-integrated/.github/workflows/build-canonical.yml'); YAML.load_file('/tmp/meridiano-w47-integrated/.github/workflows/pages.yml'); puts 'W4.7 YAML syntax OK'"
+
+      - name: Validate integrated pipeline candidate end to end
+        run: |
+          python3 scripts/validate_v8_pipeline_integration_candidate.py \
+            --candidate-root /tmp/meridiano-w47-integrated
+
+      - name: Prove source checkout remained unchanged
+        run: git diff --exit-code
+
+      - name: Prepare integrated workflow review artifact
+        run: |
+          rm -rf w47-pipeline-integration-candidate
+          mkdir -p w47-pipeline-integration-candidate
+          cp /tmp/meridiano-w47-integrated/.github/workflows/build-canonical.yml \
+            w47-pipeline-integration-candidate/build-canonical.integrated-candidate.yml
+          cp /tmp/meridiano-w47-integrated/.github/workflows/pages.yml \
+            w47-pipeline-integration-candidate/pages.integrated-candidate.yml
+          cp /tmp/meridiano-w47-integrated/.v8-pipeline-integration-candidate.json \
+            w47-pipeline-integration-candidate/manifest.json
+
+      - name: Upload integrated candidate artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: w47-v8-pipeline-integration-candidate
+          path: w47-pipeline-integration-candidate
+          if-no-files-found: error
+          retention-days: 7

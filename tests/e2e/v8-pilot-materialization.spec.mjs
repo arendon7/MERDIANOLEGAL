@@ -1,0 +1,120 @@
+import AxeBuilder from '@axe-core/playwright';
+import { test, expect } from '@playwright/test';
+
+const wcagTags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
+const blockingImpacts = new Set(['serious', 'critical']);
+
+const pilots = [
+  {
+    id: 'SO07',
+    path: './soluciones/sistema-contractual-empresarial.html',
+    family: 'solution',
+    title: 'Sistema Contractual Empresarial',
+    source: 'product-contract-system',
+  },
+  {
+    id: 'PR02',
+    path: './practicas/corporativo-societario-gobierno.html',
+    family: 'practice',
+    title: 'Corporativo, Societario y Gobierno',
+    source: 'service-corporate',
+  },
+  {
+    id: 'RC01',
+    path: './servicios-continuos/direccion-juridica-externa.html',
+    family: 'recurring',
+    title: 'Dirección Jurídica Externa',
+    source: 'service-direction',
+  },
+];
+
+function compact(violations) {
+  return violations.map((violation) => ({
+    id: violation.id,
+    impact: violation.impact,
+    targets: violation.nodes.slice(0, 6).map((node) => node.target.join(' ')),
+  }));
+}
+
+async function audit(page) {
+  const result = await new AxeBuilder({ page }).withTags(wcagTags).analyze();
+  const blocking = result.violations.filter((violation) => blockingImpacts.has(violation.impact));
+  expect(compact(blocking), JSON.stringify(compact(blocking), null, 2)).toEqual([]);
+}
+
+async function expectRelatedLinksResolve(page, pilotId) {
+  const links = page.locator('#ml-related a');
+  expect(await links.count(), `${pilotId}: related links`).toBeGreaterThan(0);
+  const hrefs = await links.evaluateAll((nodes) => nodes.map((node) => node.getAttribute('href')));
+  for (const href of hrefs) {
+    expect(href, `${pilotId}: related href`).toBeTruthy();
+    const absolute = new URL(href, page.url()).href;
+    const response = await page.request.get(absolute);
+    expect(response.status(), `${pilotId}: related ${href}`).toBe(200);
+  }
+}
+
+for (const pilot of pilots) {
+  test(`${pilot.id} materializa semántica v8, truth surface y boundary de candidate`, async ({ page }) => {
+    const response = await page.goto(pilot.path);
+    expect(response?.status()).toBe(200);
+
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex,follow');
+    await expect(page.locator('body')).toHaveClass(new RegExp(`ml-surface--${pilot.family}`));
+    await expect(page.locator('body')).toHaveAttribute('data-v8-pilot', pilot.id);
+    await expect(page.locator('body')).toHaveAttribute('data-source-catalog-id', pilot.source);
+    await expect(page.locator('h1')).toHaveCount(1);
+    await expect(page.locator('h1')).toHaveText(pilot.title);
+    await expect(page.locator('form')).toHaveCount(0);
+
+    await expect(page.locator('.ml-meta-ledger > div')).toHaveCount(3);
+    await expect(page.locator('#ml-fit .ml-index-row')).toHaveCount(4);
+    expect(await page.locator('.ml-ledger-item').count()).toBeGreaterThan(10);
+
+    const primary = page.locator('.ml-hero .ml-btn').first();
+    await expect(primary).toHaveAttribute('href', /\.\.\/index\.html\?.+#contacto$/);
+    await expect(primary).toHaveAttribute('href', /commercial_intent=/);
+    await expect(primary).toHaveAttribute('href', /proof_standard=source/);
+
+    const disclosure = page.locator('.ml-disclosure');
+    await expect(disclosure).toHaveCount(1);
+    await expect(disclosure).not.toHaveAttribute('open', '');
+    const summary = disclosure.locator('summary');
+    await summary.focus();
+    await page.keyboard.press('Enter');
+    await expect(disclosure).toHaveAttribute('open', '');
+    await expect(disclosure.locator('#ml-related')).toBeVisible();
+    await expectRelatedLinksResolve(page, pilot.id);
+
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    expect(overflow).toBeLessThanOrEqual(1);
+
+    await audit(page);
+  });
+}
+
+test('RC01 vende cobertura y nivel de servicio, no una bolsa pública de horas', async ({ page }) => {
+  const response = await page.goto('./servicios-continuos/direccion-juridica-externa.html');
+  expect(response?.status()).toBe(200);
+
+  await expect(page.locator('#ml-governance')).toContainText('Cobertura');
+  await expect(page.locator('#ml-governance')).toContainText('Cobertura mensual definida');
+
+  const publicText = (await page.locator('body').innerText()).toLowerCase();
+  expect(publicText).not.toContain('bolsa mensual');
+  expect(publicText).not.toContain('atención dentro de la bolsa');
+  expect(publicText).not.toMatch(/\bhoras?\b/);
+});
+
+test('pilotos v8 mantienen los tres legacy certificados disponibles en paralelo', async ({ page }) => {
+  const legacy = [
+    './productos/sistema-contractual-empresarial.html',
+    './servicios/sociedades-gobierno-inversion.html',
+    './servicios/direccion-juridica-externa.html',
+  ];
+  for (const path of legacy) {
+    const response = await page.goto(path);
+    expect(response?.status(), path).toBe(200);
+    await expect(page.locator('h1')).toHaveCount(1);
+  }
+});

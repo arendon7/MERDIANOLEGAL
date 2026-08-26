@@ -1,85 +1,131 @@
 # Meridiano Legal — Tarea activa
 
-Actualizado: 2026-08-19.
+Actualizado: 2026-08-25.
+
+## Baseline certificado
+
+- Repositorio: `arendon7/MERDIANOLEGAL`.
+- `main == stable == 86813813e29dd6b47105ba7fb6259630fcd9cb5b`.
+- Release productiva: **v7.4.0 — Commercial Evidence Readiness**.
+- Analytics: `readiness-disabled`.
+- Capability truth v7.4 permanece vigente mientras v8 está en candidate.
+- `stable` no se modifica manualmente.
+
+## Programa v8 — estado acumulado
+
+### W4.1 — Client Architecture & Taxonomy
+
+PR draft #183.
+
+- taxonomía `Prácticas / Soluciones / Servicios continuos`;
+- matriz 46/46;
+- 6 prácticas;
+- 8 soluciones;
+- Dirección Jurídica Externa como servicio continuo;
+- RC02 Meridiano Contratos bloqueado hasta capability contract verificable.
+
+### W4.2 — Route Compatibility & SEO Contract
+
+PR draft #184.
+
+- route contract estructurado;
+- 46/46 legacy routes;
+- 43/43 sitemap baseline;
+- canonical/alias/sitemap policy;
+- CI run `32904478022`: **PASS**.
+
+### W4.3 — Renderer & Design-System Pilot Infrastructure
+
+PR draft #185.
+
+- experience model source-driven;
+- renderer no destructivo;
+- design system v8 consolidado;
+- truth parity;
+- no-activation gate;
+- CI run `32904520736`: **PASS**.
+
+### W4.4 — Ephemeral Pilot Materialization
+
+PR draft #186.
+
+Pilotos:
+
+1. SO07 `/soluciones/sistema-contractual-empresarial.html`.
+2. PR02 `/practicas/corporativo-societario-gobierno.html`.
+3. RC01 `/servicios-continuos/direccion-juridica-externa.html`.
+
+Resultado definitivo:
+
+- 46 legacy antes del materializado: PASS;
+- materialización efímera: PASS;
+- topología temporal 49 = 46 + 3: PASS;
+- legacy pilots sin reescritura: PASS;
+- contraste determinista WCAG AA: PASS;
+- Chromium desktop: PASS;
+- Chromium mobile: PASS;
+- WebKit desktop: PASS;
+- axe WCAG 2.1 A/AA serious/critical: PASS;
+- run final `32905639585`, job `97989006324`: **success**.
+
+La incidencia previa de contraste se corrigió en el sistema de tokens, sin rebajar axe:
+
+- `--ml-muted` → `#52606a`;
+- `--ml-gold-ink` → `#765b38` para texto dorado;
+- `--ml-gold` se conserva para acento no textual;
+- `validate_v8_contrast_tokens.py` impide regresión.
 
 ## Frente vigente
 
-**v7.4.0 — Commercial Evidence Readiness / production-certified closure.**
+**W4.5 — v8 Public-Tree Candidate.**
 
-Rama: `docs/v740-certified-closure`.
+Objetivo: persistir exactamente los tres targets ya certificados por W4.4 como páginas `noindex`, manteniendo el sitio productivo v7.4 sin handoff canónico.
 
-La funcionalidad y el candidate ya fueron certificados productivamente.
+### Estrategia de bootstrap reproducible
 
-## Evidencia cerrada
+No se copiará HTML manualmente desde conversación ni se recreará fuera del renderer.
 
-### Funcional #180
+1. crear branch W4.5 sobre W4.4;
+2. CI genera los tres targets desde `render_v8_pilot.py` + fuentes canónicas en un checkout temporal;
+3. CI publica un artefacto con los tres HTML exactos;
+4. esos bytes se incorporan al branch W4.5;
+5. un segundo run vuelve a renderizar y exige byte parity con los tres archivos persistidos;
+6. después ejecuta validación estructural + Browser/Axe sobre el árbol persistente.
 
-- Baseline anterior certificado: v7.3.0 `61790b4bdf0bfe4dd1143a414288559d664826e6`.
-- SHA funcional final: `fcd929a63f0cdede944cf1767ec03346711e6ee8`.
-- 12/12 workflows aplicables same-SHA: PASS.
-- Merge funcional #180: `d781b3296b325d3d4cd6974523b01c27d77ebaf2`.
+## Invariantes W4.5
 
-### Candidate #181
+Durante esta wave:
 
-- SHA candidate final: `b30d92c923f3f982190dfba3ce31b353cb170f97`.
-- 10/10 workflows aplicables same-SHA: PASS.
-- Merge candidate #181: `8a898dd3e791bb4b216815156643396a6f5e7c93`.
-- Builder/snapshot candidate: `8f3596a0a23ec264c0fd4c4cdbf701311403f17a`.
-- Pages quality/deploy/live smoke + Browser E2E/axe + Lighthouse: PASS.
-- `stable` fue promovido automáticamente a `8f3596a0a23ec264c0fd4c4cdbf701311403f17a`.
-- Antes de este cierre: `main == stable == 8f3596a0a23ec264c0fd4c4cdbf701311403f17a`.
-- `stable/version.json`: v7.4.0 / `github-pages-commercial-evidence-readiness-candidate`.
+- los tres targets permanecen `noindex,follow`;
+- no se añaden al sitemap;
+- Home/navigation no los enlaza todavía;
+- los 46 legacy permanecen físicamente presentes;
+- los legacy conservan self-canonical;
+- no se cambia `version.json`;
+- no se integra aún v8 al Builder/Pages productivo;
+- no se cambia robots productivo;
+- no se crea otro formulario;
+- no se activa analytics;
+- RC02 Meridiano Contratos sigue `publishable=false`;
+- `stable` permanece intacta.
 
-## Qué contiene v7.4
+## Crítica visual abierta
 
-Commercial Evidence Readiness prepara atribución comercial local y anónima para Legal AI Transformation, Contract Control, AI Governance 360, Regulatory Control y Meridiano Legal Desk.
+Screenshots reales W4.4 muestran una mejora de polish no bloqueante:
 
-Solo admite `offer_view`, `demo_offer_open`, `contact_intent` y `handoff_prepared`, asociados mediante tokens públicos allowlisted `source=li-*`.
+- en mobile, el summary `Profundidad jurídica y operativa / Ver alcance completo` tiene demasiado peso visual.
 
-## Lifecycle y activation boundary
+Se tratará después de asegurar byte parity y Public-Tree Candidate, sin esconder profundidad material ni romper `<details>` nativo.
 
-El cierre cambia el lifecycle del contrato de `release-candidate` a `certified`, pero **no cambia el estado operativo**: v7.4 permanece `readiness-disabled`.
+## Definition of Done W4.5
 
-- `site-config.json` continúa con analytics disabled, provider `none`, site_id vacío.
-- No se activa Plausible, GA4, Umami ni otro proveedor.
-- No hay transporte analytics externo propio, cookies, storage persistente, fingerprinting o identificadores cross-session.
-- No se exporta PII, texto libre o contenido del formulario.
-- El buffer local permanece limitado a 24 eventos en memoria.
-- El payload local sigue limitado a `subject + interaction`.
-
-Una futura activación externa requiere otro frente/release, proveedor/site ID reales, revisión de metadata del proveedor y actualización previa de privacidad.
-
-## Boundary del cierre
-
-El cierre `production-certified` modifica exactamente siete archivos:
-
-1. `version.json`: candidate → `github-pages-production-commercial-evidence-readiness-certified`.
-2. `assets/data/v7/commercial-evidence-v74.json`: lifecycle `release-candidate` → `certified`, manteniendo `status: readiness-disabled`.
-3. `README.md`.
-4. `RELEASE-v7.4.md`.
-5. `knowledge/00_CANON/CONTEXTO_RAPIDO.md`.
-6. `knowledge/00_CANON/ESTADO_ACTUAL.md`.
-7. esta memoria.
-
-No modifica runtime JS, HTML, navegación, formularios, CSS, catálogos, precios, capabilities, `site-config.json`, política de privacidad, materializadores, validators funcionales, E2E ni workflows.
-
-## Gate del cierre
-
-Antes de declarar v7.4 definitivamente cerrada:
-
-1. confirmar boundary exacto de siete archivos;
-2. congelar un único SHA final;
-3. superar todos los workflows aplicables sobre ese mismo SHA;
-4. confirmar V7.4 PASS con lifecycle `certified` y status `readiness-disabled`;
-5. mantener Measurement y Browser E2E/axe PASS;
-6. fusionar únicamente con `expected_head_sha`;
-7. completar Builder → Pages → live smoke → Browser/axe + Lighthouse;
-8. permitir únicamente promoción automática de `stable`;
-9. terminar con `main == stable`;
-10. confirmar `stable/version.json` = v7.4.0 + `github-pages-production-commercial-evidence-readiness-certified`.
-
-`stable` no se mueve manualmente.
-
-## Después de v7.4
-
-Cualquier activación real de analítica será una decisión separada. El próximo frente comercial debe mejorar comprensión, autoridad, descubrimiento y conversión de las ofertas existentes antes de crear nuevas capabilities tecnológicas.
+- tres target HTML persistidos;
+- generated == persisted byte-for-byte;
+- 49 HTML en candidate = 46 legacy + 3 targets;
+- targets `noindex` y fuera del sitemap;
+- legacy canonical intacto;
+- Home/navigation sin activación v8;
+- route contract y truth parity PASS;
+- Chromium desktop/mobile + WebKit + axe PASS sobre archivos persistidos;
+- no cambio en `stable`;
+- handoff preparado para W4.6, sin activarlo.

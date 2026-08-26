@@ -1,0 +1,118 @@
+.ml-hero {
+  padding: clamp(4.5rem, 9vw, 8rem) 0 var(--ml-space-8);
+  border-bottom: 1px solid var(--ml-line);
+  background:
+    linear-gradient(90deg, rgba(245, 241, 232, 0.82), rgba(255, 255, 255, 0.96) 58%),
+    var(--ml-white);
+}
+
+.ml-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+  gap: clamp(2rem, 6vw, 6rem);
+  align-items: end;
+}
+
+.ml-hero-copy { max-width: 800px; }
+.ml-hero-copy .ml-lead { margin-bottom: 0; }
+
+.ml-hero-aside {
+  padding-left: var(--ml-space-6);
+  border-left: 1px solid var(--ml-line-strong);
+}
+.ml-hero-aside strong {
+  display: block;
+  color: var(--ml-navy-deep);
+  font-family: var(--ml-serif);
+  font-size: 1.35rem;
+  font-weight: 500;
+  line-height: 1.35;
+}
+.ml-hero-aside p { margin: var(--ml-space-3) 0 0; color: var(--ml-muted); }
+
+.ml-surface--solution .ml-hero { box-shadow: inset 0 4px 0 var(--ml-gold); }
+.ml-surface--practice .ml-hero { box-shadow: inset 0 4px 0 var(--ml-blue); }
+.ml-surface--recurring .ml-hero { box-shadow: inset 0 4px 0 var(--ml-navy); }
+
+.ml-surface--solution .ml-family-marker,
+.ml-surface--practice .ml-family-marker,
+.ml-surface--recurring .ml-family-marker {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ml-space-2);
+  margin-bottom: var(--ml-space-4);
+  color: var(--ml-muted);
+  font-size: var(--ml-text-xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.ml-family-marker::before { content: ""; width: 28px; height: 1px; background: currentColor; }
+.ml-surface--solution .ml-family-marker { color: var(--ml-gold-ink); }
+.ml-surface--practice .ml-family-marker { color: var(--ml-blue); }
+.ml-surface--recurring .ml-family-marker { color: var(--ml-navy); }
+
+/* El oro de marca sigue gobernando líneas, puntos y acentos no textuales. Para
+   etiquetas pequeñas usamos un token oscuro con contraste AA sobre blanco/ivory. */
+.ml-eyebrow,
+.ml-index-row b,
+.ml-ledger-item span {
+  color: var(--ml-gold-ink);
+}
+
+.ml-practice-scope {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.55fr) minmax(0, 1.45fr);
+  gap: var(--ml-space-8);
+}
+.ml-practice-scope > aside { position: sticky; top: calc(var(--ml-header-height) + var(--ml-space-5)); align-self: start; }
+
+.ml-recurring-governance {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border: 1px solid var(--ml-line-strong);
+  border-radius: var(--ml-radius-md);
+  overflow: hidden;
+}
+.ml-recurring-governance > div { padding: var(--ml-space-5); background: var(--ml-white); }
+.ml-recurring-governance > div + div { border-left: 1px solid var(--ml-line); }
+.ml-recurring-governance span { display: block; color: var(--ml-muted); font-size: var(--ml-text-xs); text-transform: uppercase; letter-spacing: 0.08em; }
+.ml-recurring-governance strong { display: block; margin-top: var(--ml-space-2); color: var(--ml-navy-deep); }
+
+.ml-next-step {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--ml-space-7);
+  align-items: center;
+  padding-block: var(--ml-space-8);
+  border-top: 1px solid var(--ml-line-strong);
+}
+.ml-next-step h2 { margin-bottom: var(--ml-space-3); }
+.ml-next-step p { margin-bottom: 0; color: var(--ml-muted); }
+
+.ml-pilot-banner {
+  padding: var(--ml-space-3) 0;
+  background: var(--ml-ivory);
+  border-bottom: 1px solid var(--ml-line);
+  color: var(--ml-muted);
+  font-size: var(--ml-text-sm);
+}
+.ml-pilot-banner strong { color: var(--ml-navy-deep); }
+
+@media (max-width: 900px) {
+  .ml-hero-grid { grid-template-columns: 1fr; }
+  .ml-hero-aside { padding: var(--ml-space-5) 0 0; border-left: 0; border-top: 1px solid var(--ml-line); }
+  .ml-practice-scope { grid-template-columns: 1fr; gap: var(--ml-space-6); }
+  .ml-practice-scope > aside { position: static; }
+  .ml-recurring-governance { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ml-recurring-governance > div:nth-child(3) { border-left: 0; border-top: 1px solid var(--ml-line); }
+  .ml-recurring-governance > div:nth-child(4) { border-top: 1px solid var(--ml-line); }
+}
+
+@media (max-width: 600px) {
+  .ml-hero { padding-top: var(--ml-space-8); }
+  .ml-recurring-governance { grid-template-columns: 1fr; }
+  .ml-recurring-governance > div + div,
+  .ml-recurring-governance > div:nth-child(3) { border-left: 0; border-top: 1px solid var(--ml-line); }
+  .ml-next-step { grid-template-columns: 1fr; gap: var(--ml-space-5); }
+}
