@@ -62,7 +62,7 @@ jobs:
           node-version: '22'
           cache: 'npm'
           cache-dependency-path: package-lock.json
-      - name: Prepare strict 46-page legacy projection for v8 tree
+      - name: Prepare strict 46-page legacy projection for additive v8 tree
         run: |
           python3 scripts/v8_legacy_projection.py --output "$MERIDIANO_V61_ROOT"
           test "$(find "$MERIDIANO_V61_ROOT" -name '*.html' -type f | wc -l)" -eq 46
