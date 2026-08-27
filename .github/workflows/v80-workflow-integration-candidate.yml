@@ -51,29 +51,32 @@ jobs:
             scripts/run_v8_pages_quality_compat.py
           python3 -m json.tool assets/data/v8/workflow-integration-v80.json > /dev/null
 
-      - name: Verify committed workflow bytes against certified artifact contract
-        run: |
-          printf '%s  %s\n' \
-            '6a002a1e6f9049bc9c98ad767c6aca9083c92f6847af3bc8ec78af534b5345ea' \
-            '.github/workflows/build-canonical.yml' \
-            | sha256sum -c -
-          printf '%s  %s\n' \
-            '3e3ab999ead2f094d7a0b26b2d430dd1bf5e414b224f9e6275f961000e25be01' \
-            '.github/workflows/pages.yml' \
-            | sha256sum -c -
+      - name: Verify immutable W4.7 provenance and current integration contract
+        run: python3 scripts/validate_v8_workflow_integration.py
 
-      - name: Prove PR-base integration parity
+      - name: Prove PR-base integration provenance
         if: github.event_name == 'pull_request'
         run: |
           rm -rf /tmp/meridiano-w48-base
           git worktree add --detach /tmp/meridiano-w48-base '${{ github.event.pull_request.base.sha }}'
 
-          # Before W4.13, the base did not yet contain v8 integration and the
-          # expected workflows had to be materialized. After W4.13, production
-          # already contains the certified integration. In that state, trying
-          # to materialize again is itself an error; require exact byte parity
-          # with the committed production workflows instead.
-          if cmp --silent \
+          if python3 - <<'PY'
+          import json
+          from pathlib import Path
+          contract = json.loads(Path('assets/data/v8/workflow-integration-v80.json').read_text())
+          raise SystemExit(0 if (contract.get('w5_overlay') or {}).get('enabled') is True else 1)
+          PY
+          then
+            printf '%s  %s\n' \
+              '6a002a1e6f9049bc9c98ad767c6aca9083c92f6847af3bc8ec78af534b5345ea' \
+              '/tmp/meridiano-w48-base/.github/workflows/build-canonical.yml' \
+              | sha256sum -c -
+            printf '%s  %s\n' \
+              '3e3ab999ead2f094d7a0b26b2d430dd1bf5e414b224f9e6275f961000e25be01' \
+              '/tmp/meridiano-w48-base/.github/workflows/pages.yml' \
+              | sha256sum -c -
+            echo 'W5 OVERLAY PROVENANCE PASS: PR base preserves certified W4.7 Builder/Pages bytes; current overlay is validated separately.'
+          elif cmp --silent \
               /tmp/meridiano-w48-base/.github/workflows/build-canonical.yml \
               .github/workflows/build-canonical.yml \
             && cmp --silent \
