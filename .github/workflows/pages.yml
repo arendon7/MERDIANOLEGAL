@@ -191,8 +191,8 @@ jobs:
         if: env.MERIDIANO_W5_PERSISTED_HOME != 'true'
         run: python3 scripts/validate_decision_action_v515.py
       - name: Validate manual handoff continuity v5.17
-        if: env.MERIDIANO_W5_PERSISTED_HOME != 'true'
         run: python3 scripts/validate_handoff_v517.py
+        if: env.MERIDIANO_W5_PERSISTED_HOME != 'true'
       - name: Validate handoff observability v5.18
         if: env.MERIDIANO_W5_PERSISTED_HOME != 'true'
         run: python3 scripts/validate_handoff_observability_v518.py
