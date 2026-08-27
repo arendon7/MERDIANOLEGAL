@@ -1,0 +1,187 @@
+{
+  "schema_version": "1.0.0",
+  "contract": "v8-w5-home-shell",
+  "status": "candidate",
+  "activation": {
+    "public": false,
+    "indexing_change": false,
+    "sitemap_change": false,
+    "legacy_routes_unchanged": true
+  },
+  "sources": {
+    "implementation_contract": "knowledge/20_DESIGN/W50-HOME-NAVIGATION-CONTRACT.md",
+    "capability_decision": "knowledge/10_DECISIONES/ADR-009-v8-w5-home-shell-rc02.md",
+    "offer_canon": "knowledge/20_DESIGN/V8-OFFER-CANON.md",
+    "route_contract": "assets/data/v8/route-contract-v80.json",
+    "pilot_experience_model": "assets/data/v8/experience-model-v80.json"
+  },
+  "truth_policy": {
+    "legal_scope_from_existing_truth_layer": true,
+    "home_copy_may_summarize_but_not_expand_scope": true,
+    "route_resolution_fail_closed": true,
+    "unverified_product_claims_forbidden": true
+  },
+  "navigation": {
+    "primary": [
+      ["what", "Qué hacemos", "mega", null],
+      ["sectors", "Sectores", "anchor", "#sectores"],
+      ["firm", "Firma", "route", "firma.html"],
+      ["insights", "Insights", "route", "perspectivas.html"],
+      ["contact", "Contacto", "anchor", "#contacto"]
+    ],
+    "actions": [
+      ["talk", "Hablar con Meridiano", "primary", "#contacto", true],
+      ["diagnostic", "Solicitar diagnóstico", "secondary", "productos/diagnostico-juridico-empresarial.html", true],
+      ["portal", "Portal clientes", "utility", null, false]
+    ],
+    "mega_groups": {
+      "practices": [
+        ["PR01", "Contratación y Negocios", "/practicas/contratacion-negocios.html", "servicios/contratacion-estrategica.html", "legacy_bridge"],
+        ["PR02", "Corporativo, Societario y Gobierno", "/practicas/corporativo-societario-gobierno.html", "practicas/corporativo-societario-gobierno.html", "v8_pilot"],
+        ["PR03", "Propiedad Intelectual y Activos Intangibles", "/practicas/propiedad-intelectual-activos-intangibles.html", "servicios/propiedad-intelectual.html", "legacy_bridge"],
+        ["PR04", "Tecnología, Datos e Inteligencia Artificial", "/practicas/tecnologia-datos-inteligencia-artificial.html", "servicios/tecnologia-inteligencia-artificial.html", "legacy_bridge"],
+        ["PR05", "Regulación, Infraestructura y Proyectos", "/practicas/regulacion-infraestructura-proyectos.html", "servicios/proyectos-regulados.html", "legacy_bridge"],
+        ["PR06", "Legal Operations y Transformación Jurídica", "/practicas/legal-operations-transformacion-juridica.html", "servicios/legal-operations.html", "legacy_bridge"]
+      ],
+      "solutions": [
+        ["SO01", "Diagnóstico Jurídico Empresarial", "/soluciones/diagnostico-juridico-empresarial.html", "productos/diagnostico-juridico-empresarial.html", "legacy_bridge"],
+        ["SO02", "Empresa Jurídicamente Organizada", "/soluciones/empresa-juridicamente-organizada.html", "productos/empresa-juridicamente-organizada.html", "legacy_bridge"],
+        ["SO03", "Sistema de Protección de Activos Intangibles", "/soluciones/sistema-proteccion-activos-intangibles.html", "productos/activos-intangibles-protegidos.html", "legacy_bridge"],
+        ["SO04", "Empresa Lista para Inversión", "/soluciones/empresa-lista-para-inversion.html", "productos/empresa-lista-para-inversion.html", "legacy_bridge"],
+        ["SO05", "Programa de Gobernanza de Inteligencia Artificial", "/soluciones/programa-gobernanza-ia.html", "productos/programa-gobernanza-ia.html", "legacy_bridge"],
+        ["SO06", "Proyecto Regulado Estructurado", "/soluciones/proyecto-regulado-estructurado.html", "productos/proyecto-regulado-estructurado.html", "legacy_bridge"],
+        ["SO07", "Sistema Contractual Empresarial", "/soluciones/sistema-contractual-empresarial.html", "soluciones/sistema-contractual-empresarial.html", "v8_pilot"],
+        ["SO08", "Programa de Cumplimiento Digital", "/soluciones/programa-cumplimiento-digital.html", "productos/proteccion-datos-consumidor.html", "legacy_bridge"]
+      ],
+      "recurring": [
+        ["RC01", "Dirección Jurídica Externa", "/servicios-continuos/direccion-juridica-externa.html", "servicios-continuos/direccion-juridica-externa.html", "v8_pilot"],
+        ["RC02", "Meridiano Contratos", "/servicios-continuos/meridiano-contratos.html", null, "owner_confirmed_not_materialized"]
+      ]
+    }
+  },
+  "home": {
+    "section_order": ["H01", "H02", "H03", "H04", "H05", "H06", "H07", "H08", "H09", "H10", "H11", "H12"],
+    "hero": {
+      "id": "H01",
+      "eyebrow": "FIRMA JURÍDICA EMPRESARIAL",
+      "title": "Derecho empresarial para decisiones que necesitan avanzar.",
+      "lead": "Integramos criterio jurídico, comprensión del negocio y tecnología aplicada para estructurar decisiones, reducir fricción y dejar rutas ejecutables.",
+      "primary_action": "talk",
+      "secondary": ["Explorar soluciones →", "#soluciones"],
+      "visual": "structural_m"
+    },
+    "situations": {
+      "id": "H02",
+      "title": "Empiece por lo que está pasando en su empresa.",
+      "items": [
+        ["Mi empresa creció y jurídicamente está desorganizada.", "SO02"],
+        ["Necesito controlar mejor nuestros contratos.", "SO07"],
+        ["Estamos preparando inversión.", "SO04"],
+        ["Tenemos un proyecto regulado.", "SO06"],
+        ["Estamos utilizando IA.", "SO05"],
+        ["Necesitamos apoyo jurídico permanente.", "RC01"]
+      ]
+    },
+    "featured_solutions": {
+      "id": "H03",
+      "anchor": "soluciones",
+      "title": "Soluciones diseñadas alrededor de un resultado.",
+      "route_ids": ["SO01", "SO07", "SO04", "SO06"]
+    },
+    "meridiano_contracts": {
+      "id": "H04",
+      "capability_id": "RC02",
+      "title": "Meridiano Contratos",
+      "headline": "Contratos configurados para su empresa, disponibles para volver a generarse sobre modelos jurídicamente gobernados.",
+      "body": "Meridiano configura con la empresa los modelos y variables que necesita. El cliente puede generar nuevos contratos para clientes, trabajadores, proveedores u otros destinatarios definidos en el alcance desde su biblioteca contractual, mientras Meridiano mantiene los modelos maestros jurídicamente actualizados durante la relación contratada.",
+      "loop": ["Configurar", "Parametrizar", "Generar", "Registrar", "Actualizar modelos", "Escalar excepciones"],
+      "guardrails": [
+        "Las actualizaciones aplican a los modelos maestros y a futuras generaciones; no modifican automáticamente contratos ya celebrados.",
+        "Cambios materiales, excepciones o negociaciones fuera del modelo requieren revisión jurídica humana.",
+        "No se publican claims sobre autenticación, almacenamiento, disponibilidad, seguridad o integraciones hasta verificarlos técnicamente."
+      ],
+      "capability_status": "owner_confirmed",
+      "publication_status": "candidate_only",
+      "technical_claims_status": "deferred"
+    },
+    "practices": {
+      "id": "H05",
+      "title": "Prácticas que conectan derecho, operación y decisión.",
+      "route_ids": ["PR01", "PR02", "PR03", "PR04", "PR05", "PR06"]
+    },
+    "method": {
+      "id": "H06",
+      "theme": "dark",
+      "title": "De la necesidad a una ruta que pueda administrarse.",
+      "steps": ["Entender", "Estructurar", "Ejecutar", "Controlar"]
+    },
+    "evidence": {
+      "id": "H07",
+      "title": "Experiencia que se demuestra con contexto, intervención y resultado verificable.",
+      "policy": "anonymized_or_verifiable_only"
+    },
+    "external_legal_direction": {
+      "id": "H08",
+      "title": "Una función jurídica integrada a su empresa.",
+      "route_id": "RC01",
+      "commercial_dimensions": ["Cobertura", "Complejidad", "Prioridad", "SLA / nivel de servicio", "Gobierno y reporting"],
+      "forbidden_public_framing": ["bolsa de horas", "horas al mes", "hourly retainer"]
+    },
+    "sectors": {
+      "id": "H09",
+      "anchor": "sectores",
+      "title": "Sectores donde la complejidad jurídica se cruza con la operación.",
+      "items": [
+        ["Empresas y grupos empresariales", "sectores/comercio-distribucion.html", "/sectores/empresas-comercio-grupos-empresariales.html"],
+        ["Tecnología y economía digital", "sectores/tecnologia-software-ia.html", "/sectores/tecnologia-economia-digital.html"],
+        ["Servicios públicos e infraestructura", "sectores/proyectos-publicos-territoriales.html", "/sectores/servicios-publicos-infraestructura-proyectos.html"],
+        ["Ambiente, residuos y economía circular", "sectores/servicios-publicos-aseo-economia-circular.html", "/sectores/ambiente-residuos-economia-circular.html"],
+        ["Salud y ciencias de la vida", "sectores/salud-negocios-regulados.html", "/sectores/salud-ciencias-vida.html"],
+        ["Startups e inversión", "sectores/startups-inversion.html", "/sectores/startups-inversion.html"]
+      ]
+    },
+    "legal_intelligence": {
+      "id": "H10",
+      "title": "Tecnología jurídica como infraestructura, no como sustituto del criterio profesional.",
+      "body": "La capa de Legal Intelligence soporta trazabilidad, documentación y operación jurídica cuando el alcance lo requiere. Meridiano Legal sigue siendo la marca y relación profesional frente al cliente.",
+      "href": "experiencia.html"
+    },
+    "insights": {
+      "id": "H11",
+      "title": "Ideas para decisiones jurídicas que necesitan contexto.",
+      "items": [
+        ["Contratos administrables", "perspectivas/contratos-administrables.html"],
+        ["Gobierno jurídico de inteligencia artificial", "perspectivas/gobierno-juridico-inteligencia-artificial.html"],
+        ["Socios, inversión y gobierno", "perspectivas/socios-inversion-gobierno.html"]
+      ]
+    },
+    "final_cta": {
+      "id": "H12",
+      "theme": "dark",
+      "title": "Conversemos sobre la decisión que necesita estructurar.",
+      "primary_action": "talk",
+      "secondary_action": "diagnostic"
+    }
+  },
+  "mobile": {
+    "section_order": ["H01", "H02", "H03", "H04", "H05", "H06", "H07", "H08", "H09", "H10", "H11", "H12"],
+    "menu": "full_screen",
+    "practice_presentation": "accordion_or_index",
+    "sticky_cta": [true, "talk", ["menu_open", "form_visible", "final_cta_nearby"]],
+    "minimum_target_px": 44,
+    "horizontal_overflow_forbidden": true
+  },
+  "analytics": {
+    "events": ["cta_click", "solution_view", "practice_view", "diagnosis_start", "contact_submit", "portal_click"],
+    "pii_forbidden": true,
+    "required_properties": ["source", "page"]
+  },
+  "accessibility": {
+    "standard": "WCAG 2.1 AA",
+    "keyboard_navigation": true,
+    "visible_focus": true,
+    "reduced_motion": true,
+    "semantic_landmarks": true,
+    "mega_menu_accessible": true
+  }
+}

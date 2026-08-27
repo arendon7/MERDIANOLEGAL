@@ -3,6 +3,11 @@ import { defineConfig, devices } from '@playwright/test';
 const configuredBase = process.env.MERIDIANO_BASE_URL || 'https://arendon7.github.io/MERDIANOLEGAL/';
 const baseURL = configuredBase.endsWith('/') ? configuredBase : `${configuredBase}/`;
 const a11ySpec = /accessibility\.spec\.mjs$/;
+const w5HomeSpec = /v8-home-shell(?:\.accessibility)?\.spec\.mjs$/;
+const w5HomeCandidate = process.env.MERIDIANO_W5_HOME_CANDIDATE === '1';
+// v5.5 compatibility invariant: browser projects preserve the historical testIgnore: a11ySpec behavior while W5 adds its isolated spec family.
+const browserIgnore = w5HomeCandidate ? a11ySpec : [a11ySpec, w5HomeSpec];
+const accessibilityIgnore = w5HomeCandidate ? [] : [w5HomeSpec];
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -31,7 +36,7 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium-desktop',
-      testIgnore: a11ySpec,
+      testIgnore: browserIgnore,
       use: {
         ...devices['Desktop Chrome'],
         viewport: { width: 1440, height: 1000 },
@@ -39,14 +44,14 @@ export default defineConfig({
     },
     {
       name: 'chromium-mobile',
-      testIgnore: a11ySpec,
+      testIgnore: browserIgnore,
       use: {
         ...devices['Pixel 7'],
       },
     },
     {
       name: 'webkit-desktop',
-      testIgnore: a11ySpec,
+      testIgnore: browserIgnore,
       use: {
         ...devices['Desktop Safari'],
         viewport: { width: 1440, height: 1000 },
@@ -55,6 +60,7 @@ export default defineConfig({
     {
       name: 'accessibility-chromium',
       testMatch: a11ySpec,
+      testIgnore: accessibilityIgnore,
       use: {
         ...devices['Desktop Chrome'],
         viewport: { width: 1440, height: 1000 },

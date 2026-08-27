@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
-      - name: Checkout exact W4.10 candidate head
+      - name: Checkout exact candidate head
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
@@ -48,13 +48,27 @@ jobs:
           cache: 'npm'
           cache-dependency-path: package-lock.json
 
-      - name: Fetch immutable production anchors
+      - name: Resolve certified production baseline fail closed
+        env:
+          PR_BASE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || '' }}
         run: |
           git fetch origin \
             main:refs/remotes/origin/main \
             stable:refs/remotes/origin/stable
-          test "$(git rev-parse refs/remotes/origin/main)" = '86813813e29dd6b47105ba7fb6259630fcd9cb5b'
-          test "$(git rev-parse refs/remotes/origin/stable)" = '86813813e29dd6b47105ba7fb6259630fcd9cb5b'
+          remote_main="$(git rev-parse refs/remotes/origin/main)"
+          remote_stable="$(git rev-parse refs/remotes/origin/stable)"
+          if [ -n "$PR_BASE_SHA" ]; then
+            baseline="$PR_BASE_SHA"
+            test "$remote_main" = "$baseline"
+          else
+            baseline="$remote_main"
+          fi
+          # Candidate certification starts only from a production snapshot that
+          # completed deployed Browser/Lighthouse gates and was promoted to stable.
+          test "$remote_stable" = "$baseline"
+          echo "W410_BASELINE_SHA=$baseline" >> "$GITHUB_ENV"
+          echo "W410_ROLLBACK_SHA=$remote_stable" >> "$GITHUB_ENV"
+          echo "PRODUCTION BASELINE PASS: main/stable=$baseline"
 
       - name: Validate release topology and previous certification chain
         run: |
@@ -81,7 +95,7 @@ jobs:
           python3 scripts/validate_v8_workflow_integration.py
           git diff --exit-code
           test "$(git rev-parse HEAD)" = "$W410_CANDIDATE_SHA"
-          echo 'W4.10 BUILDER PROMOTION MODEL PASS: candidate promotion requires no generated canonical commit.'
+          echo 'BUILDER PROMOTION MODEL PASS: candidate promotion requires no generated canonical commit.'
 
       - name: Execute Pages pre-deploy quality on synthetic promoted main
         working-directory: /tmp/meridiano-w410-promoted-main
@@ -91,7 +105,7 @@ jobs:
           python3 scripts/validate_pages_trigger_v511.py
           python3 scripts/validate_ci_v56.py
           git diff --exit-code
-          echo 'W4.10 PAGES PRE-DEPLOY MODEL PASS: promoted tree is quality-ready without mutation.'
+          echo 'PAGES PRE-DEPLOY MODEL PASS: promoted tree is quality-ready without mutation.'
 
       - name: Prove fail-closed release dependency graph
         working-directory: /tmp/meridiano-w410-promoted-main
@@ -109,24 +123,24 @@ jobs:
           }
           missing = [name for name, marker in required.items() if marker not in pages]
           if missing:
-              raise SystemExit(f'W4.10 dependency graph missing: {missing}')
-          print('W4.10 FAIL-CLOSED MATRIX PASS: stable remains behind both deployed quality gates.')
+              raise SystemExit(f'release dependency graph missing: {missing}')
+          print('FAIL-CLOSED MATRIX PASS: stable remains behind both deployed quality gates.')
           PY
 
       - name: Build promotion certification manifest
         run: |
           mkdir -p /tmp/w410-release-topology
           head_sha="$(git rev-parse HEAD)"
-          ahead="$(git rev-list --count 86813813e29dd6b47105ba7fb6259630fcd9cb5b..HEAD)"
-          changed="$(git diff --name-only 86813813e29dd6b47105ba7fb6259630fcd9cb5b..HEAD | wc -l | tr -d ' ')"
+          ahead="$(git rev-list --count "${W410_BASELINE_SHA}..HEAD")"
+          changed="$(git diff --name-only "${W410_BASELINE_SHA}..HEAD" | wc -l | tr -d ' ')"
           cat > /tmp/w410-release-topology/manifest.json <<EOF
           {
             "contract": "v8-release-topology-result",
             "status": "promotion-ready-candidate",
             "source_run_id": "${GITHUB_RUN_ID}",
             "candidate_sha": "${head_sha}",
-            "baseline_main_sha": "86813813e29dd6b47105ba7fb6259630fcd9cb5b",
-            "rollback_stable_sha": "86813813e29dd6b47105ba7fb6259630fcd9cb5b",
+            "baseline_main_sha": "${W410_BASELINE_SHA}",
+            "rollback_stable_sha": "${W410_ROLLBACK_SHA}",
             "ahead_commits": ${ahead},
             "changed_files": ${changed},
             "builder_generated_commit_expected": false,
@@ -138,7 +152,7 @@ jobs:
           EOF
           cat /tmp/w410-release-topology/manifest.json
 
-      - name: Upload W4.10 release topology evidence
+      - name: Upload release topology evidence
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: w410-v8-release-topology-candidate

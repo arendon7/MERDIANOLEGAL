@@ -8,12 +8,16 @@ on:
       - assets/js/v6/analytics-adapter-v61.js
       - assets/data/v6/measurement-readiness-v61.json
       - assets/data/v6/fit-scope-clarity-v64.json
+      - assets/data/v8/pipeline-compat-v80.json
       - assets/css/v6/fit-scope-clarity-v64.css
       - telemetry-v50.js
       - site-config.json
       - runtime-config.js
       - site-status.json
       - privacidad.html
+      - index.html
+      - scripts/v8_legacy_projection.py
+      - tests/fixtures/v8/home-v74.fixture
       - scripts/sync_public_version.py
       - scripts/validate_production_v50.py
       - scripts/normalize_experience_compat_v60.py
@@ -42,6 +46,7 @@ jobs:
     timeout-minutes: 30
     env:
       MERIDIANO_BASE_URL: http://127.0.0.1:8000/
+      MERIDIANO_V61_ROOT: /tmp/meridiano-v61-projection
     steps:
       - name: Checkout candidate
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -57,8 +62,15 @@ jobs:
           node-version: '22'
           cache: 'npm'
           cache-dependency-path: package-lock.json
+      - name: Prepare strict 46-page legacy projection for additive v8 tree
+        run: |
+          python3 scripts/v8_legacy_projection.py --output "$MERIDIANO_V61_ROOT"
+          test "$(find "$MERIDIANO_V61_ROOT" -name '*.html' -type f | wc -l)" -eq 46
+          grep -q 'data-experience-system="v6"' "$MERIDIANO_V61_ROOT/index.html"
+          ! grep -q 'data-v8-home-candidate="persisted"' "$MERIDIANO_V61_ROOT/index.html"
       - name: Materialize canonical v6 with measurement readiness
         run: |
+          cd "$MERIDIANO_V61_ROOT"
           python3 scripts/sync_public_version.py
           python3 scripts/apply_experience_v60.py
           python3 scripts/apply_experience_solutions_v60.py
@@ -72,6 +84,7 @@ jobs:
           fi
       - name: Validate measurement privacy and release metadata
         run: |
+          cd "$MERIDIANO_V61_ROOT"
           python3 scripts/validate_production_v50.py
           python3 scripts/validate_measurement_readiness_v61.py
           python3 scripts/validate_release_governance_v57.py
@@ -91,7 +104,9 @@ jobs:
           fi
           python3 -m json.tool site-status.json > /dev/null
       - name: Install locked QA dependencies
-        run: npm ci --ignore-scripts --no-audit --no-fund
+        run: |
+          cd "$MERIDIANO_V61_ROOT"
+          npm ci --ignore-scripts --no-audit --no-fund
       - name: Prefer official Ubuntu mirrors for browser dependencies
         run: |
           if [ -f /etc/apt/apt-mirrors.txt ]; then
@@ -104,9 +119,12 @@ jobs:
             'Acquire::https::Timeout "30";' \
             | sudo tee /etc/apt/apt.conf.d/80meridiano-network >/dev/null
       - name: Install Chromium and WebKit
-        run: timeout 900s npx playwright install --with-deps chromium webkit
+        run: |
+          cd "$MERIDIANO_V61_ROOT"
+          timeout 900s npx playwright install --with-deps chromium webkit
       - name: Start local candidate server
         run: |
+          cd "$MERIDIANO_V61_ROOT"
           python3 -m http.server 8000 --bind 127.0.0.1 > /tmp/meridiano-v61-http.log 2>&1 &
           echo $! > /tmp/meridiano-v61-http.pid
           for i in {1..20}; do
@@ -117,16 +135,41 @@ jobs:
           done
           cat /tmp/meridiano-v61-http.log >&2 || true
           exit 1
-      - name: Run full browser E2E suite
-        run: npm run test:e2e
+      - name: Run full historical browser E2E suite in 46-page projection
+        run: |
+          cd "$MERIDIANO_V61_ROOT"
+          mapfile -t LEGACY_SPECS < <(
+            find tests/e2e -maxdepth 1 -type f -name '*.spec.mjs' ! -name 'v8-*.spec.mjs' -print | sort
+          )
+          if [ "${#LEGACY_SPECS[@]}" -lt 20 ]; then
+            echo "V6.1 historical E2E scope unexpectedly small: ${#LEGACY_SPECS[@]} specs" >&2
+            exit 1
+          fi
+          printf '%s\n' "${LEGACY_SPECS[@]}" | grep -qx 'tests/e2e/measurement-readiness-v61.spec.mjs'
+          if printf '%s\n' "${LEGACY_SPECS[@]}" | grep -Eq '(^|/)v8-'; then
+            echo "V6.1 legacy projection must not execute v8-only specs" >&2
+            exit 1
+          fi
+          printf 'V6.1 historical E2E scope: %s specs; additive v8 specs excluded by topology boundary.\n' "${#LEGACY_SPECS[@]}"
+          npx playwright test "${LEGACY_SPECS[@]}"
       - name: Upload measurement failure artifacts
         if: failure()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: v61-measurement-readiness-failure-artifacts
           path: |
-            playwright-report
-            test-results
+            /tmp/meridiano-v61-projection/playwright-report
+            /tmp/meridiano-v61-projection/test-results
             /tmp/meridiano-v61-http.log
           if-no-files-found: ignore
           retention-days: 7
+      - name: Prove real v8 tree remained untouched
+        if: success()
+        run: |
+          python3 scripts/validate_v8_public_tree.py
+          if grep -q 'data-v8-home-candidate="persisted"' index.html; then
+            python3 scripts/validate_v8_home_persisted.py --expect-state persisted
+          fi
+          find . -type d -name __pycache__ -prune -exec rm -rf {} +
+          git diff --exit-code
+          test -z "$(git status --porcelain)"

@@ -9,11 +9,14 @@ on:
       - '*.css'
       - '*.js'
       - tests/e2e/**
+      - tests/fixtures/v8/home-v74.fixture
       - playwright.config.mjs
       - package.json
       - package-lock.json
       - scripts/apply_v8_builder_compat.py
       - scripts/validate_v8_pipeline_compat.py
+      - scripts/v8_legacy_projection.py
+      - scripts/validate_v8_home_persisted.py
       - scripts/run_v8_historical_gate_compat.py
       - .github/workflows/v80-final-browser-candidate.yml
   workflow_dispatch:
@@ -32,6 +35,7 @@ jobs:
     timeout-minutes: 35
     env:
       MERIDIANO_BASE_URL: http://127.0.0.1:8000/
+      MERIDIANO_V80_LEGACY_ROOT: /tmp/meridiano-v80-final-legacy
     steps:
       - name: Checkout final candidate
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -56,6 +60,13 @@ jobs:
           python3 scripts/apply_v8_builder_compat.py --check
           python3 scripts/validate_v8_pipeline_compat.py
           python3 scripts/validate_v8_public_tree.py
+          if grep -q 'data-v8-home-candidate="persisted"' index.html; then
+            echo 'MERIDIANO_W5_PERSISTED_HOME=true' >> "$GITHUB_ENV"
+            python3 scripts/validate_v8_home_persisted.py --expect-state persisted
+            python3 scripts/v8_legacy_projection.py --output "$MERIDIANO_V80_LEGACY_ROOT"
+          else
+            echo 'MERIDIANO_W5_PERSISTED_HOME=false' >> "$GITHUB_ENV"
+          fi
 
       - name: Validate E2E JavaScript syntax
         run: |
@@ -81,21 +92,67 @@ jobs:
       - name: Install Chromium and WebKit
         run: timeout 900s npx playwright install --with-deps chromium webkit
 
-      - name: Start local final candidate server
+      - name: Run browser certification by topology
         run: |
-          python3 -m http.server 8000 --bind 127.0.0.1 > /tmp/meridiano-v80-final-http.log 2>&1 &
-          echo $! > /tmp/meridiano-v80-final-http.pid
+          if [ "$MERIDIANO_W5_PERSISTED_HOME" != "true" ]; then
+            python3 -m http.server 8000 --bind 127.0.0.1 > /tmp/meridiano-v80-final-http.log 2>&1 &
+            SERVER_PID=$!
+            trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+            for i in {1..20}; do
+              if curl --fail --silent http://127.0.0.1:8000/version.json > /dev/null; then break; fi
+              sleep 1
+            done
+            npm run test:e2e
+            exit 0
+          fi
+
+          ln -s "$GITHUB_WORKSPACE/node_modules" "$MERIDIANO_V80_LEGACY_ROOT/node_modules"
+          python3 -m http.server 8000 --bind 127.0.0.1 --directory "$MERIDIANO_V80_LEGACY_ROOT" > /tmp/meridiano-v80-final-legacy-http.log 2>&1 &
+          LEGACY_PID=$!
           for i in {1..20}; do
-            if curl --fail --silent http://127.0.0.1:8000/version.json > /dev/null; then
-              exit 0
-            fi
+            if curl --fail --silent http://127.0.0.1:8000/version.json > /dev/null; then break; fi
             sleep 1
           done
-          cat /tmp/meridiano-v80-final-http.log >&2 || true
-          exit 1
+          mapfile -t LEGACY_SPECS < <(
+            find "$MERIDIANO_V80_LEGACY_ROOT/tests/e2e" -maxdepth 1 -type f -name '*.spec.mjs' ! -name 'v8-*.spec.mjs' -print | sort
+          )
+          if [ "${#LEGACY_SPECS[@]}" -lt 20 ]; then
+            echo "Historical final-browser scope unexpectedly small: ${#LEGACY_SPECS[@]}" >&2
+            exit 1
+          fi
+          (
+            cd "$MERIDIANO_V80_LEGACY_ROOT"
+            npx playwright test "${LEGACY_SPECS[@]}"
+          )
+          kill "$LEGACY_PID" 2>/dev/null || true
+          wait "$LEGACY_PID" 2>/dev/null || true
 
-      - name: Run full browser E2E suite
-        run: npm run test:e2e
+          python3 -m http.server 8000 --bind 127.0.0.1 > /tmp/meridiano-v80-final-v8-http.log 2>&1 &
+          V8_PID=$!
+          trap 'kill "$V8_PID" 2>/dev/null || true' EXIT
+          for i in {1..20}; do
+            if curl --fail --silent http://127.0.0.1:8000/version.json > /dev/null; then break; fi
+            sleep 1
+          done
+          mapfile -t REAL_V8_SPECS < <(
+            find tests/e2e -maxdepth 1 -type f -name 'v8-*.spec.mjs' \
+              ! -name 'v8-home-shell.spec.mjs' \
+              ! -name 'v8-home-shell.accessibility.spec.mjs' \
+              -print | sort
+          )
+          if [ "${#REAL_V8_SPECS[@]}" -lt 2 ]; then
+            echo "Real v8 browser scope unexpectedly small: ${#REAL_V8_SPECS[@]}" >&2
+            exit 1
+          fi
+          MERIDIANO_W5_PERSISTED_CANDIDATE=1 npx playwright test "${REAL_V8_SPECS[@]}"
+
+      - name: Prove browser certification did not mutate candidate
+        if: success()
+        run: |
+          rm -rf playwright-report test-results
+          find . -type d -name __pycache__ -prune -exec rm -rf {} +
+          git diff --exit-code
+          test -z "$(git status --porcelain)"
 
       - name: Upload browser failure artifacts
         if: failure()
@@ -106,5 +163,7 @@ jobs:
             playwright-report
             test-results
             /tmp/meridiano-v80-final-http.log
+            /tmp/meridiano-v80-final-legacy-http.log
+            /tmp/meridiano-v80-final-v8-http.log
           if-no-files-found: ignore
           retention-days: 7

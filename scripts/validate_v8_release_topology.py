@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
-"""Validate W4.10 release/promotion topology without merging or deploying.
+"""Validate v8 release/promotion topology without merging or deploying.
 
-The gate proves that the final v8 candidate remains a linear descendant of the
-certified production baseline, that a future push to main would trigger the
-canonical Builder, and that Pages/stable promotion stays fail-closed.
+W4.10 recorded the production baseline that existed when the release topology
+was designed. After a certified promotion, later candidates must start from the
+new main==stable snapshot rather than pretending the historical SHA is still
+production. This validator therefore preserves the historical contract while
+resolving a fail-closed runtime baseline for descendant candidates.
 """
 from __future__ import annotations
 
 from fnmatch import fnmatch
 from pathlib import Path
 import json
+import os
 import re
 import subprocess
 import sys
@@ -19,6 +22,7 @@ CONTRACT_PATH = ROOT / "assets/data/v8/release-topology-v80.json"
 BUILD = ROOT / ".github/workflows/build-canonical.yml"
 PAGES = ROOT / ".github/workflows/pages.yml"
 RELEASE_WORKFLOW = ROOT / ".github/workflows/v80-release-topology-candidate.yml"
+HISTORICAL_BASELINE = "86813813e29dd6b47105ba7fb6259630fcd9cb5b"
 
 
 def fail(message: str) -> None:
@@ -39,6 +43,15 @@ def git(*args: str, check: bool = True) -> str:
     return completed.stdout.strip()
 
 
+def is_ancestor(ancestor: str, descendant: str) -> bool:
+    return subprocess.run(
+        ["git", "merge-base", "--is-ancestor", ancestor, descendant],
+        cwd=ROOT,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    ).returncode == 0
+
+
 def require_mapping(actual: dict, expected: dict, label: str) -> None:
     for key, value in expected.items():
         if actual.get(key) != value:
@@ -46,6 +59,7 @@ def require_mapping(actual: dict, expected: dict, label: str) -> None:
 
 
 def validate_contract(contract: dict) -> tuple[str, str]:
+    """Validate the immutable W4.10 design-time record."""
     if contract.get("schema_version") != "1.0.0":
         fail("release topology schema_version must be 1.0.0")
     if contract.get("contract") != "v8-release-topology":
@@ -56,12 +70,12 @@ def validate_contract(contract: dict) -> tuple[str, str]:
         fail("W4.10 must depend on W4.9 shadow certification")
 
     baseline = contract.get("baseline") or {}
-    main_sha = baseline.get("main_sha")
-    stable_sha = baseline.get("stable_sha")
-    if main_sha != "86813813e29dd6b47105ba7fb6259630fcd9cb5b":
-        fail("unexpected production main baseline")
-    if stable_sha != main_sha or baseline.get("version") != "7.4.0":
-        fail("main/stable baseline must remain the same certified v7.4.0 commit")
+    recorded_main = baseline.get("main_sha")
+    recorded_stable = baseline.get("stable_sha")
+    if recorded_main != HISTORICAL_BASELINE:
+        fail("W4.10 historical production baseline was rewritten")
+    if recorded_stable != recorded_main or baseline.get("version") != "7.4.0":
+        fail("W4.10 historical main/stable record must remain the certified v7.4.0 commit")
 
     require_mapping(
         contract.get("promotion") or {},
@@ -108,7 +122,33 @@ def validate_contract(contract: dict) -> tuple[str, str]:
     for key, value in (contract.get("protected") or {}).items():
         if value is not False:
             fail(f"protected.{key} must remain false")
-    return main_sha, stable_sha
+    return recorded_main, recorded_stable
+
+
+def resolve_runtime_baseline(recorded_main: str, recorded_stable: str) -> tuple[str, str]:
+    """Choose the certified baseline for the candidate currently being tested.
+
+    Priority:
+    1. explicit workflow env, which must be complete and main==stable;
+    2. current origin/main==origin/stable when current main is an ancestor of HEAD;
+    3. historical W4.10 record for old branches/tests.
+    """
+    env_main = os.environ.get("W410_BASELINE_SHA", "").strip()
+    env_stable = os.environ.get("W410_ROLLBACK_SHA", "").strip()
+    if bool(env_main) != bool(env_stable):
+        fail("runtime release baseline env must provide both main and stable SHA")
+    if env_main:
+        if env_main != env_stable:
+            fail("runtime candidate must start from certified main==stable")
+        return env_main, env_stable
+
+    head = git("rev-parse", "HEAD")
+    origin_main = git("rev-parse", "refs/remotes/origin/main", check=False)
+    origin_stable = git("rev-parse", "refs/remotes/origin/stable", check=False)
+    if origin_main and origin_stable and origin_main == origin_stable and is_ancestor(origin_main, head):
+        return origin_main, origin_stable
+
+    return recorded_main, recorded_stable
 
 
 def validate_git_topology(main_sha: str, stable_sha: str) -> list[str]:
@@ -116,10 +156,8 @@ def validate_git_topology(main_sha: str, stable_sha: str) -> list[str]:
     merge_base = git("merge-base", main_sha, head)
     if merge_base != main_sha:
         fail(f"candidate merge-base drifted: expected {main_sha}, got {merge_base}")
-    if subprocess.run(
-        ["git", "merge-base", "--is-ancestor", main_sha, head], cwd=ROOT
-    ).returncode != 0:
-        fail("production main baseline is not an ancestor of candidate HEAD")
+    if not is_ancestor(main_sha, head):
+        fail("certified production main baseline is not an ancestor of candidate HEAD")
 
     ahead = int(git("rev-list", "--count", f"{main_sha}..{head}"))
     behind = int(git("rev-list", "--count", f"{head}..{main_sha}"))
@@ -139,7 +177,8 @@ def validate_git_topology(main_sha: str, stable_sha: str) -> list[str]:
         if line.strip()
     ]
     if not changed:
-        fail("candidate contains no changes relative to production main")
+        fail("candidate contains no changes relative to certified production main")
+    print(f"V8 release runtime baseline: main=stable={main_sha}; candidate={head}.")
     return changed
 
 
@@ -190,7 +229,7 @@ def validate_builder(build: str, changed: list[str]) -> None:
     if not triggering:
         fail("candidate diff would not trigger canonical Builder on push to main")
     print(
-        f"W4.10 Builder trigger proof: {len(triggering)}/{len(changed)} changed files match push.paths."
+        f"V8 Builder trigger proof: {len(triggering)}/{len(changed)} changed files match push.paths."
     )
 
 
@@ -247,7 +286,7 @@ def validate_pages(pages: str) -> None:
 
 def validate_certification_workflow() -> None:
     if not RELEASE_WORKFLOW.exists():
-        fail("W4.10 certification workflow is missing")
+        fail("v8 release certification workflow is missing")
     text = RELEASE_WORKFLOW.read_text(encoding="utf-8")
     for marker in (
         "contents: read",
@@ -261,7 +300,7 @@ def validate_certification_workflow() -> None:
         "stable_moved\": false",
     ):
         if marker not in text:
-            fail(f"W4.10 certification workflow missing {marker!r}")
+            fail(f"v8 certification workflow missing {marker!r}")
 
     forbidden_literals = (
         "actions/upload-pages-artifact@",
@@ -272,17 +311,18 @@ def validate_certification_workflow() -> None:
     )
     for marker in forbidden_literals:
         if marker in text:
-            fail(f"W4.10 certification workflow contains forbidden primitive {marker!r}")
+            fail(f"v8 certification workflow contains forbidden primitive {marker!r}")
     if re.search(r"(?m)^\s+git\s+push\b", text):
-        fail("W4.10 certification workflow must never execute git push")
+        fail("v8 certification workflow must never execute git push")
     if re.search(r"(?m)^\s+environment:\s*$", text):
-        fail("W4.10 certification workflow must not target a deployment environment")
+        fail("v8 certification workflow must not target a deployment environment")
 
 
 def main() -> int:
     contract = load_json(CONTRACT_PATH)
-    main_sha, stable_sha = validate_contract(contract)
-    changed = validate_git_topology(main_sha, stable_sha)
+    recorded_main, recorded_stable = validate_contract(contract)
+    runtime_main, runtime_stable = resolve_runtime_baseline(recorded_main, recorded_stable)
+    changed = validate_git_topology(runtime_main, runtime_stable)
     build = BUILD.read_text(encoding="utf-8")
     pages = PAGES.read_text(encoding="utf-8")
     validate_builder(build, changed)
@@ -290,8 +330,7 @@ def main() -> int:
     validate_certification_workflow()
 
     print(
-        "VALIDATE V8 RELEASE TOPOLOGY OK: candidate is linear from production main, Builder push will trigger, "
-        "Pages workflow_run is single-release aware, stable remains fail-closed, and W4.10 itself is read-only."
+        "VALIDATE V8 RELEASE TOPOLOGY OK: historical W4.10 baseline preserved; current candidate is linear from certified runtime main==stable; Builder will trigger; Pages/stable remains fail-closed."
     )
     return 0
 

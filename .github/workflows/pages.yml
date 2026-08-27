@@ -33,93 +33,112 @@ jobs:
         run: |
           if [ -f assets/data/v8/pipeline-compat-v80.json ] && [ -f soluciones/sistema-contractual-empresarial.html ] && [ -f practicas/corporativo-societario-gobierno.html ] && [ -f servicios-continuos/direccion-juridica-externa.html ]; then
             echo 'MERIDIANO_V8_PIPELINE_COMPAT=true' >> "$GITHUB_ENV"
+            if grep -q 'data-v8-home-candidate="persisted"' index.html; then
+              echo 'MERIDIANO_W5_PERSISTED_HOME=true' >> "$GITHUB_ENV"
+            else
+              echo 'MERIDIANO_W5_PERSISTED_HOME=false' >> "$GITHUB_ENV"
+            fi
             python3 scripts/apply_v8_builder_compat.py --check
           else
             echo 'MERIDIANO_V8_PIPELINE_COMPAT=false' >> "$GITHUB_ENV"
-          if grep -q 'data-experience-system="v6"' index.html; then
-            MERIDIANO_CANONICAL_V6=true
-            echo "Experience System v6 baseline detected; legacy HTML materializers are skipped."
-          else
-            MERIDIANO_CANONICAL_V6=false
-            echo "Pre-v6 baseline detected; legacy canonical chain remains active."
-          fi
-          if [ "$MERIDIANO_CANONICAL_V6" != "true" ]; then
-            python3 scripts/build_catalog_shells.py
-            node scripts/render_catalog_static.mjs
-            node scripts/render_services_v42.mjs
-            python3 scripts/enrich_editorial_pages.py
-            python3 scripts/apply_commercial_v43.py
-            python3 scripts/apply_visual_assets.py
-            python3 scripts/apply_ux_v45.py
-            python3 scripts/apply_detail_ux_v46.py
-            python3 scripts/apply_editorial_ux_v47.py
-            python3 scripts/normalize_editorial_v47.py
-            python3 scripts/normalize_growth_compat_v51.py
-            python3 scripts/apply_quality_v48.py
-            python3 scripts/normalize_quality_v48.py
-            python3 scripts/apply_operations_v49.py
-          fi
-          python3 scripts/sync_public_version.py
-          if [ "$MERIDIANO_CANONICAL_V6" != "true" ]; then
-            python3 scripts/apply_production_v50.py
-            python3 scripts/apply_growth_v51.py
-            python3 scripts/finalize_growth_v51.py
-            python3 scripts/apply_cro_v52.py
-            python3 scripts/apply_authority_v53.py
-            python3 scripts/apply_decision_v58.py
-            python3 scripts/apply_commercial_v59.py
-            python3 scripts/apply_conversion_v510.py
-            python3 scripts/apply_engagement_v511.py
-            python3 scripts/apply_proof_v512.py
-            python3 scripts/apply_commercial_brief_v513.py
-            python3 scripts/apply_recommendation_v514.py
-            python3 scripts/apply_decision_action_v515.py
-            python3 scripts/apply_handoff_v517.py
-            python3 scripts/apply_handoff_observability_v518.py
-          fi
-          python3 scripts/apply_experience_v60.py
-          python3 scripts/apply_experience_solutions_v60.py
-          python3 scripts/apply_experience_sectors_v60.py
-          python3 scripts/apply_experience_perspectives_v60.py
-          python3 scripts/apply_experience_final_v60.py
-          python3 scripts/apply_funnel_trust_v529.py
-          python3 scripts/normalize_experience_compat_v60.py
-          if [ -f assets/data/v6/fit-scope-clarity-v64.json ]; then
-            python3 scripts/apply_fit_scope_clarity_v64.py
-          fi
-          python3 scripts/validate_experience_v60.py
-          python3 scripts/validate_experience_solutions_v60.py
-          python3 scripts/validate_experience_sectors_v60.py
-          python3 scripts/validate_experience_perspectives_v60.py
-          python3 scripts/validate_experience_final_v60.py
-          python3 scripts/validate_funnel_trust_v529.py
-          python3 scripts/validate_proof_v512.py
-          python3 scripts/validate_capability_truth_v521.py
-          python3 scripts/validate_editorial_context.py
-          if [ -f assets/data/v6/fit-scope-clarity-v64.json ]; then
-            python3 scripts/validate_fit_scope_clarity_v64.py
-          fi
+            echo 'MERIDIANO_W5_PERSISTED_HOME=false' >> "$GITHUB_ENV"
+            if grep -q 'data-experience-system="v6"' index.html; then
+              MERIDIANO_CANONICAL_V6=true
+              echo "Experience System v6 baseline detected; legacy HTML materializers are skipped."
+            else
+              MERIDIANO_CANONICAL_V6=false
+              echo "Pre-v6 baseline detected; legacy canonical chain remains active."
+            fi
+            if [ "$MERIDIANO_CANONICAL_V6" != "true" ]; then
+              python3 scripts/build_catalog_shells.py
+              node scripts/render_catalog_static.mjs
+              node scripts/render_services_v42.mjs
+              python3 scripts/enrich_editorial_pages.py
+              python3 scripts/apply_commercial_v43.py
+              python3 scripts/apply_visual_assets.py
+              python3 scripts/apply_ux_v45.py
+              python3 scripts/apply_detail_ux_v46.py
+              python3 scripts/apply_editorial_ux_v47.py
+              python3 scripts/normalize_editorial_v47.py
+              python3 scripts/normalize_growth_compat_v51.py
+              python3 scripts/apply_quality_v48.py
+              python3 scripts/normalize_quality_v48.py
+              python3 scripts/apply_operations_v49.py
+            fi
+            python3 scripts/sync_public_version.py
+            if [ "$MERIDIANO_CANONICAL_V6" != "true" ]; then
+              python3 scripts/apply_production_v50.py
+              python3 scripts/apply_growth_v51.py
+              python3 scripts/finalize_growth_v51.py
+              python3 scripts/apply_cro_v52.py
+              python3 scripts/apply_authority_v53.py
+              python3 scripts/apply_decision_v58.py
+              python3 scripts/apply_commercial_v59.py
+              python3 scripts/apply_conversion_v510.py
+              python3 scripts/apply_engagement_v511.py
+              python3 scripts/apply_proof_v512.py
+              python3 scripts/apply_commercial_brief_v513.py
+              python3 scripts/apply_recommendation_v514.py
+              python3 scripts/apply_decision_action_v515.py
+              python3 scripts/apply_handoff_v517.py
+              python3 scripts/apply_handoff_observability_v518.py
+            fi
+            python3 scripts/apply_experience_v60.py
+            python3 scripts/apply_experience_solutions_v60.py
+            python3 scripts/apply_experience_sectors_v60.py
+            python3 scripts/apply_experience_perspectives_v60.py
+            python3 scripts/apply_experience_final_v60.py
+            python3 scripts/apply_funnel_trust_v529.py
+            python3 scripts/normalize_experience_compat_v60.py
+            if [ -f assets/data/v6/fit-scope-clarity-v64.json ]; then
+              python3 scripts/apply_fit_scope_clarity_v64.py
+            fi
+            python3 scripts/validate_experience_v60.py
+            python3 scripts/validate_experience_solutions_v60.py
+            python3 scripts/validate_experience_sectors_v60.py
+            python3 scripts/validate_experience_perspectives_v60.py
+            python3 scripts/validate_experience_final_v60.py
+            python3 scripts/validate_funnel_trust_v529.py
+            python3 scripts/validate_proof_v512.py
+            python3 scripts/validate_capability_truth_v521.py
+            python3 scripts/validate_editorial_context.py
+            if [ -f assets/data/v6/fit-scope-clarity-v64.json ]; then
+              python3 scripts/validate_fit_scope_clarity_v64.py
+            fi
           fi
           git diff --exit-code -- index.html catalog-home-v32.js decision-flow.js site-v3.js page-context.js sitemap.xml robots.txt runtime-config.js site-status.json servicios productos firma.html perspectivas perspectivas.html sectores soluciones experiencia.html demo.html 404.html aviso-legal.html privacidad.html terminos.html manifest.webmanifest CNAME scripts/build_catalog_shells.py
+      - name: Validate persisted W5 static quality
+        if: env.MERIDIANO_W5_PERSISTED_HOME == 'true'
+        run: python3 scripts/run_v8_pages_quality_compat.py
       - name: Validate HTML and local resources
+        if: env.MERIDIANO_W5_PERSISTED_HOME != 'true'
         run: python3 scripts/validate_site.py
       - name: Validate static catalog
+        if: env.MERIDIANO_W5_PERSISTED_HOME != 'true'
         run: python3 scripts/validate_static_catalog.py
       - name: Validate commercial conversion v4.4
+        if: env.MERIDIANO_W5_PERSISTED_HOME != 'true'
         run: python3 scripts/validate_commercial_v44.py
       - name: Validate homepage UX/UI v4.5
+        if: env.MERIDIANO_W5_PERSISTED_HOME != 'true'
         run: python3 scripts/validate_ux_v45.py
       - name: Validate deep-page UX/UI v4.6
+        if: env.MERIDIANO_W5_PERSISTED_HOME != 'true'
         run: python3 scripts/validate_detail_ux_v46.py
       - name: Validate editorial and demo UX/UI v4.7
+        if: env.MERIDIANO_W5_PERSISTED_HOME != 'true'
         run: python3 scripts/validate_editorial_ux_v47.py
       - name: Validate final quality v4.8
+        if: env.MERIDIANO_W5_PERSISTED_HOME != 'true'
         run: python3 scripts/validate_quality_v48.py
       - name: Validate public operations v4.9
+        if: env.MERIDIANO_W5_PERSISTED_HOME != 'true'
         run: python3 scripts/validate_operations_v49.py
       - name: Validate production configuration v5.0
+        if: env.MERIDIANO_W5_PERSISTED_HOME != 'true'
         run: python3 scripts/validate_production_v50.py
       - name: Validate growth and decision routes v5.1
+        if: env.MERIDIANO_W5_PERSISTED_HOME != 'true'
         run: |
           if [ "$MERIDIANO_V8_PIPELINE_COMPAT" = "true" ]; then
             python3 scripts/validate_v8_pipeline_compat.py
@@ -127,48 +146,70 @@ jobs:
             python3 scripts/validate_growth_v51.py
           fi
       - name: Validate CRO and search-intent v5.2
+        if: env.MERIDIANO_W5_PERSISTED_HOME != 'true'
         run: python3 scripts/validate_cro_v52.py
       - name: Validate authority, discovery and measurement v5.3
+        if: env.MERIDIANO_W5_PERSISTED_HOME != 'true'
         run: python3 scripts/validate_authority_v53.py
       - name: Validate browser E2E infrastructure v5.4
+        if: env.MERIDIANO_W5_PERSISTED_HOME != 'true'
         run: python3 scripts/validate_browser_v54.py
       - name: Validate performance and accessibility QA v5.5
+        if: env.MERIDIANO_W5_PERSISTED_HOME != 'true'
         run: python3 scripts/validate_quality_v55.py
       - name: Validate CI efficiency and observability v5.6
+        if: env.MERIDIANO_W5_PERSISTED_HOME != 'true'
         run: python3 scripts/validate_ci_v56.py
       - name: Validate release governance v5.7
+        if: env.MERIDIANO_W5_PERSISTED_HOME != 'true'
         run: python3 scripts/validate_release_governance_v57.py
       - name: Validate canonical release trigger v5.11
+        if: env.MERIDIANO_W5_PERSISTED_HOME != 'true'
         run: python3 scripts/validate_pages_trigger_v511.py
       - name: Validate buying decision architecture v5.8
+        if: env.MERIDIANO_W5_PERSISTED_HOME != 'true'
         run: python3 scripts/validate_decision_v58.py
       - name: Validate commercial intake v5.9
+        if: env.MERIDIANO_W5_PERSISTED_HOME != 'true'
         run: python3 scripts/validate_commercial_v59.py
       - name: Validate conversion-to-close v5.10
+        if: env.MERIDIANO_W5_PERSISTED_HOME != 'true'
         run: python3 scripts/validate_conversion_v510.py
       - name: Validate engagement readiness v5.11
+        if: env.MERIDIANO_W5_PERSISTED_HOME != 'true'
         run: python3 scripts/validate_engagement_v511.py
       - name: Validate verifiable proof v5.12
+        if: env.MERIDIANO_W5_PERSISTED_HOME != 'true'
         run: python3 scripts/validate_proof_v512.py
       - name: Validate commercial brief continuity v5.13
+        if: env.MERIDIANO_W5_PERSISTED_HOME != 'true'
         run: python3 scripts/validate_commercial_brief_v513.py
       - name: Validate explainable recommendation v5.14
+        if: env.MERIDIANO_W5_PERSISTED_HOME != 'true'
         run: python3 scripts/validate_recommendation_v514.py
       - name: Validate decision-to-action efficiency v5.15
+        if: env.MERIDIANO_W5_PERSISTED_HOME != 'true'
         run: python3 scripts/validate_decision_action_v515.py
       - name: Validate manual handoff continuity v5.17
         run: python3 scripts/validate_handoff_v517.py
+        if: env.MERIDIANO_W5_PERSISTED_HOME != 'true'
       - name: Validate handoff observability v5.18
+        if: env.MERIDIANO_W5_PERSISTED_HOME != 'true'
         run: python3 scripts/validate_handoff_observability_v518.py
       - name: Validate offer narrative v5.22
+        if: env.MERIDIANO_W5_PERSISTED_HOME != 'true'
         run: python3 scripts/validate_offer_narrative_v522.py
       - name: Validate guided decision flow
+        if: env.MERIDIANO_W5_PERSISTED_HOME != 'true'
         run: python3 scripts/validate_decision_flow.py
       - name: Validate page context and structured data
+        if: env.MERIDIANO_W5_PERSISTED_HOME != 'true'
         run: python3 scripts/validate_page_context.py
       - name: Validate firm, perspectives and sectors
+        if: env.MERIDIANO_W5_PERSISTED_HOME != 'true'
         run: python3 scripts/validate_editorial_context.py
       - name: Validate canonical visual system
+        if: env.MERIDIANO_W5_PERSISTED_HOME != 'true'
         run: python3 scripts/validate_visual_assets.py
       - name: Validate JavaScript
         run: |
@@ -194,6 +235,9 @@ jobs:
           node --check decision-action-v515.js
           node --check handoff-continuity-v517.js
           node --check handoff-observability-v518.js
+          node --check assets/js/v8/navigation.js
+          node --check assets/js/v8/measurement.js
+          node --check assets/js/v8/contact.js
           node --check playwright.config.mjs
           node --check tests/e2e/helpers.mjs
           node --check tests/e2e/public-site.spec.mjs
@@ -278,7 +322,12 @@ jobs:
           ref: main
           persist-credentials: false
       - name: Smoke test public URL
-        run: python3 scripts/validate_live_v53.py
+        run: |
+          if grep -q 'data-v8-home-candidate="persisted"' index.html; then
+            python3 scripts/validate_v8_live_home.py
+          else
+            python3 scripts/validate_live_v53.py
+          fi
 
   browser_e2e:
     name: Browser E2E on deployed Pages
@@ -317,7 +366,22 @@ jobs:
       - name: Install Chromium and WebKit
         run: timeout 900s npx playwright install --with-deps chromium webkit
       - name: Run deployed browser E2E suite
-        run: npm run test:e2e
+        run: |
+          if grep -q 'data-v8-home-candidate="persisted"' index.html; then
+            mapfile -t REAL_V8_SPECS < <(
+              find tests/e2e -maxdepth 1 -type f -name 'v8-*.spec.mjs' \
+                ! -name 'v8-home-shell.spec.mjs' \
+                ! -name 'v8-home-shell.accessibility.spec.mjs' \
+                -print | sort
+            )
+            if [ "${#REAL_V8_SPECS[@]}" -lt 2 ]; then
+              echo "Deployed v8 browser scope unexpectedly small: ${#REAL_V8_SPECS[@]}" >&2
+              exit 1
+            fi
+            MERIDIANO_W5_PERSISTED_CANDIDATE=1 npx playwright test "${REAL_V8_SPECS[@]}"
+          else
+            npm run test:e2e
+          fi
       - name: Upload browser failure artifacts
         if: failure()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
@@ -422,12 +486,18 @@ jobs:
         run: |
           python3 scripts/validate_release_governance_v57.py --report-dir ci-artifacts/v5.7
           python3 scripts/validate_pages_trigger_v511.py
-          python3 scripts/validate_commercial_brief_v513.py
-          python3 scripts/validate_recommendation_v514.py
-          python3 scripts/validate_decision_action_v515.py
-          python3 scripts/validate_handoff_v517.py
-          python3 scripts/validate_handoff_observability_v518.py
-          python3 scripts/validate_offer_narrative_v522.py
+          if grep -q 'data-v8-home-candidate="persisted"' index.html; then
+            python3 scripts/validate_v8_public_tree.py
+            python3 scripts/validate_v8_pipeline_compat.py
+            python3 scripts/validate_v8_home_persisted.py --expect-state persisted
+          else
+            python3 scripts/validate_commercial_brief_v513.py
+            python3 scripts/validate_recommendation_v514.py
+            python3 scripts/validate_decision_action_v515.py
+            python3 scripts/validate_handoff_v517.py
+            python3 scripts/validate_handoff_observability_v518.py
+            python3 scripts/validate_offer_narrative_v522.py
+          fi
           cat ci-artifacts/v5.7/release-health.md >> "$GITHUB_STEP_SUMMARY"
       - name: Upload release governance health report
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7

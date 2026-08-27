@@ -1,27 +1,18 @@
 #!/usr/bin/env python3
-"""Run v5.22→v5.31 governance validators on their certified topology.
-
-The final v8 candidate is additive: 46 historical HTML + 3 noindex v8 targets.
-Historical tail validators remain unchanged and execute in an ephemeral 46-page
-projection. The real 49-page candidate is validated independently and is never
-rewritten by this runner.
-"""
+"""Run v5.22→v5.31 governance validators on their certified topology."""
 from __future__ import annotations
 
+import os
 from pathlib import Path
 import json
-import shutil
 import subprocess
 import sys
 import tempfile
 
+from v8_legacy_projection import ProjectionError, TARGETS, prepare_projection, persisted_home
+
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / "assets/data/v8/pipeline-compat-v80.json"
-TARGETS = (
-    "soluciones/sistema-contractual-empresarial.html",
-    "practicas/corporativo-societario-gobierno.html",
-    "servicios-continuos/direccion-juridica-externa.html",
-)
 VALIDATORS = (
     "scripts/validate_offer_narrative_v522.py",
     "scripts/validate_contact_compression_v523.py",
@@ -63,6 +54,28 @@ def is_final_v8() -> bool:
     return True
 
 
+def governed_projection() -> Path | None:
+    raw = os.environ.get("MERIDIANO_RELEASE_GOVERNANCE_ROOT", "").strip()
+    if not raw:
+        return None
+    projected = Path(raw).resolve()
+    if not projected.is_dir():
+        fail(f"governed historical projection missing: {projected}")
+    html_count = len(list(projected.rglob("*.html")))
+    if html_count != 46:
+        fail(f"governed historical projection must contain 46 HTML; found {html_count}")
+    home = projected / "index.html"
+    if not home.is_file():
+        fail("governed historical projection lost index.html")
+    text = home.read_text(encoding="utf-8")
+    if 'data-experience-system="v6"' not in text or 'data-v8-home-candidate="persisted"' in text:
+        fail("governed historical projection is not the certified v7.4/v6 Home topology")
+    for target in TARGETS:
+        if (projected / target).exists():
+            fail(f"governed historical projection leaked additive target: {target}")
+    return projected
+
+
 def historical_direct() -> None:
     for validator in VALIDATORS:
         run([sys.executable, validator])
@@ -70,36 +83,24 @@ def historical_direct() -> None:
 
 
 def final_projection() -> None:
-    with tempfile.TemporaryDirectory(prefix="meridiano-v8-legacy-tail-") as tmp:
-        projected = Path(tmp) / "site"
-        shutil.copytree(
-            ROOT,
-            projected,
-            ignore=shutil.ignore_patterns(
-                ".git", "node_modules", "playwright-report", "test-results", "__pycache__"
-            ),
-        )
-        for relative in TARGETS:
-            path = projected / relative
-            if not path.exists():
-                fail(f"projection target missing: {relative}")
-            path.unlink()
-        count = len(list(projected.rglob("*.html")))
-        if count != 46:
-            fail(f"legacy tail projection must contain exactly 46 HTML; found {count}")
-
-        # Rehydrate the canonical historical tail. This applicator chains the
-        # post-handoff materializers through v5.31 (and later compatibility
-        # normalizers) while the closed six-solution topology is restored.
-        run([sys.executable, "scripts/apply_handoff_observability_v518.py"], cwd=projected)
+    governed = governed_projection()
+    if governed is not None:
         for validator in VALIDATORS:
-            run([sys.executable, validator], cwd=projected)
+            run([sys.executable, validator], cwd=governed)
+        print("LEGACY TAIL governed projection PASS: v5.22→v5.31 reused the existing 46-page release-governance state.")
+    else:
+        with tempfile.TemporaryDirectory(prefix="meridiano-v8-legacy-tail-") as tmp:
+            projected = Path(tmp) / "site"
+            restored = prepare_projection(ROOT, projected)
+            run([sys.executable, "scripts/apply_handoff_observability_v518.py"], cwd=projected)
+            for validator in VALIDATORS:
+                run([sys.executable, validator], cwd=projected)
+            print(f"LEGACY TAIL projection PASS: persisted-home-restored={str(restored).lower()}.")
 
     run([sys.executable, "scripts/validate_v8_public_tree.py"])
-    print(
-        "V8 LEGACY TAIL COMPAT PASS: v5.22→v5.31 validators passed unchanged on strict 46-page "
-        "projection; real 49-page v8 tree remained additive and valid."
-    )
+    if persisted_home(ROOT):
+        run([sys.executable, "scripts/validate_v8_home_persisted.py", "--expect-state", "persisted"])
+    print("V8 LEGACY TAIL COMPAT PASS: v5.22→v5.31 validators passed unchanged in strict projection; real v8 tree remained protected.")
 
 
 def main() -> int:
@@ -113,6 +114,6 @@ def main() -> int:
 if __name__ == "__main__":
     try:
         raise SystemExit(main())
-    except (RuntimeError, json.JSONDecodeError) as exc:
+    except (RuntimeError, ProjectionError, json.JSONDecodeError) as exc:
         print(f"V8 LEGACY TAIL COMPAT FAIL: {exc}", file=sys.stderr)
         raise SystemExit(1)

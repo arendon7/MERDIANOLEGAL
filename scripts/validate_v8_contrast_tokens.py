@@ -55,6 +55,7 @@ def main() -> int:
         ("--ml-muted", "--ml-soft", "texto secundario / soft"),
         ("--ml-gold-ink", "--ml-white", "etiqueta oro textual / blanco"),
         ("--ml-gold-ink", "--ml-ivory", "etiqueta oro textual / ivory"),
+        ("--ml-gold-light", "--ml-navy-deep", "oro claro textual / navy deep"),
         ("--ml-white", "--ml-navy", "botón primario / navy"),
         ("--ml-white", "--ml-navy-deep", "texto inverso / navy deep"),
         ("--ml-navy", "--ml-white", "acción secundaria / blanco"),
@@ -68,7 +69,7 @@ def main() -> int:
     if not brand_gold or not gold_ink or brand_gold == gold_ink:
         raise AssertionError("v8 debe separar oro de marca y oro textual accesible")
 
-    print("VALIDATE V8 CONTRAST TOKENS OK: pares textuales críticos cumplen WCAG AA 4.5:1.")
+    print("VALIDATE V8 CONTRAST TOKENS OK: pares textuales críticos claros/oscuros cumplen WCAG AA 4.5:1.")
     return 0
 
 
