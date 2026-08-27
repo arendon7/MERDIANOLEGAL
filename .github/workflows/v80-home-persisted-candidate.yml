@@ -71,15 +71,27 @@ jobs:
           python3 scripts/validate_v8_public_tree.py
           python3 scripts/validate_v8_home_persisted.py
 
-      - name: Materialize exact future root only in disposable checkout
+      - name: Materialize exact future root in disposable mirror
         run: |
-          rm -rf .w5-persisted
-          python3 scripts/render_v8_home_persisted.py --output .w5-persisted/index.html
-          test -s .w5-persisted/index.html
-          grep -q 'data-v8-home-candidate="persisted"' .w5-persisted/index.html
-          grep -q 'name="robots" content="index,follow,max-image-preview:large"' .w5-persisted/index.html
-          grep -q 'rel="canonical" href="https://arendon7.github.io/MERDIANOLEGAL/"' .w5-persisted/index.html
-          test "$(grep -o 'id="contact-form"' .w5-persisted/index.html | wc -l)" -eq 1
+          SITE_ROOT=/tmp/meridiano-w50e-site
+          rm -rf "$SITE_ROOT"
+          mkdir -p "$SITE_ROOT"
+          tar \
+            --exclude='./.git' \
+            --exclude='./node_modules' \
+            --exclude='./playwright-report' \
+            --exclude='./test-results' \
+            --exclude='./.w5-persisted' \
+            -cf - . | tar -xf - -C "$SITE_ROOT"
+          python3 scripts/render_v8_home_persisted.py --output "$SITE_ROOT/index.html"
+          test -s "$SITE_ROOT/index.html"
+          grep -q 'data-v8-home-candidate="persisted"' "$SITE_ROOT/index.html"
+          grep -q 'name="robots" content="index,follow,max-image-preview:large"' "$SITE_ROOT/index.html"
+          grep -q 'rel="canonical" href="https://arendon7.github.io/MERDIANOLEGAL/"' "$SITE_ROOT/index.html"
+          test "$(grep -o 'id="contact-form"' "$SITE_ROOT/index.html" | wc -l)" -eq 1
+          test -s "$SITE_ROOT/runtime-config.js"
+          test -s "$SITE_ROOT/assets/js/v8/contact.js"
+          test -s "$SITE_ROOT/assets/css/v8/home-persisted.css"
 
       - name: Install locked QA dependencies
         run: npm ci --ignore-scripts --no-audit --no-fund
@@ -94,12 +106,12 @@ jobs:
       - name: Install Chromium and WebKit
         run: timeout 900s npx playwright install --with-deps chromium webkit
 
-      - name: Start local candidate server
+      - name: Start disposable future-root server
         run: |
-          python3 -m http.server 8000 --bind 127.0.0.1 > /tmp/meridiano-w50e-http.log 2>&1 &
+          python3 -m http.server 8000 --bind 127.0.0.1 --directory /tmp/meridiano-w50e-site > /tmp/meridiano-w50e-http.log 2>&1 &
           echo $! > /tmp/meridiano-w50e-http.pid
           for i in {1..20}; do
-            if curl --fail --silent http://127.0.0.1:8000/.w5-persisted/index.html >/dev/null; then exit 0; fi
+            if curl --fail --silent http://127.0.0.1:8000/ >/dev/null; then exit 0; fi
             sleep 1
           done
           cat /tmp/meridiano-w50e-http.log >&2 || true
@@ -119,10 +131,17 @@ jobs:
 
       - name: Prove E1 did not persist or mutate production Home
         run: |
-          rm -rf .w5-persisted playwright-report test-results
+          rm -rf playwright-report test-results
           find . -type d -name __pycache__ -prune -exec rm -rf {} +
           git diff --exit-code
           test -z "$(git status --porcelain)"
+
+      - name: Prepare W5.0E failure evidence
+        if: failure()
+        run: |
+          mkdir -p .w5-persisted-evidence
+          cp /tmp/meridiano-w50e-site/index.html .w5-persisted-evidence/index.html 2>/dev/null || true
+          cp /tmp/meridiano-w50e-http.log .w5-persisted-evidence/http.log 2>/dev/null || true
 
       - name: Upload W5.0E browser evidence on failure
         if: failure()
@@ -130,9 +149,8 @@ jobs:
         with:
           name: w50e-persisted-home-failure
           path: |
-            .w5-persisted/index.html
+            .w5-persisted-evidence
             playwright-report
             test-results
-            /tmp/meridiano-w50e-http.log
           if-no-files-found: ignore
           retention-days: 7

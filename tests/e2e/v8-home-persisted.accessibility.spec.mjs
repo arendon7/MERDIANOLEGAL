@@ -1,7 +1,8 @@
 import AxeBuilder from '@axe-core/playwright';
 import { test, expect, expectNoHorizontalOverflow } from './helpers.mjs';
 
-const candidate = './.w5-persisted/index.html';
+// The disposable server root contains the exact future production index.html.
+const candidate = './';
 
 test('W5.0E future root has no serious/critical axe violations', async ({ page }) => {
   const response = await page.goto(candidate);

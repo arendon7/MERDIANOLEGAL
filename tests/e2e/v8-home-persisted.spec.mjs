@@ -1,13 +1,17 @@
 import { test, expect, expectNoHorizontalOverflow } from './helpers.mjs';
 
-const candidate = './.w5-persisted/index.html';
+// W5.0E is served from a disposable mirror whose root index.html is the exact
+// future production Home. Do not test it from a synthetic subdirectory: that
+// would change relative URL semantics for runtime-config, assets and links.
+const candidate = './';
 const sections = Array.from({ length: 12 }, (_, index) => `H${String(index + 1).padStart(2, '0')}`);
 
 async function openCandidate(page) {
   const external = [];
   page.on('request', (request) => {
     const url = new URL(request.url());
-    if (!['127.0.0.1', 'localhost'].includes(url.hostname)) external.push(request.url());
+    const host = url.hostname.replace(/\.$/, '');
+    if (!['127.0.0.1', 'localhost'].includes(host)) external.push(request.url());
   });
   const response = await page.goto(candidate);
   expect(response?.status()).toBe(200);
