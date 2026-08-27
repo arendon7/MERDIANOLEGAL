@@ -4,6 +4,7 @@ import { test, expect, expectNoHorizontalOverflow } from './helpers.mjs';
 // future production Home. Do not test it from a synthetic subdirectory: that
 // would change relative URL semantics for runtime-config, assets and links.
 const candidate = './';
+const persistedCandidate = process.env.MERIDIANO_W5_PERSISTED_CANDIDATE === '1';
 const sections = Array.from({ length: 12 }, (_, index) => `H${String(index + 1).padStart(2, '0')}`);
 
 async function openCandidate(page) {
@@ -20,6 +21,7 @@ async function openCandidate(page) {
 }
 
 test('W5.0E future root is indexable, source-driven and SEO-bridged without pilot handoff', async ({ page }) => {
+  test.skip(!persistedCandidate, 'W5.0E persisted Home specs run only in their dedicated candidate workflow.');
   const external = await openCandidate(page);
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'index,follow,max-image-preview:large');
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://arendon7.github.io/MERDIANOLEGAL/');
@@ -40,6 +42,7 @@ test('W5.0E future root is indexable, source-driven and SEO-bridged without pilo
 });
 
 test('W5.0E contact prepares WhatsApp only after explicit submit and protects stale drafts', async ({ page }) => {
+  test.skip(!persistedCandidate, 'W5.0E persisted Home specs run only in their dedicated candidate workflow.');
   await openCandidate(page);
   await page.evaluate(() => {
     window.__meridianoOpened = [];
@@ -93,6 +96,7 @@ test('W5.0E contact prepares WhatsApp only after explicit submit and protects st
 });
 
 test('W5.0E shell remains keyboard-operable and mobile-safe', async ({ page }, testInfo) => {
+  test.skip(!persistedCandidate, 'W5.0E persisted Home specs run only in their dedicated candidate workflow.');
   await openCandidate(page);
   const mobile = testInfo.project.name === 'chromium-mobile';
   const menuToggle = page.locator('[data-ml-menu-toggle]');

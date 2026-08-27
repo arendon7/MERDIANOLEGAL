@@ -4,19 +4,10 @@ const configuredBase = process.env.MERIDIANO_BASE_URL || 'https://arendon7.githu
 const baseURL = configuredBase.endsWith('/') ? configuredBase : `${configuredBase}/`;
 const a11ySpec = /accessibility\.spec\.mjs$/;
 const w5HomeSpec = /v8-home-shell(?:\.accessibility)?\.spec\.mjs$/;
-const w5PersistedSpec = /v8-home-persisted(?:\.accessibility)?\.spec\.mjs$/;
 const w5HomeCandidate = process.env.MERIDIANO_W5_HOME_CANDIDATE === '1';
-const w5PersistedCandidate = process.env.MERIDIANO_W5_PERSISTED_CANDIDATE === '1';
-// v5.5 compatibility invariant: browser projects preserve the historical a11y split while candidate-only W5 families are isolated unless their dedicated workflow opts in.
-const browserIgnore = [
-  a11ySpec,
-  ...(!w5HomeCandidate ? [w5HomeSpec] : []),
-  ...(!w5PersistedCandidate ? [w5PersistedSpec] : []),
-];
-const accessibilityIgnore = [
-  ...(!w5HomeCandidate ? [w5HomeSpec] : []),
-  ...(!w5PersistedCandidate ? [w5PersistedSpec] : []),
-];
+// v5.5 compatibility invariant: browser projects preserve the historical testIgnore: a11ySpec behavior while W5 adds its isolated spec family.
+const browserIgnore = w5HomeCandidate ? a11ySpec : [a11ySpec, w5HomeSpec];
+const accessibilityIgnore = w5HomeCandidate ? [] : [w5HomeSpec];
 
 export default defineConfig({
   testDir: './tests/e2e',
