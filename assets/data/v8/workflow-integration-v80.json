@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "1.1.0",
   "contract": "v8-workflow-integration",
   "status": "candidate",
   "depends_on": "v8-pipeline-integration",
@@ -22,6 +22,48 @@
     "builder_adapter_check_required": true,
     "pages_quality_dual_view_required": true,
     "deploy_during_w48": false,
+    "main_modified": false,
+    "stable_modified": false,
+    "version_bump": false,
+    "canonical_handoff": false
+  },
+  "w5_overlay": {
+    "enabled": true,
+    "phase": "W5.0E-pre-persistence",
+    "historical_w47_artifact_immutable": true,
+    "current_exact_w47_bytes_required": false,
+    "fail_closed": true,
+    "allowed_integrated_files": [
+      ".github/workflows/build-canonical.yml",
+      ".github/workflows/pages.yml"
+    ],
+    "builder_required_markers": [
+      "practicas/**",
+      "servicios-continuos/**",
+      "soluciones/**",
+      "scripts/v8_legacy_projection.py",
+      "scripts/run_v8_release_governance_compat.py",
+      "data-v8-home-candidate=\"persisted\"",
+      "Managed canonical baseline detected (v6 legacy or persisted v8 Home)",
+      "python3 scripts/apply_v8_builder_compat.py"
+    ],
+    "pages_required_markers": [
+      "MERIDIANO_W5_PERSISTED_HOME",
+      "data-v8-home-candidate=\"persisted\"",
+      "python3 scripts/apply_v8_builder_compat.py --check",
+      "python3 scripts/run_v8_pages_quality_compat.py",
+      "uses: actions/deploy-pages@",
+      "git push origin HEAD:refs/heads/stable --force"
+    ],
+    "required_checks": [
+      "canonical_pipeline",
+      "pages_trigger",
+      "ci_governance",
+      "builder_adapter_check",
+      "pages_quality_dual_view"
+    ],
+    "production_merge": false,
+    "production_deploy": false,
     "main_modified": false,
     "stable_modified": false,
     "version_bump": false,
