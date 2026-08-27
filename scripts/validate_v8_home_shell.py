@@ -1,14 +1,9 @@
 #!/usr/bin/env python3
-"""Fail-closed validator for W5.0A Home + navigation source model.
+"""Fail-closed validator for W5.0 Home + navigation source model across pre/persisted states.
 
-This gate validates the new source-driven shell without activating it. It proves:
-- canonical taxonomy/counts and Home narrative order;
-- all candidate-visible hrefs resolve to physical files or Home anchors;
-- RC02 is owner-confirmed only inside W5 candidate and remains non-publishable in
-  the historical route/pilot contracts until its dedicated materialization gate;
-- Dirección Jurídica Externa cannot regress to public hour-bag framing;
-- the three W4 pilots remain noindex and outside sitemap;
-- index.html has not yet been replaced by the W5 renderer.
+This gate validates the source-driven shell and preserves the historical W5.0A
+contracts. Once W5.0E is persisted, index.html is accepted only when it is
+byte-identical to the certified source renderer.
 """
 from __future__ import annotations
 
@@ -16,6 +11,9 @@ from pathlib import Path
 import json
 import re
 import sys
+
+from render_v8_home_persisted import render_document
+from v8_legacy_projection import PERSISTED_MARKER
 
 ROOT = Path(__file__).resolve().parents[1]
 MODEL = ROOT / "assets/data/v8/home-shell-v80.json"
@@ -87,12 +85,12 @@ def main() -> int:
     if model.get("schema_version") != "1.0.0" or model.get("contract") != "v8-w5-home-shell":
         fail("identidad/schema del Home shell inválida")
     if model.get("status") != "candidate":
-        fail("W5.0A debe permanecer status=candidate")
+        fail("W5 source model debe permanecer status=candidate")
     activation = model.get("activation") or {}
     if any(activation.get(key) for key in ("public", "indexing_change", "sitemap_change")):
-        fail("W5.0A no puede activar publicación, indexación ni sitemap")
+        fail("W5 source model no puede activar publicación, indexación ni sitemap")
     if activation.get("legacy_routes_unchanged") is not True:
-        fail("W5.0A debe preservar rutas legacy")
+        fail("W5 debe preservar rutas legacy")
 
     for _name, rel in model.get("sources", {}).items():
         if not (ROOT / rel).exists():
@@ -129,7 +127,7 @@ def main() -> int:
                 fail(f"{code}: candidate_href no resuelve: {fallback!r}")
         elif code == "RC02":
             if fallback is not None or availability != "owner_confirmed_not_materialized":
-                fail("RC02 debe permanecer sin href físico en W5.0A")
+                fail("RC02 debe permanecer sin href físico en W5")
         else:
             fail(f"{code}: availability desconocida {availability!r}")
 
@@ -184,7 +182,6 @@ def main() -> int:
     if a11y.get("standard") != "WCAG 2.1 AA" or not all(a11y.get(k) for k in ("keyboard_navigation", "visible_focus", "reduced_motion", "semantic_landmarks", "mega_menu_accessible")):
         fail("contrato de accesibilidad incompleto")
 
-    # Historical truth remains intentionally closed while W5 prepares candidate RC02.
     recurring = {row[0]: row for row in routes["target_families"]["recurring"]}
     if recurring["RC02"][2] is not False:
         fail("route-contract histórico RC02 debe seguir publishable=false")
@@ -204,14 +201,22 @@ def main() -> int:
             fail(f"piloto W4 entró prematuramente al sitemap: {rel}")
 
     index = INDEX.read_text(encoding="utf-8")
-    if "data-v8-home-shell" in index or home["hero"]["title"] in index:
-        fail("W5 Home fue persistido antes del renderer/browser gate")
+    persisted = PERSISTED_MARKER in index
+    if persisted:
+        expected = render_document(model)
+        if index != expected:
+            fail("persisted W5 Home differs from source-driven E2 renderer")
+        if home["hero"]["title"] not in index or 'data-v8-home-shell="persisted-candidate"' not in index:
+            fail("persisted W5 Home lost canonical source markers")
+    elif "data-v8-home-shell" in index or home["hero"]["title"] in index:
+        fail("partial W5 Home detected before persisted marker")
 
     html_count = len(list(ROOT.rglob("*.html")))
     if html_count != 49:
-        fail(f"W5.0A espera baseline físico W4.13 de 49 HTML; encontró {html_count}")
+        fail(f"W5 expects physical 49 HTML topology; found {html_count}")
 
-    print("VALIDATE V8 W5 HOME SHELL OK: 6 practices, 8 solutions, 2 recurring; H01-H12; 49 HTML baseline; RC02 candidate-only; production Home untouched.")
+    state = "persisted" if persisted else "pre-persist"
+    print(f"VALIDATE V8 W5 HOME SHELL OK: 6 practices, 8 solutions, 2 recurring; H01-H12; 49 HTML; RC02 candidate-only; state={state}.")
     return 0
 
 

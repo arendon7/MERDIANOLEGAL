@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
-"""Apply the canonical legacy extension chain without touching additive v8 targets.
+"""Apply canonical legacy extensions without overwriting additive v8/W5 surfaces.
 
-W4.7 production-adapter candidate:
-- materialize inside an ephemeral 46-page legacy projection;
-- allow only historically public/generated outputs to differ;
-- in apply mode, copy those generated legacy outputs back to the real tree;
-- in --check mode, fail if the real legacy tree is not already canonical;
-- never delete or overwrite the three additive v8 targets.
+The Builder always runs historical materializers inside a strict 46-page
+projection. Once W5.0E is persisted, that projection restores the immutable v7.4
+Home fixture and index.html becomes a protected real-tree surface: it is never
+copied back from legacy materializers.
 """
 from __future__ import annotations
 
@@ -18,6 +16,8 @@ import shutil
 import subprocess
 import sys
 import tempfile
+
+from v8_legacy_projection import ProjectionError, prepare_projection, persisted_home
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / "assets/data/v8/pipeline-compat-v80.json"
@@ -46,35 +46,12 @@ POST_VALIDATORS = [
 ]
 
 ALLOWED_EXACT = {
-    "index.html",
-    "firma.html",
-    "perspectivas.html",
-    "experiencia.html",
-    "demo.html",
-    "demo.js",
-    "404.html",
-    "aviso-legal.html",
-    "privacidad.html",
-    "terminos.html",
-    "catalog-home-v32.js",
-    "decision-flow.js",
-    "site-v3.js",
-    "page-context.js",
-    "sitemap.xml",
-    "robots.txt",
-    "runtime-config.js",
-    "site-status.json",
-    "manifest.webmanifest",
-    "CNAME",
+    "index.html", "firma.html", "perspectivas.html", "experiencia.html", "demo.html", "demo.js",
+    "404.html", "aviso-legal.html", "privacidad.html", "terminos.html", "catalog-home-v32.js",
+    "decision-flow.js", "site-v3.js", "page-context.js", "sitemap.xml", "robots.txt",
+    "runtime-config.js", "site-status.json", "manifest.webmanifest", "CNAME",
 }
-ALLOWED_PREFIXES = (
-    "assets/",
-    "servicios/",
-    "productos/",
-    "perspectivas/",
-    "sectores/",
-    "soluciones/",
-)
+ALLOWED_PREFIXES = ("assets/", "servicios/", "productos/", "perspectivas/", "sectores/", "soluciones/")
 IGNORE_PARTS = {".git", "node_modules", "playwright-report", "test-results", "__pycache__"}
 
 
@@ -121,7 +98,7 @@ def allowed_output(relative: str) -> bool:
 def additive_targets(contract: dict) -> set[str]:
     projection = contract.get("legacy_projection") or {}
     if projection.get("builder_strategy") != "run-v6-in-projection-then-prove-real-legacy-equivalence":
-        fail("W4.7 requires certified W4.6 builder strategy")
+        fail("Builder requires certified W4.6 projection strategy")
     removals = set(projection.get("remove_before_strict_validation") or [])
     expected = {
         "soluciones/sistema-contractual-empresarial.html",
@@ -135,28 +112,24 @@ def additive_targets(contract: dict) -> set[str]:
 
 def main(argv: list[str] | None = None) -> int:
     parser = ArgumentParser()
-    parser.add_argument("--check", action="store_true", help="Fail if legacy outputs would change")
+    parser.add_argument("--check", action="store_true", help="Fail if synchronizable legacy outputs would change")
     args = parser.parse_args(argv)
 
     contract = load(CONTRACT)
     removals = additive_targets(contract)
-    target_hashes = {relative: digest(ROOT / relative) for relative in removals}
-    before = inventory(ROOT, removals)
+    home_is_persisted = persisted_home(ROOT)
+    protected = set(removals)
+    if home_is_persisted:
+        protected.add("index.html")
+    protected_hashes = {relative: digest(ROOT / relative) for relative in protected}
+    before = inventory(ROOT, protected)
+    pending: list[str] = []
 
     with tempfile.TemporaryDirectory(prefix="meridiano-w47-builder-") as tmp:
         projected = Path(tmp) / "site"
-        shutil.copytree(
-            ROOT,
-            projected,
-            ignore=shutil.ignore_patterns(".git", "node_modules", "playwright-report", "test-results", "__pycache__"),
-        )
-        for relative in removals:
-            target = projected / relative
-            if not target.exists():
-                fail(f"projection target missing before removal: {relative}")
-            target.unlink()
-        if len(list(projected.rglob("*.html"))) != 46:
-            fail("projection must contain exactly 46 HTML before legacy materialization")
+        restored = prepare_projection(ROOT, projected)
+        if restored != home_is_persisted:
+            fail("legacy projection Home restoration state disagrees with real candidate")
 
         for command in COMMANDS:
             run(command, projected)
@@ -169,7 +142,8 @@ def main(argv: list[str] | None = None) -> int:
             run([sys.executable, "scripts/validate_fit_scope_clarity_v64.py"], projected)
             run([sys.executable, "scripts/apply_fit_scope_clarity_v64.py", "--check"], projected)
 
-        after = inventory(projected, set())
+        projected_excluded = {"index.html"} if home_is_persisted else set()
+        after = inventory(projected, projected_excluded)
         missing = sorted(set(before) - set(after))
         changed = sorted(path for path in set(before) & set(after) if before[path] != after[path])
         extra = sorted(set(after) - set(before))
@@ -185,20 +159,25 @@ def main(argv: list[str] | None = None) -> int:
 
         if not args.check:
             for relative in pending:
+                if home_is_persisted and relative == "index.html":
+                    fail("persisted Home entered legacy synchronization set")
                 source = projected / relative
                 destination = ROOT / relative
                 destination.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(source, destination)
 
-    for relative, expected in target_hashes.items():
+    for relative, expected in protected_hashes.items():
         if digest(ROOT / relative) != expected:
-            fail(f"additive v8 target was mutated: {relative}")
+            fail(f"protected v8 surface was mutated: {relative}")
 
     run([sys.executable, "scripts/validate_v8_pipeline_compat.py"], ROOT)
+    if home_is_persisted:
+        run([sys.executable, "scripts/validate_v8_home_persisted.py", "--expect-state", "persisted"], ROOT)
     mode = "CHECK" if args.check else "APPLY"
+    state = "persisted-home-protected" if home_is_persisted else "legacy-home"
     print(
-        f"APPLY V8 BUILDER COMPAT {mode} OK: legacy projection canonical; "
-        f"{len(pending)} legacy output(s) {'pending' if args.check else 'synchronized'}; 3 v8 targets untouched."
+        f"APPLY V8 BUILDER COMPAT {mode} OK: legacy projection canonical; {len(pending)} legacy output(s) "
+        f"{'pending' if args.check else 'synchronized'}; three v8 targets untouched; state={state}."
     )
     return 0
 
@@ -206,6 +185,6 @@ def main(argv: list[str] | None = None) -> int:
 if __name__ == "__main__":
     try:
         raise SystemExit(main())
-    except (AssertionError, json.JSONDecodeError) as exc:
+    except (AssertionError, ProjectionError, json.JSONDecodeError) as exc:
         print(f"APPLY V8 BUILDER COMPAT FAIL: {exc}", file=sys.stderr)
         raise SystemExit(1)

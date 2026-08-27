@@ -15,6 +15,9 @@ on:
       - runtime-config.js
       - site-status.json
       - privacidad.html
+      - index.html
+      - scripts/v8_legacy_projection.py
+      - tests/fixtures/v8/home-v74.fixture
       - scripts/sync_public_version.py
       - scripts/validate_production_v50.py
       - scripts/normalize_experience_compat_v60.py
@@ -59,38 +62,12 @@ jobs:
           node-version: '22'
           cache: 'npm'
           cache-dependency-path: package-lock.json
-      - name: Prepare strict 46-page legacy projection for additive v8 tree
+      - name: Prepare strict 46-page legacy projection for v8 tree
         run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          import json
-          import os
-          import shutil
-
-          root = Path.cwd()
-          projected = Path(os.environ["MERIDIANO_V61_ROOT"])
-          contract = json.loads((root / "assets/data/v8/pipeline-compat-v80.json").read_text(encoding="utf-8"))
-          removals = list((contract.get("legacy_projection") or {}).get("remove_before_strict_validation") or [])
-          if len(removals) != 3:
-              raise SystemExit(f"V6.1 projection requires exactly 3 additive v8 removals; got {removals}")
-
-          shutil.rmtree(projected, ignore_errors=True)
-          shutil.copytree(
-              root,
-              projected,
-              ignore=shutil.ignore_patterns(".git", "node_modules", "playwright-report", "test-results", "__pycache__"),
-          )
-          for relative in removals:
-              target = projected / relative
-              if not target.is_file():
-                  raise SystemExit(f"V6.1 projection target missing before removal: {relative}")
-              target.unlink()
-
-          html_count = len(list(projected.rglob("*.html")))
-          if html_count != 46:
-              raise SystemExit(f"V6.1 projection must restore 46 HTML; found {html_count}")
-          print("V6.1 STRICT PROJECTION OK: 49-page additive tree -> isolated 46-page legacy measurement view.")
-          PY
+          python3 scripts/v8_legacy_projection.py --output "$MERIDIANO_V61_ROOT"
+          test "$(find "$MERIDIANO_V61_ROOT" -name '*.html' -type f | wc -l)" -eq 46
+          grep -q 'data-experience-system="v6"' "$MERIDIANO_V61_ROOT/index.html"
+          ! grep -q 'data-v8-home-candidate="persisted"' "$MERIDIANO_V61_ROOT/index.html"
       - name: Materialize canonical v6 with measurement readiness
         run: |
           cd "$MERIDIANO_V61_ROOT"
@@ -186,10 +163,13 @@ jobs:
             /tmp/meridiano-v61-http.log
           if-no-files-found: ignore
           retention-days: 7
-      - name: Prove real additive v8 tree remained untouched
+      - name: Prove real v8 tree remained untouched
         if: success()
         run: |
           python3 scripts/validate_v8_public_tree.py
+          if grep -q 'data-v8-home-candidate="persisted"' index.html; then
+            python3 scripts/validate_v8_home_persisted.py --expect-state persisted
+          fi
           find . -type d -name __pycache__ -prune -exec rm -rf {} +
           git diff --exit-code
           test -z "$(git status --porcelain)"

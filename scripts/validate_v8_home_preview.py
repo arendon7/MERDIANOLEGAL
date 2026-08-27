@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fail-closed static validation for the ephemeral W5.0C Home preview."""
+"""Fail-closed static validation for the W5 Home preview across pre/persisted states."""
 from __future__ import annotations
 
 from html.parser import HTMLParser
@@ -9,6 +9,8 @@ import sys
 from urllib.parse import urlsplit
 
 from render_v8_home import render_home
+from render_v8_home_persisted import render_document
+from v8_legacy_projection import PERSISTED_MARKER
 from v8_shell import load_model
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -124,9 +126,6 @@ def main() -> int:
     if parser.inline_styles or parser.inline_scripts:
         fail("preview must not introduce inline style/script sedimentation")
 
-    # Dark Home sections must use the actual v8 navy primitive. A historical
-    # or invented dark class would silently fall back to a light background and
-    # can turn otherwise-accessible inverse/gold text into an axe violation.
     if "ml-section--dark" in html:
         fail("preview uses undefined ml-section--dark instead of canonical ml-section--navy")
     for marker in (
@@ -158,8 +157,6 @@ def main() -> int:
     if "/servicios-continuos/meridiano-contratos.html" in html:
         fail("RC02 target must not be linked or serialized into preview HTML")
 
-    # RC01 may explain that hours are not the commercial frame, but cannot offer
-    # a numeric/public hour package.
     lowered = visible.lower()
     forbidden_public_offers = (
         "10 horas al mes",
@@ -174,11 +171,15 @@ def main() -> int:
 
     canonical = CANONICAL_HOME.read_text(encoding="utf-8")
     if canonical.count('id="contact-form"') != 1:
-        fail("canonical production Home must keep exactly one physical contact form")
+        fail("canonical Home must keep exactly one physical contact form")
     if 'id="contacto"' not in canonical:
-        fail("canonical Home lost #contacto target used by ephemeral preview")
-    if 'data-v8-home-shell="candidate"' in canonical or model["home"]["hero"]["title"] in canonical:
-        fail("W5 Home was persisted into index.html before Browser/Axe gate")
+        fail("canonical Home lost #contacto target used by preview")
+    persisted = PERSISTED_MARKER in canonical
+    if persisted:
+        if canonical != render_document(model):
+            fail("persisted canonical Home differs from exact W5.0E renderer")
+    elif 'data-v8-home-shell="candidate"' in canonical or model["home"]["hero"]["title"] in canonical:
+        fail("partial W5 Home detected before persisted marker")
 
     allowed_local_anchors = {"#contenido", "#soluciones", "#sectores"}
     for href in parser.links:
@@ -199,9 +200,10 @@ def main() -> int:
         assert_fragment_exists(target, parts.fragment, href)
 
     if len(list(ROOT.rglob("*.html"))) != 49:
-        fail("W5.0C source tree must remain at the certified 49 HTML baseline")
+        fail("W5 preview source tree must remain at certified 49 HTML baseline")
 
-    print("VALIDATE V8 W5 HOME PREVIEW OK: H01-H12; canonical navy dark sections; one H1; no duplicate form; v8-only assets; all links resolve; RC02 non-linked; production Home untouched.")
+    state = "persisted" if persisted else "pre-persist"
+    print(f"VALIDATE V8 W5 HOME PREVIEW OK: H01-H12; no duplicate form; v8-only assets; links resolve; RC02 non-linked; canonical-state={state}.")
     return 0
 
 

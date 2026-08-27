@@ -1,19 +1,21 @@
 #!/usr/bin/env python3
-"""W4.6 pipeline compatibility gate for additive v8 candidate targets.
+"""W4.6+ pipeline compatibility gate for additive v8 targets and W5 persisted Home.
 
-Historical validators with closed topologies remain strict. W4.6 executes them
-against an ephemeral 46-page legacy projection while validating the real
-49-page candidate independently with the v8 contracts.
+Historical validators with closed topologies remain strict. They execute against
+an ephemeral 46-page projection; if the real Home has transitioned to W5.0E,
+the projection restores the exact certified v7.4 Home fixture first. The real
+49-page candidate is always validated independently.
 """
 from __future__ import annotations
 
 from pathlib import Path
 import hashlib
 import json
-import shutil
 import subprocess
 import sys
 import tempfile
+
+from v8_legacy_projection import ProjectionError, prepare_projection, persisted_home
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / "assets/data/v8/pipeline-compat-v80.json"
@@ -51,13 +53,13 @@ def validate_contract(contract: dict) -> list[str]:
     if contract.get("contract") != "v8-pipeline-compat":
         fail("unexpected pipeline compatibility contract")
     if contract.get("status") != "candidate":
-        fail("W4.6 requires status=candidate")
+        fail("pipeline compatibility requires status=candidate")
     if contract.get("baseline_version") != "7.4.0":
-        fail("W4.6 baseline must remain 7.4.0")
+        fail("pipeline baseline must remain 7.4.0")
 
     tree = contract.get("public_tree") or {}
     if tree.get("legacy_html_count") != 46 or tree.get("candidate_html_count") != 49:
-        fail("W4.6 topology must be 46 legacy + 3 additive = 49")
+        fail("topology must remain 46 legacy + 3 additive = 49")
     targets = tree.get("additive_targets") or []
     expected = [
         "/soluciones/sistema-contractual-empresarial.html",
@@ -73,9 +75,9 @@ def validate_contract(contract: dict) -> list[str]:
         "scripts/validate_experience_solutions_v60.py",
         "scripts/validate_growth_v51.py",
     ]:
-        fail("W4.6 strict validator allowlist changed unexpectedly")
+        fail("strict validator allowlist changed unexpectedly")
     if projection.get("builder_strategy") != "run-v6-in-projection-then-prove-real-legacy-equivalence":
-        fail("W4.6 builder projection strategy changed unexpectedly")
+        fail("builder projection strategy changed unexpectedly")
 
     policy = contract.get("candidate_policy") or {}
     required_policy = {
@@ -111,7 +113,7 @@ def validate_contract(contract: dict) -> list[str]:
 def validate_real_candidate(targets: list[str]) -> dict[str, str]:
     version = load(VERSION).get("version")
     if version != "7.4.0":
-        fail(f"W4.6 must not bump public version; got {version!r}")
+        fail(f"candidate must not bump public version; got {version!r}")
 
     html_files = sorted(ROOT.rglob("*.html"))
     if len(html_files) != 49:
@@ -131,12 +133,14 @@ def validate_real_candidate(targets: list[str]) -> dict[str, str]:
         if route in sitemap:
             fail(f"{route} must remain outside sitemap")
         if route in home:
-            fail(f"{route} must remain outside Home/navigation")
+            fail(f"{route} target route must remain outside public Home/navigation before SEO handoff")
         hashes[relative] = sha256(path)
 
     run([sys.executable, "scripts/validate_v8_public_tree.py"])
     run([sys.executable, "scripts/validate_v8_contrast_tokens.py"])
     run([sys.executable, "scripts/render_v8_pilot.py", "--check"])
+    if persisted_home(ROOT):
+        run([sys.executable, "scripts/validate_v8_home_persisted.py", "--expect-state", "persisted"])
     return hashes
 
 
@@ -149,23 +153,10 @@ def validate_legacy_projection(contract: dict, target_hashes: dict[str, str]) ->
 
     with tempfile.TemporaryDirectory(prefix="meridiano-w46-legacy-") as tmp:
         legacy_root = Path(tmp) / "site"
-        shutil.copytree(
-            ROOT,
-            legacy_root,
-            ignore=shutil.ignore_patterns(".git", "node_modules", "playwright-report", "test-results"),
-        )
-        for relative in removals:
-            path = legacy_root / relative
-            if not path.exists():
-                fail(f"projection removal missing {relative}")
-            path.unlink()
-
-        projected_html = sorted(legacy_root.rglob("*.html"))
-        if len(projected_html) != 46:
-            fail(f"legacy projection must restore exactly 46 HTML; found {len(projected_html)}")
-
+        restored = prepare_projection(ROOT, legacy_root)
         for validator in validators:
             run([sys.executable, validator], cwd=legacy_root)
+        print(f"PIPELINE legacy projection PASS: home-restored={str(restored).lower()}.")
 
     for relative, expected in target_hashes.items():
         actual = sha256(ROOT / relative)
@@ -178,9 +169,10 @@ def main() -> int:
     targets = validate_contract(contract)
     target_hashes = validate_real_candidate(targets)
     validate_legacy_projection(contract, target_hashes)
+    state = "persisted-home" if persisted_home(ROOT) else "legacy-home"
     print(
         "VALIDATE V8 PIPELINE COMPAT OK: real 49-page candidate + strict 46-page legacy projection; "
-        "Experience and Growth closed topologies remain strict with no activation or target mutation."
+        f"closed historical topologies remain strict; real-state={state}."
     )
     return 0
 
@@ -188,6 +180,6 @@ def main() -> int:
 if __name__ == "__main__":
     try:
         raise SystemExit(main())
-    except (AssertionError, json.JSONDecodeError) as exc:
+    except (AssertionError, ProjectionError, json.JSONDecodeError) as exc:
         print(f"VALIDATE V8 PIPELINE COMPAT FAIL: {exc}", file=sys.stderr)
         raise SystemExit(1)

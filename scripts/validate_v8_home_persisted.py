@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Fail-closed static contract for the exact future-root W5.0E Home candidate."""
+"""Fail-closed static contract for the exact W5.0E future/persisted Home candidate."""
 from __future__ import annotations
 
+from argparse import ArgumentParser
 from html.parser import HTMLParser
 from pathlib import Path
 import json
@@ -9,6 +10,7 @@ import sys
 from urllib.parse import urlsplit
 
 from render_v8_home_persisted import CANONICAL_URL, PUBLIC_BRIDGES, render_document
+from v8_legacy_projection import PERSISTED_MARKER
 from v8_shell import load_model
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -99,7 +101,16 @@ def fail(message: str) -> None:
     raise AssertionError(message)
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
+    parser_args = ArgumentParser()
+    parser_args.add_argument(
+        "--expect-state",
+        choices=("auto", "unpersisted", "persisted"),
+        default="auto",
+        help="Require the real index.html to remain legacy, be exact persisted v8, or auto-detect.",
+    )
+    args = parser_args.parse_args(argv)
+
     model = load_model()
     first = render_document(model)
     second = render_document(model)
@@ -172,12 +183,28 @@ def main() -> int:
         fail("manual WhatsApp handoff target missing")
 
     canonical = CANONICAL_HOME.read_text(encoding="utf-8")
-    if 'data-v8-home-candidate="persisted"' in canonical:
-        fail("W5.0E E1 must not persist future root into index.html before browser gate")
-    if len(list(ROOT.rglob("*.html"))) != 49:
-        fail("W5.0E E1 source tree must remain at certified 49 HTML baseline")
+    persisted = PERSISTED_MARKER in canonical
+    if args.expect_state == "unpersisted" and persisted:
+        fail("real Home is persisted but unpersisted state was required")
+    if args.expect_state == "persisted" and not persisted:
+        fail("real Home is not persisted but persisted state was required")
+    if persisted:
+        if canonical != first:
+            fail("persisted index.html is not byte-identical to source-driven renderer output")
+        if canonical.count('data-experience-system="v8"') != 1:
+            fail("persisted Home must declare exactly one v8 experience-system marker")
+    else:
+        if 'data-experience-system="v8"' in canonical:
+            fail("partial v8 Home marker detected without persisted candidate marker")
 
-    print("VALIDATE V8 W5.0E PERSISTED HOME OK: deterministic future root; indexable canonical; 5 CSS/5 JS budget; one privacy-first form; three legacy SEO bridges; RC02 non-linked; production Home untouched.")
+    if len(list(ROOT.rglob("*.html"))) != 49:
+        fail("W5.0E source tree must remain at certified 49 HTML baseline")
+
+    state = "persisted-byte-exact" if persisted else "future-root-only"
+    print(
+        "VALIDATE V8 W5.0E PERSISTED HOME OK: deterministic/indexable canonical; 5 CSS/5 JS; "
+        f"one privacy-first form; three legacy SEO bridges; RC02 non-linked; state={state}."
+    )
     return 0
 
 

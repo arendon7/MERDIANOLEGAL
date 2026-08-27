@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
-"""Static fail-closed certification for the W5.0B global navigation shell."""
+"""Static fail-closed certification for the W5 global navigation shell."""
 from __future__ import annotations
 
 from html.parser import HTMLParser
 from pathlib import Path
 import json
-import re
 import sys
 
+from render_v8_home_persisted import production_bridge_model, render_document
+from v8_legacy_projection import PERSISTED_MARKER
 from v8_shell import load_model, render_footer, render_header
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -53,16 +54,16 @@ def check_href(href: str) -> None:
             fail(f"anchor inesperado en shell: {href}")
         return
     if href.startswith(("http://", "https://", "mailto:", "tel:")):
-        fail(f"W5.0B shell no debe introducir destino externo: {href}")
+        fail(f"W5 shell no debe introducir destino externo: {href}")
     path = ROOT / href.split("?", 1)[0].split("#", 1)[0]
     if not path.is_file():
         fail(f"href físico inexistente: {href}")
 
 
-def main() -> int:
-    model = load_model()
-    header = render_header(model)
-    footer = render_footer(model)
+def validate_shell_markup(model: dict, *, persisted: bool) -> None:
+    rendered_model = production_bridge_model(model) if persisted else model
+    header = render_header(rendered_model)
+    footer = render_footer(rendered_model)
     markup = header + footer
 
     parser = ShellParser()
@@ -103,11 +104,7 @@ def main() -> int:
 
     header_item_rows = [entry for entry in parser.items if "data-ml-item-id" in entry[2]]
     header_ids = [entry[1] for entry in header_item_rows]
-    expected_ids = [
-        row[0]
-        for rows in model["navigation"]["mega_groups"].values()
-        for row in rows
-    ]
+    expected_ids = [row[0] for rows in model["navigation"]["mega_groups"].values() for row in rows]
     if header_ids != expected_ids:
         fail(f"mega menu no conserva orden/IDs 6+8+2: {header_ids}")
     if len(header_ids) != 16 or len(set(header_ids)) != 16:
@@ -128,10 +125,16 @@ def main() -> int:
             fail(f"anchor sin href: {anchor}")
         check_href(href)
 
-    # No-JS fallback must remain a real link while JS uses a button.
     fallback_links = [a for a in parser.anchors if "ml-nav-fallback" in a.get("class", "")]
     if len(fallback_links) != 1 or fallback_links[0].get("href") != "#soluciones":
         fail("Qué hacemos necesita fallback no-JS a #soluciones")
+
+
+def main() -> int:
+    model = load_model()
+    index = INDEX.read_text(encoding="utf-8")
+    persisted = PERSISTED_MARKER in index
+    validate_shell_markup(model, persisted=persisted)
 
     js = JS.read_text(encoding="utf-8")
     required_js = (
@@ -173,14 +176,19 @@ def main() -> int:
         if marker not in css:
             fail(f"components.css omite shell requirement: {marker}")
 
-    index = INDEX.read_text(encoding="utf-8")
-    if "data-ml-shell" in index or "assets/js/v8/navigation.js" in index:
-        fail("W5.0B no puede persistir shell en index.html antes de W5.0C/D")
+    if persisted:
+        if index != render_document(model):
+            fail("persisted Home shell differs from exact E2 renderer")
+        if index.count("data-ml-shell") != 1 or "assets/js/v8/navigation.js" not in index:
+            fail("persisted Home lost global v8 shell/runtime")
+    elif "data-ml-shell" in index or "assets/js/v8/navigation.js" in index:
+        fail("partial W5 shell detected in legacy Home before persisted marker")
 
     if len(list(ROOT.rglob("*.html"))) != 49:
-        fail("W5.0B debe preservar baseline físico de 49 HTML")
+        fail("W5 navigation must preserve physical 49 HTML topology")
 
-    print("VALIDATE V8 W5 NAVIGATION SHELL OK: semantic desktop/mobile shell; 6+8+2; RC02 non-link; keyboard/Escape/focus contract; Home untouched.")
+    state = "persisted" if persisted else "pre-persist"
+    print(f"VALIDATE V8 W5 NAVIGATION SHELL OK: semantic desktop/mobile shell; 6+8+2; RC02 non-link; keyboard/Escape/focus; state={state}.")
     return 0
 
 

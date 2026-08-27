@@ -69,6 +69,7 @@ on:
       - catalog-products-v41/**
       - catalog-services-v42/**
       - tests/e2e/**
+      - tests/fixtures/v8/home-v74.fixture
       - scripts/enrich_editorial_pages.py
       - scripts/sync_public_version.py
       - scripts/apply_production_v50.py
@@ -127,6 +128,8 @@ on:
       - scripts/validate_operations_v49.py
       - scripts/validate_static_catalog.py
       - scripts/validate_growth_v51.py
+      - scripts/v8_legacy_projection.py
+      - scripts/run_v8_release_governance_compat.py
       - scripts/run_v8_historical_gate_compat.py
       - scripts/run_v8_legacy_tail_compat.py
       - scripts/validate_live_v51.py
@@ -158,64 +161,15 @@ jobs:
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
         with:
           python-version: "3.12"
-      - name: Normalize materialized handoff v5.17 before historical validators
-        run: python3 scripts/apply_handoff_v517.py
-      - name: Validate governance contracts
+      - name: Validate topology-aware governance contracts
         run: |
-          python3 -m py_compile scripts/validate_live_v51.py scripts/run_v8_historical_gate_compat.py scripts/run_v8_legacy_tail_compat.py
-          python3 scripts/run_v8_historical_gate_compat.py growth
-          python3 scripts/validate_quality_v55.py
-          python3 scripts/validate_ci_v56.py
-          python3 scripts/validate_release_governance_v57.py --report-dir governance-artifacts/v5.7
-          python3 scripts/validate_pages_trigger_v511.py
-      - name: Validate public version semantics v5.0
-        run: |
-          python3 scripts/sync_public_version.py
-          python3 scripts/apply_production_v50.py
-          python3 scripts/validate_production_v50.py
-          python3 scripts/validate_visual_assets.py
-      - name: Validate buying decision contract v5.8
-        run: |
-          python3 scripts/apply_decision_v58.py
-          python3 scripts/validate_decision_v58.py
-      - name: Validate commercial intake contract v5.9
-        run: |
-          python3 scripts/apply_operations_v49.py
-          python3 scripts/apply_decision_v58.py
-          python3 scripts/apply_commercial_v59.py
-          python3 scripts/validate_commercial_v59.py
-      - name: Validate conversion-to-close contract v5.10
-        run: |
-          python3 scripts/apply_conversion_v510.py
-          python3 scripts/validate_conversion_v510.py
-      - name: Validate engagement readiness v5.11
-        run: |
-          python3 scripts/apply_engagement_v511.py
-          python3 scripts/validate_engagement_v511.py
-      - name: Validate verifiable proof v5.12
-        run: |
-          python3 scripts/apply_proof_v512.py
-          python3 scripts/validate_proof_v512.py
-      - name: Validate commercial brief continuity v5.13
-        run: |
-          python3 scripts/apply_commercial_brief_v513.py
-          python3 scripts/validate_commercial_brief_v513.py
-      - name: Validate explainable recommendation v5.14
-        run: |
-          python3 scripts/apply_recommendation_v514.py
-          python3 scripts/validate_recommendation_v514.py
-      - name: Validate decision-to-action efficiency v5.15
-        run: |
-          python3 scripts/apply_decision_action_v515.py
-          python3 scripts/validate_decision_action_v515.py
-      - name: Validate manual handoff continuity v5.17
-        run: |
-          python3 scripts/apply_handoff_v517.py
-          python3 scripts/validate_handoff_v517.py
-      - name: Validate handoff observability v5.18+
-        run: python3 scripts/run_v8_historical_gate_compat.py handoff-observability
-      - name: Validate historical tail v5.22 through v5.31
-        run: python3 scripts/run_v8_legacy_tail_compat.py
+          python3 -m py_compile \
+            scripts/v8_legacy_projection.py \
+            scripts/run_v8_release_governance_compat.py \
+            scripts/run_v8_historical_gate_compat.py \
+            scripts/run_v8_legacy_tail_compat.py
+          python3 scripts/v8_legacy_projection.py
+          python3 scripts/run_v8_release_governance_compat.py
       - name: Publish release-health report
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7

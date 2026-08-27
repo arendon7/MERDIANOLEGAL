@@ -1,19 +1,21 @@
 #!/usr/bin/env python3
-"""Run the canonical v6 extension chain in an ephemeral W4.6 legacy projection.
+"""Run canonical v6 extensions in an ephemeral strict legacy projection.
 
-The real candidate remains untouched. After the projected Builder finishes, every
-legacy file is compared byte-for-byte with the real branch. A difference means
-the current branch is not Builder-idempotent and W4.6 must fail.
+For a persisted W5 Home, index.html is intentionally excluded from byte
+comparison because the projection restores the immutable v7.4 fixture while the
+real tree retains the source-driven v8 Home. All other legacy outputs must remain
+byte-idempotent and the three additive targets remain protected.
 """
 from __future__ import annotations
 
 from pathlib import Path
 import hashlib
 import json
-import shutil
 import subprocess
 import sys
 import tempfile
+
+from v8_legacy_projection import ProjectionError, prepare_projection, persisted_home
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / "assets/data/v8/pipeline-compat-v80.json"
@@ -70,12 +72,11 @@ def comparable_files(root: Path, excluded: set[str]) -> dict[str, str]:
     for path in root.rglob("*"):
         if not path.is_file():
             continue
-        relative = path.relative_to(root).as_posix()
+        relative_path = path.relative_to(root)
+        relative = relative_path.as_posix()
         if relative in excluded:
             continue
-        if any(part in IGNORE_PARTS for part in path.relative_to(root).parts):
-            continue
-        if path.suffix == ".pyc":
+        if any(part in IGNORE_PARTS for part in relative_path.parts) or path.suffix == ".pyc":
             continue
         result[relative] = digest(path)
     return result
@@ -90,39 +91,32 @@ def main() -> int:
     if len(removals) != 3:
         fail("Builder projection must remove exactly three additive targets")
 
-    real_target_hashes = {relative: digest(ROOT / relative) for relative in removals}
-    real_legacy = comparable_files(ROOT, removals)
+    home_is_persisted = persisted_home(ROOT)
+    protected = set(removals)
+    if home_is_persisted:
+        protected.add("index.html")
+    real_protected_hashes = {relative: digest(ROOT / relative) for relative in protected}
+    real_legacy = comparable_files(ROOT, protected)
 
     with tempfile.TemporaryDirectory(prefix="meridiano-w46-builder-") as tmp:
         projected = Path(tmp) / "site"
-        shutil.copytree(
-            ROOT,
-            projected,
-            ignore=shutil.ignore_patterns(".git", "node_modules", "playwright-report", "test-results", "__pycache__"),
-        )
-        for relative in removals:
-            target = projected / relative
-            if not target.exists():
-                fail(f"projection target missing before removal: {relative}")
-            target.unlink()
-
-        if len(list(projected.rglob("*.html"))) != 46:
-            fail("Builder projection did not restore the 46-page legacy topology")
+        restored = prepare_projection(ROOT, projected)
+        if restored != home_is_persisted:
+            fail("projection Home restoration state mismatch")
 
         for command in BUILDER_COMMANDS:
             run(command, projected)
-
         fit = projected / "assets/data/v6/fit-scope-clarity-v64.json"
         if fit.exists():
             run([sys.executable, "scripts/apply_fit_scope_clarity_v64.py"], projected)
-
         for validator in POST_VALIDATORS:
             run([sys.executable, validator], projected)
         if fit.exists():
             run([sys.executable, "scripts/validate_fit_scope_clarity_v64.py"], projected)
             run([sys.executable, "scripts/apply_fit_scope_clarity_v64.py", "--check"], projected)
 
-        projected_legacy = comparable_files(projected, set())
+        projected_excluded = {"index.html"} if home_is_persisted else set()
+        projected_legacy = comparable_files(projected, projected_excluded)
         extra = sorted(set(projected_legacy) - set(real_legacy))
         missing = sorted(set(real_legacy) - set(projected_legacy))
         changed = sorted(
@@ -131,17 +125,20 @@ def main() -> int:
         )
         if extra or missing or changed:
             fail(
-                "Builder projection is not byte-idempotent against real legacy tree; "
+                "Builder projection is not byte-idempotent against comparable real legacy tree; "
                 f"extra={extra[:8]}, missing={missing[:8]}, changed={changed[:12]}"
             )
 
-    for relative, expected in real_target_hashes.items():
+    for relative, expected in real_protected_hashes.items():
         if digest(ROOT / relative) != expected:
-            fail(f"real additive target mutated during Builder projection: {relative}")
+            fail(f"real protected surface mutated during Builder projection: {relative}")
 
+    if home_is_persisted:
+        run([sys.executable, "scripts/validate_v8_home_persisted.py", "--expect-state", "persisted"], ROOT)
+    state = "persisted-home-excluded-from-legacy-equivalence" if home_is_persisted else "legacy-home"
     print(
         "SIMULATE V8 BUILDER PROJECTION OK: v6 canonical extensions and validators pass on 46-page projection; "
-        "legacy output equals real tree byte-for-byte and three v8 targets remain untouched."
+        f"comparable legacy output equals real tree byte-for-byte; protected surfaces untouched; state={state}."
     )
     return 0
 
@@ -149,6 +146,6 @@ def main() -> int:
 if __name__ == "__main__":
     try:
         raise SystemExit(main())
-    except (AssertionError, json.JSONDecodeError) as exc:
+    except (AssertionError, ProjectionError, json.JSONDecodeError) as exc:
         print(f"SIMULATE V8 BUILDER PROJECTION FAIL: {exc}", file=sys.stderr)
         raise SystemExit(1)

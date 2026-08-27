@@ -29,6 +29,9 @@ on:
       - soluciones/**
       - scripts/apply_v8_builder_compat.py
       - scripts/run_v8_pages_quality_compat.py
+      - scripts/v8_legacy_projection.py
+      - scripts/run_v8_release_governance_compat.py
+      - tests/fixtures/v8/home-v74.fixture
       - .gitignore
       - playwright.config.mjs
       - tests/e2e/**
@@ -205,9 +208,9 @@ jobs:
           else
             echo 'MERIDIANO_V8_PIPELINE_COMPAT=false' >> "$GITHUB_ENV"
           fi
-          if grep -q 'data-experience-system="v6"' index.html; then
+          if grep -q 'data-experience-system="v6"' index.html || grep -q 'data-v8-home-candidate="persisted"' index.html; then
             echo 'MERIDIANO_CANONICAL_V6=true' >> "$GITHUB_ENV"
-            echo 'Experience System v6 baseline detected; legacy HTML materializers will be skipped.'
+            echo 'Managed canonical baseline detected (v6 legacy or persisted v8 Home); direct legacy HTML materializers will be skipped.'
           else
             echo 'MERIDIANO_CANONICAL_V6=false' >> "$GITHUB_ENV"
             echo 'Pre-v6 baseline detected; legacy canonical chain remains active.'

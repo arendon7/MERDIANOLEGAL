@@ -1,0 +1,124 @@
+name: V8.0 W5.0E persistence integration shadow
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - index.html
+      - assets/data/v8/**
+      - assets/css/v8/**
+      - assets/js/v8/**
+      - tests/fixtures/v8/home-v74.fixture
+      - scripts/render_v8_home_persisted.py
+      - scripts/validate_v8_home_persisted.py
+      - scripts/validate_v8_home_shell.py
+      - scripts/validate_v8_navigation_shell.py
+      - scripts/validate_v8_home_preview.py
+      - scripts/v8_legacy_projection.py
+      - scripts/validate_v8_pipeline_compat.py
+      - scripts/apply_v8_builder_compat.py
+      - scripts/simulate_v8_builder_projection.py
+      - scripts/run_v8_pages_quality_compat.py
+      - scripts/run_v8_historical_gate_compat.py
+      - scripts/run_v8_legacy_tail_compat.py
+      - scripts/run_v8_release_governance_compat.py
+      - scripts/validate_v8_live_home.py
+      - .github/workflows/build-canonical.yml
+      - .github/workflows/pages.yml
+      - .github/workflows/release-governance.yml
+      - .github/workflows/v61-measurement-readiness.yml
+      - .github/workflows/v80-final-browser-candidate.yml
+      - .github/workflows/v80-home-persistence-integration.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: meridiano-v80-w50e-persistence-shadow-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  integration:
+    name: Persisted Home / Builder Pages Governance shadow
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      MERIDIANO_E2_ROOT: /tmp/meridiano-w50e-persisted-integration
+    steps:
+      - name: Checkout E2 candidate
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.12'
+      - name: Compile persistence compatibility substrate
+        run: |
+          python3 -m py_compile \
+            scripts/v8_legacy_projection.py \
+            scripts/render_v8_home_persisted.py \
+            scripts/validate_v8_home_persisted.py \
+            scripts/validate_v8_home_shell.py \
+            scripts/validate_v8_navigation_shell.py \
+            scripts/validate_v8_home_preview.py \
+            scripts/validate_v8_pipeline_compat.py \
+            scripts/apply_v8_builder_compat.py \
+            scripts/simulate_v8_builder_projection.py \
+            scripts/run_v8_pages_quality_compat.py \
+            scripts/run_v8_historical_gate_compat.py \
+            scripts/run_v8_legacy_tail_compat.py \
+            scripts/run_v8_release_governance_compat.py \
+            scripts/validate_v8_live_home.py
+          python3 scripts/v8_legacy_projection.py
+      - name: Materialize persisted state only in disposable mirror
+        run: |
+          rm -rf "$MERIDIANO_E2_ROOT"
+          mkdir -p "$MERIDIANO_E2_ROOT"
+          tar \
+            --exclude='./.git' \
+            --exclude='./node_modules' \
+            --exclude='./playwright-report' \
+            --exclude='./test-results' \
+            -cf - . | tar -xf - -C "$MERIDIANO_E2_ROOT"
+          cd "$MERIDIANO_E2_ROOT"
+          python3 scripts/render_v8_home_persisted.py --output index.html
+          grep -q 'data-v8-home-candidate="persisted"' index.html
+          test "$(find . -name '*.html' -type f | wc -l)" -eq 49
+      - name: Validate real persisted v8 model in mirror
+        run: |
+          cd "$MERIDIANO_E2_ROOT"
+          python3 scripts/validate_v8_home_shell.py
+          python3 scripts/validate_v8_navigation_shell.py
+          python3 scripts/validate_v8_home_preview.py
+          python3 scripts/validate_v8_home_persisted.py --expect-state persisted
+          python3 scripts/validate_v8_public_tree.py
+          python3 scripts/validate_v8_pipeline_compat.py
+      - name: Prove Builder cannot overwrite persisted Home
+        run: |
+          cd "$MERIDIANO_E2_ROOT"
+          BEFORE="$(git hash-object index.html)"
+          python3 scripts/apply_v8_builder_compat.py --check
+          python3 scripts/simulate_v8_builder_projection.py
+          AFTER="$(git hash-object index.html)"
+          test "$BEFORE" = "$AFTER"
+          python3 scripts/validate_v8_home_persisted.py --expect-state persisted
+      - name: Validate Pages static quality through strict historical projection
+        run: |
+          cd "$MERIDIANO_E2_ROOT"
+          python3 scripts/run_v8_pages_quality_compat.py
+          python3 scripts/validate_v8_home_persisted.py --expect-state persisted
+      - name: Validate Release Governance through strict historical projection
+        run: |
+          cd "$MERIDIANO_E2_ROOT"
+          python3 scripts/run_v8_release_governance_compat.py
+          python3 scripts/validate_v8_home_persisted.py --expect-state persisted
+      - name: Prove shadow did not persist branch Home
+        run: |
+          ! grep -q 'data-v8-home-candidate="persisted"' index.html
+          python3 scripts/validate_v8_home_persisted.py --expect-state unpersisted
+          find . -type d -name __pycache__ -prune -exec rm -rf {} +
+          git diff --exit-code
+          test -z "$(git status --porcelain)"
