@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Execute Release Governance on the correct historical topology.
+"""Execute Release Governance on the certified historical topology.
 
-Before W5 Home persistence, this reproduces the existing disposable-checkout
-sequence directly. After persistence, the same v5.7→v5.31 chain executes inside
-the strict 46-page/v7.4 projection while the real v8 Home is read-only and is
-validated separately at the end.
+The v8 candidate is additive before and after W5 Home persistence, so the
+historical v5.7→v5.31 chain always runs in the shared strict 46-page projection.
+When the real Home is persisted, the projection additionally restores the exact
+v7.4 Home fixture. The real v8 tree remains read-only and is validated after the
+historical governance chain completes.
 """
 from __future__ import annotations
 
@@ -90,20 +91,33 @@ def governance_chain(cwd: Path) -> None:
 
 def main() -> int:
     REPORT_DIR.mkdir(parents=True, exist_ok=True)
-    if persisted_home(ROOT):
-        with tempfile.TemporaryDirectory(prefix="meridiano-release-governance-w5-") as tmp:
-            projected = Path(tmp) / "site"
-            restored = prepare_projection(ROOT, projected)
-            if not restored:
-                fail("persisted Release Governance requires v7.4 Home restoration")
-            governance_chain(projected)
-        run([sys.executable, "scripts/validate_v8_public_tree.py"], ROOT)
-        run([sys.executable, "scripts/validate_v8_pipeline_compat.py"], ROOT)
-        run([sys.executable, "scripts/validate_v8_home_persisted.py", "--expect-state", "persisted"], ROOT)
-        print("V8 RELEASE GOVERNANCE COMPAT OK: historical v5.7→v5.31 chain passed in strict v7.4 projection; real W5 Home remained protected.")
-    else:
-        governance_chain(ROOT)
-        print("V8 RELEASE GOVERNANCE COMPAT OK: pre-persist historical governance behavior preserved directly.")
+    real_persisted = persisted_home(ROOT)
+
+    with tempfile.TemporaryDirectory(prefix="meridiano-release-governance-v8-") as tmp:
+        projected = Path(tmp) / "site"
+        restored = prepare_projection(ROOT, projected)
+        if restored != real_persisted:
+            fail(
+                "shared legacy projection Home restoration state diverged from real Home state: "
+                f"real-persisted={real_persisted}, restored={restored}"
+            )
+        governance_chain(projected)
+
+    run([sys.executable, "scripts/validate_v8_public_tree.py"], ROOT)
+    run([sys.executable, "scripts/validate_v8_pipeline_compat.py"], ROOT)
+    if real_persisted:
+        run([
+            sys.executable,
+            "scripts/validate_v8_home_persisted.py",
+            "--expect-state",
+            "persisted",
+        ], ROOT)
+
+    state = "persisted-home" if real_persisted else "legacy-home"
+    print(
+        "V8 RELEASE GOVERNANCE COMPAT OK: historical v5.7→v5.31 chain passed in shared strict "
+        f"46-page projection; real v8 tree remained protected; state={state}."
+    )
     return 0
 
 
