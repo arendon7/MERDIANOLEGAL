@@ -2,6 +2,7 @@
 """Stage-aware compatibility runner for historical CI gates on v8/W5 candidates."""
 from __future__ import annotations
 
+import os
 from pathlib import Path
 import json
 import re
@@ -46,6 +47,28 @@ def final_candidate() -> bool:
     if tree.get("legacy_html_count") != 46 or tree.get("candidate_html_count") != 49:
         fail("v8 topology contract must remain 46 legacy + 3 additive = 49")
     return True
+
+
+def governed_projection() -> Path | None:
+    raw = os.environ.get("MERIDIANO_RELEASE_GOVERNANCE_ROOT", "").strip()
+    if not raw:
+        return None
+    projected = Path(raw).resolve()
+    if not projected.is_dir():
+        fail(f"governed historical projection missing: {projected}")
+    html_count = len(list(projected.rglob("*.html")))
+    if html_count != 46:
+        fail(f"governed historical projection must contain 46 HTML; found {html_count}")
+    home = projected / "index.html"
+    if not home.is_file():
+        fail("governed historical projection lost index.html")
+    text = home.read_text(encoding="utf-8")
+    if 'data-experience-system="v6"' not in text or 'data-v8-home-candidate="persisted"' in text:
+        fail("governed historical projection is not the certified v7.4/v6 Home topology")
+    for relative in TARGETS:
+        if (projected / relative).exists():
+            fail(f"governed historical projection leaked additive target: {relative}")
+    return projected
 
 
 def projection() -> tuple[tempfile.TemporaryDirectory[str], Path]:
@@ -153,6 +176,17 @@ def mode_handoff_observability(is_final: bool) -> None:
         run([sys.executable, "scripts/apply_handoff_observability_v518.py"])
         run([sys.executable, "scripts/validate_handoff_observability_v518.py"])
         return
+
+    governed = governed_projection()
+    if governed is not None:
+        run([sys.executable, "scripts/apply_handoff_observability_v518.py"], cwd=governed)
+        run([sys.executable, "scripts/validate_handoff_observability_v518.py"], cwd=governed)
+        run([sys.executable, "scripts/validate_v8_public_tree.py"])
+        if persisted_home(ROOT):
+            run([sys.executable, "scripts/validate_v8_home_persisted.py", "--expect-state", "persisted"])
+        print("HISTORICAL GATE COMPAT handoff-observability PASS: reused governed 46-page projection; real W5 tree remained untouched.")
+        return
+
     holder, projected = projection()
     try:
         run([sys.executable, "scripts/apply_handoff_observability_v518.py"], cwd=projected)
